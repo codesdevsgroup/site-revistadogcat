@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject, throwError, of } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
+import { catchError, tap, map } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
 import { Role, RoleUtils } from '../enums/role.enum';
@@ -253,5 +253,39 @@ export class AuthService {
   hasAdminAccess(): boolean {
     const user = this.getCurrentUser();
     return user ? RoleUtils.hasAdminAccess(user.role) : false;
+  }
+
+  /**
+   * Verifica se é necessário e possível fazer refresh do token
+   */
+  canRefreshToken(): boolean {
+    const refreshToken = this.getRefreshToken();
+    const user = this.getCurrentUser();
+    const hasAccessToken = !!this.getAccessToken();
+    
+    return !hasAccessToken && !!refreshToken && !!user;
+  }
+
+  /**
+   * Tenta fazer refresh do token se necessário
+   * Retorna true se já está autenticado ou se o refresh foi bem-sucedido
+   */
+  ensureAuthenticated(): Observable<boolean> {
+    if (this.isAuthenticated()) {
+      return of(true);
+    }
+
+    if (this.canRefreshToken()) {
+      console.log('AuthService: Fazendo refresh automático do token...');
+      return this.refreshToken().pipe(
+        map(() => true),
+        catchError((error) => {
+          console.log('AuthService: Falha no refresh automático:', error);
+          return of(false);
+        })
+      );
+    }
+
+    return of(false);
   }
 }

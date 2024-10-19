@@ -13,7 +13,7 @@ describe('ExpoDogComponent', () => {
     .compileComponents();
 
     fixture = TestBed.createComponent(ExpoDogComponent);
-    component = fixtureInstance;
+    component = fixture.componentInstance;
     fixture.detectChanges();
   });
 

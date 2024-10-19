@@ -13,7 +13,7 @@ describe('AssinaturasComponent', () => {
     .compileComponents();
 
     fixture = TestBed.createComponent(AssinaturasComponent);
-    component = fixtureInstance;
+    component = fixture.componentInstance;
     fixture.detectChanges();
   });
 

@@ -13,7 +13,7 @@ describe('DocumentacaoComponent', () => {
     .compileComponents();
 
     fixture = TestBed.createComponent(DocumentacaoComponent);
-    component = fixtureInstance;
+    component = fixture.componentInstance;
     fixture.detectChanges();
   });
 

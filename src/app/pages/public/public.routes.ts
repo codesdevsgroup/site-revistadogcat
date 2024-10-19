@@ -6,7 +6,9 @@ import { ExpoDogComponent } from './expo-dog/expo-dog';
 import { CadastroCaoComponent } from './cadastro-cao/cadastro-cao';
 import { ProfileComponent } from './profile/profile';
 import { EdicoesComponent } from './edicoes/edicoes';
+import { TestRefreshComponent } from './test-refresh/test-refresh.component';
 import { AuthGuard } from '../../guards/auth.guard';
+import { AuthResolver } from '../../resolvers/auth.resolver';
 
 export const publicRoutes: Routes = [
   {
@@ -18,7 +20,8 @@ export const publicRoutes: Routes = [
       { path: 'expo-dog', component: ExpoDogComponent },
       { path: 'edicoes', component: EdicoesComponent },
       { path: 'cadastro-cao', component: CadastroCaoComponent },
-      { path: 'perfil', component: ProfileComponent, canActivate: [AuthGuard] },
+      { path: 'perfil', component: ProfileComponent, canActivate: [AuthGuard], resolve: { auth: AuthResolver } },
+      { path: 'test-refresh', component: TestRefreshComponent },
       { path: 'area-leitor', redirectTo: '/auth/login', pathMatch: 'full' },
       { path: 'auth', loadChildren: () => import('./auth/auth.routes').then(m => m.authRoutes) }
     ]

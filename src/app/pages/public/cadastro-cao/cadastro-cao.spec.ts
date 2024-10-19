@@ -13,7 +13,7 @@ describe('CadastroCaoComponent', () => {
     .compileComponents();
 
     fixture = TestBed.createComponent(CadastroCaoComponent);
-    component = fixtureInstance;
+    component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
