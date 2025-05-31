@@ -1,0 +1,62 @@
+.navbar {
+  background-color: var(--primaryColor);
+  box-shadow: var(--borderBoxShadow);
+
+  .navbar-brand {
+    color: var(--secondaryColorColor);
+    font-weight: bold;
+    font-size: 1.8rem;
+    text-decoration: none;
+
+    img {
+      height: 60px;
+      margin-right: 12px;
+    }
+  }
+
+  .nav-link {
+    color: var(--secondaryColor) !important;
+    font-weight: 500;
+    margin-left: 1rem;
+    transition: all 0.3s ease;
+    &:hover {
+      filter: brightness(0.9);
+      text-decoration: underline;
+      animation: blink 1s infinite;
+      cursor: pointer;
+      text-decoration-color: var(--goldenColor);
+      transform: translateY(-4px);
+    }
+  }
+
+  .btn-login {
+    background-color: var(--goldenColor);
+    color: var(--primaryColor);
+    font-weight: bold;
+    padding: 0.4rem 1.4rem;
+    border: none;
+    border-radius: 80px;
+    margin-left: 1rem;
+    transition: all 0.3s ease;
+    box-shadow: var(--borderBoxShadow);
+  }
+
+  .btn-login:hover {
+    animation: pulse 0.8s infinite;
+    filter: brightness(1.1);
+    transform: scale(1.05);
+  }
+
+  @keyframes pulse {
+    0% {
+      box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7);
+    }
+    70% {
+      box-shadow: 0 0 0 10px rgba(255, 215, 0, 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(255, 215, 0, 0);
+    }
+  }
+
+}

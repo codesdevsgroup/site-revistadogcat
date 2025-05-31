@@ -1,0 +1,23 @@
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+
+  .metric-box {
+    background: #f4f4f4;
+    padding: 1.5rem;
+    border-radius: 6px;
+    text-align: center;
+
+    h3 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      color: #2a5d34;
+    }
+
+    p {
+      margin: 0;
+    }
+  }
+}

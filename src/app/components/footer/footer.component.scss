@@ -1,0 +1,13 @@
+.footer {
+  margin-top: 4rem;
+  text-align: center;
+
+  a {
+    color: #2a5d34;
+    text-decoration: underline;
+
+    &:hover {
+      color: #1e4726;
+    }
+  }
+}
