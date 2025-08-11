@@ -1,0 +1,229 @@
+.top-canis-gatis {
+  background: var(--tertiaryColor);
+  padding: 4rem 0;
+  margin: 4rem 0;
+}
+
+.top-canis-gatis h2 {
+  text-align: center;
+  font-size: 2.5rem;
+  color: var(--primaryColor);
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+
+.subtitle {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #666;
+  margin-bottom: 3rem;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.showcase-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin: 3rem 0;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.showcase-item {
+  background: white;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+  border: 3px solid transparent;
+}
+
+.showcase-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 35px rgba(0,0,0,0.15);
+  border-color: var(--goldenColor);
+}
+
+.showcase-placeholder {
+  height: 200px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 2px solid var(--goldenColor);
+  position: relative;
+}
+
+.showcase-placeholder::before {
+  content: '🏆';
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 2rem;
+  opacity: 0.3;
+}
+
+.showcase-placeholder span {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--primaryColor);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 0.5rem;
+}
+
+.showcase-placeholder p {
+  color: #666;
+  font-style: italic;
+  margin: 0;
+}
+
+.showcase-info {
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.showcase-info h4 {
+  font-size: 1.3rem;
+  color: var(--primaryColor);
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.showcase-info p {
+  color: var(--goldenColor);
+  font-size: 1rem;
+  margin: 0;
+  font-weight: 500;
+}
+
+.cta-buttons {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  margin: 3rem 0;
+  flex-wrap: wrap;
+}
+
+.btn-top {
+  background: linear-gradient(135deg, var(--primaryColor), #2a5d34);
+  color: white;
+  padding: 1.2rem 3rem;
+  border-radius: 50px;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 20px rgba(26, 61, 30, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.btn-top:hover {
+  background: linear-gradient(135deg, #2a5d34, var(--primaryColor));
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(26, 61, 30, 0.4);
+  color: white;
+  text-decoration: none;
+}
+
+.btn-icon {
+  font-size: 1.5rem;
+}
+
+.advertising-info {
+  background: white;
+  padding: 3rem;
+  border-radius: 20px;
+  text-align: center;
+  max-width: 800px;
+  margin: 4rem auto 0;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  border-top: 4px solid var(--goldenColor);
+}
+
+.advertising-info h3 {
+  font-size: 2rem;
+  color: var(--primaryColor);
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+
+.advertising-info p {
+  font-size: 1.1rem;
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+.btn-whatsapp {
+  background: #25D366;
+  color: white;
+  padding: 1rem 2.5rem;
+  border-radius: 50px;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 1.1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(37, 211, 102, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.btn-whatsapp:hover {
+  background: #20BA5A;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(37, 211, 102, 0.4);
+  color: white;
+  text-decoration: none;
+}
+
+.whatsapp-icon {
+  font-size: 1.3rem;
+}
+
+@media (max-width: 768px) {
+  .top-canis-gatis {
+    padding: 3rem 1rem;
+  }
+
+  .top-canis-gatis h2 {
+    font-size: 2rem;
+  }
+
+  .showcase-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .cta-buttons {
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .btn-top {
+    width: 100%;
+    max-width: 300px;
+    justify-content: center;
+  }
+
+  .advertising-info {
+    padding: 2rem 1.5rem;
+    margin: 3rem 1rem 0;
+  }
+
+  .advertising-info h3 {
+    font-size: 1.6rem;
+  }
+}

@@ -1,22 +1,91 @@
 <div class="home-container">
-  <header class="header row">
-    <div class="col-8 d-flex flex-column align-items-center p-5 justify-content-between">
-      <div class="destaque d-flex align-items-center justify-content-center">
-        <span>foto de destaque de pets</span>
-      </div>
-      <div class="col-8 d-flex flex-column align-items-baseline">
-        <img src="./logo.png" width="400px" alt="Logo DogCat" class="img-fluid mb-3">
-        <p class="w-100">Seu portal de conteúdo para cães e gatos</p>
-        <a class="btn-primary mt-2" href="#">Acesse as Edições</a>
+  <header class="hero-section">
+    <div class="container">
+      <div class="row align-items-center min-vh-100">
+        <div class="col-lg-6 col-md-12">
+          <div class="hero-content">
+            <div class="welcome-badge">
+              <span>🐾</span>
+              Seja bem-vindo
+            </div>
+            
+            <h1 class="hero-title">
+              Seu portal de conteúdo para 
+              <span class="highlight-text">cães e gatos</span>
+            </h1>
+            
+            <p class="hero-description">
+              A Revista Dog & Cat BR é sua fonte confiável de informações sobre cuidados, 
+              saúde e bem-estar dos seus pets. Conteúdo especializado feito por quem ama animais.
+            </p>
+            
+            <div class="hero-stats">
+              <div class="stat-item">
+                <span class="stat-number">132M</span>
+                <span class="stat-label">Pets no Brasil</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-number">40%</span>
+                <span class="stat-label">Lares com pets</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-number">15+</span>
+                <span class="stat-label">Anos de experiência</span>
+              </div>
+            </div>
+            
+            <div class="hero-actions">
+              <a class="btn btn-primary-hero" href="#assinaturas">
+                <span class="btn-icon">📖</span>
+                Seja um Assinante
+              </a>
+              <a class="btn btn-secondary-hero" href="#edicoes">
+                <span class="btn-icon">👁️</span>
+                Ver Edições
+              </a>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-lg-6 col-md-12">
+          <div class="hero-visual">
+            <div class="magazine-showcase">
+              <div class="magazine-cover">
+                <img src="./capa.png" alt="Capa da Revista Dog & Cat" class="img-fluid">
+                <div class="magazine-badge">Nova Edição</div>
+              </div>
+              
+              <div class="floating-elements">
+                <div class="floating-card card-1">
+                  <span class="card-icon">🏆</span>
+                  <span class="card-text">Expo Dog BR</span>
+                </div>
+                <div class="floating-card card-2">
+                  <span class="card-icon">⭐</span>
+                  <span class="card-text">Top Canis</span>
+                </div>
+                <div class="floating-card card-3">
+                  <span class="card-icon">🐱</span>
+                  <span class="card-text">Top Gatis</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="col-4 d-flex align-items-center">
-      <img class="img-fluid" src="./capa.png" width="500" alt="Logo DogCat">
+    
+    <div class="hero-background">
+      <div class="bg-shape shape-1"></div>
+      <div class="bg-shape shape-2"></div>
+      <div class="bg-shape shape-3"></div>
     </div>
   </header>
 </div>
 
 <app-destaque-edicao />
+
+<app-expo-dog />
 
 <section class="about">
   <div class="container">
@@ -26,7 +95,7 @@
       </div>
       <div class="col-12 col-md-8">
         <h2>Sobre Nós</h2>
-        <p>Revista DogCat é a sua fonte confiável de informações sobre cuidados, saúde e bem-estar de cães e gatos. Nossa missão é educar e entreter amantes de pets com conteúdo de qualidade.</p>
+        <p>Revista Dog & Cat BR é a sua fonte confiável de informações sobre cuidados, saúde e bem-estar de cães e gatos. Nossa missão é educar e entreter amantes de pets com conteúdo de qualidade.</p>
         <p>Com uma equipe de especialistas e apaixonados por animais, trazemos dicas práticas, histórias inspiradoras e as últimas novidades do mundo pet.</p>
         <a class="btn-secondary" href="#">Saiba Mais</a>
       </div>
@@ -38,6 +107,6 @@
 
 <app-metrics />
 
-
+<app-top-canis-gatis />
 
 <app-footer />
