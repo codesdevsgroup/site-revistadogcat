@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import {DestaqueEdicaoComponent} from '../../components/destaque-edicao/destaque-edicao.component';
 import {FooterComponent} from '../../components/footer/footer.component';
-import {MetricsComponent} from '../../components/metrics/metrics.component';
 import {ExpoDogComponent} from '../../components/expo-dog/expo-dog.component';
 import {TopCanisGatisComponent} from '../../components/top-canis-gatis/top-canis-gatis.component';
 
@@ -10,7 +9,6 @@ import {TopCanisGatisComponent} from '../../components/top-canis-gatis/top-canis
   imports: [
     DestaqueEdicaoComponent,
     FooterComponent,
-    MetricsComponent,
     ExpoDogComponent,
     TopCanisGatisComponent
   ],
