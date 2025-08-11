@@ -1,0 +1,442 @@
+<app-navbar />
+
+<div class="cadastro-container">
+  <!-- Progress Steps -->
+  <section class="progress-section">
+    <div class="container">
+      <div class="row">
+        <div class="col-12">
+          <div class="progress-steps">
+            <div class="step" [class.active]="currentStep >= 1" [class.completed]="currentStep > 1">
+              <div class="step-number">1</div>
+              <div class="step-label">Dados Pessoais</div>
+            </div>
+            <div class="step-line" [class.active]="currentStep > 1"></div>
+            <div class="step" [class.active]="currentStep >= 2" [class.completed]="currentStep > 2">
+              <div class="step-number">2</div>
+              <div class="step-label">Dados do Cão</div>
+            </div>
+            <div class="step-line" [class.active]="currentStep > 2"></div>
+            <div class="step" [class.active]="currentStep >= 3" [class.completed]="currentStep > 3">
+              <div class="step-number">3</div>
+              <div class="step-label">Vídeo de Apresentação</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Form Content -->
+  <section class="form-section">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+          <div class="form-card">
+            <!-- Step 1: Dados Pessoais -->
+            <div class="form-step" [class.active]="currentStep === 1">
+              <div class="step-header">
+                <h2>👤 Dados Pessoais</h2>
+                <p>Informações do proprietário/criador</p>
+              </div>
+              
+              <form [formGroup]="userForm" class="step-form">
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Nome Completo *</label>
+                    <input type="text" class="form-control" formControlName="nomeCompleto" placeholder="Seu nome completo">
+                    <div class="invalid-feedback" *ngIf="userForm.get('nomeCompleto')?.invalid && userForm.get('nomeCompleto')?.touched">
+                      Nome completo é obrigatório
+                    </div>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">CPF *</label>
+                    <input type="text" class="form-control" formControlName="cpf" placeholder="000.000.000-00" mask="000.000.000-00">
+                    <div class="invalid-feedback" *ngIf="userForm.get('cpf')?.invalid && userForm.get('cpf')?.touched">
+                      CPF é obrigatório
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">E-mail *</label>
+                    <input type="email" class="form-control" formControlName="email" placeholder="seu@email.com">
+                    <div class="invalid-feedback" *ngIf="userForm.get('email')?.invalid && userForm.get('email')?.touched">
+                      E-mail válido é obrigatório
+                    </div>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Telefone/WhatsApp *</label>
+                    <input type="text" class="form-control" formControlName="telefone" placeholder="(11) 99999-9999" mask="(00) 00000-0000">
+                    <div class="invalid-feedback" *ngIf="userForm.get('telefone')?.invalid && userForm.get('telefone')?.touched">
+                      Telefone é obrigatório
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-8 mb-3">
+                    <label class="form-label">Endereço</label>
+                    <input type="text" class="form-control" formControlName="endereco" placeholder="Rua, número, bairro">
+                    <small class="form-text">O endereço será preenchido automaticamente pelo CEP, mas você pode editá-lo</small>
+                  </div>
+                  <div class="col-md-4 mb-3">
+                    <label class="form-label">CEP</label>
+                    <div class="input-group">
+                      <input type="text" class="form-control" 
+                             [class.cep-loading]="cepStatus === 'loading'"
+                             [class.cep-success]="cepStatus === 'success'"
+                             [class.cep-error]="cepStatus === 'error'"
+                             formControlName="cep" placeholder="00000-000" 
+                             maxlength="9" (input)="formatCep($event)" (blur)="onCepChange($event)">
+                      <div class="input-group-append" *ngIf="isCepLoading">
+                        <span class="input-group-text">
+                          <div class="spinner-border spinner-border-sm" role="status">
+                            <span class="sr-only">Buscando...</span>
+                          </div>
+                        </span>
+                      </div>
+                      <div class="input-group-append" *ngIf="cepStatus === 'success' && !isCepLoading">
+                        <span class="input-group-text text-success">
+                          ✓
+                        </span>
+                      </div>
+                      <div class="input-group-append" *ngIf="cepStatus === 'error' && !isCepLoading">
+                        <span class="input-group-text text-danger">
+                          ✗
+                        </span>
+                      </div>
+                    </div>
+                    <small class="form-text" 
+                           [class.text-success]="cepStatus === 'success'"
+                           [class.text-danger]="cepStatus === 'error'">
+                      <span *ngIf="cepStatus === 'none' || cepStatus === 'loading'">Digite o CEP para preenchimento automático</span>
+                      <span *ngIf="cepStatus === 'success'">✓ Endereço encontrado e preenchido</span>
+                      <span *ngIf="cepStatus === 'error'">✗ CEP não encontrado</span>
+                    </small>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Cidade</label>
+                    <input type="text" class="form-control" formControlName="cidade" placeholder="Sua cidade">
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Estado</label>
+                    <select class="form-control" formControlName="estado">
+                      <option value="">Selecione</option>
+                      <option value="AC">Acre</option>
+                      <option value="AL">Alagoas</option>
+                      <option value="AP">Amapá</option>
+                      <option value="AM">Amazonas</option>
+                      <option value="BA">Bahia</option>
+                      <option value="CE">Ceará</option>
+                      <option value="DF">Distrito Federal</option>
+                      <option value="ES">Espírito Santo</option>
+                      <option value="GO">Goiás</option>
+                      <option value="MA">Maranhão</option>
+                      <option value="MT">Mato Grosso</option>
+                      <option value="MS">Mato Grosso do Sul</option>
+                      <option value="MG">Minas Gerais</option>
+                      <option value="PA">Pará</option>
+                      <option value="PB">Paraíba</option>
+                      <option value="PR">Paraná</option>
+                      <option value="PE">Pernambuco</option>
+                      <option value="PI">Piauí</option>
+                      <option value="RJ">Rio de Janeiro</option>
+                      <option value="RN">Rio Grande do Norte</option>
+                      <option value="RS">Rio Grande do Sul</option>
+                      <option value="RO">Rondônia</option>
+                      <option value="RR">Roraima</option>
+                      <option value="SC">Santa Catarina</option>
+                      <option value="SP">São Paulo</option>
+                      <option value="SE">Sergipe</option>
+                      <option value="TO">Tocantins</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-actions">
+                  <button type="button" class="btn btn-primary" (click)="nextStep()" [disabled]="!userForm.valid">
+                    Próximo: Dados do Cão
+                    <i class="icon">→</i>
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <!-- Step 2: Dados do Cão -->
+            <div class="form-step" [class.active]="currentStep === 2">
+              <div class="step-header">
+                <h2>🐕 Dados do Cão</h2>
+                <p>Informações completas do seu cão</p>
+              </div>
+              
+              <form [formGroup]="dogForm" class="step-form">
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Nome do Cão *</label>
+                    <input type="text" class="form-control" formControlName="nome" placeholder="Nome do seu cão">
+                    <div class="invalid-feedback" *ngIf="dogForm.get('nome')?.invalid && dogForm.get('nome')?.touched">
+                      Nome do cão é obrigatório
+                    </div>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Raça *</label>
+                    <select class="form-control" formControlName="raca">
+                      <option value="">Selecione a raça</option>
+                      <option value="golden-retriever">Golden Retriever</option>
+                      <option value="labrador">Labrador</option>
+                      <option value="pastor-alemao">Pastor Alemão</option>
+                      <option value="border-collie">Border Collie</option>
+                      <option value="bulldog-frances">Bulldog Francês</option>
+                      <option value="poodle">Poodle</option>
+                      <option value="shih-tzu">Shih Tzu</option>
+                      <option value="yorkshire">Yorkshire</option>
+                      <option value="outro">Outro</option>
+                    </select>
+                    <div class="invalid-feedback" *ngIf="dogForm.get('raca')?.invalid && dogForm.get('raca')?.touched">
+                      Raça é obrigatória
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-3 mb-3">
+                    <label class="form-label">Sexo *</label>
+                    <select class="form-control" formControlName="sexo">
+                      <option value="">Selecione</option>
+                      <option value="macho">Macho</option>
+                      <option value="femea">Fêmea</option>
+                    </select>
+                  </div>
+                  <div class="col-md-3 mb-3">
+                    <label class="form-label">Data de Nascimento *</label>
+                    <input type="date" class="form-control" formControlName="dataNascimento">
+                  </div>
+                  <div class="col-md-3 mb-3">
+                    <label class="form-label">Peso (kg)</label>
+                    <input type="number" class="form-control" formControlName="peso" placeholder="0.0" step="0.1">
+                  </div>
+                  <div class="col-md-3 mb-3">
+                    <label class="form-label">Altura (cm)</label>
+                    <input type="number" class="form-control" formControlName="altura" placeholder="0">
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Registro de Pedigree *</label>
+                    <input type="text" class="form-control" formControlName="registroPedigree" placeholder="Número do registro">
+                    <small class="form-text">Registro CBKC, FCI ou outro órgão oficial</small>
+                    <div class="invalid-feedback" *ngIf="dogForm.get('registroPedigree')?.invalid && dogForm.get('registroPedigree')?.touched">
+                      Registro de pedigree é obrigatório
+                    </div>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Microchip</label>
+                    <input type="text" class="form-control" formControlName="microchip" placeholder="Número do microchip">
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Nome do Pai</label>
+                    <input type="text" class="form-control" formControlName="nomePai" placeholder="Nome do pai">
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Nome da Mãe</label>
+                    <input type="text" class="form-control" formControlName="nomeMae" placeholder="Nome da mãe">
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-12 mb-3">
+                    <label class="form-label">Títulos e Conquistas</label>
+                    <textarea class="form-control" formControlName="titulos" rows="3" placeholder="Descreva títulos, exposições anteriores, prêmios..."></textarea>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-12 mb-3">
+                    <label class="form-label">Características Especiais</label>
+                    <textarea class="form-control" formControlName="caracteristicas" rows="3" placeholder="Temperamento, particularidades, qualidades de destaque..."></textarea>
+                  </div>
+                </div>
+
+                <div class="form-actions">
+                  <button type="button" class="btn btn-secondary" (click)="prevStep()">
+                    <i class="icon">←</i>
+                    Voltar
+                  </button>
+                  <button type="button" class="btn btn-primary" (click)="nextStep()" [disabled]="!dogForm.valid">
+                    Próximo: Vídeo
+                    <i class="icon">→</i>
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <!-- Step 3: Vídeo -->
+            <div class="form-step" [class.active]="currentStep === 3">
+              <div class="step-header">
+                <h2>🎥 Vídeo de Apresentação</h2>
+                <p>Grave um vídeo mostrando seu cão para avaliação</p>
+              </div>
+              
+              <form [formGroup]="videoForm" class="step-form">
+                <div class="video-guidelines">
+                  <h4>📋 Diretrizes para o Vídeo</h4>
+                  <ul>
+                    <li>✅ Duração: máximo 20 segundos</li>
+                    <li>✅ Mostrar o cão em pose (stack)</li>
+                    <li>✅ Caminhar em linha reta (ida e volta)</li>
+                    <li>✅ Mostrar perfil lateral completo</li>
+                    <li>✅ Boa iluminação e qualidade de imagem</li>
+                    <li>✅ Som ambiente (sem música)</li>
+                  </ul>
+                </div>
+
+                <!-- Opção de envio -->
+                <div class="video-options">
+                  <h4>📤 Como você enviará o vídeo?</h4>
+                  <div class="option-cards">
+                    <div class="option-card" [class.selected]="videoOption === 'upload'" (click)="selectVideoOption('upload')">
+                      <div class="option-icon">📱</div>
+                      <h5>Upload Direto</h5>
+                      <p>Enviar arquivo do dispositivo</p>
+                      <small>Máx. 50MB, 20 segundos</small>
+                    </div>
+                    <div class="option-card" [class.selected]="videoOption === 'youtube'" (click)="selectVideoOption('youtube')">
+                      <div class="option-icon">🎬</div>
+                      <h5>Link do YouTube</h5>
+                      <p>Vídeo já hospedado online</p>
+                      <small>YouTube, Vimeo, etc.</small>
+                    </div>
+                    <div class="option-card" [class.selected]="videoOption === 'whatsapp'" (click)="selectVideoOption('whatsapp')">
+                      <div class="option-icon">💬</div>
+                      <h5>Envio por WhatsApp</h5>
+                      <p>Enviarei depois pelo WhatsApp</p>
+                      <small>Mais prático para vídeos maiores</small>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Upload Section -->
+                <div class="upload-section" *ngIf="videoOption === 'upload'">
+                  <div class="upload-area" (click)="triggerFileInput()">
+                    <div class="upload-icon">🎬</div>
+                    <h4>Carregar Vídeo</h4>
+                    <p>Clique aqui ou arraste seu vídeo</p>
+                    <small>Formatos aceitos: MP4, MOV, AVI (máx. 50MB, 20 segundos)</small>
+                  </div>
+                  <input type="file" #fileInput (change)="onFileSelected($event)" accept="video/*" style="display: none;">
+                  
+                  <div class="uploaded-file" *ngIf="selectedFile">
+                    <div class="file-info">
+                      <div class="file-icon">🎥</div>
+                      <div class="file-details">
+                        <span class="file-name">{{ selectedFile.name }}</span>
+                        <span class="file-size">{{ formatFileSize(selectedFile.size) }}</span>
+                      </div>
+                      <button type="button" class="btn-remove" (click)="removeFile()">✕</button>
+                    </div>
+                    <div class="upload-progress" *ngIf="uploadProgress > 0">
+                      <div class="progress-bar" [style.width.%]="uploadProgress"></div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- YouTube Link Section -->
+                <div class="youtube-section" *ngIf="videoOption === 'youtube'">
+                  <div class="youtube-option">
+                    <label class="form-label">Link do YouTube/Vimeo *</label>
+                    <input type="url" class="form-control" formControlName="videoUrl" placeholder="https://youtube.com/watch?v=..." required>
+                    <small class="form-text">Cole aqui o link do seu vídeo já hospedado</small>
+                    <div class="invalid-feedback" *ngIf="videoForm.get('videoUrl')?.invalid && videoForm.get('videoUrl')?.touched">
+                      Link do vídeo é obrigatório para esta opção
+                    </div>
+                  </div>
+                </div>
+
+                <!-- WhatsApp Section -->
+                <div class="whatsapp-section" *ngIf="videoOption === 'whatsapp'">
+                  <div class="whatsapp-info">
+                    <div class="info-card">
+                      <div class="info-icon">📱</div>
+                      <div class="info-content">
+                        <h5>Envio por WhatsApp</h5>
+                        <p>Após finalizar o cadastro, você receberá instruções para enviar o vídeo diretamente pelo WhatsApp.</p>
+                        <p><strong>WhatsApp:</strong> (15) 99835-0750</p>
+                        <p><strong>Prazo:</strong> Envie o vídeo em até 24 horas após o cadastro</p>
+                      </div>
+                    </div>
+                    
+                    <div class="confirmation-check">
+                      <label class="checkbox-label">
+                        <input type="checkbox" formControlName="confirmaWhatsapp">
+                        <span class="checkmark"></span>
+                        Confirmo que enviarei o vídeo pelo WhatsApp em até 24 horas
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="video-notes">
+                  <label class="form-label">Observações sobre o Vídeo</label>
+                  <textarea class="form-control" formControlName="observacoes" rows="3" placeholder="Informações adicionais sobre as condições do vídeo, ambiente, etc..."></textarea>
+                </div>
+
+                <div class="form-actions">
+                  <button type="button" class="btn btn-secondary" (click)="prevStep()">
+                    <i class="icon">←</i>
+                    Voltar
+                  </button>
+                  <button type="button" class="btn btn-success" (click)="submitForm()" [disabled]="!isFormValid()">
+                    <i class="icon">✓</i>
+                    Finalizar Cadastro
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <!-- Success Message -->
+            <div class="form-step" [class.active]="currentStep === 4">
+              <div class="success-message">
+                <div class="success-icon">🎉</div>
+                <h2>Cadastro Realizado com Sucesso!</h2>
+                <p>Seu cão foi cadastrado na Expo Dog BR. Nossa equipe entrará em contato em até 48 horas para confirmar a participação.</p>
+                
+                <div class="next-steps">
+                  <h4>📋 Próximos Passos:</h4>
+                  <ol>
+                    <li>Verificação dos dados enviados</li>
+                    <li>Análise do vídeo de apresentação</li>
+                    <li>Confirmação da categoria de participação</li>
+                    <li>Envio das instruções finais</li>
+                  </ol>
+                </div>
+
+                <div class="contact-info">
+                  <p><strong>Dúvidas?</strong> Entre em contato:</p>
+                  <a href="https://wa.me/5515998350750" class="btn btn-whatsapp" target="_blank">
+                    📱 WhatsApp: (15) 99835-0750
+                  </a>
+                </div>
+
+                <div class="action-buttons">
+                  <a routerLink="/expo-dog" class="btn btn-primary">Voltar para Expo Dog</a>
+                  <a routerLink="/" class="btn btn-secondary">Ir para Home</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<app-footer />
