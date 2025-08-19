@@ -180,10 +180,23 @@
               border-top: 10px solid #2d5a32;
             }
 
-            .trophy-icon {
-              font-size: 2.25rem;
+            .trophy-carousel {
+              display: flex;
+              gap: 0.5rem;
+              justify-content: center;
               margin-bottom: 0.5rem;
-              filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+              animation: trophySlide 3s infinite;
+
+              .trophy-icon {
+                font-size: 2.25rem;
+                filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+                animation: trophyBounce 2s ease-in-out infinite;
+                
+                &:nth-child(1) { animation-delay: 0s; }
+                &:nth-child(2) { animation-delay: 0.5s; }
+                &:nth-child(3) { animation-delay: 1s; }
+                &:nth-child(4) { animation-delay: 1.5s; }
+              }
             }
 
             h3 {
@@ -197,6 +210,16 @@
               font-weight: 600;
               opacity: 0.9;
               font-size: 0.9rem;
+
+              .example-label {
+                background: rgba(255, 255, 255, 0.2);
+                padding: 0.2rem 0.5rem;
+                border-radius: 10px;
+                font-size: 0.7rem;
+                margin-left: 0.5rem;
+                backdrop-filter: blur(5px);
+                border: 1px solid rgba(255, 255, 255, 0.3);
+              }
             }
           }
 
@@ -319,6 +342,13 @@
           justify-content: center;
           text-align: center;
           padding: 1rem;
+          
+          // Corrigir anti-aliasing
+          -webkit-backface-visibility: hidden;
+          backface-visibility: hidden;
+          -webkit-transform-style: preserve-3d;
+          transform-style: preserve-3d;
+          will-change: transform;
 
           .mini-icon {
             font-size: 1.8rem;
@@ -345,10 +375,10 @@
             background: linear-gradient(135deg, var(--goldenColor), #f4d03f);
             color: white;
             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-            transform: rotate(5deg);
+            transform: rotate(5deg) translateZ(0);
 
             &:hover {
-              transform: rotate(0deg) translateY(-5px);
+              transform: rotate(0deg) translateY(-5px) translateZ(0);
             }
           }
 
@@ -357,10 +387,10 @@
             left: 5%;
             background: linear-gradient(135deg, var(--secondaryColor), #a8d157);
             color: var(--primaryColor);
-            transform: rotate(-5deg);
+            transform: rotate(-5deg) translateZ(0);
 
             &:hover {
-              transform: rotate(0deg) translateY(-5px);
+              transform: rotate(0deg) translateY(-5px) translateZ(0);
             }
           }
         }
@@ -729,6 +759,17 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+@keyframes trophySlide {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+@keyframes trophyBounce {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-3px) scale(1.1); }
 }
 
 // Responsividade

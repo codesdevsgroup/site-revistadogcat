@@ -2,6 +2,175 @@
   background: linear-gradient(135deg, #f8f9fa 0%, var(--tertiaryColor) 100%);
   min-height: 100vh;
 
+  // Hero Header
+  .hero-header {
+    background: linear-gradient(135deg, var(--primaryColor) 0%, var(--primaryColorDark) 100%);
+    color: white;
+    padding: 2.5rem 0;
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="%23ffffff" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>') repeat;
+      opacity: 0.3;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-icon {
+      font-size: 2.4rem;
+      margin-bottom: 1rem;
+      animation: bounce 2s infinite;
+    }
+
+    h1 {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+      background: linear-gradient(45deg, #fff, var(--goldenColor));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-subtitle {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      color: var(--secondaryColor);
+    }
+
+    .hero-description {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      margin-bottom: 3rem;
+      opacity: 0.9;
+    }
+
+    .registration-options {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 2rem;
+        flex-wrap: wrap;
+        margin-top: 1rem;
+
+        .option-card {
+          background: rgba(255, 255, 255, 0.1);
+          backdrop-filter: blur(10px);
+          border: 2px solid rgba(255, 255, 255, 0.2);
+          border-radius: 20px;
+          padding: 2rem 1.5rem;
+          text-align: center;
+          min-width: 200px;
+          transition: all 0.3s ease;
+          cursor: pointer;
+          position: relative;
+
+          &:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
+          }
+
+          &.active {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: var(--goldenColor);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+          }
+
+          .option-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+          }
+
+          h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: white;
+          }
+
+          p {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-bottom: 1rem;
+          }
+
+          .option-badge {
+            background: var(--goldenColor);
+            color: var(--primaryColorDark);
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+          }
+
+          .option-note {
+            background: rgba(255, 193, 7, 0.2);
+            color: #ffc107;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 600;
+          }
+
+          &.whatsapp-option:hover {
+            border-color: #25d366;
+            
+            .option-icon {
+              animation: shake 0.5s ease-in-out;
+            }
+          }
+        }
+
+        .option-divider {
+          font-size: 1.1rem;
+          font-weight: 600;
+          opacity: 0.7;
+          padding: 0 1rem;
+        }
+      }
+
+      .form-instruction {
+         margin-top: 1.5rem;
+         text-align: center;
+         cursor: pointer;
+         
+         p {
+           color: rgba(255, 255, 255, 0.9);
+           font-size: 1.1rem;
+           font-weight: 500;
+           margin: 0;
+           padding: 1rem 1.6rem;
+           background: rgba(255, 255, 255, 0.1);
+           border-radius: 15px;
+           backdrop-filter: blur(10px);
+           border: 1px solid rgba(255, 255, 255, 0.2);
+           display: inline-block;
+           transition: all 0.3s ease;
+         }
+         
+         &:hover p {
+           background: rgba(255, 255, 255, 0.2);
+           border-color: rgba(255, 255, 255, 0.4);
+           transform: translateY(-2px);
+           box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+         }
+       }
+  }
+
   // Progress Section
   .progress-section {
     background: white;
@@ -643,9 +812,70 @@
   }
 }
 
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+}
+
 // Responsividade
 @media (max-width: 768px) {
   .cadastro-container {
+    .hero-header {
+      padding: 2rem 0;
+
+      .hero-icon {
+        font-size: 3rem;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+      }
+
+      .hero-subtitle {
+        font-size: 1.2rem;
+      }
+
+      .hero-description {
+        font-size: 1rem;
+        margin-bottom: 2rem;
+      }
+
+      .registration-options {
+        flex-direction: column;
+        gap: 1rem;
+
+        .option-card {
+          min-width: auto;
+          width: 100%;
+          max-width: 300px;
+        }
+
+        .option-divider {
+          transform: rotate(90deg);
+          margin: 0.5rem 0;
+        }
+      }
+    }
+
     .form-section .form-card .form-step {
       padding: 2rem 1.5rem;
 

@@ -18,7 +18,7 @@
     transition: var(--transition-fast);
 
     img {
-      height: 60px;
+      height: 46px;
       margin-right: var(--space-3);
       filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
       transition: var(--transition-fast);
@@ -70,7 +70,7 @@
     background: linear-gradient(135deg, var(--goldenColor) 0%, var(--goldenColorLight) 100%);
     color: var(--primaryColor);
     font-weight: var(--fontWeight-semibold);
-    padding: var(--space-3) var(--space-6);
+    padding: var(--space-2) var(--space-4);
     border: none;
     border-radius: var(--radius-full);
     margin-left: var(--space-4);

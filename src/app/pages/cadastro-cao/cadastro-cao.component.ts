@@ -348,4 +348,29 @@ export class CadastroCaoComponent {
     }
     event.target.value = value;
   }
+
+  openWhatsAppRegistration() {
+    const whatsappNumber = '5515998350750'; // Número do WhatsApp da revista
+    const message = encodeURIComponent(
+      '🏆 Olá! Gostaria de fazer o cadastro para a Expo Dog BR via WhatsApp.\n\n' +
+      'Informações que preciso fornecer:\n' +
+      '👤 Dados pessoais (nome, CPF, email, telefone)\n' +
+      '🐕 Dados do cão (nome, raça, idade, etc.)\n' +
+      '🎥 Vídeo de apresentação\n\n' +
+      'Aguardo o atendimento!'
+    );
+    
+    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${message}`;
+    window.open(whatsappUrl, '_blank');
+  }
+
+  scrollToForm() {
+    const progressSection = document.querySelector('.progress-section');
+    if (progressSection) {
+      progressSection.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'start' 
+      });
+    }
+  }
 }

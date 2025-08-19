@@ -1,4 +1,47 @@
 <div class="cadastro-container">
+  <!-- Hero Header -->
+  <section class="hero-header">
+    <div class="container">
+      <div class="row justify-content-center text-center">
+        <div class="col-lg-8">
+          <div class="hero-content">
+            <div class="hero-icon">
+              🏆
+            </div>
+            <h1>Expo Dog BR</h1>
+            <p class="hero-subtitle">A primeira mostra 100% online do Brasil</p>
+            <p class="hero-description">
+              Com tradição de mais de 150 anos, as exposições de cães ganham um novo formato que democratiza o acesso e valoriza criadores e suas raças em todo o país.
+            </p>
+            
+            <!-- Opções de Cadastro -->
+            <div class="registration-options">
+              <div class="option-card active" (click)="scrollToForm()">
+                <div class="option-icon">💻</div>
+                <h3>Cadastro Online</h3>
+                <p>Preencha o formulário abaixo</p>
+                <div class="option-badge">Recomendado</div>
+              </div>
+              
+              <div class="option-divider">ou</div>
+              
+              <div class="option-card whatsapp-option" (click)="openWhatsAppRegistration()">
+                <div class="option-icon">📱</div>
+                <h3>Cadastro via WhatsApp</h3>
+                <p>Atendimento personalizado</p>
+                <div class="option-note">Alternativa ao formulário</div>
+              </div>
+            </div>
+            
+            <div class="form-instruction" (click)="scrollToForm()">
+              <p>👇 Complete o formulário abaixo para se cadastrar na Expo Dog BR</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Progress Steps -->
   <section class="progress-section">
     <div class="container">
