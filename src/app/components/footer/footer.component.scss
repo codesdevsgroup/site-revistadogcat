@@ -176,7 +176,7 @@
 .footer {
   background: linear-gradient(135deg, var(--primaryColor) 0%, var(--primaryColorDark) 100%);
   color: var(--white);
-  padding: var(--space-16) 0 var(--space-4);
+  padding: var(--space-16) 0 0;
   margin-top: var(--space-16);
   position: relative;
   overflow: hidden;
@@ -320,7 +320,7 @@
   background: #000000;
   color: #ffffff;
   text-align: center;
-  padding: var(--space-3) 0;
+  padding: 0;
   margin: 0;
   border-top: 1px solid #333;
   transition: var(--transition-normal);
@@ -355,20 +355,12 @@
   }
   
   &:hover {
-    background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
     
     .heart {
       animation-duration: 0.8s;
       transform: scale(1.2);
     }
   }
-}
-
-// Garantir que não há espaço após o footer
-:host {
-  display: block;
-  margin-bottom: 0;
-  padding-bottom: 0;
 }
 
 @keyframes heartbeat {
