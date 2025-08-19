@@ -1,0 +1,47 @@
+<section class="anuncie-aqui-section">
+  <div class="container">
+    <div class="anuncie-card">
+      <div class="anuncie-text-content">
+        <div class="anuncie-header">
+          <span class="anuncie-badge">Exclusivo</span>
+          <h2 class="anuncie-title">Sua Marca no Coração do Mundo Pet!</h2>
+        </div>
+        <p class="anuncie-subtitle">Anuncie na Revista Dog & Cat e conecte-se com milhares de apaixonados por animais.</p>
+        <ul class="anuncie-benefits">
+          <li>
+            <div class="icon-wrapper"><i class="fas fa-users"></i></div>
+            <span>Público Engajado</span>
+          </li>
+          <li>
+            <div class="icon-wrapper"><i class="fas fa-bullseye"></i></div>
+            <span>Visibilidade Certa</span>
+          </li>
+          <li>
+            <div class="icon-wrapper"><i class="fas fa-chart-line"></i></div>
+            <span>Resultados Reais</span>
+          </li>
+        </ul>
+        <div class="anuncie-cta-buttons">
+          <button class="cta-button primary" (click)="openModal()">
+            <i class="fas fa-rocket"></i> Quero Anunciar
+          </button>
+          <a [href]="socialMedia.whatsapp.url" class="cta-button secondary" target="_blank">
+            <i class="fab fa-whatsapp"></i> Fale no WhatsApp
+          </a>
+        </div>
+      </div>
+      <div class="anuncie-image-content">
+        <div class="image-perspective">
+          <img src="./anuncie-aqui-pets.png" alt="Cachorro e gato sorrindo para a câmera" class="anuncie-image">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Modal de Cadastro -->
+<app-modal-cadastro-anunciante
+  [isOpen]="isModalOpen"
+  (closeModal)="closeModal()"
+  (submitForm)="onFormSubmit($event)">
+</app-modal-cadastro-anunciante>

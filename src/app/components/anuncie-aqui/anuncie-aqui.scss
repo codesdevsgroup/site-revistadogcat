@@ -1,0 +1,303 @@
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css');
+
+:host {
+  --anuncie-bg: linear-gradient(135deg, var(--tertiaryColor) 0%, var(--gray-100) 100%);
+  --anuncie-card-bg: rgba(255, 255, 255, 0.95);
+  --anuncie-card-shadow: var(--shadow-lg);
+  --anuncie-card-hover-shadow: var(--shadow-2xl);
+  --anuncie-glow-color: rgba(26, 61, 30, 0.3);
+  --anuncie-primary-color: var(--primaryColor);
+  --anuncie-primary-hover: var(--primaryColorLight);
+  --anuncie-secondary-color: var(--gray-600);
+  --anuncie-text-color: var(--gray-900);
+  --anuncie-text-secondary: var(--gray-700);
+}
+
+.anuncie-aqui-section {
+  padding: 6rem 0;
+  background: var(--anuncie-bg);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(186, 235, 108, 0.1) 0%, rgba(186, 235, 108, 0) 70%);
+    animation: pulse 10s infinite linear;
+  }
+}
+
+.anuncie-card {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  align-items: center;
+  gap: 3rem;
+  background: var(--anuncie-card-bg);
+  border-radius: 24px;
+  padding: 3rem;
+  box-shadow: var(--anuncie-card-shadow);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  position: relative;
+
+  &:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: var(--anuncie-card-hover-shadow);
+  }
+}
+
+.anuncie-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.anuncie-badge {
+  background: var(--secondaryColor);
+  color: var(--primaryColor);
+  padding: 0.5rem 1rem;
+  border-radius: 50px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px rgba(186, 235, 108, 0.3);
+}
+
+.anuncie-title {
+  font-size: 2.75rem;
+  font-weight: 800;
+  color: var(--anuncie-text-color);
+  line-height: 1.2;
+}
+
+.anuncie-subtitle {
+  font-size: 1.125rem;
+  color: var(--anuncie-text-secondary);
+  margin-bottom: 2.5rem;
+  max-width: 90%;
+}
+
+.anuncie-benefits {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 3rem 0;
+  display: grid;
+  gap: 1.5rem;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--anuncie-text-color);
+  }
+
+  .icon-wrapper {
+    background: rgba(255, 255, 255, 0.9);
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    transition: all var(--transition-normal);
+    
+    i {
+      font-size: 1.5rem;
+      color: var(--primaryColor);
+      transition: all var(--transition-fast);
+    }
+
+    &:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 15px rgba(26, 61, 30, 0.2);
+      
+      i {
+        color: var(--primaryColorLight);
+      }
+    }
+  }
+}
+
+.anuncie-cta-buttons {
+  display: flex;
+  gap: 1.5rem;
+
+  .cta-button {
+    padding: 1rem 2rem;
+    border-radius: 50px;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    box-shadow: var(--shadow-md);
+    position: relative;
+    overflow: hidden;
+    min-width: 180px;
+    justify-content: center;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left var(--transition-slow);
+    }
+
+    &:hover::before {
+      left: 100%;
+    }
+
+    i {
+      font-size: 1.2rem;
+      transition: all var(--transition-fast);
+    }
+
+    &:hover i {
+      transform: scale(1.1);
+    }
+
+    &.primary {
+      background: linear-gradient(135deg, var(--primaryColor), var(--primaryColorLight));
+      color: white;
+      
+      &:hover {
+        background: linear-gradient(135deg, var(--primaryColorLight), var(--primaryColor));
+        transform: translateY(-4px) scale(1.02);
+        box-shadow: 0 12px 30px rgba(26, 61, 30, 0.4);
+      }
+
+      &:active {
+        transform: translateY(-2px) scale(1.01);
+      }
+    }
+
+    &.secondary {
+      background: linear-gradient(135deg, var(--white), var(--gray-50));
+      color: var(--primaryColor);
+      border: 2px solid var(--primaryColor);
+      
+      &:hover {
+        background: linear-gradient(135deg, var(--primaryColor), var(--primaryColorLight));
+        color: white;
+        transform: translateY(-4px) scale(1.02);
+        box-shadow: 0 12px 30px rgba(26, 61, 30, 0.3);
+        border-color: var(--primaryColorLight);
+      }
+
+      &:active {
+        transform: translateY(-2px) scale(1.01);
+      }
+    }
+  }
+}
+
+.anuncie-image-content {
+  .image-perspective {
+    perspective: 1500px;
+  }
+  
+  .anuncie-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 24px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    transform: rotateY(-15deg) rotateX(5deg);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+    .anuncie-card:hover & {
+      transform: rotateY(0) rotateX(0);
+      box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+    }
+  }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+@media (max-width: 992px) {
+  .anuncie-card {
+    grid-template-columns: 1fr;
+    padding: 2.5rem;
+    gap: 2.5rem;
+  }
+  .anuncie-title {
+    font-size: 2.25rem;
+  }
+  .anuncie-image-content {
+    order: -1;
+  }
+}
+
+@media (max-width: 768px) {
+  .anuncie-aqui-section {
+    padding: 4rem 0;
+  }
+
+  .anuncie-card {
+    padding: 2rem;
+    gap: 2rem;
+    margin: 0 1rem;
+  }
+
+  .anuncie-title {
+    font-size: 1.875rem;
+  }
+
+  .anuncie-subtitle {
+    font-size: 1rem;
+    max-width: 100%;
+  }
+
+  .anuncie-benefits {
+    gap: 1rem;
+
+    li {
+      font-size: 1rem;
+    }
+  }
+
+  .anuncie-cta-buttons {
+    flex-direction: column;
+    gap: 1rem;
+
+    .cta-button {
+      width: 100%;
+      min-width: auto;
+      padding: 1.25rem 2rem;
+      font-size: 1rem;
+
+      &:hover {
+        transform: translateY(-2px) scale(1.01);
+      }
+    }
+  }
+
+  .icon-wrapper {
+    width: 45px;
+    height: 45px;
+
+    i {
+      font-size: 1.25rem;
+    }
+  }
+}
