@@ -1,50 +1,108 @@
 .navbar {
-  background-color: var(--primaryColor);
-  box-shadow: var(--borderBoxShadow);
+  background: linear-gradient(135deg, var(--primaryColor) 0%, var(--primaryColorLight) 100%);
+  backdrop-filter: blur(10px);
+  box-shadow: var(--shadow-lg);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+  transition: var(--transition-normal);
 
   .navbar-brand {
-    color: var(--secondaryColorColor);
-    font-weight: bold;
-    font-size: 1.8rem;
+    color: var(--secondaryColor);
+    font-weight: var(--fontWeight-bold);
+    font-size: 1.875rem;
     text-decoration: none;
+    display: flex;
+    align-items: center;
+    transition: var(--transition-fast);
 
     img {
       height: 60px;
-      margin-right: 12px;
+      margin-right: var(--space-3);
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+      transition: var(--transition-fast);
+    }
+
+    &:hover {
+      color: var(--secondaryColorLight);
+      transform: translateY(-1px);
+      
+      img {
+        transform: scale(1.05);
+      }
     }
   }
 
   .nav-link {
     color: var(--secondaryColor) !important;
-    font-weight: 500;
-    margin-left: 1rem;
-    transition: all 0.3s ease;
+    font-weight: var(--fontWeight-medium);
+    margin-left: var(--space-4);
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-md);
+    position: relative;
+    transition: var(--transition-fast);
+    
+    &::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      width: 0;
+      height: 2px;
+      background: var(--goldenColor);
+      transition: var(--transition-fast);
+      transform: translateX(-50%);
+    }
+    
     &:hover {
-      filter: brightness(0.9);
-      text-decoration: underline;
-      animation: blink 1s infinite;
-      cursor: pointer;
-      text-decoration-color: var(--goldenColor);
-      transform: translateY(-4px);
+      color: var(--white) !important;
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateY(-2px);
+      
+      &::before {
+        width: 80%;
+      }
     }
   }
 
   .btn-login {
-    background-color: var(--goldenColor);
+    background: linear-gradient(135deg, var(--goldenColor) 0%, var(--goldenColorLight) 100%);
     color: var(--primaryColor);
-    font-weight: bold;
-    padding: 0.4rem 1.4rem;
+    font-weight: var(--fontWeight-semibold);
+    padding: var(--space-3) var(--space-6);
     border: none;
-    border-radius: 80px;
-    margin-left: 1rem;
-    transition: all 0.3s ease;
-    box-shadow: var(--borderBoxShadow);
-  }
-
-  .btn-login:hover {
-    animation: pulse 0.8s infinite;
-    filter: brightness(1.1);
-    transform: scale(1.05);
+    border-radius: var(--radius-full);
+    margin-left: var(--space-4);
+    transition: var(--transition-normal);
+    box-shadow: var(--shadow-md);
+    position: relative;
+    overflow: hidden;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: var(--transition-slow);
+    }
+    
+    &:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: var(--shadow-xl);
+      background: linear-gradient(135deg, var(--goldenColorLight) 0%, var(--goldenColor) 100%);
+      
+      &::before {
+        left: 100%;
+      }
+    }
+    
+    &:active {
+      transform: translateY(0) scale(0.98);
+    }
   }
 
   @keyframes pulse {
