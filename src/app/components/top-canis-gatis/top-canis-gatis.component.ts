@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { ModalCadastroAnuncianteComponent } from '../modal-cadastro-anunciante/modal-cadastro-anunciante.component';
+import { SocialMediaService } from '../../services/social-media.service';
 
 @Component({
   selector: 'app-top-canis-gatis',
@@ -8,7 +9,12 @@ import { ModalCadastroAnuncianteComponent } from '../modal-cadastro-anunciante/m
   styleUrl: './top-canis-gatis.component.scss'
 })
 export class TopCanisGatisComponent {
+  socialMedia: any;
   isModalOpen = false;
+
+  constructor(private socialMediaService: SocialMediaService) {
+    this.socialMedia = this.socialMediaService.getSocialMedia();
+  }
 
   openModal() {
     this.isModalOpen = true;

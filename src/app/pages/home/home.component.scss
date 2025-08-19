@@ -100,7 +100,7 @@
   padding: var(--space-3) var(--space-6);
   border-radius: var(--radius-full);
   font-weight: var(--fontWeight-semibold);
-  font-size: 0.875rem;
+  font-size: 0.7875rem;
   box-shadow: var(--shadow-lg);
   margin-bottom: var(--space-8);
   border: 2px solid var(--goldenColor);
@@ -114,7 +114,7 @@
   }
   
   span {
-    font-size: 1.125rem;
+    font-size: 1.0125rem;
     filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
   }
 }
@@ -149,7 +149,7 @@
 }
 
 .hero-description {
-  font-size: 1.25rem;
+  font-size: 1.125rem;
   line-height: 1.7;
   color: var(--gray-600);
   margin-bottom: var(--space-10);
@@ -189,7 +189,7 @@
 }
 
 .stat-label {
-  font-size: 0.875rem;
+  font-size: 0.7875rem;
   color: var(--gray-600);
   font-weight: var(--fontWeight-medium);
   text-transform: uppercase;
@@ -210,7 +210,7 @@
   border-radius: var(--radius-full);
   text-decoration: none;
   font-weight: var(--fontWeight-bold);
-  font-size: 1.125rem;
+  font-size: 1.0125rem;
   display: inline-flex;
   align-items: center;
   gap: var(--space-3);
@@ -252,7 +252,7 @@
   border-radius: var(--radius-full);
   text-decoration: none;
   font-weight: var(--fontWeight-semibold);
-  font-size: 1.125rem;
+  font-size: 1.0125rem;
   display: inline-flex;
   align-items: center;
   gap: var(--space-3);
@@ -269,7 +269,7 @@
 }
 
 .btn-icon {
-  font-size: 1.25rem;
+  font-size: 1.125rem;
   transition: var(--transition-fast);
   
   .btn-primary-hero:hover &,
@@ -321,7 +321,7 @@
   padding: 0.5rem 1rem;
   border-radius: 20px;
   font-weight: 700;
-  font-size: 0.8rem;
+  font-size: 0.72rem;
   text-transform: uppercase;
   letter-spacing: 1px;
   box-shadow: 0 4px 15px rgba(224, 181, 58, 0.3);
@@ -375,11 +375,11 @@
 }
 
 .card-icon {
-  font-size: 1.5rem;
+  font-size: 1.35rem;
 }
 
 .card-text {
-  font-size: 0.9rem;
+  font-size: 0.81rem;
   white-space: nowrap;
 }
 
@@ -397,7 +397,7 @@
     }
 
     label {
-      font-size: 0.9rem;
+      font-size: 0.81rem;
       display: flex;
       align-items: center;
       gap: 0.5rem;
@@ -417,7 +417,7 @@
   }
 
   .hero-title {
-    font-size: 2.8rem;
+    font-size: 2.52rem;
   }
 
   .hero-stats {
@@ -439,7 +439,7 @@
   }
 
   .hero-title {
-    font-size: 2.2rem;
+    font-size: 1.98rem;
   }
 
   .hero-stats {
@@ -447,7 +447,7 @@
   }
 
   .stat-number {
-    font-size: 1.8rem;
+    font-size: 1.62rem;
   }
 
   .hero-actions {

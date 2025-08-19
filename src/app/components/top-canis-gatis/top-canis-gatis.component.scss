@@ -30,7 +30,7 @@
 
 .subtitle {
   text-align: center;
-  font-size: 1.25rem;
+  font-size: 1.125rem;
   color: var(--gray-600);
   margin-bottom: var(--space-12);
   max-width: 600px;
@@ -111,13 +111,13 @@
     position: absolute;
     top: var(--space-5);
     right: var(--space-5);
-    font-size: 2rem;
+    font-size: 1.8rem;
     opacity: 0.3;
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
   }
   
   span {
-    font-size: 1.5rem;
+    font-size: 1.35rem;
     font-weight: var(--fontWeight-extrabold);
     color: var(--primaryColor);
     text-transform: uppercase;
@@ -141,7 +141,7 @@
   padding: var(--space-3) var(--space-6);
   border-radius: var(--radius-full);
   font-weight: var(--fontWeight-semibold);
-  font-size: 0.9375rem;
+  font-size: 0.8438rem;
   cursor: pointer;
   transition: var(--transition-normal);
   text-transform: uppercase;
@@ -182,7 +182,7 @@
 }
 
 .showcase-info h4 {
-  font-size: 1.3rem;
+  font-size: 1.17rem;
   color: var(--primaryColor);
   margin-bottom: 0.5rem;
   font-weight: 600;
@@ -190,7 +190,7 @@
 
 .showcase-info p {
   color: var(--goldenColor);
-  font-size: 1rem;
+  font-size: 0.9rem;
   margin: 0;
   font-weight: 500;
 }
@@ -210,7 +210,7 @@
   border-radius: 50px;
   text-decoration: none;
   font-weight: 700;
-  font-size: 1.2rem;
+  font-size: 1.08rem;
   display: flex;
   align-items: center;
   gap: 0.8rem;
@@ -229,7 +229,7 @@
 }
 
 .btn-icon {
-  font-size: 1.5rem;
+  font-size: 1.35rem;
 }
 
 .advertising-info {
@@ -244,14 +244,14 @@
 }
 
 .advertising-info h3 {
-  font-size: 2rem;
+  font-size: 1.8rem;
   color: var(--primaryColor);
   margin-bottom: 1rem;
   font-weight: 700;
 }
 
 .advertising-info p {
-  font-size: 1.1rem;
+  font-size: 0.99rem;
   color: #666;
   line-height: 1.6;
   margin-bottom: 2rem;
@@ -271,7 +271,7 @@
   padding: 1rem 2.5rem;
   border-radius: 50px;
   font-weight: 700;
-  font-size: 1.1rem;
+  font-size: 0.99rem;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -288,7 +288,7 @@
   }
 
   .icon {
-    font-size: 1.3rem;
+    font-size: 1.17rem;
   }
 }
 
@@ -299,7 +299,7 @@
   border-radius: 50px;
   text-decoration: none;
   font-weight: 700;
-  font-size: 1.1rem;
+  font-size: 0.99rem;
   display: inline-flex;
   align-items: center;
   gap: 0.8rem;
@@ -318,7 +318,7 @@
 }
 
 .whatsapp-icon {
-  font-size: 1.3rem;
+  font-size: 1.17rem;
 }
 
 @media (max-width: 768px) {
@@ -327,7 +327,7 @@
   }
 
   .top-canis-gatis h2 {
-    font-size: 2rem;
+    font-size: 1.8rem;
   }
 
   .showcase-grid {
@@ -353,7 +353,7 @@
   }
 
   .advertising-info h3 {
-    font-size: 1.6rem;
+    font-size: 1.44rem;
   }
 
   .contact-buttons {

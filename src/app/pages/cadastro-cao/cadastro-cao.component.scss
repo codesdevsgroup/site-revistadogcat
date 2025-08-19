@@ -35,13 +35,13 @@
           align-items: center;
           justify-content: center;
           font-weight: 700;
-          font-size: 1.2rem;
+          font-size: 1.08rem;
           margin-bottom: 0.5rem;
           transition: all 0.3s ease;
         }
 
         .step-label {
-          font-size: 0.9rem;
+          font-size: 0.81rem;
           color: #6c757d;
           font-weight: 600;
           transition: all 0.3s ease;
@@ -111,14 +111,14 @@
 
           h2 {
             color: var(--primaryColor);
-            font-size: 2.5rem;
+            font-size: 2.25rem;
             font-weight: 700;
             margin-bottom: 0.5rem;
           }
 
           p {
             color: #6c757d;
-            font-size: 1.1rem;
+            font-size: 0.99rem;
           }
         }
 
@@ -136,7 +136,7 @@
             border: 2px solid #e9ecef;
             border-radius: 10px;
             padding: 0.75rem 1rem;
-            font-size: 1rem;
+            font-size: 0.9rem;
             transition: all 0.3s ease;
 
             &:focus {
@@ -152,12 +152,12 @@
           .invalid-feedback {
             display: block;
             color: #dc3545;
-            font-size: 0.875rem;
+            font-size: 0.7875rem;
             margin-top: 0.25rem;
           }
 
           .form-text {
-            font-size: 0.8rem;
+            font-size: 0.72rem;
             color: #6c757d;
             margin-top: 0.25rem;
           }
@@ -180,7 +180,7 @@
             transition: all 0.3s ease;
 
             .icon {
-              font-size: 1.2rem;
+              font-size: 1.08rem;
             }
 
             &.btn-primary {
@@ -281,7 +281,7 @@
         }
 
         .option-icon {
-          font-size: 2rem;
+          font-size: 1.8rem;
           margin-bottom: 1rem;
         }
 
@@ -293,12 +293,12 @@
         p {
           color: #6c757d;
           margin-bottom: 0.5rem;
-          font-size: 0.9rem;
+          font-size: 0.81rem;
         }
 
         small {
           color: #868e96;
-          font-size: 0.8rem;
+          font-size: 0.72rem;
         }
       }
     }
@@ -323,7 +323,7 @@
       }
 
       .upload-icon {
-        font-size: 3rem;
+        font-size: 2.7rem;
         margin-bottom: 1rem;
         color: var(--primaryColor);
       }
@@ -356,7 +356,7 @@
         gap: 1rem;
 
         .file-icon {
-          font-size: 1.5rem;
+          font-size: 1.35rem;
           color: var(--primaryColor);
         }
 
@@ -371,7 +371,7 @@
 
           .file-size {
             display: block;
-            font-size: 0.9rem;
+            font-size: 0.81rem;
             color: #6c757d;
           }
         }
@@ -432,7 +432,7 @@
 
       .form-text {
         color: #6c757d;
-        font-size: 0.9rem;
+        font-size: 0.81rem;
       }
     }
   }
@@ -455,7 +455,7 @@
         gap: 1rem;
 
         .info-icon {
-          font-size: 2rem;
+          font-size: 1.8rem;
           color: #25d366;
         }
 
@@ -519,7 +519,7 @@
     padding: 3rem 2rem;
 
     .success-icon {
-      font-size: 4rem;
+      font-size: 3.6rem;
       margin-bottom: 1.5rem;
     }
 
@@ -530,7 +530,7 @@
 
     p {
       color: #6c757d;
-      font-size: 1.1rem;
+      font-size: 0.99rem;
       margin-bottom: 2rem;
     }
 
@@ -652,7 +652,7 @@
       padding: 2rem 1.5rem;
 
       .step-header h2 {
-        font-size: 1.75rem;
+        font-size: 1.575rem;
       }
     }
 
@@ -660,7 +660,7 @@
       padding: 2rem 1rem;
 
       .upload-icon {
-        font-size: 2.5rem;
+        font-size: 2.25rem;
       }
     }
 
@@ -668,11 +668,11 @@
       padding: 2rem 1rem;
 
       h2 {
-        font-size: 2rem;
+        font-size: 1.8rem;
       }
 
       .success-icon {
-        font-size: 3rem;
+        font-size: 2.7rem;
       }
     }
   }
@@ -697,7 +697,7 @@
 
 // Form text styles
 .form-text {
-  font-size: 0.8rem;
+  font-size: 0.72rem;
   color: #6c757d;
   margin-top: 0.25rem;
 }

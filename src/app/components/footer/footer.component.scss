@@ -23,7 +23,7 @@
   }
 
   h2 {
-    font-size: 2.5rem;
+    font-size: 2.25rem;
     margin-bottom: var(--space-4);
     font-weight: var(--fontWeight-extrabold);
     background: linear-gradient(45deg, var(--white), var(--secondaryColor));
@@ -35,7 +35,7 @@
   }
 
   p {
-    font-size: 1.125rem;
+    font-size: 1.0125rem;
     margin-bottom: var(--space-8);
     opacity: 0.95;
     line-height: 1.7;
@@ -56,7 +56,7 @@
       padding: var(--space-4) var(--space-6);
       border: 2px solid rgba(255, 255, 255, 0.2);
       border-radius: var(--radius-full);
-      font-size: 1rem;
+      font-size: 0.9rem;
       outline: none;
       background: rgba(255, 255, 255, 0.1);
       color: var(--white);
@@ -75,7 +75,7 @@
     }
 
     label {
-      font-size: 0.875rem;
+      font-size: 0.7875rem;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -91,7 +91,7 @@
       border: none;
       border-radius: var(--radius-full);
       font-weight: var(--fontWeight-bold);
-      font-size: 1.125rem;
+      font-size: 1.0125rem;
       cursor: pointer;
       transition: var(--transition-normal);
       box-shadow: var(--shadow-lg);
@@ -160,7 +160,7 @@
   .footer-section {
     h4 {
       color: var(--goldenColor);
-      font-size: 1.375rem;
+      font-size: 1.2375rem;
       margin-bottom: var(--space-4);
       font-weight: var(--fontWeight-bold);
       position: relative;
@@ -262,7 +262,7 @@
     
     p {
       margin-bottom: var(--space-2);
-      font-size: 0.875rem;
+      font-size: 0.7875rem;
       font-weight: var(--fontWeight-normal);
     }
   }
@@ -274,7 +274,7 @@
     padding: 2rem 1rem;
 
     h2 {
-      font-size: 1.8rem;
+      font-size: 1.62rem;
     }
   }
 

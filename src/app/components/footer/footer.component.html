@@ -23,10 +23,10 @@
     <div class="footer-section">
       <h4>Redes Sociais</h4>
       <div class="social-links">
-        <a href="https://www.instagram.com/revistadogcat/" target="_blank">Instagram/revistadogcat</a>
-        <a href="https://www.facebook.com/profile.php?id=61576202886357" target="_blank">Facebook/dogcatbr</a>
-        <a href="#" target="_blank">TikTok/dogcatbr</a>
-        <a href="https://wa.me/5515998350750" target="_blank">WhatsApp</a>
+        <a [href]="socialMedia.instagram.url" target="_blank">{{ socialMedia.instagram.displayName }}</a>
+        <a [href]="socialMedia.facebook.url" target="_blank">{{ socialMedia.facebook.displayName }}</a>
+        <a [href]="socialMedia.tiktok.url" target="_blank">{{ socialMedia.tiktok.displayName }}</a>
+        <a [href]="socialMedia.whatsapp.url" target="_blank">{{ socialMedia.whatsapp.displayName }}</a>
       </div>
     </div>
     <div class="footer-section">

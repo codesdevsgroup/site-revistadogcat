@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { NavbarComponent } from '../../components/navbar/navbar.component';
 import { FooterComponent } from '../../components/footer/footer.component';
+import { SocialMediaService } from '../../services/social-media.service';
 
 // Interface para resposta da API ViaCEP
 interface ViaCepResponse {
@@ -45,6 +46,7 @@ interface CorreiosResponse {
 })
 export class CadastroCaoComponent {
   @ViewChild('fileInput') fileInput!: ElementRef;
+  socialMedia: any;
 
   currentStep = 1;
   videoOption: 'upload' | 'youtube' | 'whatsapp' = 'upload';
@@ -56,7 +58,8 @@ export class CadastroCaoComponent {
   isCepLoading = false;
   cepStatus: 'none' | 'loading' | 'success' | 'error' = 'none';
 
-  constructor(private fb: FormBuilder, private http: HttpClient) {
+  constructor(private fb: FormBuilder, private http: HttpClient, private socialMediaService: SocialMediaService) {
+    this.socialMedia = this.socialMediaService.getSocialMedia();
     this.userForm = this.fb.group({
       nomeCompleto: ['', [Validators.required, Validators.minLength(2)]],
       cpf: ['', [Validators.required]],

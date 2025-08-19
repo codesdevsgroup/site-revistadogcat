@@ -24,7 +24,7 @@
 }
 
 .hero-title {
-  font-size: 3.5rem;
+  font-size: 3.15rem;
   font-weight: 800;
   margin-bottom: 1rem;
   position: relative;
@@ -32,7 +32,7 @@
 }
 
 .hero-subtitle {
-  font-size: 1.3rem;
+  font-size: 1.17rem;
   margin-bottom: 2rem;
   opacity: 0.9;
   position: relative;
@@ -46,7 +46,7 @@
   padding: 0.8rem 2rem;
   border-radius: 50px;
   font-weight: 700;
-  font-size: 1.1rem;
+  font-size: 0.99rem;
   text-transform: uppercase;
   letter-spacing: 1px;
   box-shadow: 0 4px 20px rgba(224, 181, 58, 0.3);
@@ -61,14 +61,14 @@
 }
 
 .section-title {
-  font-size: 2.5rem;
+  font-size: 2.25rem;
   font-weight: 800;
   color: var(--primaryColor);
   margin-bottom: 1rem;
 }
 
 .section-description {
-  font-size: 1.2rem;
+  font-size: 1.08rem;
   color: #666;
   max-width: 600px;
   margin: 0 auto;
@@ -116,7 +116,7 @@
   padding: 0.5rem 1.5rem;
   border-radius: 20px;
   font-weight: 700;
-  font-size: 0.9rem;
+  font-size: 0.81rem;
   text-transform: uppercase;
   letter-spacing: 1px;
 }
@@ -127,7 +127,7 @@
 }
 
 .plan-name {
-  font-size: 1.8rem;
+  font-size: 1.62rem;
   font-weight: 700;
   color: var(--primaryColor);
   margin-bottom: 1rem;
@@ -138,25 +138,25 @@
 }
 
 .currency {
-  font-size: 1.5rem;
+  font-size: 1.35rem;
   color: #666;
   vertical-align: top;
 }
 
 .price-value {
-  font-size: 3rem;
+  font-size: 2.7rem;
   font-weight: 800;
   color: var(--primaryColor);
 }
 
 .price-period {
-  font-size: 1.2rem;
+  font-size: 1.08rem;
   color: #666;
 }
 
 .plan-period {
   color: #666;
-  font-size: 1.1rem;
+  font-size: 0.99rem;
   margin-bottom: 0.5rem;
 }
 
@@ -166,7 +166,7 @@
   padding: 0.5rem 1rem;
   border-radius: 20px;
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 0.81rem;
   display: inline-block;
 }
 
@@ -186,7 +186,7 @@
   align-items: center;
   padding: 0.8rem 0;
   border-bottom: 1px solid #f0f0f0;
-  font-size: 1rem;
+  font-size: 0.9rem;
   color: #333;
 }
 
@@ -195,7 +195,7 @@
 }
 
 .icon {
-  font-size: 1.3rem;
+  font-size: 1.17rem;
   margin-right: 1rem;
   width: 25px;
 }
@@ -211,7 +211,7 @@
   border: none;
   border-radius: 50px;
   font-weight: 700;
-  font-size: 1.1rem;
+  font-size: 0.99rem;
   text-decoration: none;
   transition: all 0.3s ease;
   display: inline-block;
@@ -268,12 +268,12 @@
 }
 
 .benefit-icon {
-  font-size: 3rem;
+  font-size: 2.7rem;
   margin-bottom: 1.5rem;
 }
 
 .benefit-card h4 {
-  font-size: 1.3rem;
+  font-size: 1.17rem;
   font-weight: 700;
   color: var(--primaryColor);
   margin-bottom: 1rem;
@@ -299,7 +299,7 @@
 }
 
 .faq-item h4 {
-  font-size: 1.2rem;
+  font-size: 1.08rem;
   font-weight: 700;
   color: var(--primaryColor);
   margin-bottom: 1rem;
@@ -319,13 +319,13 @@
 }
 
 .cta-section h2 {
-  font-size: 2.5rem;
+  font-size: 2.25rem;
   font-weight: 800;
   margin-bottom: 1rem;
 }
 
 .cta-section p {
-  font-size: 1.2rem;
+  font-size: 1.08rem;
   margin-bottom: 2rem;
   opacity: 0.9;
 }
@@ -337,7 +337,7 @@
   border-radius: 50px;
   text-decoration: none;
   font-weight: 700;
-  font-size: 1.2rem;
+  font-size: 1.08rem;
   transition: all 0.3s ease;
   display: inline-block;
   box-shadow: 0 6px 25px rgba(224, 181, 58, 0.3);
@@ -354,7 +354,7 @@
 // Responsive
 @media (max-width: 992px) {
   .hero-title {
-    font-size: 2.8rem;
+    font-size: 2.52rem;
   }
 
   .plan-featured {
@@ -372,15 +372,15 @@
   }
 
   .hero-title {
-    font-size: 2.2rem;
+    font-size: 1.98rem;
   }
 
   .hero-subtitle {
-    font-size: 1.1rem;
+    font-size: 0.99rem;
   }
 
   .section-title {
-    font-size: 2rem;
+    font-size: 1.8rem;
   }
 
   .planos-section,
@@ -395,6 +395,6 @@
   }
 
   .price-value {
-    font-size: 2.5rem;
+    font-size: 2.25rem;
   }
 }

@@ -369,7 +369,7 @@
                       <div class="info-content">
                         <h5>Envio por WhatsApp</h5>
                         <p>Após finalizar o cadastro, você receberá instruções para enviar o vídeo diretamente pelo WhatsApp.</p>
-                        <p><strong>WhatsApp:</strong> (15) 99835-0750</p>
+                        <p><strong>WhatsApp:</strong> {{ socialMedia.whatsapp.formattedNumber }}</p>
                         <p><strong>Prazo:</strong> Envie o vídeo em até 24 horas após o cadastro</p>
                       </div>
                     </div>
@@ -421,9 +421,9 @@
 
                 <div class="contact-info">
                   <p><strong>Dúvidas?</strong> Entre em contato:</p>
-                  <a href="https://wa.me/5515998350750" class="btn btn-whatsapp" target="_blank">
-                    📱 WhatsApp: (15) 99835-0750
-                  </a>
+                  <a [href]="socialMedia.whatsapp.url" class="btn btn-whatsapp" target="_blank">
+          📱 WhatsApp: {{ socialMedia.whatsapp.formattedNumber }}
+        </a>
                 </div>
 
                 <div class="action-buttons">

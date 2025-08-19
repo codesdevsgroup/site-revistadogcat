@@ -34,14 +34,14 @@
       color: var(--primaryColor);
       padding: 0.5rem 1rem;
       border-radius: 25px;
-      font-size: 0.9rem;
+      font-size: 0.81rem;
       font-weight: 600;
       margin-bottom: 1rem;
       animation: fadeInUp 0.8s ease-out;
     }
     
     .hero-title {
-      font-size: 3.5rem;
+      font-size: 3.15rem;
       font-weight: 800;
       margin-bottom: 1rem;
       background: linear-gradient(45deg, white, var(--secondaryColor));
@@ -51,12 +51,12 @@
       animation: fadeInUp 0.8s ease-out 0.2s both;
       
       @media (max-width: 768px) {
-        font-size: 2.5rem;
+        font-size: 2.25rem;
       }
     }
     
     .hero-subtitle {
-      font-size: 1.2rem;
+      font-size: 1.08rem;
       line-height: 1.6;
       margin-bottom: 2rem;
       opacity: 0.9;
@@ -80,7 +80,7 @@
         gap: 0.5rem;
         
         .icon {
-          font-size: 1.2rem;
+          font-size: 1.08rem;
         }
       }
       
@@ -151,7 +151,7 @@
             background: linear-gradient(45deg, var(--goldenColor), #f4d03f);
             color: white;
             padding: 8px 20px 8px 15px;
-            font-size: 0.8rem;
+            font-size: 0.72rem;
             font-weight: 700;
             letter-spacing: 1px;
             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
@@ -184,13 +184,13 @@
             }
             
             .trophy-icon {
-              font-size: 2.5rem;
+              font-size: 2.25rem;
               margin-bottom: 0.5rem;
               filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
             }
             
             h3 {
-              font-size: 1.3rem;
+              font-size: 1.17rem;
               margin-bottom: 0.5rem;
               font-weight: 700;
               text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
@@ -199,7 +199,7 @@
             .category {
               font-weight: 600;
               opacity: 0.9;
-              font-size: 1rem;
+              font-size: 0.9rem;
             }
           }
           
@@ -260,7 +260,7 @@
             }
             
             .owner-label {
-              font-size: 0.85rem;
+              font-size: 0.765rem;
               color: #666;
               font-weight: 500;
             }
@@ -268,7 +268,7 @@
             .owner-name {
               font-weight: 700;
               color: var(--primaryColor);
-              font-size: 0.95rem;
+              font-size: 0.855rem;
             }
             
             .location-info {
@@ -277,7 +277,7 @@
               }
               
               .location {
-                font-size: 0.9rem;
+                font-size: 0.81rem;
                 color: #666;
                 font-weight: 500;
               }
@@ -296,14 +296,14 @@
               
               .stat-number {
                 display: block;
-                font-size: 1.2rem;
+                font-size: 1.08rem;
                 font-weight: 700;
                 color: var(--goldenColor);
                 margin-bottom: 0.25rem;
               }
               
               .stat-label {
-                font-size: 0.75rem;
+                font-size: 0.675rem;
                 color: #666;
                 text-transform: uppercase;
                 letter-spacing: 0.5px;
@@ -324,20 +324,20 @@
           padding: 1rem;
           
           .mini-icon {
-            font-size: 2rem;
+            font-size: 1.8rem;
             margin-bottom: 0.5rem;
             filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
           }
           
           .mini-title {
-            font-size: 0.8rem;
+            font-size: 0.72rem;
             font-weight: 700;
             margin-bottom: 0.25rem;
             display: block;
           }
           
           .mini-subtitle {
-            font-size: 0.7rem;
+            font-size: 0.63rem;
             opacity: 0.8;
             font-weight: 500;
           }
@@ -384,14 +384,14 @@
   }
   
   .section-title {
-    font-size: 2.5rem;
+    font-size: 2.25rem;
     font-weight: 700;
     color: var(--primaryColor);
     margin-bottom: 1rem;
   }
   
   .section-description {
-    font-size: 1.2rem;
+    font-size: 1.08rem;
     color: #666;
     margin-bottom: 3rem;
   }
@@ -411,7 +411,7 @@
     }
     
     .benefit-icon {
-      font-size: 3rem;
+      font-size: 2.7rem;
       margin-bottom: 1rem;
     }
     
@@ -451,7 +451,7 @@
       align-items: center;
       justify-content: center;
       font-weight: 700;
-      font-size: 1.2rem;
+      font-size: 1.08rem;
     }
     
     h4 {
@@ -475,7 +475,7 @@
     height: 100%;
     
     .categoria-icon {
-      font-size: 3rem;
+      font-size: 2.7rem;
       margin-bottom: 1rem;
     }
     
@@ -642,13 +642,13 @@
     text-align: center;
     
     h2 {
-      font-size: 2.5rem;
+      font-size: 2.25rem;
       margin-bottom: 1rem;
       font-weight: 700;
     }
     
     p {
-      font-size: 1.2rem;
+      font-size: 1.08rem;
       margin-bottom: 2rem;
       opacity: 0.9;
     }
@@ -672,7 +672,7 @@
       gap: 0.5rem;
       
       .icon {
-        font-size: 1.2rem;
+        font-size: 1.08rem;
       }
       
       &:hover {
@@ -706,7 +706,7 @@
       
       p {
         margin-bottom: 0.5rem;
-        font-size: 1rem;
+        font-size: 0.9rem;
         opacity: 0.8;
       }
     }
@@ -738,11 +738,11 @@
 @media (max-width: 768px) {
   .expo-dog-container {
     .hero-expo .hero-title {
-      font-size: 2.5rem;
+      font-size: 2.25rem;
     }
     
     .section-title {
-      font-size: 2rem;
+      font-size: 1.8rem;
     }
     
     .hero-buttons {
