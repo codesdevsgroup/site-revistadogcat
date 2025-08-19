@@ -5,9 +5,10 @@
     
     <div class="showcase-grid">
       <div class="showcase-item">
-        <div class="showcase-placeholder">
+        <div class="showcase-placeholder clickable" (click)="openModal()">
           <span>ANUNCIE AQUI</span>
           <p>Espaço disponível para seu canil</p>
+          <button class="btn-anunciar">📢 Cadastre-se Agora</button>
         </div>
         <div class="showcase-info">
           <h4>Canil Premium</h4>
@@ -16,9 +17,10 @@
       </div>
 
       <div class="showcase-item">
-        <div class="showcase-placeholder">
+        <div class="showcase-placeholder clickable" (click)="openModal()">
           <span>ANUNCIE AQUI</span>
           <p>Espaço disponível para seu gatil</p>
+          <button class="btn-anunciar">📢 Cadastre-se Agora</button>
         </div>
         <div class="showcase-info">
           <h4>Gatil de Excelência</h4>
@@ -27,9 +29,10 @@
       </div>
 
       <div class="showcase-item">
-        <div class="showcase-placeholder">
+        <div class="showcase-placeholder clickable" (click)="openModal()">
           <span>ANUNCIE AQUI</span>
           <p>Destaque sua criação</p>
+          <button class="btn-anunciar">📢 Cadastre-se Agora</button>
         </div>
         <div class="showcase-info">
           <h4>Criação Especializada</h4>
@@ -52,10 +55,23 @@
     <div class="advertising-info">
       <h3>Anuncie com a gente!</h3>
       <p>Entre em contato e faça sua empresa ser vista por milhares de pessoas que procuram os melhores canis e gatis da região.</p>
-      <a href="https://wa.me/5515998350750" class="btn-whatsapp" target="_blank">
-        <span class="whatsapp-icon">📱</span>
-        NOSSO WHATSAPP
-      </a>
+      <div class="contact-buttons">
+        <button class="btn-cadastro" (click)="openModal()">
+          <span class="icon">📝</span>
+          CADASTRE-SE AGORA
+        </button>
+        <a href="https://wa.me/5515998350750" class="btn-whatsapp" target="_blank">
+          <span class="whatsapp-icon">📱</span>
+          NOSSO WHATSAPP
+        </a>
+      </div>
     </div>
   </div>
 </section>
+
+<!-- Modal de Cadastro -->
+<app-modal-cadastro-anunciante
+  [isOpen]="isModalOpen"
+  (closeModal)="closeModal()"
+  (submitForm)="onFormSubmit($event)">
+</app-modal-cadastro-anunciante>

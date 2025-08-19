@@ -56,6 +56,16 @@
   justify-content: center;
   border-bottom: 2px solid var(--goldenColor);
   position: relative;
+  transition: all 0.3s ease;
+
+  &.clickable {
+    cursor: pointer;
+    
+    &:hover {
+      background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+      transform: scale(1.02);
+    }
+  }
 }
 
 .showcase-placeholder::before {
@@ -79,7 +89,32 @@
 .showcase-placeholder p {
   color: #666;
   font-style: italic;
-  margin: 0;
+  margin: 0 0 1rem 0;
+}
+
+.btn-anunciar {
+  background: linear-gradient(135deg, var(--primaryColor), #2a5d34);
+  color: white;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 25px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 15px rgba(44, 85, 48, 0.3);
+
+  &:hover {
+    background: linear-gradient(135deg, #2a5d34, var(--primaryColor));
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(44, 85, 48, 0.4);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
 }
 
 .showcase-info {
@@ -163,6 +198,41 @@
   margin-bottom: 2rem;
 }
 
+.contact-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-cadastro {
+  background: linear-gradient(135deg, var(--primaryColor), #2a5d34);
+  color: white;
+  border: none;
+  padding: 1rem 2.5rem;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(44, 85, 48, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+
+  &:hover {
+    background: linear-gradient(135deg, #2a5d34, var(--primaryColor));
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(44, 85, 48, 0.4);
+  }
+
+  .icon {
+    font-size: 1.3rem;
+  }
+}
+
 .btn-whatsapp {
   background: #25D366;
   color: white;
@@ -178,14 +248,14 @@
   box-shadow: 0 4px 20px rgba(37, 211, 102, 0.3);
   text-transform: uppercase;
   letter-spacing: 1px;
-}
 
-.btn-whatsapp:hover {
-  background: #20BA5A;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 25px rgba(37, 211, 102, 0.4);
-  color: white;
-  text-decoration: none;
+  &:hover {
+    background: #20BA5A;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(37, 211, 102, 0.4);
+    color: white;
+    text-decoration: none;
+  }
 }
 
 .whatsapp-icon {
@@ -225,5 +295,18 @@
 
   .advertising-info h3 {
     font-size: 1.6rem;
+  }
+
+  .contact-buttons {
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .btn-cadastro,
+  .btn-whatsapp {
+    width: 100%;
+    max-width: 280px;
+    justify-content: center;
   }
 }
