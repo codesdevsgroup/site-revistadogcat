@@ -315,6 +315,80 @@
   }
 }
 
+// Faixa CodeDevs
+.codedevs-banner {
+  background: #000000;
+  color: #ffffff;
+  text-align: center;
+  padding: var(--space-3) 0;
+  margin: 0;
+  border-top: 1px solid #333;
+  transition: var(--transition-normal);
+  position: relative;
+  z-index: 10;
+  
+  p {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: var(--fontWeight-medium);
+    letter-spacing: 0.5px;
+  }
+  
+  .heart {
+    color: #ff0000;
+    font-size: 1rem;
+    display: inline-block;
+    animation: heartbeat 2s ease-in-out infinite;
+    margin: 0 var(--space-1);
+  }
+  
+  .codedevs-text {
+    color: #ffffff;
+    font-weight: var(--fontWeight-bold);
+    transition: var(--transition-fast);
+    cursor: pointer;
+    
+    &:hover {
+      color: var(--goldenColor);
+      text-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
+    }
+  }
+  
+  &:hover {
+    background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+    
+    .heart {
+      animation-duration: 0.8s;
+      transform: scale(1.2);
+    }
+  }
+}
+
+// Garantir que não há espaço após o footer
+:host {
+  display: block;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+@keyframes heartbeat {
+  0% {
+    transform: scale(1);
+  }
+  14% {
+    transform: scale(1.1);
+  }
+  28% {
+    transform: scale(1);
+  }
+  42% {
+    transform: scale(1.1);
+  }
+  70% {
+    transform: scale(1);
+  }
+}
+
 @media (max-width: 768px) {
   .newsletter {
     margin: 2rem 1rem;
