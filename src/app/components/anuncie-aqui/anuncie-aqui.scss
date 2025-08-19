@@ -1,0 +1,133 @@
+.anuncie-aqui-section {
+  padding: 6rem 0;
+  background: var(--surface-ground);
+
+  .anuncie-card {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 4rem;
+    background: var(--surface-card);
+    border-radius: var(--border-radius-xl);
+    padding: 4rem;
+    box-shadow: var(--shadow-4);
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-5);
+    }
+
+    @media (max-width: 992px) {
+      grid-template-columns: 1fr;
+      padding: 3rem;
+      gap: 3rem;
+    }
+  }
+
+  .anuncie-text-content {
+    animation: fadeInRight 0.8s ease-out;
+  }
+
+  .anuncie-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--text-color);
+    margin-bottom: 1rem;
+  }
+
+  .anuncie-subtitle {
+    font-size: 1.125rem;
+    color: var(--text-color-secondary);
+    margin-bottom: 2rem;
+  }
+
+  .anuncie-benefits {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 2.5rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    li {
+      display: flex;
+      align-items: center;
+      font-weight: 500;
+      .icon {
+        margin-right: 0.75rem;
+        color: var(--primary-color);
+        font-size: 1.5rem;
+      }
+    }
+  }
+
+  .anuncie-cta-buttons {
+    display: flex;
+    gap: 1rem;
+
+    .cta-button {
+      padding: 0.875rem 1.75rem;
+      border-radius: var(--border-radius-lg);
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+
+      &.primary {
+        background: var(--primary-color);
+        color: var(--primary-color-text);
+        &:hover {
+          background: var(--primary-600);
+          transform: translateY(-2px);
+        }
+      }
+
+      &.secondary {
+        background: transparent;
+        color: var(--primary-color);
+        border-color: var(--primary-color);
+        &:hover {
+          background: var(--primary-color-text);
+          color: var(--primary-color);
+        }
+      }
+    }
+  }
+
+  .anuncie-image-content {
+    animation: fadeInLeft 0.8s ease-out;
+    text-align: center;
+  }
+
+  .anuncie-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--border-radius-lg);
+  }
+}
+
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}

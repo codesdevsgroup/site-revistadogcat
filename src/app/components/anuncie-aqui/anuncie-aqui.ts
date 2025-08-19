@@ -3,12 +3,13 @@ import { ModalCadastroAnuncianteComponent } from '../modal-cadastro-anunciante/m
 import { SocialMediaService } from '../../services/social-media.service';
 
 @Component({
-  selector: 'app-top-canis-gatis',
+  selector: 'app-anuncie-aqui',
+  standalone: true,
   imports: [ModalCadastroAnuncianteComponent],
-  templateUrl: './top-canis-gatis.component.html',
-  styleUrl: './top-canis-gatis.component.scss'
+  templateUrl: './anuncie-aqui.html',
+  styleUrl: './anuncie-aqui.scss'
 })
-export class TopCanisGatisComponent {
+export class AnuncieAquiComponent {
   socialMedia: any;
   isModalOpen = false;
 

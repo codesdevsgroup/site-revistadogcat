@@ -43,6 +43,53 @@
     z-index: 1;
   }
 
+  .instagram-call {
+    margin-bottom: var(--space-6) !important;
+    font-size: 1.0125rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+    
+    .instagram-icon {
+      font-size: 1.25rem;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+      animation: pulse 2s infinite;
+    }
+    
+    .instagram-link {
+      color: var(--white);
+      text-decoration: none;
+      font-weight: var(--fontWeight-bold);
+      transition: all 0.3s ease;
+      position: relative;
+      padding: var(--space-1) var(--space-3);
+      border-radius: var(--radius-lg);
+      background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      
+      .instagram-text {
+        color: var(--white);
+        font-weight: var(--fontWeight-bold);
+      }
+      
+      &:hover {
+        transform: translateY(-2px) scale(1.05);
+        box-shadow: 0 4px 16px rgba(240, 148, 51, 0.4);
+        
+        .instagram-text {
+          color: var(--white);
+        }
+      }
+    }
+  }
+  
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+  }
+
   form {
     display: flex;
     flex-direction: column;

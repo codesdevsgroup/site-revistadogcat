@@ -3,7 +3,6 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { NavbarComponent } from '../../components/navbar/navbar.component';
 import { FooterComponent } from '../../components/footer/footer.component';
 import { SocialMediaService } from '../../services/social-media.service';
 
@@ -38,7 +37,6 @@ interface CorreiosResponse {
     CommonModule,
     ReactiveFormsModule,
     RouterModule,
-    NavbarComponent,
     FooterComponent
   ],
   templateUrl: './cadastro-cao.component.html',
