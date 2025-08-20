@@ -1,64 +1,83 @@
-# SiteRevistadogcat
+# Revista Dog & Cat BR - Website
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.13.
+Este é o repositório oficial do site da **Revista Dog & Cat BR**, uma plataforma de conteúdo dedicada a apaixonados por cães e gatos. O site oferece acesso às edições digitais da revista, informações sobre eventos, e um espaço para criadores e anunciantes.
 
-## Development server
+Este projeto foi gerado com [Angular CLI](https://github.com/angular/angular-cli) versão 19.2.13.
 
-To start a local development server, run:
+## ✨ Funcionalidades
 
-```bash
-  ng serve
-```
-Start projeto com o Bun
+- **Leitor de Revistas Interativo:** Visualize as edições da revista com um efeito de virar a página (flipbook) em 3D.
+- **Expo Dog BR:** Participe da primeira mostra de cães 100% online do Brasil, com um formulário de cadastro completo.
+- **Anuncie Conosco:** Uma seção dedicada para empresas e marcas que desejam anunciar na revista.
+- **Design Moderno e Responsivo:** Interface amigável e adaptada para todos os dispositivos.
 
-```bash
-  bun run ng serve
-```
+## 🚀 Tecnologias Utilizadas
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+- **[Angular](https://angular.io/):** Framework principal para a construção da interface.
+- **[Bootstrap](https://getbootstrap.com/):** Para a criação de layouts responsivos.
+- **[Font Awesome](https://fontawesome.com/):** Biblioteca de ícones.
+- **[DearFlip.js](https://dearflip.com/):** Para o leitor de revistas com efeito flipbook 3D.
+- **[Bun](https://bun.sh/):** Usado como um runtime JavaScript alternativo e rápido.
 
-## Code scaffolding
+## ⚙️ Como Começar
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+### Pré-requisitos
 
-```bash
-ng generate component component-name
-```
+- [Node.js](https://nodejs.org/) (versão 18 ou superior)
+- [Angular CLI](https://angular.io/cli)
+- [Bun](https://bun.sh/) (opcional, para usar os scripts `bun:*`)
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+### Instalação e Execução
 
-```bash
-ng generate --help
-```
+1.  Clone o repositório:
+    ```bash
+    git clone https://github.com/seu-usuario/site-revistadogcat.git
+    cd site-revistadogcat
+    ```
 
-## Building
+2.  Instale as dependências:
+    ```bash
+    npm install
+    ```
 
-To build the project run:
+3.  Inicie o servidor de desenvolvimento:
+    ```bash
+    ng serve
+    ```
+    ou com Bun:
+    ```bash
+    bun run ng serve
+    ```
 
-```bash
-ng build
-```
+4.  Abra seu navegador e acesse `http://localhost:4200/`.
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+## 📂 Estrutura do Projeto
 
-## Running unit tests
+O projeto segue a estrutura padrão do Angular, com as seguintes pastas principais dentro de `src/app`:
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+-   `components/`: Componentes reutilizáveis (navbar, footer, etc.).
+-   `pages/`: Componentes que representam as páginas principais do site (home, edições, etc.).
+-   `services/`: Serviços para lógica de negócio e comunicação com APIs.
 
-```bash
-ng test
-```
+## 🔗 Dependências Externas (CDN)
 
-## Running end-to-end tests
+Algumas bibliotecas são carregadas via CDN no arquivo `src/index.html` para otimizar o build inicial:
 
-For end-to-end (e2e) testing, run:
+-   **jQuery:** Dependência para a biblioteca DearFlip.js.
+-   **DearFlip.js (CSS e JS):** Biblioteca que renderiza o leitor de revistas interativo.
+-   **Font Awesome:** Para a utilização de ícones em toda a aplicação.
 
-```bash
-ng e2e
-```
+## 🛠️ Comandos Úteis do Angular CLI
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+-   **Gerar um novo componente:**
+    ```bash
+    ng generate component nome-do-componente
+    ```
+-   **Build para produção:**
+    ```bash
+    ng build
+    ```
+-   **Executar testes unitários:**
+    ```bash
+    ng test
+    ```
