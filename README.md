@@ -2,7 +2,7 @@
 
 Este é o repositório oficial do site da **Revista Dog & Cat BR**, uma plataforma de conteúdo dedicada a apaixonados por cães e gatos. O site oferece acesso às edições digitais da revista, informações sobre eventos, e um espaço para criadores e anunciantes.
 
-Este projeto foi gerado com [Angular CLI](https://github.com/angular/angular-cli) versão 19.2.13.
+Este projeto foi gerado com [Angular CLI](https://github.com/angular/angular-cli) versão 20.1.6.
 
 ## ✨ Funcionalidades
 
