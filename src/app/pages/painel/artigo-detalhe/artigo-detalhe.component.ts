@@ -2,12 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { EditorJsComponent } from '../../../components/editor-js/editor-js.component';
+import { TiptapEditorComponent } from '../../../components/tiptap-editor/tiptap-editor.component';
 
 @Component({
   selector: 'app-artigo-detalhe',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, EditorJsComponent],
+  imports: [CommonModule, ReactiveFormsModule, TiptapEditorComponent],
   templateUrl: './artigo-detalhe.component.html',
   styleUrl: './artigo-detalhe.component.scss'
 })

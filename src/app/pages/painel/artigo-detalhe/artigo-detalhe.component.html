@@ -190,11 +190,11 @@
             <div class="placeholder-content">
                            
               <!-- Tiptap Editor -->
-              <app-editor-js 
+              <app-tiptap-editor 
                 formControlName="conteudo"
                 placeholder="Digite o conteúdo do artigo aqui..."
                 [class.is-invalid]="conteudo?.invalid && conteudo?.touched"
-              ></app-editor-js>
+              ></app-tiptap-editor>
               
               <div class="invalid-feedback" *ngIf="conteudo?.invalid && conteudo?.touched">
                 Conteúdo é obrigatório
