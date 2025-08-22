@@ -1,14 +1,14 @@
 .top-menu {
   position: fixed;
-  top: 20px;
+  top: 14px;
   left: 20px;
   right: 20px;
   z-index: 1030;
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px);
-  border-radius: 16px;
+  border-radius: 10px;
   box-shadow: 
-    0 8px 32px rgba(0, 0, 0, 0.1),
+    0 8px 26px rgba(0, 0, 0, 0.1),
     0 4px 16px rgba(0, 0, 0, 0.05),
     inset 0 1px 0 rgba(255, 255, 255, 0.8);
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -33,7 +33,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 24px;
+  padding: 5px 10px;
   gap: var(--space-6);
   max-width: 1520px;
   margin: 0 auto;
@@ -47,7 +47,7 @@
 .menu-brand {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
+  gap: var(--space-2);
   flex-shrink: 0;
 
   .brand-logo {
@@ -270,6 +270,6 @@
 
   .user-dropdown {
     right: -10px;
-    min-width: 180px;
+    min-width: 160px;
   }
 }
