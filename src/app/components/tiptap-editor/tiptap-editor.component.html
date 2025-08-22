@@ -35,6 +35,22 @@
         title="Riscado">
         <s>S</s>
       </button>
+      <button 
+        type="button" 
+        class="toolbar-btn" 
+        [class.active]="isSubscript()" 
+        (click)="toggleSubscript()" 
+        title="Subscrito">
+        X<sub>2</sub>
+      </button>
+      <button 
+        type="button" 
+        class="toolbar-btn" 
+        [class.active]="isSuperscript()" 
+        (click)="toggleSuperscript()" 
+        title="Sobrescrito">
+        X<sup>2</sup>
+      </button>
     </div>
 
     <!-- Alinhamento -->
@@ -127,19 +143,70 @@
       <button 
         type="button" 
         class="toolbar-btn" 
+        [class.active]="isCode()" 
+        (click)="toggleCode()" 
+        title="Código inline">
+        &lt;code&gt;
+      </button>
+      <button 
+        type="button" 
+        class="toolbar-btn" 
         (click)="addImage()" 
         title="Inserir imagem">
         🖼️
       </button>
+      <button 
+        type="button" 
+        class="toolbar-btn" 
+        (click)="insertPageBreak()" 
+        title="Quebra de página">
+        📄
+      </button>
     </div>
 
-    <!-- Cores -->
+    <!-- Ajustes de Imagem -->
     <div class="toolbar-group">
+      <label class="toolbar-label">Tamanho:</label>
+      <button type="button" class="toolbar-btn-small" (click)="resizeImage('small')" title="Pequena">
+        S
+      </button>
+      <button type="button" class="toolbar-btn-small" (click)="resizeImage('medium')" title="Média">
+        M
+      </button>
+      <button type="button" class="toolbar-btn-small" (click)="resizeImage('large')" title="Grande">
+        L
+      </button>
+      <button type="button" class="toolbar-btn-small" (click)="resizeImage('original')" title="Original">
+        XL
+      </button>
+    </div>
+
+    <div class="toolbar-group">
+      <label class="toolbar-label">Posição:</label>
+      <button type="button" class="toolbar-btn-small" (click)="alignImage('left')" title="Esquerda">
+        ⬅️
+      </button>
+      <button type="button" class="toolbar-btn-small" (click)="alignImage('center')" title="Centro">
+        ⬆️
+      </button>
+      <button type="button" class="toolbar-btn-small" (click)="alignImage('right')" title="Direita">
+        ➡️
+      </button>
+    </div>
+
+    <!-- Cores e Formatação -->
+    <div class="toolbar-group">
+      <label class="toolbar-label">Cor:</label>
       <input 
         type="color" 
         class="color-picker" 
         (change)="setColor($any($event.target).value)" 
         title="Cor do texto">
+      <input 
+        type="color" 
+        class="color-picker" 
+        (change)="setBackgroundColor($any($event.target).value)" 
+        title="Cor de fundo">
       <button 
         type="button" 
         class="toolbar-btn" 
@@ -147,7 +214,53 @@
         title="Destacar">
         🖍️
       </button>
+      <button 
+        type="button" 
+        class="toolbar-btn" 
+        (click)="clearFormatting()" 
+        title="Limpar formatação">
+        🧹
+      </button>
     </div>
+
+    <!-- Fonte -->
+    <div class="toolbar-group">
+      <label class="toolbar-label">Fonte:</label>
+      <select class="toolbar-select" (change)="setFontFamily($any($event.target).value)">
+        <option value="">Padrão</option>
+        <option value="Arial">Arial</option>
+        <option value="Helvetica">Helvetica</option>
+        <option value="Times New Roman">Times New Roman</option>
+        <option value="Georgia">Georgia</option>
+        <option value="Verdana">Verdana</option>
+        <option value="Courier New">Courier New</option>
+      </select>
+      <select class="toolbar-select" (change)="setFontSize($any($event.target).value)">
+        <option value="">Tamanho</option>
+        <option value="12px">12px</option>
+        <option value="14px">14px</option>
+        <option value="16px">16px</option>
+        <option value="18px">18px</option>
+        <option value="20px">20px</option>
+        <option value="24px">24px</option>
+        <option value="32px">32px</option>
+      </select>
+    </div>
+
+    <!-- Links e elementos -->
+    <div class="toolbar-group">
+      <button type="button" class="toolbar-btn" (click)="setLink()" [class.active]="isLink()" title="Adicionar Link">
+        🔗
+      </button>
+      <button type="button" class="toolbar-btn" (click)="unsetLink()" title="Remover Link">
+        🔗❌
+      </button>
+      <button type="button" class="toolbar-btn" (click)="insertHorizontalRule()" title="Linha Horizontal">
+        ―
+      </button>
+    </div>
+
+
 
     <!-- Desfazer/Refazer -->
     <div class="toolbar-group">

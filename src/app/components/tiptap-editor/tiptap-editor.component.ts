@@ -1,4 +1,5 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, forwardRef } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, forwardRef, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { Editor } from '@tiptap/core';
 import StarterKit from '@tiptap/starter-kit';
@@ -9,6 +10,14 @@ import { FontFamily } from '@tiptap/extension-font-family';
 import { Highlight } from '@tiptap/extension-highlight';
 import { Underline } from '@tiptap/extension-underline';
 import { Image } from '@tiptap/extension-image';
+
+import { Link } from '@tiptap/extension-link';
+import { Subscript } from '@tiptap/extension-subscript';
+import { Superscript } from '@tiptap/extension-superscript';
+import { HorizontalRule } from '@tiptap/extension-horizontal-rule';
+import { Code } from '@tiptap/extension-code';
+// import { FontSize } from 'tiptap-extension-font-size';
+
 
 @Component({
   selector: 'app-tiptap-editor',
@@ -32,37 +41,50 @@ export class TiptapEditorComponent implements OnInit, OnDestroy, ControlValueAcc
   private onTouched = () => {};
   parseInt = parseInt;
 
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
+
   ngOnInit() {
-    this.editor = new Editor({
-      element: document.querySelector('#tiptap-editor'),
-      extensions: [
-        StarterKit,
-        TextAlign.configure({
-          types: ['heading', 'paragraph'],
-        }),
-        TextStyle,
-        Color,
-        FontFamily,
-        Highlight.configure({
-          multicolor: true
-        }),
-        Underline,
-        Image.configure({
-          inline: true,
-          allowBase64: true,
-        })
-      ],
-      content: '',
-      editable: this.editable,
-      onUpdate: ({ editor }) => {
-        const html = editor.getHTML();
-        this.onChange(html);
-        this.contentChange.emit(html);
-      },
-      onBlur: () => {
-        this.onTouched();
-      }
-    });
+    if (isPlatformBrowser(this.platformId)) {
+      this.editor = new Editor({
+        element: document.querySelector('#tiptap-editor'),
+        extensions: [
+          StarterKit,
+          TextAlign.configure({
+            types: ['heading', 'paragraph'],
+          }),
+          TextStyle,
+          Color,
+          FontFamily,
+          // FontSize,
+          Highlight.configure({
+            multicolor: true
+          }),
+          Underline,
+          Code,
+          Image.configure({
+            inline: true,
+            allowBase64: true,
+          }),
+
+          Link.configure({
+            openOnClick: false,
+          }),
+          Subscript,
+          Superscript,
+          HorizontalRule,
+        ],
+        content: '',
+        editable: this.editable,
+        onUpdate: ({ editor }) => {
+          const html = editor.getHTML();
+          this.onChange(html);
+          this.contentChange.emit(html);
+        },
+        onBlur: () => {
+          this.onTouched();
+        }
+      });
+    }
   }
 
   ngOnDestroy() {
@@ -150,20 +172,22 @@ export class TiptapEditorComponent implements OnInit, OnDestroy, ControlValueAcc
   }
 
   addImage() {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'image/*';
-    input.onchange = (event: any) => {
-      const file = event.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (e: any) => {
-          this.editor?.chain().focus().setImage({ src: e.target.result }).run();
-        };
-        reader.readAsDataURL(file);
-      }
-    };
-    input.click();
+    if (isPlatformBrowser(this.platformId)) {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+      input.onchange = (event: any) => {
+        const file = event.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (e: any) => {
+            this.editor?.chain().focus().setImage({ src: e.target.result }).run();
+          };
+          reader.readAsDataURL(file);
+        }
+      };
+      input.click();
+    }
   }
 
   undo() {
@@ -172,6 +196,76 @@ export class TiptapEditorComponent implements OnInit, OnDestroy, ControlValueAcc
 
   redo() {
     this.editor.chain().focus().redo().run();
+  }
+
+  // Métodos para novas funcionalidades
+  toggleSubscript() {
+    this.editor?.chain().focus().toggleSubscript().run();
+  }
+
+  toggleSuperscript() {
+    this.editor?.chain().focus().toggleSuperscript().run();
+  }
+
+  setLink() {
+    if (isPlatformBrowser(this.platformId)) {
+      const url = window.prompt('URL do link:');
+      if (url) {
+        this.editor?.chain().focus().setLink({ href: url }).run();
+      }
+    }
+  }
+
+  unsetLink() {
+    this.editor?.chain().focus().unsetLink().run();
+  }
+
+
+
+  insertHorizontalRule() {
+    this.editor?.chain().focus().setHorizontalRule().run();
+  }
+
+  // Métodos para ajuste de imagem
+  resizeImage(size: 'small' | 'medium' | 'large' | 'original') {
+    const selection = this.editor?.state.selection;
+    if (selection && this.editor?.isActive('image')) {
+      let width: string;
+      switch (size) {
+        case 'small':
+          width = '25%';
+          break;
+        case 'medium':
+          width = '50%';
+          break;
+        case 'large':
+          width = '75%';
+          break;
+        case 'original':
+          width = '100%';
+          break;
+      }
+      this.editor?.chain().focus().updateAttributes('image', { style: `width: ${width}; height: auto;` }).run();
+    }
+  }
+
+  alignImage(alignment: 'left' | 'center' | 'right') {
+    const selection = this.editor?.state.selection;
+    if (selection && this.editor?.isActive('image')) {
+      let style: string;
+      switch (alignment) {
+        case 'left':
+          style = 'float: left; margin: 0 16px 16px 0;';
+          break;
+        case 'center':
+          style = 'display: block; margin: 16px auto;';
+          break;
+        case 'right':
+          style = 'float: right; margin: 0 0 16px 16px;';
+          break;
+      }
+      this.editor?.chain().focus().updateAttributes('image', { style }).run();
+    }
   }
 
   // Helper methods for toolbar state
@@ -214,4 +308,55 @@ export class TiptapEditorComponent implements OnInit, OnDestroy, ControlValueAcc
   isCodeBlock(): boolean {
     return this.editor?.isActive('codeBlock') || false;
   }
+
+  isSubscript(): boolean {
+    return this.editor?.isActive('subscript') || false;
+  }
+
+  isSuperscript(): boolean {
+    return this.editor?.isActive('superscript') || false;
+  }
+
+  isLink(): boolean {
+    return this.editor?.isActive('link') || false;
+  }
+
+  isCode(): boolean {
+    return this.editor?.isActive('code') || false;
+  }
+
+  // Novos métodos para as funcionalidades adicionadas
+  toggleCode() {
+    this.editor?.chain().focus().toggleCode().run();
+  }
+
+  setFontFamily(fontFamily: string) {
+    if (fontFamily) {
+      this.editor?.chain().focus().setFontFamily(fontFamily).run();
+    } else {
+      this.editor?.chain().focus().unsetFontFamily().run();
+    }
+  }
+
+  setFontSize(fontSize: string) {
+    if (fontSize) {
+      this.editor?.chain().focus().setMark('textStyle', { fontSize }).run();
+    } else {
+      this.editor?.chain().focus().unsetMark('textStyle').run();
+    }
+  }
+
+  setBackgroundColor(color: string) {
+    this.editor?.chain().focus().setHighlight({ color }).run();
+  }
+
+  clearFormatting() {
+    this.editor?.chain().focus().clearNodes().unsetAllMarks().run();
+  }
+
+  insertPageBreak() {
+    this.editor?.chain().focus().setHardBreak().run();
+  }
+
+
 }

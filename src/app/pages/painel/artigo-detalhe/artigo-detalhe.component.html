@@ -1,169 +1,179 @@
 <div class="artigo-detalhe-container">
-  <!-- Header -->
-  <div class="page-header">
-    <div class="header-content">
-      <h1 class="page-title">
-        {{ isEditMode ? 'Editar Artigo' : 'Novo Artigo' }}
-      </h1>
-      <div class="header-actions">
-        <button type="button" class="btn btn-outline-secondary me-2" (click)="onCancel()">
-          <i class="fas fa-times me-1"></i>
-          Cancelar
-        </button>
-        <button type="button" class="btn btn-primary" (click)="onSubmit()" [disabled]="artigoForm.invalid">
-          <i class="fas fa-save me-1"></i>
-          {{ isEditMode ? 'Atualizar' : 'Salvar' }}
-        </button>
-      </div>
-    </div>
-  </div>
+
 
   <!-- Main Content -->
   <div class="content-wrapper">
     <form [formGroup]="artigoForm" (ngSubmit)="onSubmit()">
       
-      <!-- Sidebar de Configurações -->
-      <div class="sidebar">
-        <div class="sidebar-content">
-          <h3 class="sidebar-title">
+      <!-- Configurações Horizontais no Topo -->
+      <div class="config-section">
+        <div class="config-header">
+          <h3 class="config-title">
             <i class="fas fa-cog me-2"></i>
             Configurações
           </h3>
-
-          <!-- Título -->
-          <div class="form-group">
-            <label for="titulo" class="form-label">Título *</label>
-            <input 
-              type="text" 
-              id="titulo" 
-              class="form-control"
-              formControlName="titulo"
-              [class.is-invalid]="titulo?.invalid && titulo?.touched"
-              placeholder="Digite o título do artigo"
-            >
-            <div class="invalid-feedback" *ngIf="titulo?.invalid && titulo?.touched">
-              <div *ngIf="titulo?.errors?.['required']">Título é obrigatório</div>
-              <div *ngIf="titulo?.errors?.['minlength']">Título deve ter pelo menos 3 caracteres</div>
-            </div>
+          <div class="config-actions">
+            <button type="button" class="btn btn-outline-secondary me-2" (click)="onCancel()">
+              <i class="fas fa-times me-1"></i>
+              Cancelar
+            </button>
+            <button type="button" class="btn btn-primary" (click)="onSubmit()" [disabled]="artigoForm.invalid">
+              <i class="fas fa-save me-1"></i>
+              {{ isEditMode ? 'Atualizar' : 'Salvar' }}
+            </button>
           </div>
-
-          <!-- Autor -->
-          <div class="form-group">
-            <label for="autor" class="form-label">Autor *</label>
-            <select 
-              id="autor" 
-              class="form-select"
-              formControlName="autor"
-              [class.is-invalid]="autor?.invalid && autor?.touched"
-            >
-              <option value="">Selecione um autor</option>
-              <option *ngFor="let autor of autores" [value]="autor.id">
-                {{ autor.nome }}
-              </option>
-            </select>
-            <div class="invalid-feedback" *ngIf="autor?.invalid && autor?.touched">
-              Autor é obrigatório
-            </div>
-          </div>
-
-          <!-- Categoria -->
-          <div class="form-group">
-            <label for="categoria" class="form-label">Categoria *</label>
-            <select 
-              id="categoria" 
-              class="form-select"
-              formControlName="categoria"
-              [class.is-invalid]="categoria?.invalid && categoria?.touched"
-            >
-              <option value="">Selecione uma categoria</option>
-              <option *ngFor="let cat of categorias" [value]="cat.id">
-                {{ cat.nome }}
-              </option>
-            </select>
-            <div class="invalid-feedback" *ngIf="categoria?.invalid && categoria?.touched">
-              Categoria é obrigatória
-            </div>
-          </div>
-
-          <!-- Status -->
-          <div class="form-group">
-            <label for="status" class="form-label">Status *</label>
-            <select 
-              id="status" 
-              class="form-select"
-              formControlName="status"
-              [class.is-invalid]="status?.invalid && status?.touched"
-            >
-              <option *ngFor="let st of statusOptions" [value]="st.value">
-                {{ st.label }}
-              </option>
-            </select>
-            <div class="invalid-feedback" *ngIf="status?.invalid && status?.touched">
-              Status é obrigatório
-            </div>
-          </div>
-
-          <!-- Data de Publicação -->
-          <div class="form-group">
-            <label for="dataPublicacao" class="form-label">Data de Publicação *</label>
-            <input 
-              type="date" 
-              id="dataPublicacao" 
-              class="form-control"
-              formControlName="dataPublicacao"
-              [class.is-invalid]="dataPublicacao?.invalid && dataPublicacao?.touched"
-            >
-            <div class="invalid-feedback" *ngIf="dataPublicacao?.invalid && dataPublicacao?.touched">
-              Data de publicação é obrigatória
-            </div>
-          </div>
-
-          <!-- Público -->
-          <div class="form-group">
-            <label for="publico" class="form-label">Público *</label>
-            <select 
-              id="publico" 
-              class="form-select"
-              formControlName="publico"
-              [class.is-invalid]="publico?.invalid && publico?.touched"
-            >
-              <option *ngFor="let pub of publicoOptions" [value]="pub.value">
-                {{ pub.label }}
-              </option>
-            </select>
-            <div class="invalid-feedback" *ngIf="publico?.invalid && publico?.touched">
-              Tipo de público é obrigatório
-            </div>
-            <small class="form-text text-muted">
-              <div *ngIf="publico?.value === 'publico'" class="text-success">
-                <i class="fas fa-globe me-1"></i>
-                Visível para todos os visitantes
+        </div>
+        <h1 class="page-title">
+        {{ isEditMode ? 'Editar Artigo' : 'Novo Artigo' }}
+      </h1>
+        <div class="config-content">
+          <!-- Primeira linha de campos -->
+          <div class="config-row">
+            <!-- Título -->
+            <div class="form-group">
+              <label for="titulo" class="form-label">Título *</label>
+              <input 
+                type="text" 
+                id="titulo" 
+                class="form-control"
+                formControlName="titulo"
+                [class.is-invalid]="titulo?.invalid && titulo?.touched"
+                placeholder="Digite o título do artigo"
+              >
+              <div class="invalid-feedback" *ngIf="titulo?.invalid && titulo?.touched">
+                <div *ngIf="titulo?.errors?.['required']">Título é obrigatório</div>
+                <div *ngIf="titulo?.errors?.['minlength']">Título deve ter pelo menos 3 caracteres</div>
               </div>
-              <div *ngIf="publico?.value === 'assinantes'" class="text-warning">
-                <i class="fas fa-star me-1"></i>
-                Apenas para assinantes
-              </div>
-              <div *ngIf="publico?.value === 'privado'" class="text-danger">
-                <i class="fas fa-lock me-1"></i>
-                Apenas para administradores
-              </div>
-            </small>
-          </div>
+            </div>
 
-          <!-- Informações do Artigo -->
-          <div class="info-section" *ngIf="isEditMode">
-            <h4 class="info-title">Informações</h4>
-            <div class="info-item">
-              <span class="info-label">ID:</span>
-              <span class="info-value">#{{ artigoId }}</span>
+            <!-- Autor -->
+            <div class="form-group">
+              <label for="autor" class="form-label">Autor *</label>
+              <select 
+                id="autor" 
+                class="form-select"
+                formControlName="autor"
+                [class.is-invalid]="autor?.invalid && autor?.touched"
+              >
+                <option value="">Selecione um autor</option>
+                <option *ngFor="let autor of autores" [value]="autor.id">
+                  {{ autor.nome }}
+                </option>
+              </select>
+              <div class="invalid-feedback" *ngIf="autor?.invalid && autor?.touched">
+                Autor é obrigatório
+              </div>
             </div>
-            <div class="info-item">
-              <span class="info-label">Criado em:</span>
-              <span class="info-value">15/01/2024</span>
+
+            <!-- Categoria -->
+            <div class="form-group">
+              <label for="categoria" class="form-label">Categoria *</label>
+              <select 
+                id="categoria" 
+                class="form-select"
+                formControlName="categoria"
+                [class.is-invalid]="categoria?.invalid && categoria?.touched"
+              >
+                <option value="">Selecione uma categoria</option>
+                <option *ngFor="let cat of categorias" [value]="cat.id">
+                  {{ cat.nome }}
+                </option>
+              </select>
+              <div class="invalid-feedback" *ngIf="categoria?.invalid && categoria?.touched">
+                Categoria é obrigatória
+              </div>
             </div>
-            <div class="info-item">
-              <span class="info-label">Última edição:</span>
-              <span class="info-value">20/01/2024</span>
+          </div>
+          
+          <!-- Segunda linha de campos -->
+          <div class="config-row">
+
+            <!-- Status -->
+            <div class="form-group">
+              <label for="status" class="form-label">Status *</label>
+              <select 
+                id="status" 
+                class="form-select"
+                formControlName="status"
+                [class.is-invalid]="status?.invalid && status?.touched"
+              >
+                <option *ngFor="let st of statusOptions" [value]="st.value">
+                  {{ st.label }}
+                </option>
+              </select>
+              <div class="invalid-feedback" *ngIf="status?.invalid && status?.touched">
+                Status é obrigatório
+              </div>
+            </div>
+
+            <!-- Data de Publicação -->
+            <div class="form-group">
+              <label for="dataPublicacao" class="form-label">Data de Publicação *</label>
+              <input 
+                type="date" 
+                id="dataPublicacao" 
+                class="form-control"
+                formControlName="dataPublicacao"
+                [class.is-invalid]="dataPublicacao?.invalid && dataPublicacao?.touched"
+              >
+              <div class="invalid-feedback" *ngIf="dataPublicacao?.invalid && dataPublicacao?.touched">
+                Data de publicação é obrigatória
+              </div>
+            </div>
+
+            <!-- Público -->
+            <div class="form-group">
+              <label for="publico" class="form-label">Público *</label>
+              <select 
+                id="publico" 
+                class="form-select"
+                formControlName="publico"
+                [class.is-invalid]="publico?.invalid && publico?.touched"
+              >
+                <option *ngFor="let pub of publicoOptions" [value]="pub.value">
+                  {{ pub.label }}
+                </option>
+              </select>
+              <div class="invalid-feedback" *ngIf="publico?.invalid && publico?.touched">
+                Tipo de público é obrigatório
+              </div>
+              <small class="form-text text-muted">
+                <div *ngIf="publico?.value === 'publico'" class="text-success">
+                  <i class="fas fa-globe me-1"></i>
+                  Visível para todos os visitantes
+                </div>
+                <div *ngIf="publico?.value === 'assinantes'" class="text-warning">
+                  <i class="fas fa-star me-1"></i>
+                  Apenas para assinantes
+                </div>
+                <div *ngIf="publico?.value === 'privado'" class="text-danger">
+                  <i class="fas fa-lock me-1"></i>
+                  Apenas para administradores
+                </div>
+              </small>
+            </div>
+          </div>
+          
+          <!-- Terceira linha - Informações do Artigo -->
+          <div class="config-row" *ngIf="isEditMode">
+
+            <!-- Informações do Artigo -->
+            <div class="info-section">
+              <h4 class="info-title">Informações</h4>
+              <div class="info-items">
+                <div class="info-item">
+                  <span class="info-label">ID:</span>
+                  <span class="info-value">#{{ artigoId }}</span>
+                </div>
+                <div class="info-item">
+                  <span class="info-label">Criado em:</span>
+                  <span class="info-value">15/01/2024</span>
+                </div>
+                <div class="info-item">
+                  <span class="info-label">Última edição:</span>
+                  <span class="info-value">20/01/2024</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>

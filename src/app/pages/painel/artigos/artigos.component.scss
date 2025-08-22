@@ -1,6 +1,7 @@
 .artigos-container {
   padding: var(--space-6);
-  max-width: 100%;
+  max-width: 1520px;
+  margin: 0 auto;
   
   @media (max-width: 768px) {
     padding: var(--space-4);
