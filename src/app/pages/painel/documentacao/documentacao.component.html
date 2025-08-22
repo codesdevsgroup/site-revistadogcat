@@ -1,0 +1,52 @@
+<div class="documentacao-container">
+  <div class="documentacao-sidebar">
+    <h3 class="sidebar-title">
+      <i class="fas fa-book"></i>
+      Documentação
+    </h3>
+    
+    <nav class="docs-nav">
+      <div 
+        *ngFor="let doc of documentos" 
+        class="nav-item"
+        [class.active]="documentoAtual === doc.id"
+        (click)="navegarPara(doc.id)"
+      >
+        <div class="nav-item-content">
+          <i [class]="doc.icone"></i>
+          <div class="nav-item-text">
+            <span class="nav-title">{{ doc.titulo }}</span>
+            <span class="nav-description">{{ doc.descricao }}</span>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </div>
+
+  <div class="documentacao-content">
+    <div class="content-header" *ngIf="getDocumentoAtual() as docAtual">
+      <h1 class="page-title">
+        <i [class]="docAtual.icone"></i>
+        {{ docAtual.titulo }}
+      </h1>
+      <p class="page-description">{{ docAtual.descricao }}</p>
+    </div>
+
+    <div class="content-body">
+      <div *ngIf="carregando" class="loading-state">
+        <i class="fas fa-spinner fa-spin"></i>
+        <span>Carregando documentação...</span>
+      </div>
+
+      <div *ngIf="erro && !carregando" class="error-state">
+        <i class="fas fa-exclamation-triangle"></i>
+        <h3>Erro ao carregar documento</h3>
+        <p>Não foi possível carregar o documento solicitado.</p>
+      </div>
+
+      <div *ngIf="!carregando && !erro" class="markdown-content">
+        <markdown [data]="conteudoMarkdown | async"></markdown>
+      </div>
+    </div>
+  </div>
+</div>

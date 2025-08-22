@@ -4,6 +4,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { UsuariosComponent } from './usuarios/usuarios.component';
 import { ArtigosComponent } from './artigos/artigos.component';
 import { ArtigoDetalheComponent } from './artigo-detalhe/artigo-detalhe.component';
+import { DocumentacaoComponent } from './documentacao/documentacao.component';
 
 export const painelRoutes: Routes = [
   {
@@ -15,7 +16,9 @@ export const painelRoutes: Routes = [
       { path: 'usuarios', component: UsuariosComponent },
       { path: 'artigos', component: ArtigosComponent },
       { path: 'artigos/novo', component: ArtigoDetalheComponent },
-      { path: 'artigos/:id', component: ArtigoDetalheComponent }
+      { path: 'artigos/:id', component: ArtigoDetalheComponent },
+      { path: 'documentacao', component: DocumentacaoComponent },
+      { path: 'documentacao/:doc', component: DocumentacaoComponent }
     ]
   }
 ];
