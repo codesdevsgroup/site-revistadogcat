@@ -81,7 +81,33 @@
                 <p>Informações do proprietário/criador</p>
               </div>
               
-              <form [formGroup]="userForm" class="step-form">
+              <!-- Seleção de Proprietário -->
+              <div class="proprietario-selection mb-4">
+                <div class="selection-card">
+                  <h4><i class="fas fa-user-friends"></i> O proprietário do cão é diferente de você?</h4>
+                  <div class="toggle-switch-container">
+                    <div class="toggle-switch-wrapper">
+                      <span class="toggle-label" [class.active]="!proprietarioDiferente">NÃO</span>
+                      <div class="toggle-switch" [class.active]="proprietarioDiferente" (click)="toggleProprietarioDiferente()">
+                        <div class="toggle-slider"></div>
+                      </div>
+                      <span class="toggle-label" [class.active]="proprietarioDiferente">SIM</span>
+                    </div>
+                    <div class="toggle-description">
+                      <span *ngIf="!proprietarioDiferente">Você é o proprietário do cão</span>
+                      <span *ngIf="proprietarioDiferente">O proprietário é outra pessoa</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Formulário de dados do proprietário (apenas se for diferente do usuário logado) -->
+              <form [formGroup]="userForm" class="step-form" *ngIf="proprietarioDiferente">
+                <div class="form-section-title">
+                  <h4>📝 Dados do Proprietário</h4>
+                  <p>Preencha as informações do proprietário do cão</p>
+                </div>
+                
                 <div class="row">
                   <div class="col-md-6 mb-3">
                     <label class="form-label">Nome Completo *</label>
@@ -198,14 +224,63 @@
                     </select>
                   </div>
                 </div>
-
-                <div class="form-actions">
-                  <button type="button" class="btn btn-primary" (click)="nextStep()" [disabled]="!userForm.valid">
-                    Próximo: Dados do Cão
-                    <i class="icon">→</i>
-                  </button>
-                </div>
               </form>
+              
+              <!-- Informações do usuário logado (quando ele é o proprietário) -->
+              <div class="user-info-display" *ngIf="!proprietarioDiferente">
+                <div class="form-section-title">
+                  <h4>✅ Dados do Proprietário (Seus dados)</h4>
+                  <p>Utilizando as informações da sua conta</p>
+                </div>
+                
+                <div class="user-data-card">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="data-item">
+                        <label>Nome Completo</label>
+                        <div class="data-value">{{ usuarioLogado.nomeCompleto }}</div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="data-item">
+                        <label>CPF</label>
+                        <div class="data-value">{{ usuarioLogado.cpf }}</div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="data-item">
+                        <label>E-mail</label>
+                        <div class="data-value">{{ usuarioLogado.email }}</div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="data-item">
+                        <label>Telefone</label>
+                        <div class="data-value">{{ usuarioLogado.telefone }}</div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div class="data-item">
+                        <label>Endereço</label>
+                        <div class="data-value">{{ usuarioLogado.endereco }}, {{ usuarioLogado.cidade }} - {{ usuarioLogado.estado }}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button type="button" class="btn btn-primary" (click)="nextStep()" [disabled]="proprietarioDiferente && !userForm.valid">
+                  Próximo: Dados do Cão
+                  <i class="icon">→</i>
+                </button>
+              </div>
             </div>
 
             <!-- Step 2: Dados do Cão -->
@@ -267,18 +342,93 @@
                   </div>
                 </div>
 
-                <div class="row">
-                  <div class="col-md-6 mb-3">
-                    <label class="form-label">Registro de Pedigree *</label>
-                    <input type="text" class="form-control" formControlName="registroPedigree" placeholder="Número do registro">
-                    <small class="form-text">Registro CBKC, FCI ou outro órgão oficial</small>
-                    <div class="invalid-feedback" *ngIf="dogForm.get('registroPedigree')?.invalid && dogForm.get('registroPedigree')?.touched">
-                      Registro de pedigree é obrigatório
+                <!-- Seção Pedigree -->
+                <div class="pedigree-section mb-4">
+                  <div class="section-card">
+                    <h4><i class="fas fa-certificate"></i> O cão possui pedigree?</h4>
+                    <div class="toggle-switch-container">
+                      <div class="toggle-switch-wrapper">
+                        <span class="toggle-label" [class.active]="!temPedigree">NÃO</span>
+                        <div class="toggle-switch" [class.active]="temPedigree" (click)="togglePedigree()">
+                          <div class="toggle-slider"></div>
+                        </div>
+                        <span class="toggle-label" [class.active]="temPedigree">SIM</span>
+                      </div>
+                      <div class="toggle-description">
+                        <span *ngIf="!temPedigree">O cão não possui pedigree registrado</span>
+                        <span *ngIf="temPedigree">O cão possui pedigree - preencha os dados abaixo</span>
+                      </div>
+                    </div>
+                    
+                    <div class="pedigree-details" *ngIf="temPedigree">
+                      <div class="row">
+                        <div class="col-md-12 mb-3">
+                          <label class="form-label">Número do Registro de Pedigree *</label>
+                          <input type="text" class="form-control" formControlName="registroPedigree" placeholder="Número do registro CBKC, FCI ou outro órgão oficial">
+                          <div class="invalid-feedback" *ngIf="dogForm.get('registroPedigree')?.invalid && dogForm.get('registroPedigree')?.touched">
+                            Registro de pedigree é obrigatório quando o cão possui pedigree
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div class="row">
+                        <div class="col-md-6 mb-3">
+                          <label class="form-label">Foto do Pedigree - Frente *</label>
+                          <div class="file-upload-area">
+                            <input type="file" id="pedigreeFrente" (change)="onPedigreeFrenteSelected($event)" accept="image/*,.pdf" class="file-input">
+                            <label for="pedigreeFrente" class="file-upload-label">
+                              <i class="fas fa-cloud-upload-alt"></i>
+                              <span *ngIf="!pedigreeFrente">Clique para enviar a frente do pedigree</span>
+                              <span *ngIf="pedigreeFrente" class="file-selected">{{ pedigreeFrente.name }}</span>
+                            </label>
+                          </div>
+                          <small class="form-text">Formatos aceitos: JPG, PNG, PDF (máx. 5MB)</small>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                          <label class="form-label">Foto do Pedigree - Verso *</label>
+                          <div class="file-upload-area">
+                            <input type="file" id="pedigreeVerso" (change)="onPedigreeVersoSelected($event)" accept="image/*,.pdf" class="file-input">
+                            <label for="pedigreeVerso" class="file-upload-label">
+                              <i class="fas fa-cloud-upload-alt"></i>
+                              <span *ngIf="!pedigreeVerso">Clique para enviar o verso do pedigree</span>
+                              <span *ngIf="pedigreeVerso" class="file-selected">{{ pedigreeVerso.name }}</span>
+                            </label>
+                          </div>
+                          <small class="form-text">Formatos aceitos: JPG, PNG, PDF (máx. 5MB)</small>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                  <div class="col-md-6 mb-3">
-                    <label class="form-label">Microchip</label>
-                    <input type="text" class="form-control" formControlName="microchip" placeholder="Número do microchip">
+                </div>
+                
+                <!-- Seção Microchip -->
+                <div class="microchip-section mb-4">
+                  <div class="section-card">
+                    <h4><i class="fas fa-microchip"></i> O cão possui microchip?</h4>
+                    <div class="toggle-switch-container">
+                      <div class="toggle-switch-wrapper">
+                        <span class="toggle-label" [class.active]="!temMicrochip">NÃO</span>
+                        <div class="toggle-switch" [class.active]="temMicrochip" (click)="toggleMicrochip()">
+                          <div class="toggle-slider"></div>
+                        </div>
+                        <span class="toggle-label" [class.active]="temMicrochip">SIM</span>
+                      </div>
+                      <div class="toggle-description">
+                        <span *ngIf="!temMicrochip">O cão não possui microchip implantado</span>
+                        <span *ngIf="temMicrochip">O cão possui microchip - informe o número abaixo</span>
+                      </div>
+                    </div>
+                    
+                    <div class="microchip-details" *ngIf="temMicrochip">
+                      <div class="row">
+                        <div class="col-md-8 mb-3">
+                          <label class="form-label">Número do Microchip *</label>
+                          <input type="text" class="form-control" formControlName="numeroMicrochip" placeholder="Digite o número do microchip" maxlength="15">
+                          <small class="form-text">Número de identificação único do microchip</small>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
 

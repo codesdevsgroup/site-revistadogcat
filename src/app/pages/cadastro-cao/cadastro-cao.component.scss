@@ -1,12 +1,12 @@
 .cadastro-container {
-  background: linear-gradient(135deg, #f8f9fa 0%, var(--tertiaryColor) 100%);
+  background: linear-gradient(135deg, var(--gray-50) 0%, var(--tertiaryColor) 100%);
   min-height: 100vh;
 
-  // Hero Header
+  // Hero Header - Reduzido ainda mais
   .hero-header {
     background: linear-gradient(135deg, var(--primaryColor) 0%, var(--primaryColorDark) 100%);
-    color: white;
-    padding: 2.5rem 0;
+    color: var(--white);
+    padding: var(--space-3) 0; // Reduzido para 0.75rem
     position: relative;
     overflow: hidden;
 
@@ -27,32 +27,32 @@
     }
 
     .hero-icon {
-      font-size: 2.4rem;
-      margin-bottom: 1rem;
+      font-size: 1.5rem; // Reduzido ainda mais
+      margin-bottom: var(--space-2); // Reduzido para 0.5rem
       animation: bounce 2s infinite;
     }
 
     h1 {
-      font-size: 3rem;
-      font-weight: 800;
-      margin-bottom: 1rem;
-      background: linear-gradient(45deg, #fff, var(--goldenColor));
+      font-size: 1.875rem; // Reduzido ainda mais
+      font-weight: var(--fontWeight-extrabold);
+      margin-bottom: var(--space-2); // Reduzido para 0.5rem
+      background: linear-gradient(45deg, var(--white), var(--goldenColor));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
 
     .hero-subtitle {
-      font-size: 1.5rem;
-      font-weight: 600;
-      margin-bottom: 1.5rem;
+      font-size: 1rem; // Reduzido ainda mais
+      font-weight: var(--fontWeight-semibold);
+      margin-bottom: var(--space-3); // Reduzido para 0.75rem
       color: var(--secondaryColor);
     }
 
     .hero-description {
-      font-size: 1.1rem;
-      line-height: 1.6;
-      margin-bottom: 3rem;
+      font-size: 0.9rem; // Reduzido ainda mais
+      line-height: 1.5;
+      margin-bottom: var(--space-5); // Reduzido para 1.25rem
       opacity: 0.9;
     }
 
@@ -60,70 +60,70 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 2rem;
+        gap: var(--space-8);
         flex-wrap: wrap;
-        margin-top: 1rem;
+        margin-top: var(--space-4);
 
         .option-card {
           background: rgba(255, 255, 255, 0.1);
           backdrop-filter: blur(10px);
           border: 2px solid rgba(255, 255, 255, 0.2);
-          border-radius: 20px;
-          padding: 2rem 1.5rem;
+          border-radius: var(--radius-2xl);
+          padding: var(--space-6) var(--space-5); // Reduzido de 2rem 1.5rem
           text-align: center;
-          min-width: 200px;
-          transition: all 0.3s ease;
+          min-width: 180px; // Reduzido de 200px
+          transition: var(--transition-normal);
           cursor: pointer;
           position: relative;
 
           &:hover {
             transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            box-shadow: var(--shadow-2xl);
             border-color: rgba(255, 255, 255, 0.4);
           }
 
           &.active {
             background: rgba(255, 255, 255, 0.2);
             border-color: var(--goldenColor);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            box-shadow: var(--shadow-xl);
           }
 
           .option-icon {
             font-size: 2.5rem;
-            margin-bottom: 1rem;
+            margin-bottom: var(--space-4);
           }
 
           h3 {
             font-size: 1.2rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            color: white;
+            font-weight: var(--fontWeight-bold);
+            margin-bottom: var(--space-2);
+            color: var(--white);
           }
 
           p {
             font-size: 0.9rem;
             opacity: 0.8;
-            margin-bottom: 1rem;
+            margin-bottom: var(--space-4);
           }
 
           .option-badge {
             background: var(--goldenColor);
             color: var(--primaryColorDark);
-            padding: 0.3rem 0.8rem;
-            border-radius: 15px;
+            padding: var(--space-1) var(--space-3);
+            border-radius: var(--radius-lg);
             font-size: 0.75rem;
-            font-weight: 700;
+            font-weight: var(--fontWeight-bold);
             text-transform: uppercase;
             letter-spacing: 0.5px;
           }
 
           .option-note {
             background: rgba(255, 193, 7, 0.2);
-            color: #ffc107;
-            padding: 0.3rem 0.8rem;
-            border-radius: 15px;
+            color: var(--warning);
+            padding: var(--space-1) var(--space-3);
+            border-radius: var(--radius-lg);
             font-size: 0.75rem;
-            font-weight: 600;
+            font-weight: var(--fontWeight-semibold);
           }
 
           &.whatsapp-option:hover {
@@ -173,6 +173,7 @@
 
   // Progress Section
   .progress-section {
+    scroll-margin-top: 100px;
     background: white;
     padding: 1rem 0;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -255,12 +256,12 @@
 
   // Form Section
   .form-section {
-    padding: 1rem 0 2rem;
+    padding: var(--space-4) 0 var(--space-8);
 
     .form-card {
-      background: white;
-      border-radius: 20px;
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+      background: var(--white);
+      border-radius: var(--radius-2xl);
+      box-shadow: var(--shadow-lg);
       overflow: hidden;
 
       .form-step {
@@ -294,57 +295,57 @@
           margin: 0 auto;
 
           .form-label {
-            font-weight: 600;
-            color: #495057;
-            margin-bottom: 0.5rem;
+            font-weight: var(--fontWeight-semibold);
+            color: var(--gray-700);
+            margin-bottom: var(--space-2);
           }
 
           .form-control, .form-select {
-            border: 2px solid #e9ecef;
-            border-radius: 10px;
-            padding: 0.75rem 1rem;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            padding: var(--space-3) var(--space-4);
             font-size: 0.9rem;
-            transition: all 0.3s ease;
+            transition: var(--transition-normal);
 
             &:focus {
               border-color: var(--primaryColor);
-              box-shadow: 0 0 0 0.2rem rgba(var(--primaryColor-rgb), 0.25);
+              box-shadow: 0 0 0 0.2rem rgba(26, 61, 30, 0.25);
             }
 
             &.is-invalid {
-              border-color: #dc3545;
+              border-color: var(--error);
             }
           }
 
           .invalid-feedback {
             display: block;
-            color: #dc3545;
+            color: var(--error);
             font-size: 0.7875rem;
-            margin-top: 0.25rem;
+            margin-top: var(--space-1);
           }
 
           .form-text {
             font-size: 0.7rem;
-            color: #6c757d;
-            margin-top: 0.2rem;
+            color: var(--gray-500);
+            margin-top: var(--space-1);
           }
         }
 
         .form-actions {
           display: flex;
           justify-content: space-between;
-          margin-top: 1.6rem;
-          padding-top: 1rem;
-          border-top: 1px solid #e9ecef;
+          margin-top: var(--space-6);
+          padding-top: var(--space-4);
+          border-top: 1px solid var(--gray-200);
 
           .btn {
-            padding: 0.75rem 2rem;
-            border-radius: 25px;
-            font-weight: 600;
+            padding: var(--space-3) var(--space-8);
+            border-radius: var(--radius-full);
+            font-weight: var(--fontWeight-semibold);
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            transition: all 0.3s ease;
+            gap: var(--space-2);
+            transition: var(--transition-normal);
 
             .icon {
               font-size: 1.08rem;
@@ -360,24 +361,24 @@
               }
 
               &:disabled {
-                background: #6c757d;
+                background: var(--gray-500);
                 transform: none;
               }
             }
 
             &.btn-secondary {
-              background: #6c757d;
+              background: var(--gray-500);
               border: none;
-              color: white;
+              color: var(--white);
 
               &:hover {
-                background: #5a6268;
+                background: var(--gray-600);
                 transform: translateY(-2px);
               }
             }
 
             &.btn-success {
-              background: #28a745;
+              background: var(--success);
               border: none;
 
               &:hover {
@@ -947,3 +948,82 @@
     box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
   }
 }
+
+  // Toggle Switch Components - Refatorado com variáveis CSS
+  .toggle-switch-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-4);
+    margin: var(--space-6) 0;
+  }
+
+  .toggle-switch-wrapper {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+
+    .toggle-label {
+      font-weight: var(--fontWeight-semibold);
+      font-size: 0.9rem;
+      color: var(--gray-500);
+      transition: var(--transition-normal);
+      min-width: 40px;
+      text-align: center;
+
+      &.active {
+        color: var(--gray-700);
+        font-weight: var(--fontWeight-bold);
+      }
+    }
+
+    .toggle-switch {
+      position: relative;
+      width: 60px;
+      height: 30px;
+      background: var(--gray-200);
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      transition: var(--transition-normal);
+      border: 2px solid var(--gray-300);
+
+      &:hover {
+        background: var(--gray-300);
+        box-shadow: var(--shadow-sm);
+      }
+
+      &.active {
+        background: var(--success);
+        border-color: var(--success);
+
+        .toggle-slider {
+          transform: translateX(30px);
+        }
+      }
+
+      .toggle-slider {
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 22px;
+        height: 22px;
+        background: var(--white);
+        border-radius: var(--radius-full);
+        transition: var(--transition-normal);
+        box-shadow: var(--shadow-sm);
+      }
+    }
+
+    .toggle-description {
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--gray-500);
+      font-style: italic;
+    }
+  }
+
+  // Seções específicas
+  .pedigree-section,
+  .microchip-section {
+    margin-bottom: var(--space-8);
+  }

@@ -37,6 +37,13 @@ export class DocumentacaoComponent implements OnInit {
       icone: 'fas fa-users'
     },
     {
+      id: 'cadastro-cao',
+      titulo: 'API de Cadastro de Cão',
+      arquivo: 'cadastro_cao_api.md',
+      descricao: 'Endpoints para cadastro e gerenciamento de cães',
+      icone: 'fas fa-dog'
+    },
+    {
       id: 'errors',
       titulo: 'Padrão de Códigos de Status HTTP',
       arquivo: 'error_codes.md',

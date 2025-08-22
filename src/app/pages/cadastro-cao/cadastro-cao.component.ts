@@ -48,6 +48,7 @@ export class CadastroCaoComponent {
 
   currentStep = 1;
   videoOption: 'upload' | 'youtube' | 'whatsapp' = 'upload';
+  proprietarioDiferente = false; // Nova propriedade para controlar se o proprietário é diferente
   userForm: FormGroup;
   dogForm: FormGroup;
   videoForm: FormGroup;
@@ -55,6 +56,27 @@ export class CadastroCaoComponent {
   uploadProgress = 0;
   isCepLoading = false;
   cepStatus: 'none' | 'loading' | 'success' | 'error' = 'none';
+  
+  // Dados do usuário logado (simulado - em produção viria de um serviço de autenticação)
+  usuarioLogado = {
+    nomeCompleto: 'João Silva',
+    cpf: '123.456.789-00',
+    email: 'joao@email.com',
+    telefone: '(11) 99999-9999',
+    endereco: 'Rua das Flores, 123',
+    cep: '01234-567',
+    cidade: 'São Paulo',
+    estado: 'SP'
+  };
+  
+  // Propriedades para pedigree
+  temPedigree: boolean = false;
+  pedigreeFrente: File | null = null;
+  pedigreeVerso: File | null = null;
+  
+  // Propriedades para microchip
+  temMicrochip: boolean = false;
+  numeroMicrochip: string = '';
 
   constructor(private fb: FormBuilder, private http: HttpClient, private socialMediaService: SocialMediaService) {
     this.socialMedia = this.socialMediaService.getSocialMedia();
@@ -68,6 +90,9 @@ export class CadastroCaoComponent {
       cidade: [''],
       estado: ['']
     });
+    
+    // Preencher automaticamente com dados do usuário logado
+    this.preencherDadosUsuarioLogado();
 
     this.dogForm = this.fb.group({
       nome: ['', [Validators.required, Validators.minLength(2)]],
@@ -78,6 +103,7 @@ export class CadastroCaoComponent {
       altura: [''],
       registroPedigree: ['', [Validators.required]],
       microchip: [''],
+      numeroMicrochip: [''],
       nomePai: [''],
       nomeMae: [''],
       titulos: [''],
@@ -89,6 +115,123 @@ export class CadastroCaoComponent {
       confirmaWhatsapp: [false],
       observacoes: ['']
     });
+  }
+
+  // Método para alternar entre proprietário diferente ou mesmo usuário logado
+  toggleProprietarioDiferente() {
+    this.proprietarioDiferente = !this.proprietarioDiferente;
+    
+    if (this.proprietarioDiferente) {
+      // Limpar campos para permitir entrada manual
+      this.limparDadosProprietario();
+      // Habilitar validações para campos obrigatórios
+      this.habilitarValidacoesProprietario();
+    } else {
+      // Preencher com dados do usuário logado
+      this.preencherDadosUsuarioLogado();
+      // Desabilitar validações já que os dados vêm do usuário logado
+      this.desabilitarValidacoesProprietario();
+    }
+  }
+
+  // Preencher formulário com dados do usuário logado
+  preencherDadosUsuarioLogado() {
+    this.userForm.patchValue({
+      nomeCompleto: this.usuarioLogado.nomeCompleto,
+      cpf: this.usuarioLogado.cpf,
+      email: this.usuarioLogado.email,
+      telefone: this.usuarioLogado.telefone,
+      endereco: this.usuarioLogado.endereco,
+      cep: this.usuarioLogado.cep,
+      cidade: this.usuarioLogado.cidade,
+      estado: this.usuarioLogado.estado
+    });
+  }
+
+  // Limpar dados do proprietário para entrada manual
+  limparDadosProprietario() {
+    this.userForm.patchValue({
+      nomeCompleto: '',
+      cpf: '',
+      email: '',
+      telefone: '',
+      endereco: '',
+      cep: '',
+      cidade: '',
+      estado: ''
+    });
+  }
+
+  // Habilitar validações quando proprietário é diferente
+  habilitarValidacoesProprietario() {
+    this.userForm.get('nomeCompleto')?.setValidators([Validators.required, Validators.minLength(2)]);
+    this.userForm.get('cpf')?.setValidators([Validators.required]);
+    this.userForm.get('email')?.setValidators([Validators.required, Validators.email]);
+    this.userForm.get('telefone')?.setValidators([Validators.required]);
+    this.userForm.updateValueAndValidity();
+  }
+
+  // Desabilitar validações quando usar dados do usuário logado
+  desabilitarValidacoesProprietario() {
+    this.userForm.get('nomeCompleto')?.clearValidators();
+    this.userForm.get('cpf')?.clearValidators();
+    this.userForm.get('email')?.clearValidators();
+    this.userForm.get('telefone')?.clearValidators();
+    this.userForm.updateValueAndValidity();
+  }
+  
+  // Métodos para pedigree
+  togglePedigree() {
+    this.temPedigree = !this.temPedigree;
+    if (!this.temPedigree) {
+      this.pedigreeFrente = null;
+      this.pedigreeVerso = null;
+    }
+  }
+  
+  onPedigreeFrenteSelected(event: any) {
+    const file = event.target.files[0];
+    if (file && this.isValidImageFile(file)) {
+      this.pedigreeFrente = file;
+    } else {
+      event.target.value = '';
+      alert('Por favor, selecione um arquivo de imagem válido (JPG, PNG, PDF)');
+    }
+  }
+  
+  onPedigreeVersoSelected(event: any) {
+    const file = event.target.files[0];
+    if (file && this.isValidImageFile(file)) {
+      this.pedigreeVerso = file;
+    } else {
+      event.target.value = '';
+      alert('Por favor, selecione um arquivo de imagem válido (JPG, PNG, PDF)');
+    }
+  }
+  
+  // Métodos para microchip
+  toggleMicrochip() {
+    this.temMicrochip = !this.temMicrochip;
+    if (!this.temMicrochip) {
+      this.numeroMicrochip = '';
+    }
+  }
+  
+  // Método auxiliar para validar arquivos de imagem
+  private isValidImageFile(file: File): boolean {
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'];
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    
+    if (!allowedTypes.includes(file.type)) {
+      return false;
+    }
+    
+    if (file.size > maxSize) {
+      alert('O arquivo deve ter no máximo 5MB');
+      return false;
+    }
+    
+    return true;
   }
 
   selectVideoOption(option: 'upload' | 'youtube' | 'whatsapp') {
@@ -194,7 +337,8 @@ export class CadastroCaoComponent {
   }
 
   isFormValid(): boolean {
-    const userValid = this.userForm.valid;
+    // Validar dados do proprietário apenas se for diferente do usuário logado
+    const userValid = this.proprietarioDiferente ? this.userForm.valid : true;
     const dogValid = this.dogForm.valid;
     
     let videoValid = false;
@@ -211,23 +355,59 @@ export class CadastroCaoComponent {
         break;
     }
     
+    // Validar pedigree se selecionado
+    if (this.temPedigree) {
+      const registroPedigree = this.dogForm.get('registroPedigree')?.value;
+      if (!registroPedigree || !this.pedigreeFrente || !this.pedigreeVerso) {
+        return false;
+      }
+    }
+    
+    // Validar microchip se selecionado
+    if (this.temMicrochip) {
+      const numeroMicrochip = this.dogForm.get('numeroMicrochip')?.value;
+      if (!numeroMicrochip || numeroMicrochip.trim().length === 0) {
+        return false;
+      }
+    }
+    
     return userValid && dogValid && videoValid;
   }
 
   submitForm() {
     if (this.isFormValid()) {
+      // Preparar dados para envio
+      const dadosEnvio = {
+        proprietarioDiferente: this.proprietarioDiferente,
+        ...this.dogForm.value,
+        videoOption: this.videoOption,
+        ...this.videoForm.value,
+        temPedigree: this.temPedigree,
+        temMicrochip: this.temMicrochip,
+        numeroMicrochip: this.temMicrochip ? this.dogForm.get('numeroMicrochip')?.value : null
+      };
+      
+      // Incluir dados do proprietário apenas se for diferente do usuário logado
+      if (this.proprietarioDiferente) {
+        dadosEnvio.nomeProprietario = this.userForm.value.nomeCompleto;
+        dadosEnvio.cpfProprietario = this.userForm.value.cpf;
+        dadosEnvio.emailProprietario = this.userForm.value.email;
+        dadosEnvio.telefoneProprietario = this.userForm.value.telefone;
+        dadosEnvio.enderecoProprietario = this.userForm.value.endereco;
+        dadosEnvio.cidade = this.userForm.value.cidade;
+        dadosEnvio.estado = this.userForm.value.estado;
+      }
+      
       // Simular envio dos dados
-      console.log('Dados do usuário:', this.userForm.value);
-      console.log('Dados do cão:', this.dogForm.value);
-      console.log('Dados do vídeo:', this.videoForm.value);
-      console.log('Opção de vídeo:', this.videoOption);
+      console.log('Dados para envio:', dadosEnvio);
+      console.log('Proprietário diferente:', this.proprietarioDiferente);
       console.log('Arquivo selecionado:', this.selectedFile);
       
       // Ir para a tela de sucesso
       this.currentStep = 4;
       
       // Aqui você enviaria os dados para o backend
-      // this.cadastroService.submitCadastro(formData).subscribe(...)
+      // this.cadastroService.submitCadastro(dadosEnvio).subscribe(...)
     } else {
       let message = 'Por favor, preencha todos os campos obrigatórios';
       
