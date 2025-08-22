@@ -15,6 +15,8 @@ export class ArtigoDetalheComponent implements OnInit {
   artigoForm: FormGroup;
   artigoId: string | null = null;
   isEditMode = false;
+  fotoDestaque: string | null = null;
+  fotoDestaqueFile: File | null = null;
 
   // Opções para os selects
   autores = [
@@ -57,7 +59,8 @@ export class ArtigoDetalheComponent implements OnInit {
       status: ['rascunho', Validators.required],
       dataPublicacao: ['', Validators.required],
       publico: ['publico', Validators.required],
-      conteudo: ['', Validators.required]
+      conteudo: ['', Validators.required],
+      fotoDestaque: ['', Validators.required]
     });
   }
 
@@ -83,10 +86,12 @@ export class ArtigoDetalheComponent implements OnInit {
       status: 'publicado',
       dataPublicacao: '2024-01-15',
       publico: 'publico',
-      conteudo: '<h2>Introdução</h2><p>Este artigo aborda os principais cuidados com a saúde dos pets...</p>'
+      conteudo: '<h2>Introdução</h2><p>Este artigo aborda os principais cuidados com a saúde dos pets...</p>',
+      fotoDestaque: 'https://via.placeholder.com/400x240/4CAF50/FFFFFF?text=Foto+de+Destaque'
     };
     
     this.artigoForm.patchValue(artigoMock);
+    this.fotoDestaque = artigoMock.fotoDestaque;
   }
 
   onSubmit(): void {
@@ -118,6 +123,49 @@ export class ArtigoDetalheComponent implements OnInit {
     this.artigoForm.patchValue({ conteudo: content });
   }
 
+  // Método para upload da foto de destaque
+  onFotoDestaqueChange(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      // Validar tipo de arquivo
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+      if (!allowedTypes.includes(file.type)) {
+        alert('Formato de arquivo não suportado. Use JPEG, PNG ou WebP.');
+        return;
+      }
+
+      // Validar tamanho do arquivo (máximo 5MB)
+      const maxSize = 5 * 1024 * 1024; // 5MB
+      if (file.size > maxSize) {
+        alert('Arquivo muito grande. O tamanho máximo é 5MB.');
+        return;
+      }
+
+      this.fotoDestaqueFile = file;
+      
+      // Criar preview da imagem
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.fotoDestaque = e.target.result;
+        this.artigoForm.patchValue({ fotoDestaque: e.target.result });
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  // Método para remover a foto de destaque
+  removerFotoDestaque(): void {
+    this.fotoDestaque = null;
+    this.fotoDestaqueFile = null;
+    this.artigoForm.patchValue({ fotoDestaque: '' });
+    
+    // Limpar o input file
+    const fileInput = document.getElementById('fotoDestaque') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = '';
+    }
+  }
+
   // Getters para facilitar acesso aos controles do formulário
   get titulo() { return this.artigoForm.get('titulo'); }
   get autor() { return this.artigoForm.get('autor'); }
@@ -126,4 +174,5 @@ export class ArtigoDetalheComponent implements OnInit {
   get dataPublicacao() { return this.artigoForm.get('dataPublicacao'); }
   get publico() { return this.artigoForm.get('publico'); }
   get conteudo() { return this.artigoForm.get('conteudo'); }
+  get fotoDestaqueControl() { return this.artigoForm.get('fotoDestaque'); }
 }

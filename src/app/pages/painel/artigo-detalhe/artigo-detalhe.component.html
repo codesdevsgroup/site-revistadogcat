@@ -152,6 +152,40 @@
                 </div>
               </small>
             </div>
+
+            <!-- Foto de Destaque -->
+            <div class="form-group">
+              <label for="fotoDestaque" class="form-label">Foto de Destaque *</label>
+              <div class="foto-destaque-container">
+                <!-- Preview da imagem -->
+                <div class="foto-preview" *ngIf="fotoDestaque">
+                  <img [src]="fotoDestaque" alt="Preview da foto de destaque" class="preview-image">
+                  <button type="button" class="btn-remove-foto" (click)="removerFotoDestaque()" title="Remover foto">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+                
+                <!-- Input de upload -->
+                <div class="upload-area" [class.has-image]="fotoDestaque">
+                  <input 
+                    type="file" 
+                    id="fotoDestaque" 
+                    class="form-control-file"
+                    accept="image/jpeg,image/jpg,image/png,image/webp"
+                    (change)="onFotoDestaqueChange($event)"
+                    [class.is-invalid]="fotoDestaqueControl?.invalid && fotoDestaqueControl?.touched"
+                  >
+                  <label for="fotoDestaque" class="upload-label" *ngIf="!fotoDestaque">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <span>Clique para selecionar uma imagem</span>
+                    <small>JPEG, PNG ou WebP - Máximo 5MB</small>
+                  </label>
+                </div>
+              </div>
+              <div class="invalid-feedback" *ngIf="fotoDestaqueControl?.invalid && fotoDestaqueControl?.touched">
+                Foto de destaque é obrigatória
+              </div>
+            </div>
           </div>
           
           <!-- Terceira linha - Informações do Artigo -->

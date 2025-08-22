@@ -13,6 +13,7 @@ export interface Artigo {
   curtidas: number;
   comentarios: number;
   destaque: boolean;
+  fotoDestaque?: string; // URL da foto de destaque
 }
 
 @Component({
@@ -34,7 +35,8 @@ export class ArtigosComponent {
       visualizacoes: 1250,
       curtidas: 89,
       comentarios: 23,
-      destaque: true
+      destaque: true,
+      fotoDestaque: 'https://via.placeholder.com/400x240/2196F3/FFFFFF?text=Cuidados+Inverno'
     },
     {
       id: 2,
@@ -46,9 +48,10 @@ export class ArtigosComponent {
       visualizacoes: 980,
       curtidas: 67,
       comentarios: 15,
-      destaque: false
-    },
-    {
+      destaque: false,
+       fotoDestaque: 'https://via.placeholder.com/400x240/4CAF50/FFFFFF?text=Alimentação+Gatos'
+     },
+     {
       id: 3,
       titulo: 'Primeiros Socorros para Pets',
       autor: 'Dr. João Santos',
@@ -58,7 +61,8 @@ export class ArtigosComponent {
       visualizacoes: 0,
       curtidas: 0,
       comentarios: 0,
-      destaque: false
+      destaque: false,
+      fotoDestaque: 'https://via.placeholder.com/400x240/FF9800/FFFFFF?text=Primeiros+Socorros'
     },
     {
       id: 4,
@@ -70,19 +74,21 @@ export class ArtigosComponent {
       visualizacoes: 2100,
       curtidas: 156,
       comentarios: 42,
-      destaque: true
-    },
-    {
+      destaque: true,
+       fotoDestaque: 'https://via.placeholder.com/400x240/9C27B0/FFFFFF?text=Adestramento'
+     },
+     {
       id: 5,
       titulo: 'Vacinação: Calendário Completo',
-      autor: 'Dra. Patricia Lima',
+      autor: 'Dra. Carla Ferreira',
       categoria: 'Saúde',
       status: 'publicado',
       dataPublicacao: '2024-01-05',
       visualizacoes: 1800,
       curtidas: 134,
       comentarios: 28,
-      destaque: false
+      destaque: false,
+      fotoDestaque: 'https://via.placeholder.com/400x240/E91E63/FFFFFF?text=Vacinação'
     },
     {
       id: 6,
