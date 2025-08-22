@@ -191,6 +191,7 @@
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
       border: 1px solid var(--bs-gray-200);
       min-height: 0;
+      max-height: 70vh;
       overflow: hidden;
 
       .editor-header {
@@ -232,7 +233,7 @@
               ::ng-deep .tiptap-editor-wrapper {
                 flex: 1;
                 display: flex;
-                min-height: 500px;
+                min-height: 300px;
                 height: 100%;
 
                 .editor-content {
@@ -396,7 +397,7 @@
 
           app-tiptap-editor {
             ::ng-deep .tiptap-editor-wrapper {
-              min-height: 350px;
+              min-height: 300px;
 
               .editor-toolbar {
                 padding: 0.5rem;
