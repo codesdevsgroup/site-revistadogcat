@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 
 export interface Artigo {
   id: number;
@@ -17,7 +18,7 @@ export interface Artigo {
 @Component({
   selector: 'app-artigos',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './artigos.component.html',
   styleUrls: ['./artigos.component.scss']
 })
