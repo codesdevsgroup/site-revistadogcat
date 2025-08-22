@@ -2,11 +2,10 @@
   background: linear-gradient(135deg, var(--gray-50) 0%, var(--tertiaryColor) 100%);
   min-height: 100vh;
 
-  // Hero Header - Reduzido ainda mais
   .hero-header {
     background: linear-gradient(135deg, var(--primaryColor) 0%, var(--primaryColorDark) 100%);
     color: var(--white);
-    padding: var(--space-3) 0; // Reduzido para 0.75rem
+    padding: var(--space-3) 0;
     position: relative;
     overflow: hidden;
 
@@ -27,34 +26,34 @@
     }
 
     .hero-icon {
-      font-size: 1.5rem; // Reduzido ainda mais
-      margin-bottom: var(--space-2); // Reduzido para 0.5rem
-      animation: bounce 2s infinite;
-    }
+        font-size: 1.5rem;
+        margin-bottom: var(--space-2);
+        animation: bounce 2s infinite;
+      }
 
-    h1 {
-      font-size: 1.875rem; // Reduzido ainda mais
-      font-weight: var(--fontWeight-extrabold);
-      margin-bottom: var(--space-2); // Reduzido para 0.5rem
-      background: linear-gradient(45deg, var(--white), var(--goldenColor));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
+      h1 {
+        font-size: 1.875rem;
+        font-weight: var(--fontWeight-extrabold);
+        margin-bottom: var(--space-2);
+        background: linear-gradient(45deg, var(--white), var(--goldenColor));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
 
-    .hero-subtitle {
-      font-size: 1rem; // Reduzido ainda mais
-      font-weight: var(--fontWeight-semibold);
-      margin-bottom: var(--space-3); // Reduzido para 0.75rem
-      color: var(--secondaryColor);
-    }
+      .hero-subtitle {
+        font-size: var(--space-4);
+        font-weight: var(--fontWeight-semibold);
+        margin-bottom: var(--space-3);
+        color: var(--secondaryColor);
+      }
 
-    .hero-description {
-      font-size: 0.9rem; // Reduzido ainda mais
-      line-height: 1.5;
-      margin-bottom: var(--space-5); // Reduzido para 1.25rem
-      opacity: 0.9;
-    }
+      .hero-description {
+        font-size: 0.9rem;
+        line-height: 1.5;
+        margin-bottom: var(--space-5);
+        opacity: 0.9;
+      }
 
     .registration-options {
         display: flex;
@@ -69,9 +68,9 @@
           backdrop-filter: blur(10px);
           border: 2px solid rgba(255, 255, 255, 0.2);
           border-radius: var(--radius-2xl);
-          padding: var(--space-6) var(--space-5); // Reduzido de 2rem 1.5rem
+          padding: var(--space-6) var(--space-5);
           text-align: center;
-          min-width: 180px; // Reduzido de 200px
+          min-width: 180px;
           transition: var(--transition-normal);
           cursor: pointer;
           position: relative;
@@ -153,9 +152,9 @@
            font-size: 1.1rem;
            font-weight: 500;
            margin: 0;
-           padding: 1rem 1.6rem;
+           padding: var(--space-4) var(--space-6);
            background: rgba(255, 255, 255, 0.1);
-           border-radius: 15px;
+           border-radius: var(--radius-xl);
            backdrop-filter: blur(10px);
            border: 1px solid rgba(255, 255, 255, 0.2);
            display: inline-block;
@@ -174,10 +173,10 @@
   // Progress Section
   .progress-section {
     scroll-margin-top: 100px;
-    background: white;
-    padding: 1rem 0;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    margin-bottom: 1rem;
+    background: var(--white);
+    padding: var(--space-4) 0;
+    box-shadow: var(--shadow-md);
+    margin-bottom: var(--space-4);
 
     .progress-steps {
       display: flex;
@@ -254,7 +253,6 @@
     }
   }
 
-  // Form Section
   .form-section {
     padding: var(--space-4) 0 var(--space-8);
 
@@ -266,7 +264,7 @@
 
       .form-step {
         display: none;
-        padding: 2rem 1rem;
+        padding: var(--space-8) var(--space-4);
         animation: fadeInUp 0.5s ease-out;
 
         &.active {
@@ -392,12 +390,11 @@
     }
   }
 
-  // Video Guidelines
-  .video-guidelines {
+  .video-guidelines.form-card {
     background: #f8f9fa;
-    border-radius: 15px;
-    padding: 2rem;
-    margin-bottom: 2rem;
+    border-radius: var(--radius-xl);
+    padding: var(--space-8);
+    margin-bottom: var(--space-8);
 
     h4 {
       color: var(--primaryColor);
@@ -415,7 +412,6 @@
     }
   }
 
-  // Video Options
   .video-options {
     margin-bottom: 2rem;
 
@@ -432,7 +428,7 @@
       .option-card {
         background: white;
         border: 2px solid #e9ecef;
-        border-radius: 15px;
+        border-radius: var(--radius-xl);
         padding: 1.5rem;
         text-align: center;
         cursor: pointer;
@@ -472,13 +468,12 @@
     }
   }
 
-  // Upload Section
   .upload-section {
     margin-bottom: 2rem;
 
     .upload-area {
       border: 2px dashed #dee2e6;
-      border-radius: 15px;
+      border-radius: var(--radius-xl);
       padding: 3rem 2rem;
       text-align: center;
       cursor: pointer;
@@ -580,13 +575,12 @@
     }
   }
 
-  // YouTube Section
   .youtube-section {
     margin-bottom: 2rem;
 
     .youtube-option {
       background: #f8f9fa;
-      border-radius: 15px;
+      border-radius: var(--radius-xl);
       padding: 2rem;
 
       .form-label {
@@ -605,14 +599,13 @@
     }
   }
 
-  // WhatsApp Section
   .whatsapp-section {
     margin-bottom: 2rem;
 
     .whatsapp-info {
       background: #f8f9fa;
-      border-radius: 15px;
-      padding: 2rem;
+      border-radius: var(--radius-xl);
+      padding: var(--space-8);
 
       .info-card {
         background: white;
@@ -666,7 +659,6 @@
     }
   }
 
-  // Video Notes
   .video-notes {
     margin-bottom: 2rem;
 
@@ -681,32 +673,31 @@
     }
   }
 
-  // Success Message
   .success-message {
     text-align: center;
-    padding: 3rem 2rem;
+    padding: var(--space-12) var(--space-8);
 
     .success-icon {
-      font-size: 3.6rem;
-      margin-bottom: 1.5rem;
+      font-size: var(--space-12);
+      margin-bottom: var(--space-6);
     }
 
     h2 {
       color: var(--primaryColor);
-      margin-bottom: 1rem;
+      margin-bottom: var(--space-4);
     }
 
     p {
       color: #6c757d;
-      font-size: 0.99rem;
-      margin-bottom: 2rem;
+      font-size: var(--space-4);
+      margin-bottom: var(--space-8);
     }
 
     .next-steps {
       background: #f8f9fa;
-      border-radius: 15px;
-      padding: 2rem;
-      margin: 2rem 0;
+      border-radius: var(--radius-xl);
+      padding: var(--space-8);
+      margin: var(--space-8) 0;
       text-align: left;
 
       h4 {
@@ -801,7 +792,6 @@
   }
 }
 
-// Animações
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -837,11 +827,10 @@
   }
 }
 
-// Responsividade
 @media (max-width: 768px) {
   .cadastro-container {
     .hero-header {
-      padding: 2rem 0;
+      padding: var(--space-8) 0;
 
       .hero-icon {
         font-size: 3rem;
@@ -878,7 +867,7 @@
     }
 
     .form-section .form-card .form-step {
-      padding: 2rem 1.5rem;
+      padding: var(--space-8) var(--space-6);
 
       .step-header h2 {
         font-size: 1.575rem;
@@ -886,7 +875,7 @@
     }
 
     .upload-section .upload-area {
-      padding: 2rem 1rem;
+      padding: var(--space-8) var(--space-4);
 
       .upload-icon {
         font-size: 2.25rem;
@@ -894,7 +883,7 @@
     }
 
     .success-message {
-      padding: 2rem 1rem;
+      padding: var(--space-8) var(--space-4);
 
       h2 {
         font-size: 1.8rem;
@@ -907,7 +896,6 @@
   }
 }
 
-// CEP Loading Styles
 .input-group {
   .input-group-append {
     .input-group-text {
@@ -924,14 +912,12 @@
   }
 }
 
-// Form text styles
 .form-text {
   font-size: 0.72rem;
   color: #6c757d;
   margin-top: 0.25rem;
 }
 
-// Enhanced form control styles for CEP
 .form-control {
   &.cep-loading {
     border-color: var(--primaryColor);
@@ -949,7 +935,6 @@
   }
 }
 
-  // Toggle Switch Components - Refatorado com variáveis CSS
   .toggle-switch-container {
     display: flex;
     flex-direction: column;
@@ -1022,7 +1007,6 @@
     }
   }
 
-  // Seções específicas
   .pedigree-section,
   .microchip-section {
     margin-bottom: var(--space-8);
