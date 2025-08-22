@@ -1,0 +1,77 @@
+<div class="dashboard-container">
+  <div class="dashboard-header">
+    <h1 class="dashboard-title">Dashboard</h1>
+    <p class="dashboard-subtitle">Bem-vindo ao painel administrativo</p>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="stats-grid">
+    <div class="stat-card" *ngFor="let stat of stats" [class]="'stat-' + stat.color">
+      <div class="stat-icon">
+        <i [class]="stat.icon"></i>
+      </div>
+      <div class="stat-content">
+        <h3 class="stat-value">{{ stat.value }}</h3>
+        <p class="stat-title">{{ stat.title }}</p>
+        <span class="stat-change positive">{{ stat.change }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="quick-actions">
+    <h2 class="section-title">Ações Rápidas</h2>
+    <div class="actions-grid">
+      <button class="action-card">
+        <i class="fas fa-plus"></i>
+        <span>Novo Artigo</span>
+      </button>
+      <button class="action-card">
+        <i class="fas fa-user-plus"></i>
+        <span>Adicionar Usuário</span>
+      </button>
+      <button class="action-card">
+        <i class="fas fa-chart-bar"></i>
+        <span>Relatórios</span>
+      </button>
+      <button class="action-card">
+        <i class="fas fa-envelope"></i>
+        <span>Newsletter</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Recent Activity -->
+  <div class="recent-activity">
+    <h2 class="section-title">Atividade Recente</h2>
+    <div class="activity-list">
+      <div class="activity-item">
+        <div class="activity-icon">
+          <i class="fas fa-user"></i>
+        </div>
+        <div class="activity-content">
+          <p class="activity-text">Novo usuário cadastrado: <strong>João Silva</strong></p>
+          <span class="activity-time">2 minutos atrás</span>
+        </div>
+      </div>
+      <div class="activity-item">
+        <div class="activity-icon">
+          <i class="fas fa-newspaper"></i>
+        </div>
+        <div class="activity-content">
+          <p class="activity-text">Artigo publicado: <strong>Cuidados com Pets no Inverno</strong></p>
+          <span class="activity-time">1 hora atrás</span>
+        </div>
+      </div>
+      <div class="activity-item">
+        <div class="activity-icon">
+          <i class="fas fa-crown"></i>
+        </div>
+        <div class="activity-content">
+          <p class="activity-text">Nova assinatura premium ativada</p>
+          <span class="activity-time">3 horas atrás</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

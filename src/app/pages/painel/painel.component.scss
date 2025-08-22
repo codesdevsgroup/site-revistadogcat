@@ -1,0 +1,35 @@
+.painel-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8f9fa 0%, var(--gray-50) 100%);
+  font-family: var(--fontFamily);
+  position: relative;
+
+  &::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="0.5" fill="rgba(26,61,30,0.03)"/></pattern></defs><rect width="100" height="100" fill="url(%23dots)"/></svg>');
+    opacity: 0.6;
+    pointer-events: none;
+    z-index: 0;
+  }
+}
+
+.painel-content {
+  padding-top: 100px; // Espaço para o menu flutuante
+  padding-left: var(--space-6);
+  padding-right: var(--space-6);
+  padding-bottom: var(--space-6);
+  position: relative;
+  z-index: 1;
+  min-height: calc(100vh - 100px);
+
+  @media (max-width: 768px) {
+    padding-left: var(--space-4);
+    padding-right: var(--space-4);
+    padding-top: 120px;
+  }
+}

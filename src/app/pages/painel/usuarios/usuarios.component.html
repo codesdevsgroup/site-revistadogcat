@@ -1,0 +1,113 @@
+<div class="usuarios-container">
+  <div class="page-header">
+    <h1 class="page-title">
+      <i class="fas fa-users"></i>
+      Usuários
+    </h1>
+    <div class="page-actions">
+      <button class="btn btn-primary">
+        <i class="fas fa-plus"></i>
+        Novo Usuário
+      </button>
+    </div>
+  </div>
+
+  <div class="usuarios-stats">
+    <div class="stat-card">
+      <div class="stat-icon">
+        <i class="fas fa-users"></i>
+      </div>
+      <div class="stat-content">
+        <h3>{{ usuarios.length }}</h3>
+        <p>Total de Usuários</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon active">
+        <i class="fas fa-user-check"></i>
+      </div>
+      <div class="stat-content">
+        <h3>{{ getActiveCount() }}</h3>
+        <p>Usuários Ativos</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon admin">
+        <i class="fas fa-user-shield"></i>
+      </div>
+      <div class="stat-content">
+        <h3>{{ getAdminCount() }}</h3>
+        <p>Administradores</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="usuarios-table-container">
+    <div class="table-header">
+      <h2>Lista de Usuários</h2>
+      <div class="table-filters">
+        <input type="text" placeholder="Buscar usuários..." class="search-input">
+        <select class="filter-select">
+          <option value="">Todos os tipos</option>
+          <option value="admin">Administrador</option>
+          <option value="editor">Editor</option>
+          <option value="leitor">Leitor</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <table class="usuarios-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Email</th>
+            <th>Tipo</th>
+            <th>Status</th>
+            <th>Data Cadastro</th>
+            <th>Último Acesso</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let usuario of usuarios; trackBy: trackByUserId" class="table-row">
+            <td class="user-id">#{{ usuario.id }}</td>
+            <td class="user-name">
+              <div class="user-info">
+                <div class="user-avatar">
+                  <i class="fas fa-user"></i>
+                </div>
+                <span>{{ usuario.nome }}</span>
+              </div>
+            </td>
+            <td class="user-email">{{ usuario.email }}</td>
+            <td class="user-tipo">
+              <span class="badge" [ngClass]="getTipoClass(usuario.tipo)">
+                {{ usuario.tipo | titlecase }}
+              </span>
+            </td>
+            <td class="user-status">
+              <span class="status-indicator" [ngClass]="getStatusClass(usuario.status)">
+                <i class="fas" [ngClass]="usuario.status === 'ativo' ? 'fa-check-circle' : 'fa-times-circle'"></i>
+                {{ usuario.status | titlecase }}
+              </span>
+            </td>
+            <td class="user-date">{{ usuario.dataCadastro | date:'dd/MM/yyyy' }}</td>
+            <td class="user-access">{{ usuario.ultimoAcesso | date:'dd/MM/yyyy' }}</td>
+            <td class="user-actions">
+              <div class="action-buttons">
+                <button class="btn-action btn-edit" (click)="editarUsuario(usuario)" title="Editar">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn-action btn-delete" (click)="excluirUsuario(usuario)" title="Excluir">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

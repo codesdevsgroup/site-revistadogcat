@@ -1,0 +1,55 @@
+<header class="top-menu">
+  <div class="menu-container">
+    <!-- Logo/Brand -->
+    <div class="menu-brand">
+      <img src="./logo2.png" alt="Logo DogCat" class="brand-logo">
+      <span class="brand-text">Painel</span>
+    </div>
+
+    <!-- Navigation Links -->
+    <nav class="menu-nav">
+      <a routerLink="/painel/dashboard" routerLinkActive="active" class="nav-link">
+        <i class="fas fa-chart-line"></i>
+        <span>Dashboard</span>
+      </a>
+      <a routerLink="/painel/usuarios" routerLinkActive="active" class="nav-link">
+        <i class="fas fa-users"></i>
+        <span>Usuários</span>
+      </a>
+      <a routerLink="/painel/artigos" routerLinkActive="active" class="nav-link">
+        <i class="fas fa-newspaper"></i>
+        <span>Artigos</span>
+      </a>
+    </nav>
+
+    <!-- User Menu -->
+    <div class="menu-user" [class.open]="userMenuOpen">
+      <button class="user-button" (click)="toggleUserMenu()">
+        <div class="user-avatar">
+          <i class="fas fa-user"></i>
+        </div>
+        <div class="user-info">
+          <span class="user-name">Admin</span>
+          <span class="user-role">Administrador</span>
+        </div>
+        <i class="fas fa-chevron-down user-arrow"></i>
+      </button>
+
+      <div class="user-dropdown" *ngIf="userMenuOpen">
+        <a href="#" class="dropdown-item" (click)="navigateToProfile()">
+          <i class="fas fa-user-circle"></i>
+          <span>Meu Perfil</span>
+        </a>
+        <a href="#" class="dropdown-item" (click)="navigateToSettings()">
+          <i class="fas fa-cog"></i>
+          <span>Configurações</span>
+        </a>
+        <hr class="dropdown-divider">
+        <a href="#" class="dropdown-item logout" (click)="logout()">
+          <i class="fas fa-sign-out-alt"></i>
+          <span>Sair</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</header>

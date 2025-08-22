@@ -1,0 +1,183 @@
+<div class="artigos-container">
+  <!-- Cabeçalho da Página -->
+  <div class="page-header">
+    <h1 class="page-title">
+      <i class="fas fa-newspaper"></i>
+      Gerenciar Artigos
+    </h1>
+    <div class="page-actions">
+      <button class="btn btn-primary">
+        <i class="fas fa-plus"></i>
+        Novo Artigo
+      </button>
+    </div>
+  </div>
+
+  <!-- Estatísticas dos Artigos -->
+  <div class="artigos-stats">
+    <div class="stat-card">
+      <div class="stat-icon">
+        <i class="fas fa-newspaper"></i>
+      </div>
+      <div class="stat-content">
+        <h3>{{ artigos.length }}</h3>
+        <p>Total de Artigos</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon published">
+        <i class="fas fa-check-circle"></i>
+      </div>
+      <div class="stat-content">
+        <h3>{{ getPublishedCount() }}</h3>
+        <p>Artigos Publicados</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon featured">
+        <i class="fas fa-star"></i>
+      </div>
+      <div class="stat-content">
+        <h3>{{ getFeaturedCount() }}</h3>
+        <p>Artigos em Destaque</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon views">
+        <i class="fas fa-eye"></i>
+      </div>
+      <div class="stat-content">
+        <h3>{{ getTotalViews() | number }}</h3>
+        <p>Total de Visualizações</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Container da Tabela -->
+  <div class="artigos-table-container">
+    <!-- Cabeçalho da Lista -->
+    <div class="table-header">
+      <h2>Lista de Artigos</h2>
+      <div class="table-filters">
+        <input 
+          type="text" 
+          class="search-input" 
+          placeholder="Buscar por título ou autor..."
+        >
+        <select class="filter-select">
+          <option value="">Todas as categorias</option>
+          <option value="cuidados">Cuidados</option>
+          <option value="nutricao">Nutrição</option>
+          <option value="saude">Saúde</option>
+          <option value="comportamento">Comportamento</option>
+          <option value="seguranca">Segurança</option>
+        </select>
+        <select class="filter-select">
+          <option value="">Todos os status</option>
+          <option value="publicado">Publicado</option>
+          <option value="rascunho">Rascunho</option>
+          <option value="revisao">Em Revisão</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Tabela Responsiva -->
+    <div class="table-responsive">
+      <table class="artigos-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Título</th>
+            <th>Autor</th>
+            <th>Categoria</th>
+            <th>Status</th>
+            <th>Data Publicação</th>
+            <th>Visualizações</th>
+            <th>Engajamento</th>
+            <th>Destaque</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let artigo of artigos; trackBy: trackByArtigoId">
+            <td class="artigo-id">#{{ artigo.id }}</td>
+            
+            <td class="artigo-titulo">
+              <div class="titulo-info">
+                <span class="titulo-text">{{ artigo.titulo }}</span>
+              </div>
+            </td>
+            
+            <td class="artigo-autor">{{ artigo.autor }}</td>
+            
+            <td>
+              <span class="badge" [ngClass]="getCategoriaClass(artigo.categoria)">
+                {{ artigo.categoria }}
+              </span>
+            </td>
+            
+            <td>
+              <span class="status-indicator" [ngClass]="getStatusClass(artigo.status)">
+                <i class="fas fa-circle"></i>
+                {{ artigo.status | titlecase }}
+              </span>
+            </td>
+            
+            <td class="artigo-date">{{ artigo.dataPublicacao | date:'dd/MM/yyyy' }}</td>
+            
+            <td class="artigo-views">
+              <i class="fas fa-eye"></i>
+              {{ artigo.visualizacoes | number }}
+            </td>
+            
+            <td class="artigo-engagement">
+              <div class="engagement-stats">
+                <span class="likes">
+                  <i class="fas fa-heart"></i>
+                  {{ artigo.curtidas }}
+                </span>
+                <span class="comments">
+                  <i class="fas fa-comment"></i>
+                  {{ artigo.comentarios }}
+                </span>
+              </div>
+            </td>
+            
+            <td class="artigo-destaque">
+              <button 
+                class="btn-destaque" 
+                [class.active]="artigo.destaque"
+                (click)="alterarDestaque(artigo)"
+                [title]="artigo.destaque ? 'Remover destaque' : 'Adicionar destaque'"
+              >
+                <i class="fas fa-star"></i>
+              </button>
+            </td>
+            
+            <td>
+              <div class="action-buttons">
+                <button 
+                  class="btn-action btn-edit" 
+                  (click)="editarArtigo(artigo)"
+                  title="Editar artigo"
+                >
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button 
+                  class="btn-action btn-delete" 
+                  (click)="excluirArtigo(artigo)"
+                  title="Excluir artigo"
+                >
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

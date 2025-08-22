@@ -1,0 +1,86 @@
+<div class="auth-container">
+  <div class="auth-card">
+    <div class="auth-header">
+      <img src="/logo.png" alt="Dog Cat" class="auth-logo">
+      <h1 class="auth-title">Entrar na sua conta</h1>
+      <p class="auth-subtitle">Acesse sua conta para continuar</p>
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="auth-form">
+      <div class="form-group">
+        <label for="identification" class="form-label">E-mail</label>
+        <input
+          type="email"
+          id="identification"
+          formControlName="identification"
+          class="form-input"
+          [class.error]="loginForm.get('identification')?.invalid && loginForm.get('identification')?.touched"
+          placeholder="Digite seu e-mail"
+        >
+        <div class="error-message" *ngIf="loginForm.get('identification')?.invalid && loginForm.get('identification')?.touched">
+          <span *ngIf="loginForm.get('identification')?.errors?.['required']">E-mail é obrigatório</span>
+          <span *ngIf="loginForm.get('identification')?.errors?.['email']">E-mail inválido</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password" class="form-label">Senha</label>
+        <div class="password-input-container">
+          <input
+            [type]="showPassword ? 'text' : 'password'"
+            id="password"
+            formControlName="password"
+            class="form-input"
+            [class.error]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+            placeholder="Digite sua senha"
+          >
+          <button
+            type="button"
+            class="password-toggle"
+            (click)="togglePasswordVisibility()"
+          >
+            <i class="fas" [class.fa-eye]="!showPassword" [class.fa-eye-slash]="showPassword"></i>
+          </button>
+        </div>
+        <div class="error-message" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+          <span *ngIf="loginForm.get('password')?.errors?.['required']">Senha é obrigatória</span>
+          <span *ngIf="loginForm.get('password')?.errors?.['minlength']">Senha deve ter pelo menos 6 caracteres</span>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button
+          type="button"
+          class="forgot-password-link"
+          (click)="navigateToResetPassword()"
+        >
+          Esqueceu sua senha?
+        </button>
+      </div>
+
+      <button
+        type="submit"
+        class="auth-button primary"
+        [disabled]="isSubmitting || loginForm.invalid"
+      >
+        <span *ngIf="!isSubmitting">Entrar</span>
+        <span *ngIf="isSubmitting" class="loading-spinner">
+          <i class="fas fa-spinner fa-spin"></i> Entrando...
+        </span>
+      </button>
+
+      <div class="auth-footer">
+        <p class="auth-footer-text">
+          Não tem uma conta?
+          <button
+            type="button"
+            class="auth-link"
+            (click)="navigateToCreatePassword()"
+          >
+            Criar conta
+          </button>
+        </p>
+      </div>
+    </form>
+  </div>
+</div>

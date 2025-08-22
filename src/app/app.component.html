@@ -1,3 +1,3 @@
-<app-navbar />
+<app-navbar *ngIf="!isPainelRoute" />
 <router-outlet />
-<app-whatsapp-float />
+<app-whatsapp-float *ngIf="!isPainelRoute" />
