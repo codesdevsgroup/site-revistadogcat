@@ -6,8 +6,8 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractContro
   selector: 'app-modal-cadastro-anunciante',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
-  templateUrl: './modal-cadastro-anunciante.component.html',
-  styleUrls: ['./modal-cadastro-anunciante.component.scss']
+  templateUrl: './modal-cadastro-anunciante.html',
+  styleUrls: ['./modal-cadastro-anunciante.scss']
 })
 export class ModalCadastroAnuncianteComponent {
   @Input() isOpen = false;

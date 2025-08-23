@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
-import { FooterComponent } from '../../components/footer/footer.component';
+import { FooterComponent } from '../../components/footer/footer';
 
 @Component({
   selector: 'app-assinaturas',
   imports: [FooterComponent],
-  templateUrl: './assinaturas.component.html',
-  styleUrl: './assinaturas.component.scss'
+  templateUrl: './assinaturas.html',
+  styleUrl: './assinaturas.scss'
 })
 export class AssinaturasComponent {
 
 }
+

@@ -1,10 +1,10 @@
 import { Routes } from '@angular/router';
-import { PainelComponent } from './painel.component';
-import { DashboardComponent } from './dashboard/dashboard.component';
-import { UsuariosComponent } from './usuarios/usuarios.component';
-import { ArtigosComponent } from './artigos/artigos.component';
-import { ArtigoDetalheComponent } from './artigo-detalhe/artigo-detalhe.component';
-import { DocumentacaoComponent } from './documentacao/documentacao.component';
+import { PainelComponent } from './painel';
+import { DashboardComponent } from './dashboard/dashboard';
+import { UsuariosComponent } from './usuarios/usuarios';
+import { ArtigosComponent } from './artigos/artigos';
+import { ArtigoDetalheComponent } from './artigo-detalhe/artigo-detalhe';
+import { DocumentacaoComponent } from './documentacao/documentacao';
 
 export const painelRoutes: Routes = [
   {

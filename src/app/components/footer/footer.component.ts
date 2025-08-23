@@ -4,8 +4,8 @@ import { SocialMediaService } from '../../services/social-media.service';
 @Component({
   selector: 'app-footer',
   imports: [],
-  templateUrl: './footer.component.html',
-  styleUrl: './footer.component.scss'
+  templateUrl: './footer.html',
+  styleUrl: './footer.scss'
 })
 export class FooterComponent {
   socialMedia: any;
@@ -14,3 +14,4 @@ export class FooterComponent {
     this.socialMedia = this.socialMediaService.getSocialMedia();
   }
 }
+

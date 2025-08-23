@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ModalCadastroAnuncianteComponent } from '../modal-cadastro-anunciante/modal-cadastro-anunciante.component';
+import { ModalCadastroAnuncianteComponent } from '../modal-cadastro-anunciante/modal-cadastro-anunciante';
 import { SocialMediaService } from '../../services/social-media.service';
 
 @Component({

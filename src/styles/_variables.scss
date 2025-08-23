@@ -1,0 +1,135 @@
+:root {
+  // Typography
+  --fontFamily: 'Inter', 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --fontFamilyHeading: 'Outfit', 'Inter', sans-serif;
+  --fontWeight-light: 300;
+  --fontWeight-normal: 400;
+  --fontWeight-medium: 500;
+  --fontWeight-semibold: 600;
+  --fontWeight-bold: 700;
+  --fontWeight-extrabold: 800;
+
+  // Colors - Modern palette
+  --primaryColor: #1a3d1e;
+  --primaryColorLight: #2a5d34;
+  --primaryColorDark: #0f2912;
+  --secondaryColor: #baeb6c;
+  --secondaryColorLight: #d4f58a;
+  --secondaryColorDark: #9fd649;
+  --tertiaryColor: #f8f9fa;
+  --goldenColor: #f59e0b;
+  --goldenColorLight: #fbbf24;
+  --goldenColorDark: #d97706;
+  
+  // Neutral colors
+  --white: #ffffff;
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-800: #1f2937;
+  --gray-900: #111827;
+  
+  // Semantic colors
+  --success: #10b981;
+  --warning: #f59e0b;
+  --error: #ef4444;
+  --info: #3b82f6;
+  
+  // Spacing scale
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  
+  // Border radius
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  --radius-full: 9999px;
+  
+  // Shadows - Modern elevation system
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+  
+  // Transitions
+  --transition-fast: 150ms ease;
+  --transition-normal: 250ms ease;
+  --transition-slow: 350ms ease;
+  
+  // Z-index scale
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-popover: 1060;
+  --z-tooltip: 1070;
+  
+  // Legacy support
+  --backgroundColor: var(--gray-50);
+  --borderBoxShadow: var(--shadow-lg);
+}
+
+// Dark Theme Variables
+[data-theme="dark"] {
+  // Colors - Dark theme palette
+  --primaryColor: #2d5a32;
+  --primaryColorLight: #3d7a42;
+  --primaryColorDark: #1a3d1e;
+  --secondaryColor: #9fd649;
+  --secondaryColorLight: #baeb6c;
+  --secondaryColorDark: #7cb83a;
+  --tertiaryColor: #1f2937;
+  --goldenColor: #fbbf24;
+  --goldenColorLight: #fcd34d;
+  --goldenColorDark: #f59e0b;
+  
+  // Neutral colors - Dark theme
+  --white: #111827;
+  --gray-50: #111827;
+  --gray-100: #1f2937;
+  --gray-200: #374151;
+  --gray-300: #4b5563;
+  --gray-400: #6b7280;
+  --gray-500: #9ca3af;
+  --gray-600: #d1d5db;
+  --gray-700: #e5e7eb;
+  --gray-800: #f3f4f6;
+  --gray-900: #f9fafb;
+  
+  // Semantic colors - Dark theme
+  --success: #34d399;
+  --warning: #fbbf24;
+  --error: #f87171;
+  --info: #60a5fa;
+  
+  // Background and text colors
+  --backgroundColor: var(--gray-50);
+  --textColor: var(--gray-800);
+  --textColorSecondary: var(--gray-600);
+  --borderColor: var(--gray-300);
+  
+  // Shadows - Dark theme (more subtle)
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.3), 0 2px 4px -2px rgb(0 0 0 / 0.3);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.3), 0 8px 10px -6px rgb(0 0 0 / 0.3);
+  --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.4);
+}

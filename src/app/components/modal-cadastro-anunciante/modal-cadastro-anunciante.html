@@ -1,0 +1,157 @@
+<div class="modal-overlay" [class.show]="isOpen" (click)="onClose()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2 class="modal-title">
+        <span class="icon">📢</span>
+        Cadastre-se para Anunciar
+      </h2>
+      <button class="btn-close" (click)="onClose()" type="button">
+        <span>&times;</span>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <p class="modal-description">
+        Preencha seus dados e entraremos em contato para apresentar nossos planos de anúncios.
+      </p>
+
+      <form [formGroup]="cadastroForm" (ngSubmit)="onSubmit()" class="cadastro-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="nome" class="form-label">
+              <span class="icon">👤</span>
+              Nome Completo
+            </label>
+            <input
+              type="text"
+              id="nome"
+              formControlName="nome"
+              class="form-control"
+              [class.is-invalid]="isFieldInvalid('nome')"
+              placeholder="Seu nome completo"
+            >
+            <div class="invalid-feedback" *ngIf="isFieldInvalid('nome')">
+              {{ getFieldError('nome') }}
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="email" class="form-label">
+              <span class="icon">📧</span>
+              Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              formControlName="email"
+              class="form-control"
+              [class.is-invalid]="isFieldInvalid('email')"
+              placeholder="seu@email.com"
+            >
+            <div class="invalid-feedback" *ngIf="isFieldInvalid('email')">
+              {{ getFieldError('email') }}
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="telefone" class="form-label">
+              <span class="icon">📱</span>
+              Telefone/WhatsApp
+            </label>
+            <input
+              type="tel"
+              id="telefone"
+              formControlName="telefone"
+              class="form-control"
+              [class.is-invalid]="isFieldInvalid('telefone')"
+              placeholder="(11) 99999-9999"
+            >
+            <div class="invalid-feedback" *ngIf="isFieldInvalid('telefone')">
+              {{ getFieldError('telefone') }}
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="empresa" class="form-label">
+              <span class="icon">🏢</span>
+              Nome da Empresa/Canil/Gatil
+            </label>
+            <input
+              type="text"
+              id="empresa"
+              formControlName="empresa"
+              class="form-control"
+              [class.is-invalid]="isFieldInvalid('empresa')"
+              placeholder="Nome do seu negócio"
+            >
+            <div class="invalid-feedback" *ngIf="isFieldInvalid('empresa')">
+              {{ getFieldError('empresa') }}
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="tipoAnuncio" class="form-label">
+            <span class="icon">🎯</span>
+            Tipo de Anúncio
+          </label>
+          <select
+            id="tipoAnuncio"
+            formControlName="tipoAnuncio"
+            class="form-control"
+          >
+            <option value="canil">Canil</option>
+            <option value="gatil">Gatil</option>
+            <option value="petshop">Pet Shop</option>
+            <option value="veterinaria">Clínica Veterinária</option>
+            <option value="servicos">Serviços Pet</option>
+            <option value="outros">Outros</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="mensagem" class="form-label">
+            <span class="icon">💬</span>
+            Mensagem (Opcional)
+          </label>
+          <textarea
+            id="mensagem"
+            formControlName="mensagem"
+            class="form-control"
+            rows="3"
+            placeholder="Conte-nos mais sobre seu negócio ou dúvidas sobre nossos planos..."
+          ></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="onClose()"
+            [disabled]="isSubmitting"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="!cadastroForm.valid || isSubmitting"
+          >
+            <span *ngIf="isSubmitting" class="spinner"></span>
+            <span *ngIf="!isSubmitting">📤 Enviar Cadastro</span>
+            <span *ngIf="isSubmitting">Enviando...</span>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div class="modal-footer">
+      <p class="footer-text">
+        <span class="icon">🔒</span>
+        Seus dados estão seguros conosco e serão usados apenas para contato comercial.
+      </p>
+    </div>
+  </div>
+</div>

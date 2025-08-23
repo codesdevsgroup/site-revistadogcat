@@ -5,8 +5,8 @@ import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-whatsapp-float',
   imports: [CommonModule],
-  templateUrl: './whatsapp-float.component.html',
-  styleUrl: './whatsapp-float.component.scss'
+  templateUrl: './whatsapp-float.html',
+  styleUrl: './whatsapp-float.scss'
 })
 export class WhatsappFloatComponent {
   whatsappData: any;

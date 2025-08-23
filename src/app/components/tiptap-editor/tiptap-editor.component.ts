@@ -21,8 +21,8 @@ import { Code } from '@tiptap/extension-code';
 
 @Component({
   selector: 'app-tiptap-editor',
-  templateUrl: './tiptap-editor.component.html',
-  styleUrls: ['./tiptap-editor.component.scss'],
+  templateUrl: './tiptap-editor.html',
+  styleUrls: ['./tiptap-editor.scss'],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
