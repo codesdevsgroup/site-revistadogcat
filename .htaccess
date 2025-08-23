@@ -1,0 +1,79 @@
+# Configuração para site Angular
+# Habilita o módulo de reescrita
+RewriteEngine On
+
+# Força HTTPS (opcional - descomente se necessário)
+# RewriteCond %{HTTPS} off
+# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Remove trailing slash (opcional)
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)/$ /$1 [R=301,L]
+
+# Configuração para Single Page Application (SPA)
+# Redireciona todas as rotas para index.html, exceto arquivos existentes
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.html [L]
+
+# Configurações de cache para otimização
+<IfModule mod_expires.c>
+    ExpiresActive on
+    
+    # Cache para arquivos estáticos
+    ExpiresByType text/css "access plus 1 year"
+    ExpiresByType application/javascript "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/jpg "access plus 1 year"
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/gif "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+    ExpiresByType image/webp "access plus 1 year"
+    ExpiresByType font/woff "access plus 1 year"
+    ExpiresByType font/woff2 "access plus 1 year"
+    
+    # Cache menor para HTML
+    ExpiresByType text/html "access plus 1 hour"
+ExpiresByType application/json "access plus 1 hour"
+</IfModule>
+
+# Configurações de compressão GZIP
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/plain
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/xml
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE application/xml
+    AddOutputFilterByType DEFLATE application/xhtml+xml
+    AddOutputFilterByType DEFLATE application/rss+xml
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE application/x-javascript
+    AddOutputFilterByType DEFLATE application/json
+</IfModule>
+
+# Configurações de segurança
+<IfModule mod_headers.c>
+    # Previne clickjacking
+    Header always append X-Frame-Options SAMEORIGIN
+    
+    # Previne MIME type sniffing
+    Header set X-Content-Type-Options nosniff
+    
+    # Habilita proteção XSS
+    Header set X-XSS-Protection "1; mode=block"
+    
+    # Política de referrer
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# Bloqueia acesso a arquivos sensíveis
+<Files ~ "\.(env|log|ini)$">
+    Order allow,deny
+    Deny from all
+</Files>
+
+# Bloqueia acesso a diretórios do sistema
+<DirectoryMatch "\.(git|svn)">
+    Order allow,deny
+    Deny from all
+</DirectoryMatch>
