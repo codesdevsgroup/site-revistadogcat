@@ -4,7 +4,7 @@
   right: var(--space-5);
   width: 60px;
   height: 60px;
-  background: #25D366;
+  background: var(--whatsapp);
   border-radius: var(--radius-full);
   display: flex;
   align-items: center;
@@ -18,6 +18,7 @@
   &:hover {
     transform: scale(1.1);
     box-shadow: var(--shadow-2xl);
+    background: var(--whatsapp-dark);
     
     .whatsapp-tooltip {
       opacity: 1;
@@ -27,7 +28,7 @@
   }
 
   .whatsapp-icon {
-    color: white;
+    color: var(--text-inverse);
     width: 28px;
     height: 28px;
     display: flex;
@@ -46,7 +47,7 @@
     left: 50%;
     transform: translateX(-50%) translateY(var(--space-2));
     background: var(--gray-800);
-    color: var(--white);
+    color: var(--text-inverse);
     padding: var(--space-2) var(--space-3);
     border-radius: var(--radius-lg);
     font-size: 14px;

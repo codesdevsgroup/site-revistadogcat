@@ -1,7 +1,10 @@
+@use '../../../../styles/variables';
+@use '../../../../styles/mixins' as *;
+
 // Artigo Detalhe Component - Layout Horizontal
 .artigo-detalhe-container {
   min-height: 80vh;
-  background-color: #f8f9fa;
+  background-color: var(--bg-primary);
   padding: 0;
 }
 
@@ -21,30 +24,26 @@ h1 {
 
 // Seção de configurações horizontais
 .config-section {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin-bottom: 1rem;
+  @include card-base;
+  margin-bottom: var(--space-4);
   overflow: hidden;
 }
 
 // Header da configuração
 .config-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 1rem;
-  background: #f8f9fa;
-  border-bottom: 1px solid #e9ecef;
+  @include flex-between;
+  padding: var(--space-4);
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-light);
   
   .config-title {
     margin: 0;
     font-size: 1.2rem;
-    font-weight: 600;
-    color: #495057;
+    font-weight: var(--fontWeight-semibold);
+    color: var(--text-primary);
     
     i {
-      color: #6c757d;
+      color: var(--text-secondary);
     }
   }
   
@@ -170,23 +169,23 @@ h1 {
   .invalid-feedback {
     display: block;
     width: 100%;
-    margin-top: 0.2rem;
-    color: #dc3545;
+    margin-top: var(--space-1);
+    color: var(--error);
   }
   
   .form-text {
-    margin-top: 0.3rem;
+    margin-top: var(--space-2);
     
     .text-success {
-      color: #28a745 !important;
+      color: var(--success);
     }
     
     .text-warning {
-      color: #ffc107 !important;
+      color: var(--warning);
     }
     
     .text-danger {
-      color: #dc3545 !important;
+      color: var(--error);
     }
   }
   

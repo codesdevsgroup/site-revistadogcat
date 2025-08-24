@@ -5,7 +5,7 @@
 // Hero Section
 .hero-assinaturas {
   background: linear-gradient(135deg, var(--primaryColor) 0%, #2a5d34 100%);
-  color: white;
+  color: var(--text-inverse);
   padding: 4rem 0;
   position: relative;
   overflow: hidden;
@@ -56,7 +56,7 @@
 // Planos Section
 .planos-section {
   padding: 5rem 0;
-  background: #f8f9fa;
+  background: var(--bg-secondary);
 }
 
 .section-title {
@@ -68,13 +68,13 @@
 
 .section-description {
   font-size: 1.08rem;
-  color: #666;
+  color: var(--text-secondary);
   max-width: 600px;
   margin: 0 auto;
 }
 
 .plan-card {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 20px;
   padding: 2.5rem 2rem;
   box-shadow: 0 10px 30px rgba(0,0,0,0.1);
@@ -138,7 +138,7 @@
 
 .currency {
   font-size: 1.35rem;
-  color: #666;
+  color: var(--text-secondary);
   vertical-align: top;
 }
 
@@ -150,18 +150,18 @@
 
 .price-period {
   font-size: 1.08rem;
-  color: #666;
+  color: var(--text-secondary);
 }
 
 .plan-period {
-  color: #666;
+  color: var(--text-secondary);
   font-size: 0.99rem;
   margin-bottom: 0.5rem;
 }
 
 .plan-savings {
-  background: #e8f5e9;
-  color: #4caf50;
+  background: var(--success-bg);
+  color: var(--success-color);
   padding: 0.5rem 1rem;
   border-radius: 20px;
   font-weight: 600;
@@ -184,9 +184,9 @@
   display: flex;
   align-items: center;
   padding: 0.8rem 0;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--border-light);
   font-size: 0.9rem;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .plan-features li:last-child {
@@ -205,7 +205,7 @@
 
 .btn-plan {
   background: linear-gradient(135deg, var(--primaryColor), #2a5d34);
-  color: white;
+  color: var(--text-inverse);
   padding: 1.2rem 2.5rem;
   border: none;
   border-radius: 50px;
@@ -221,7 +221,7 @@
 .btn-plan:hover {
   background: linear-gradient(135deg, #2a5d34, var(--primaryColor));
   transform: translateY(-2px);
-  color: white;
+  color: var(--text-inverse);
   text-decoration: none;
 }
 
@@ -238,20 +238,20 @@
 }
 
 .btn-plan.disabled {
-  background: #ccc;
-  color: #999;
+  background: var(--gray-300);
+  color: var(--gray-500);
   cursor: not-allowed;
 }
 
 .btn-plan.disabled:hover {
-  background: #ccc;
+  background: var(--gray-300);
   transform: none;
 }
 
 // Benefícios Section
 .beneficios-section {
   padding: 5rem 0;
-  background: white;
+  background: var(--bg-primary);
 }
 
 .benefit-card {
@@ -279,18 +279,18 @@
 }
 
 .benefit-card p {
-  color: #666;
+  color: var(--text-secondary);
   line-height: 1.6;
 }
 
 // FAQ Section
 .faq-section {
   padding: 5rem 0;
-  background: #f8f9fa;
+  background: var(--bg-secondary);
 }
 
 .faq-item {
-  background: white;
+  background: var(--bg-primary);
   padding: 2rem;
   border-radius: 15px;
   margin-bottom: 1.5rem;
@@ -305,7 +305,7 @@
 }
 
 .faq-item p {
-  color: #666;
+  color: var(--text-secondary);
   line-height: 1.6;
   margin: 0;
 }
@@ -314,7 +314,7 @@
 .cta-section {
   padding: 5rem 0;
   background: linear-gradient(135deg, var(--primaryColor) 0%, #2a5d34 100%);
-  color: white;
+  color: var(--text-inverse);
 }
 
 .cta-section h2 {
@@ -343,7 +343,7 @@
 }
 
 .btn-cta:hover {
-  background: #f4d03f;
+  background: var(--goldenColorLight);
   transform: translateY(-3px);
   box-shadow: 0 8px 30px rgba(224, 181, 58, 0.4);
   color: var(--primaryColor);

@@ -126,7 +126,7 @@
           }
 
           &.whatsapp-option:hover {
-            border-color: #25d366;
+            border-color: var(--whatsapp);
             
             .option-icon {
               animation: shake 0.5s ease-in-out;
@@ -196,8 +196,8 @@
           width: 30px;
           height: 30px;
           border-radius: 50%;
-          background: #e9ecef;
-          color: #6c757d;
+          background: var(--gray-200);
+          color: var(--gray-500);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -209,7 +209,7 @@
 
         .step-label {
           font-size: 0.8rem;
-          color: #6c757d;
+          color: var(--gray-500);
           font-weight: 600;
           transition: all 0.3s ease;
         }
@@ -229,12 +229,12 @@
 
         &.completed {
           .step-number {
-            background: #28a745;
+            background: var(--success);
             color: white;
           }
 
           .step-label {
-            color: #28a745;
+            color: var(--success);
           }
         }
       }
@@ -242,7 +242,7 @@
       .step-line {
         height: 2px;
         width: 50px;
-        background: #e9ecef;
+        background: var(--gray-200);
         margin: 0 1rem;
         transition: all 0.3s ease;
 
@@ -283,7 +283,7 @@
           }
 
           p {
-            color: #6c757d;
+            color: var(--gray-500);
             font-size: 0.99rem;
           }
         }
@@ -380,7 +380,7 @@
               border: none;
 
               &:hover {
-                background: #218838;
+                background: var(--success-dark);
                 transform: translateY(-2px);
               }
             }
@@ -391,7 +391,7 @@
   }
 
   .video-guidelines.form-card {
-    background: #f8f9fa;
+    background: var(--bg-secondary);
     border-radius: var(--radius-xl);
     padding: var(--space-8);
     margin-bottom: var(--space-8);
@@ -407,7 +407,7 @@
 
       li {
         margin-bottom: 0.5rem;
-        color: #495057;
+        color: var(--gray-700);
       }
     }
   }
@@ -455,13 +455,13 @@
         }
 
         p {
-          color: #6c757d;
+          color: var(--gray-500);
           margin-bottom: 0.5rem;
           font-size: 0.81rem;
         }
 
         small {
-          color: #868e96;
+          color: var(--gray-400);
           font-size: 0.72rem;
         }
       }
@@ -478,7 +478,7 @@
       text-align: center;
       cursor: pointer;
       transition: all 0.3s ease;
-      background: #f8f9fa;
+      background: var(--bg-secondary);
 
       &:hover {
         border-color: var(--primaryColor);
@@ -497,12 +497,12 @@
       }
 
       p {
-        color: #6c757d;
+        color: var(--gray-500);
         margin-bottom: 0.5rem;
       }
 
       small {
-        color: #868e96;
+        color: var(--gray-400);
       }
     }
 
@@ -529,18 +529,18 @@
           .file-name {
             display: block;
             font-weight: 600;
-            color: #495057;
+            color: var(--gray-700);
           }
 
           .file-size {
             display: block;
             font-size: 0.81rem;
-            color: #6c757d;
+            color: var(--gray-500);
           }
         }
 
         .btn-remove {
-          background: #dc3545;
+          background: var(--error);
           color: white;
           border: none;
           border-radius: 50%;
@@ -553,7 +553,7 @@
           transition: all 0.3s ease;
 
           &:hover {
-            background: #c82333;
+            background: var(--error-dark);
             transform: scale(1.1);
           }
         }
@@ -561,7 +561,7 @@
 
       .upload-progress {
         height: 4px;
-        background: #e9ecef;
+        background: var(--gray-200);
         border-radius: 2px;
         margin-top: 1rem;
         overflow: hidden;
@@ -579,7 +579,7 @@
     margin-bottom: 2rem;
 
     .youtube-option {
-      background: #f8f9fa;
+      background: var(--bg-secondary);
       border-radius: var(--radius-xl);
       padding: 2rem;
 
@@ -593,7 +593,7 @@
       }
 
       .form-text {
-        color: #6c757d;
+        color: var(--gray-500);
         font-size: 0.81rem;
       }
     }
@@ -603,7 +603,7 @@
     margin-bottom: 2rem;
 
     .whatsapp-info {
-      background: #f8f9fa;
+      background: var(--bg-secondary);
       border-radius: var(--radius-xl);
       padding: var(--space-8);
 
@@ -617,7 +617,7 @@
 
         .info-icon {
           font-size: 1.8rem;
-          color: #25d366;
+          color: var(--whatsapp);
         }
 
         .info-content {
@@ -629,7 +629,7 @@
           }
 
           p {
-            color: #495057;
+            color: var(--gray-700);
             margin-bottom: 0.5rem;
             line-height: 1.5;
 
@@ -646,7 +646,7 @@
           align-items: center;
           gap: 1rem;
           cursor: pointer;
-          color: #495057;
+          color: var(--gray-700);
           font-weight: 500;
 
           input[type="checkbox"] {
@@ -688,13 +688,13 @@
     }
 
     p {
-      color: #6c757d;
+      color: var(--gray-500);
       font-size: var(--space-4);
       margin-bottom: var(--space-8);
     }
 
     .next-steps {
-      background: #f8f9fa;
+      background: var(--bg-secondary);
       border-radius: var(--radius-xl);
       padding: var(--space-8);
       margin: var(--space-8) 0;
@@ -711,7 +711,7 @@
 
         li {
           margin-bottom: 0.5rem;
-          color: #495057;
+          color: var(--gray-700);
         }
       }
     }
@@ -725,7 +725,7 @@
       }
 
       .btn-whatsapp {
-        background: #25d366;
+        background: var(--whatsapp);
         color: white;
         border: none;
         padding: 0.75rem 1.5rem;
@@ -735,7 +735,7 @@
         transition: all 0.3s ease;
 
         &:hover {
-          background: #128c7e;
+          background: var(--whatsapp-dark);
           transform: translateY(-2px);
           color: white;
         }
@@ -768,12 +768,12 @@
         }
 
         &.btn-secondary {
-          background: #6c757d;
+          background: var(--gray-500);
           color: white;
           border: none;
 
           &:hover {
-            background: #5a6268;
+            background: var(--gray-600);
             transform: translateY(-2px);
             color: white;
           }
@@ -900,7 +900,7 @@
   .input-group-append {
     .input-group-text {
       border-left: 0;
-      background: #f8f9fa;
+      background: var(--bg-secondary);
       color: var(--primaryColor);
       
       .spinner-border {
@@ -925,12 +925,12 @@
   }
 
   &.cep-success {
-    border-color: #28a745;
+    border-color: var(--success);
     box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
   }
 
   &.cep-error {
-    border-color: #dc3545;
+    border-color: var(--error);
     box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
   }
 }

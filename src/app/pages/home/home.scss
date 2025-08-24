@@ -1,17 +1,9 @@
-.home-container {
-  font-family: var(--fontFamily);
-  color: #2e2e2e;
-}
-
 .hero-section {
   background: linear-gradient(135deg, var(--gray-50) 0%, var(--tertiaryColor) 50%, var(--gray-100) 100%);
   overflow: hidden;
   min-height: 100vh;
   display: flex;
   align-items: center;
-  p, span {
-    color: #2e2e2e !important;
-  }
   
   &::before {
     content: '';

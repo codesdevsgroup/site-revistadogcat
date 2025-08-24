@@ -317,12 +317,12 @@
 
 // Faixa CodeDevs
 .codedevs-banner {
-  background: #000000;
-  color: #ffffff;
+  background: var(--gray-900);
+  color: var(--text-inverse);
   text-align: center;
   padding: 0;
   margin: 0;
-  border-top: 1px solid #333;
+  border-top: 1px solid var(--gray-700);
   transition: var(--transition-normal);
   position: relative;
   z-index: 10;
@@ -335,7 +335,7 @@
   }
   
   .heart {
-    color: #ff0000;
+    color: var(--error);
     font-size: 1rem;
     display: inline-block;
     animation: heartbeat 2s ease-in-out infinite;
@@ -343,7 +343,7 @@
   }
   
   .codedevs-text {
-    color: #ffffff;
+    color: var(--text-inverse);
     font-weight: var(--fontWeight-bold);
     transition: var(--transition-fast);
     cursor: pointer;

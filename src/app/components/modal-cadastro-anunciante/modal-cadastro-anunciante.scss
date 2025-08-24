@@ -1,18 +1,5 @@
-// Variáveis
-:root {
-  --primary-color: #2c5530;
-  --secondary-color: #baeb6c;
-  --accent-color: #ff6b35;
-  --text-dark: #333;
-  --text-light: #666;
-  --border-color: #e0e0e0;
-  --success-color: #28a745;
-  --error-color: #dc3545;
-  --warning-color: #ffc107;
-  --white: #ffffff;
-  --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.15);
-}
+@use '../../../styles/variables';
+@use '../../../styles/mixins' as *;
 
 // Modal Overlay
 .modal-overlay {
@@ -21,15 +8,13 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.9);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
+  background: var(--bg-overlay);
+  @include flex-center;
+  z-index: var(--z-modal);
   opacity: 0;
   visibility: hidden;
-  transition: all 0.3s ease;
-  padding: 1rem;
+  @include transition(all, 0.3s);
+  padding: var(--space-4);
 
   &.show {
     opacity: 1;
@@ -44,9 +29,9 @@
 
 // Modal Container
 .modal-container {
-  background: #ffffff !important;
-  border-radius: 20px;
-  box-shadow: var(--shadow-lg);
+  background: var(--bg-card);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-2xl);
   max-width: 600px;
   width: 100%;
   max-height: 90vh;
@@ -62,26 +47,24 @@
   }
 
   &::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 10px;
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
   }
 
   &::-webkit-scrollbar-thumb {
-    background: var(--primary-color);
-    border-radius: 10px;
+    background: var(--primaryColor);
+    border-radius: var(--radius-lg);
   }
 }
 
 // Modal Header
 .modal-header {
-  padding: 2rem 2rem 1rem;
-  border-bottom: 1px solid var(--border-color);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: linear-gradient(135deg, var(--primary-color) 0%, #3a6b3e 100%);
-  color: var(--white);
-  border-radius: 20px 20px 0 0;
+  padding: var(--space-8) var(--space-8) var(--space-4);
+  border-bottom: 1px solid var(--border-light);
+  @include flex-between;
+  background: linear-gradient(135deg, var(--primaryColor) 0%, var(--primaryColorDark) 100%);
+  color: var(--text-inverse);
+  border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
 
   .modal-title {
     margin: 0;
@@ -99,15 +82,13 @@
   .btn-close {
     background: rgba(255, 255, 255, 0.2);
     border: none;
-    color: var(--white);
+    color: var(--text-inverse);
     width: 40px;
     height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    border-radius: var(--radius-full);
+    @include flex-center;
     cursor: pointer;
-    transition: all 0.3s ease;
+    @include transition(all, 0.3s);
     font-size: 1.35rem;
     font-weight: bold;
 
@@ -166,29 +147,29 @@
       width: 100%;
       padding: 0.875rem 1rem;
       border: 2px solid var(--border-color);
-      border-radius: 12px;
+      border-radius: var(--radius-lg);
       font-size: 0.9rem;
-      transition: all 0.3s ease;
-      background: #fafafa;
+      @include transition(all, 0.3s);
+      background: var(--bg-muted);
 
       &:focus {
         outline: none;
-        border-color: var(--primary-color);
-        background: var(--white);
-        box-shadow: 0 0 0 3px rgba(44, 85, 48, 0.1);
+        border-color: var(--border-focus);
+        background: var(--bg-card);
+        box-shadow: 0 0 0 3px rgba(var(--primaryColor), 0.1);
       }
 
       &.is-invalid {
-        border-color: var(--error-color);
-        background: #fff5f5;
+        border-color: var(--border-error);
+        background: var(--error-light);
 
         &:focus {
-          box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+          box-shadow: 0 0 0 3px rgba(var(--error), 0.1);
         }
       }
 
       &::placeholder {
-        color: #aaa;
+        color: var(--text-disabled);
         font-style: italic;
       }
     }
@@ -199,12 +180,11 @@
     }
 
     .invalid-feedback {
-      color: var(--error-color);
+      color: var(--error);
       font-size: 0.7875rem;
-      margin-top: 0.25rem;
-      display: flex;
-      align-items: center;
-      gap: 0.25rem;
+      margin-top: var(--space-1);
+      @include flex-center;
+      gap: var(--space-1);
 
       &::before {
         content: '⚠️';
@@ -263,13 +243,13 @@
     }
 
     &.btn-secondary {
-      background: #f8f9fa;
-      color: var(--text-dark);
-      border: 2px solid var(--border-color);
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      border: 2px solid var(--border-light);
 
       &:hover:not(:disabled) {
-        background: #e9ecef;
-        border-color: #adb5bd;
+        background: var(--bg-tertiary);
+        border-color: var(--border-medium);
       }
     }
   }
@@ -277,12 +257,7 @@
 
 // Spinner
 .spinner {
-  width: 16px;
-  height: 16px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-top: 2px solid var(--white);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
+  @include loading-spinner(16px, var(--text-inverse));
 }
 
 @keyframes spin {
@@ -292,20 +267,18 @@
 
 // Modal Footer
 .modal-footer {
-  padding: 1rem 2rem 2rem;
+  padding: var(--space-4) var(--space-8) var(--space-8);
   text-align: center;
 
   .footer-text {
-    color: var(--text-light);
+    color: var(--text-secondary);
     font-size: 0.7875rem;
     margin: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
+    @include flex-center;
+    gap: var(--space-2);
 
     .icon {
-      color: var(--success-color);
+      color: var(--success);
     }
   }
 }
