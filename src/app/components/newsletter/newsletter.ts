@@ -7,8 +7,8 @@ import { SocialMediaService } from '../../services/social-media.service';
   selector: 'app-newsletter',
   standalone: true,
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
-  templateUrl: './newsletter.component.html',
-  styleUrl: './newsletter.component.scss'
+  templateUrl: './newsletter.html',
+  styleUrl: './newsletter.scss'
 })
 export class NewsletterComponent {
   @Input() showInstagramCall: boolean = true;

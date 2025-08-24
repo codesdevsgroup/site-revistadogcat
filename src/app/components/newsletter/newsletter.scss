@@ -1,0 +1,559 @@
+// Newsletter Component - Redesigned
+.newsletter {
+  padding: 80px 0;
+  background: linear-gradient(135deg, var(--primaryColor) 0%, var(--primaryColorDark) 100%);
+  position: relative;
+  overflow: hidden;
+
+  // Background effects
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      radial-gradient(circle at 20% 80%, var(--secondaryColor) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, var(--goldenColor) 0%, transparent 50%),
+      conic-gradient(from 45deg at 50% 50%, transparent 0deg, var(--tertiaryColor) 90deg, transparent 180deg);
+    opacity: 0.1;
+    animation: shimmer 8s ease-in-out infinite;
+  }
+
+  .newsletter-container {
+    position: relative;
+    z-index: 2;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 60px;
+    align-items: start;
+
+    @media (min-width: 768px) {
+      grid-template-columns: 1fr 400px;
+      gap: 80px;
+    }
+  }
+}
+
+// Hero Section
+.hero-section {
+  text-align: left;
+
+  @media (max-width: 767px) {
+    text-align: center;
+  }
+
+  .exclusive-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--goldenColor), var(--goldenColorLight));
+    color: var(--primaryColor);
+    padding: 8px 20px;
+    border-radius: 25px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 24px;
+    animation: pulse 2s infinite;
+  }
+
+  h1 {
+    font-size: 48px;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--goldenColor), white, var(--goldenColorLight));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 16px;
+    line-height: 1.2;
+  }
+
+  .subtitle {
+    font-size: 20px;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 40px;
+    line-height: 1.5;
+  }
+
+  .floating-icons {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    overflow: hidden;
+
+    .icon {
+      position: absolute;
+      color: var(--goldenColor);
+      opacity: 0.2;
+      font-size: 24px;
+      animation: float 6s ease-in-out infinite;
+
+      &:nth-child(1) {
+        top: 20%;
+        left: 10%;
+        animation-delay: 0s;
+      }
+
+      &:nth-child(2) {
+        top: 60%;
+        right: 15%;
+        animation-delay: 2s;
+      }
+
+      &:nth-child(3) {
+        bottom: 30%;
+        left: 20%;
+        animation-delay: 4s;
+      }
+    }
+  }
+
+  // Benefits Section in Hero
+  .benefits-section {
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    .benefit-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 0;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 14px;
+      transition: all 0.3s ease;
+
+      &:hover {
+        color: var(--goldenColorLight);
+        transform: translateX(8px);
+      }
+
+      .benefit-icon {
+        font-size: 18px;
+        width: 24px;
+        text-align: center;
+        flex-shrink: 0;
+      }
+    }
+
+    @media (max-width: 768px) {
+      margin-top: 30px;
+      align-items: center;
+
+      .benefit-item {
+        justify-content: center;
+        text-align: center;
+      }
+    }
+  }
+}
+
+// Social Integration Bottom
+.social-integration-bottom {
+  grid-column: 1 / -1;
+  margin-top: 60px;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+
+  @media (max-width: 767px) {
+    margin-top: 40px;
+  }
+
+  .instagram-promo {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    padding: 24px 32px;
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: all 0.3s ease;
+    max-width: 400px;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    .instagram-icon {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      flex-shrink: 0;
+    }
+
+    .instagram-content {
+      flex: 1;
+
+      .instagram-text {
+        display: block;
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 16px;
+        margin-bottom: 4px;
+      }
+
+      .instagram-handle {
+        color: var(--goldenColor);
+        font-weight: 700;
+        text-decoration: none;
+        font-size: 18px;
+        transition: all 0.3s ease;
+
+        &:hover {
+          color: var(--goldenColorLight);
+          text-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
+        }
+      }
+    }
+  }
+}
+
+// Newsletter Form Section
+.newsletter-form-section {
+  .form-header {
+    text-align: left;
+    margin-bottom: 32px;
+
+    .form-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--goldenColor);
+      margin-bottom: 8px;
+    }
+
+    .form-description {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 16px;
+      margin: 0;
+    }
+  }
+
+  .newsletter-form {
+    .form-main {
+      margin-bottom: 24px;
+
+      .input-group {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 12px;
+
+        @media (max-width: 767px) {
+          flex-direction: column;
+        }
+
+        .input-wrapper {
+          flex: 1;
+          position: relative;
+
+          .email-input {
+            width: 100%;
+            padding: 16px 50px 16px 20px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: white;
+            font-size: 16px;
+            transition: all 0.3s ease;
+
+            &::placeholder {
+              color: rgba(255, 255, 255, 0.6);
+            }
+
+            &:focus {
+              outline: none;
+              border-color: var(--goldenColor);
+              box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.2);
+              background: rgba(255, 255, 255, 0.15);
+            }
+
+            &.success {
+              border-color: var(--successColor);
+            }
+
+            &.error {
+              border-color: var(--errorColor);
+            }
+          }
+
+          .input-icon {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.6);
+            pointer-events: none;
+          }
+        }
+
+        .btn-subscribe {
+          padding: 16px 32px;
+          background: linear-gradient(135deg, var(--goldenColor), var(--goldenColorDark));
+          color: var(--primaryColor);
+          border: none;
+          border-radius: 12px;
+          font-weight: 700;
+          font-size: 16px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          white-space: nowrap;
+          box-shadow: 0 4px 20px rgba(255, 215, 0, 0.3);
+
+          &:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(255, 215, 0, 0.4);
+            background: linear-gradient(135deg, var(--goldenColorLight), var(--goldenColor));
+          }
+
+          &:active {
+            transform: translateY(0);
+          }
+
+          &:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+          }
+
+          &.loading {
+            .btn-content {
+              opacity: 0;
+            }
+          }
+
+          .btn-loading {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            .spinner {
+              width: 18px;
+              height: 18px;
+              border: 2px solid transparent;
+              border-top: 2px solid var(--primaryColor);
+              border-radius: 50%;
+              animation: spin 1s linear infinite;
+            }
+          }
+        }
+      }
+
+      .error-message {
+        color: var(--errorColor);
+        font-size: 14px;
+        margin-top: 8px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+    }
+
+    .form-footer {
+      .checkbox-label {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        cursor: pointer;
+        font-size: 14px;
+        line-height: 1.5;
+
+        .checkbox-input {
+          display: none;
+        }
+
+        .checkbox-custom {
+          width: 20px;
+          height: 20px;
+          border: 2px solid rgba(255, 255, 255, 0.3);
+          border-radius: 4px;
+          background: rgba(255, 255, 255, 0.1);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: all 0.3s ease;
+          flex-shrink: 0;
+          margin-top: 2px;
+
+          &::after {
+            content: '✓';
+            color: var(--primaryColor);
+            font-weight: bold;
+            opacity: 0;
+            transform: scale(0);
+            transition: all 0.2s ease;
+          }
+        }
+
+        .checkbox-text {
+          color: rgba(255, 255, 255, 0.8);
+          flex: 1;
+
+          .terms-link {
+            color: var(--goldenColor);
+            text-decoration: none;
+            transition: color 0.3s ease;
+
+            &:hover {
+              color: var(--goldenColorLight);
+              text-decoration: underline;
+            }
+          }
+        }
+
+        .checkbox-input:checked + .checkbox-custom {
+          background: var(--goldenColor);
+          border-color: var(--goldenColor);
+
+          &::after {
+            opacity: 1;
+            transform: scale(1);
+          }
+        }
+      }
+    }
+  }
+
+  .benefits {
+    margin-top: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    .benefit-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 15px;
+
+      svg {
+        color: var(--goldenColor);
+        flex-shrink: 0;
+      }
+    }
+  }
+}
+
+// Submit Message
+.submit-message {
+  margin-top: 24px;
+  padding: 16px 20px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 500;
+  animation: slideIn 0.3s ease;
+
+  &.success {
+    background: rgba(34, 197, 94, 0.1);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    color: var(--successColor);
+  }
+
+  &.error {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: var(--errorColor);
+  }
+
+  .message-icon {
+    flex-shrink: 0;
+  }
+}
+
+// Animations
+@keyframes shimmer {
+  0%, 100% { opacity: 0.1; }
+  50% { opacity: 0.2; }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Responsive Design
+@media (max-width: 767px) {
+  .newsletter {
+    padding: 60px 0;
+
+    .newsletter-container {
+      gap: 40px;
+    }
+  }
+
+  .hero-section {
+    .floating-icons {
+      .icon {
+        font-size: 20px;
+      }
+    }
+  }
+
+  .social-integration {
+    .instagram-promo {
+      padding: 20px;
+      flex-direction: column;
+      text-align: center;
+      gap: 12px;
+
+      .instagram-content {
+        .instagram-text {
+          font-size: 15px;
+        }
+
+        .instagram-handle {
+          font-size: 16px;
+        }
+      }
+    }
+  }
+
+  .newsletter-form-section {
+    .benefits {
+      .benefit-item {
+        font-size: 14px;
+      }
+    }
+  }
+}
