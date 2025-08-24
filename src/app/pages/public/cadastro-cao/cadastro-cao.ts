@@ -3,8 +3,8 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { FooterComponent } from '../../components/footer/footer';
-import { SocialMediaService } from '../../services/social-media.service';
+import { FooterComponent } from '../../../components/footer/footer';
+import { SocialMediaService } from '../../../services/social-media.service';
 
 // Interface para resposta da API ViaCEP
 interface ViaCepResponse {

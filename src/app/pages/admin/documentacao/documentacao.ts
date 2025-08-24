@@ -102,7 +102,7 @@ export class DocumentacaoComponent implements OnInit {
   }
 
   navegarPara(docId: string) {
-    this.router.navigate(['/painel/documentacao', docId]);
+    this.router.navigate(['/admin/documentacao', docId]);
   }
 
   getDocumentoAtual(): DocumentoInfo | undefined {

@@ -68,7 +68,7 @@ export class LoginComponent implements OnInit {
       setTimeout(() => {
         this.isSubmitting = false;
         // Redirecionar para o painel após login bem-sucedido
-        this.router.navigate(['/painel']);
+        this.router.navigate(['/admin']);
       }, 2000);
     } else {
       this.markFormGroupTouched();

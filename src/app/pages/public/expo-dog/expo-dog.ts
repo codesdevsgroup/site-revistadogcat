@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { FooterComponent } from '../../components/footer/footer';
-import { SocialMediaService } from '../../services/social-media.service';
+import { FooterComponent } from '../../../components/footer/footer';
+import { SocialMediaService } from '../../../services/social-media.service';
 
 @Component({
   selector: 'app-expo-dog',

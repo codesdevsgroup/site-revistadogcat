@@ -4,12 +4,12 @@ import { CommonModule } from '@angular/common';
 import { TopMenuComponent } from './components/top-menu/top-menu';
 
 @Component({
-  selector: 'app-painel',
+  selector: 'app-admin',
   standalone: true,
   imports: [CommonModule, RouterOutlet, TopMenuComponent],
-  templateUrl: './painel.html',
-  styleUrls: ['./painel.scss']
+  templateUrl: './admin.html',
+  styleUrls: ['./admin.scss']
 })
-export class PainelComponent {
+export class AdminComponent {
   constructor() {}
 }

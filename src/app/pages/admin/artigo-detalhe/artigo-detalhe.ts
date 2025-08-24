@@ -108,7 +108,7 @@ export class ArtigoDetalheComponent implements OnInit {
   }
 
   onCancel(): void {
-    this.router.navigate(['/painel/artigos']);
+    this.router.navigate(['/admin/artigos']);
   }
 
   private markFormGroupTouched(): void {

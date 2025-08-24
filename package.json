@@ -7,8 +7,7 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test",
-    "serve:ssr:site-revistadogcat": "node dist/site-revistadogcat/server/server.mjs"
+    "test": "ng test"
   },
   "private": true,
   "dependencies": {
@@ -18,9 +17,7 @@
     "@angular/forms": "^20.1.7",
     "@angular/platform-browser": "^20.1.7",
     "@angular/platform-browser-dynamic": "^20.1.7",
-    "@angular/platform-server": "^20.1.7",
     "@angular/router": "^20.1.7",
-    "@angular/ssr": "^20.1.6",
     "@editorjs/checklist": "^1.6.0",
     "@editorjs/link": "^2.6.2",
     "@editorjs/list": "^2.0.8",
@@ -43,7 +40,6 @@
     "@tiptap/pm": "^3.2.1",
     "@tiptap/starter-kit": "^3.2.1",
     "bootstrap": "^5.3.6",
-    "express": "^4.18.2",
     "marked": "^15.0.12",
     "ngx-markdown": "^20.0.0",
     "rxjs": "~7.8.0",
@@ -55,7 +51,6 @@
     "@angular-devkit/build-angular": "^20.1.6",
     "@angular/cli": "^20.1.6",
     "@angular/compiler-cli": "^20.1.7",
-    "@types/express": "^4.17.17",
     "@types/jasmine": "~5.1.0",
     "@types/node": "^18.18.0",
     "jasmine-core": "~5.6.0",

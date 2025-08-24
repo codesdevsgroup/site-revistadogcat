@@ -1,15 +1,15 @@
 import { Routes } from '@angular/router';
-import { PainelComponent } from './painel';
+import { AdminComponent } from './admin';
 import { DashboardComponent } from './dashboard/dashboard';
 import { UsuariosComponent } from './usuarios/usuarios';
 import { ArtigosComponent } from './artigos/artigos';
 import { ArtigoDetalheComponent } from './artigo-detalhe/artigo-detalhe';
 import { DocumentacaoComponent } from './documentacao/documentacao';
 
-export const painelRoutes: Routes = [
+export const adminRoutes: Routes = [
   {
     path: '',
-    component: PainelComponent,
+    component: AdminComponent,
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: DashboardComponent },
