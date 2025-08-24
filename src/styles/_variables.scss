@@ -36,9 +36,46 @@
   
   // Semantic colors
   --success: #10b981;
+  --success-light: #34d399;
+  --success-dark: #059669;
   --warning: #f59e0b;
+  --warning-light: #fbbf24;
+  --warning-dark: #d97706;
   --error: #ef4444;
+  --error-light: #f87171;
+  --error-dark: #dc2626;
   --info: #3b82f6;
+  --info-light: #60a5fa;
+  --info-dark: #2563eb;
+  
+  // Additional semantic colors
+  --whatsapp: #25d366;
+  --whatsapp-dark: #128c7e;
+  --facebook: #1877f2;
+  --twitter: #1da1f2;
+  
+  // Background variations
+  --bg-primary: var(--gray-50);
+  --bg-secondary: var(--gray-100);
+  --bg-tertiary: var(--gray-200);
+  --bg-muted: var(--gray-100);
+  --bg-card: var(--white);
+  --bg-overlay: rgba(0, 0, 0, 0.5);
+  
+  // Text color variations
+  --text-primary: var(--gray-900);
+  --text-secondary: var(--gray-600);
+  --text-muted: var(--gray-500);
+  --text-disabled: var(--gray-400);
+  --text-inverse: var(--white);
+  
+  // Border colors
+  --border-light: var(--gray-200);
+  --border-medium: var(--gray-300);
+  --border-strong: var(--gray-400);
+  --border-focus: var(--info);
+  --border-error: var(--error);
+  --border-success: var(--success);
   
   // Spacing scale
   --space-1: 0.25rem;
@@ -82,6 +119,22 @@
   --z-popover: 1060;
   --z-tooltip: 1070;
   
+  // Semantic color backgrounds and states
+  --success-bg: rgba(16, 185, 129, 0.1);
+  --success-color: var(--success);
+  --info-bg: rgba(59, 130, 246, 0.1);
+  --info-color: var(--info);
+  --info-bg-hover: rgba(59, 130, 246, 0.2);
+  --danger-bg: rgba(239, 68, 68, 0.1);
+  --danger-color: var(--error);
+  --danger-bg-hover: rgba(239, 68, 68, 0.2);
+  
+  // Background variations
+  --bg-primary: var(--white);
+  --bg-secondary: var(--gray-50);
+  --bg-tertiary: var(--gray-100);
+  --text-inverse: var(--white);
+  
   // Legacy support
   --backgroundColor: var(--gray-50);
   --borderBoxShadow: var(--shadow-lg);
@@ -101,35 +154,82 @@
   --goldenColorLight: #fcd34d;
   --goldenColorDark: #f59e0b;
   
-  // Neutral colors - Dark theme
-  --white: #111827;
-  --gray-50: #111827;
-  --gray-100: #1f2937;
-  --gray-200: #374151;
-  --gray-300: #4b5563;
-  --gray-400: #6b7280;
-  --gray-500: #9ca3af;
-  --gray-600: #d1d5db;
-  --gray-700: #e5e7eb;
-  --gray-800: #f3f4f6;
-  --gray-900: #f9fafb;
+  // Neutral colors - Dark theme (melhor contraste)
+  --white: #0f172a;
+  --gray-50: #0f172a;
+  --gray-100: #1e293b;
+  --gray-200: #334155;
+  --gray-300: #475569;
+  --gray-400: #64748b;
+  --gray-500: #94a3b8;
+  --gray-600: #cbd5e1;
+  --gray-700: #e2e8f0;
+  --gray-800: #f1f5f9;
+  --gray-900: #f8fafc;
   
   // Semantic colors - Dark theme
-  --success: #34d399;
-  --warning: #fbbf24;
-  --error: #f87171;
-  --info: #60a5fa;
+  --success: #22c55e;
+  --success-light: #4ade80;
+  --success-dark: #16a34a;
+  --warning: #f59e0b;
+  --warning-light: #fbbf24;
+  --warning-dark: #d97706;
+  --error: #ef4444;
+  --error-light: #f87171;
+  --error-dark: #dc2626;
+  --info: #3b82f6;
+  --info-light: #60a5fa;
+  --info-dark: #2563eb;
   
-  // Background and text colors
+  // Additional semantic colors - Dark theme
+  --whatsapp: #25d366;
+  --whatsapp-dark: #1ebf5c;
+  --facebook: #1877f2;
+  --twitter: #1da1f2;
+  
+  // Semantic color backgrounds and states
+  --success-bg: rgba(34, 197, 94, 0.1);
+  --success-color: var(--success);
+  --info-bg: rgba(59, 130, 246, 0.1);
+  --info-color: var(--info);
+  --info-bg-hover: rgba(59, 130, 246, 0.2);
+  --danger-bg: rgba(239, 68, 68, 0.1);
+  --danger-color: var(--error);
+  --danger-bg-hover: rgba(239, 68, 68, 0.2);
+  
+  // Background variations - Dark theme
+  --bg-primary: var(--gray-50);
+  --bg-secondary: var(--gray-100);
+  --bg-tertiary: var(--gray-200);
+  --bg-muted: var(--gray-100);
+  --bg-card: var(--gray-100);
+  --bg-overlay: rgba(0, 0, 0, 0.7);
+  
+  // Text color variations - Dark theme
+  --text-primary: var(--gray-900);
+  --text-secondary: var(--gray-700);
+  --text-muted: var(--gray-600);
+  --text-disabled: var(--gray-500);
+  --text-inverse: var(--gray-900);
+  
+  // Border colors - Dark theme
+  --border-light: var(--gray-300);
+  --border-medium: var(--gray-400);
+  --border-strong: var(--gray-500);
+  --border-focus: var(--info);
+  --border-error: var(--error);
+  --border-success: var(--success);
+  
+  // Background and text colors (melhor contraste)
   --backgroundColor: var(--gray-50);
-  --textColor: var(--gray-800);
-  --textColorSecondary: var(--gray-600);
+  --textColor: #ffffff;
+  --textColorSecondary: var(--gray-700);
   --borderColor: var(--gray-300);
   
-  // Shadows - Dark theme (more subtle)
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.3), 0 2px 4px -2px rgb(0 0 0 / 0.3);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3);
-  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.3), 0 8px 10px -6px rgb(0 0 0 / 0.3);
-  --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.4);
+  // Shadows - Dark theme (mais visíveis)
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.4);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.4);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.4);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.4), 0 8px 10px -6px rgb(0 0 0 / 0.4);
+  --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.5);
 }

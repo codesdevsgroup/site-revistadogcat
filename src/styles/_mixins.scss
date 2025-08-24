@@ -1,0 +1,331 @@
+// =============================================================================
+// MIXINS - Reutilizáveis para todo o projeto
+// =============================================================================
+
+// Flexbox utilities
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@mixin flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+@mixin flex-column-center {
+  @include flex-column;
+  align-items: center;
+  justify-content: center;
+}
+
+// Transitions
+@mixin transition($properties: all, $duration: var(--transition-normal), $timing: ease) {
+  transition: $properties $duration $timing;
+}
+
+@mixin transition-fast($properties: all) {
+  @include transition($properties, var(--transition-fast));
+}
+
+@mixin transition-slow($properties: all) {
+  @include transition($properties, var(--transition-slow));
+}
+
+// Hover effects
+@mixin hover-lift {
+  @include transition(transform, var(--transition-fast));
+  
+  &:hover {
+    transform: translateY(-2px);
+  }
+}
+
+@mixin hover-scale($scale: 1.05) {
+  @include transition(transform, var(--transition-fast));
+  
+  &:hover {
+    transform: scale($scale);
+  }
+}
+
+@mixin hover-glow($color: var(--primaryColor)) {
+  @include transition(box-shadow, var(--transition-fast));
+  
+  &:hover {
+    box-shadow: 0 0 20px rgba($color, 0.3);
+  }
+}
+
+// Animations
+@mixin fade-in($duration: 0.3s, $delay: 0s) {
+  animation: fadeIn $duration ease-out $delay both;
+}
+
+@mixin slide-up($duration: 0.4s, $delay: 0s) {
+  animation: slideUp $duration ease-out $delay both;
+}
+
+@mixin bounce-in($duration: 0.6s, $delay: 0s) {
+  animation: bounceIn $duration ease-out $delay both;
+}
+
+@mixin pulse($duration: 2s) {
+  animation: pulse $duration ease-in-out infinite;
+}
+
+@mixin rotate($duration: 1s) {
+  animation: rotate $duration linear infinite;
+}
+
+// Card styles
+@mixin card-base {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: var(--space-6);
+  @include transition(box-shadow);
+}
+
+@mixin card-hover {
+  @include card-base;
+  
+  &:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+  }
+}
+
+// Button base styles
+@mixin button-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-6);
+  border: none;
+  border-radius: var(--radius-md);
+  font-weight: var(--fontWeight-medium);
+  text-decoration: none;
+  cursor: pointer;
+  @include transition(all, var(--transition-fast));
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+}
+
+@mixin button-size($size) {
+  @if $size == 'sm' {
+    padding: var(--space-2) var(--space-4);
+    font-size: 0.875rem;
+  } @else if $size == 'lg' {
+    padding: var(--space-4) var(--space-8);
+    font-size: 1.125rem;
+  } @else if $size == 'xl' {
+    padding: var(--space-5) var(--space-10);
+    font-size: 1.25rem;
+  }
+}
+
+// Form elements
+@mixin input-base {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font-size: 1rem;
+  @include transition(border-color, var(--transition-fast));
+  
+  &:focus {
+    outline: none;
+    border-color: var(--border-focus);
+    box-shadow: 0 0 0 3px rgba(var(--info), 0.1);
+  }
+  
+  &::placeholder {
+    color: var(--text-muted);
+  }
+}
+
+@mixin input-error {
+  border-color: var(--border-error);
+  
+  &:focus {
+    border-color: var(--border-error);
+    box-shadow: 0 0 0 3px rgba(var(--error), 0.1);
+  }
+}
+
+@mixin input-success {
+  border-color: var(--border-success);
+  
+  &:focus {
+    border-color: var(--border-success);
+    box-shadow: 0 0 0 3px rgba(var(--success), 0.1);
+  }
+}
+
+// Typography
+@mixin text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@mixin text-clamp($lines: 2) {
+  display: -webkit-box;
+  -webkit-line-clamp: $lines;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+// Responsive utilities
+@mixin mobile-only {
+  @media (max-width: 767px) {
+    @content;
+  }
+}
+
+@mixin tablet-up {
+  @media (min-width: 768px) {
+    @content;
+  }
+}
+
+@mixin desktop-up {
+  @media (min-width: 1024px) {
+    @content;
+  }
+}
+
+// Loading states
+@mixin loading-skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--gray-200) 25%,
+    var(--gray-100) 50%,
+    var(--gray-200) 75%
+  );
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+@mixin loading-spinner($size: 20px, $color: var(--primaryColor)) {
+  width: $size;
+  height: $size;
+  border: 2px solid var(--gray-200);
+  border-top: 2px solid $color;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+// Utility mixins
+@mixin visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@mixin clearfix {
+  &::after {
+    content: '';
+    display: table;
+    clear: both;
+  }
+}
+
+// =============================================================================
+// KEYFRAMES
+// =============================================================================
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

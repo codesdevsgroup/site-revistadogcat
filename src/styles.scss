@@ -1,5 +1,7 @@
 // Import CSS variables
 @use 'styles/variables';
+@use 'styles/mixins' as *;
+@use 'styles/buttons';
 
 // Modern CSS Reset
 *, *::before, *::after {
@@ -71,6 +73,63 @@ p {
 .card-header {
   p, span, div:not(.btn):not(.form-control) {
     color: var(--white) !important;
+  }
+}
+
+// Dark theme text contrast improvements
+[data-theme="dark"] {
+  // Ensure good contrast for all text elements
+  body, p, span, div, h1, h2, h3, h4, h5, h6 {
+    color: #ffffff !important;
+  }
+  
+  // Override any dark text colors
+  * {
+    &[style*="color: #2e2e2e"],
+    &[style*="color: rgb(46, 46, 46)"] {
+      color: #ffffff !important;
+    }
+  }
+  
+  // Secondary text elements
+  .text-muted, .text-secondary, small {
+    color: var(--textColorSecondary) !important;
+  }
+  
+  // Links in dark theme
+  a:not(.btn):not(.nav-link) {
+    color: var(--secondaryColor) !important;
+    
+    &:hover {
+      color: var(--secondaryColorLight) !important;
+    }
+  }
+  
+  // Card and container backgrounds
+  .card, .modal-content, .dropdown-menu {
+    background-color: var(--gray-100) !important;
+    border-color: var(--gray-300) !important;
+    color: var(--textColor) !important;
+  }
+  
+  // Form elements
+  .form-control, .form-select {
+    background-color: var(--gray-100) !important;
+    border-color: var(--gray-300) !important;
+    color: var(--textColor) !important;
+    
+    &::placeholder {
+      color: var(--textColorSecondary) !important;
+    }
+  }
+  
+  // Tables
+  .table {
+    color: var(--textColor) !important;
+    
+    th, td {
+      border-color: var(--gray-300) !important;
+    }
   }
 }
 

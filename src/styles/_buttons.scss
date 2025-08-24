@@ -1,0 +1,377 @@
+// =============================================================================
+// BUTTON SYSTEM - Sistema de botões padronizado
+// =============================================================================
+
+@use 'mixins' as *;
+
+
+
+// Base button class
+.btn {
+  @include button-base;
+  
+  // Icon support
+  .icon {
+    width: 1em;
+    height: 1em;
+    flex-shrink: 0;
+  }
+  
+  // Loading state
+  &.loading {
+    position: relative;
+    color: transparent;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      @include loading-spinner(16px, currentColor);
+    }
+  }
+}
+
+// Button sizes
+.btn-sm {
+  @include button-size('sm');
+}
+
+.btn-lg {
+  @include button-size('lg');
+}
+
+.btn-xl {
+  @include button-size('xl');
+}
+
+// Button variants
+.btn-primary {
+  background: var(--primaryColor);
+  color: var(--text-inverse);
+  
+  &:hover:not(:disabled) {
+    background: var(--primaryColorDark);
+    @include hover-lift;
+  }
+  
+  &:active {
+    background: var(--primaryColorDark);
+    transform: translateY(0);
+  }
+}
+
+.btn-secondary {
+  background: var(--secondaryColor);
+  color: var(--primaryColor);
+  
+  &:hover:not(:disabled) {
+    background: var(--secondaryColorLight);
+    @include hover-lift;
+  }
+  
+  &:active {
+    background: var(--secondaryColorDark);
+    transform: translateY(0);
+  }
+}
+
+.btn-success {
+  background: var(--success);
+  color: var(--text-inverse);
+  
+  &:hover:not(:disabled) {
+    background: var(--success-dark);
+    @include hover-lift;
+  }
+  
+  &:active {
+    background: var(--success-dark);
+    transform: translateY(0);
+  }
+}
+
+.btn-warning {
+  background: var(--warning);
+  color: var(--text-inverse);
+  
+  &:hover:not(:disabled) {
+    background: var(--warning-dark);
+    @include hover-lift;
+  }
+  
+  &:active {
+    background: var(--warning-dark);
+    transform: translateY(0);
+  }
+}
+
+.btn-error {
+  background: var(--error);
+  color: var(--text-inverse);
+  
+  &:hover:not(:disabled) {
+    background: var(--error-dark);
+    @include hover-lift;
+  }
+  
+  &:active {
+    background: var(--error-dark);
+    transform: translateY(0);
+  }
+}
+
+.btn-info {
+  background: var(--info);
+  color: var(--text-inverse);
+  
+  &:hover:not(:disabled) {
+    background: var(--info-dark);
+    @include hover-lift;
+  }
+  
+  &:active {
+    background: var(--info-dark);
+    transform: translateY(0);
+  }
+}
+
+// Outline variants
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--border-medium);
+  color: var(--text-primary);
+  
+  &:hover:not(:disabled) {
+    background: var(--bg-secondary);
+    border-color: var(--border-strong);
+  }
+}
+
+.btn-outline-primary {
+  background: transparent;
+  border: 1px solid var(--primaryColor);
+  color: var(--primaryColor);
+  
+  &:hover:not(:disabled) {
+    background: var(--primaryColor);
+    color: var(--text-inverse);
+  }
+}
+
+.btn-outline-secondary {
+  background: transparent;
+  border: 1px solid var(--secondaryColor);
+  color: var(--secondaryColor);
+  
+  &:hover:not(:disabled) {
+    background: var(--secondaryColor);
+    color: var(--primaryColor);
+  }
+}
+
+.btn-outline-success {
+  background: transparent;
+  border: 1px solid var(--success);
+  color: var(--success);
+  
+  &:hover:not(:disabled) {
+    background: var(--success);
+    color: var(--text-inverse);
+  }
+}
+
+.btn-outline-warning {
+  background: transparent;
+  border: 1px solid var(--warning);
+  color: var(--warning);
+  
+  &:hover:not(:disabled) {
+    background: var(--warning);
+    color: var(--text-inverse);
+  }
+}
+
+.btn-outline-error {
+  background: transparent;
+  border: 1px solid var(--error);
+  color: var(--error);
+  
+  &:hover:not(:disabled) {
+    background: var(--error);
+    color: var(--text-inverse);
+  }
+}
+
+// Ghost variants (no border)
+.btn-ghost {
+  background: transparent;
+  color: var(--text-primary);
+  
+  &:hover:not(:disabled) {
+    background: var(--bg-secondary);
+  }
+}
+
+.btn-ghost-primary {
+  background: transparent;
+  color: var(--primaryColor);
+  
+  &:hover:not(:disabled) {
+    background: rgba(var(--primaryColor), 0.1);
+  }
+}
+
+// Special variants
+.btn-whatsapp {
+  background: var(--whatsapp);
+  color: var(--text-inverse);
+  
+  &:hover:not(:disabled) {
+    background: var(--whatsapp-dark);
+    @include hover-lift;
+  }
+}
+
+.btn-gradient {
+  background: linear-gradient(135deg, var(--primaryColor), var(--secondaryColor));
+  color: var(--text-inverse);
+  border: none;
+  
+  &:hover:not(:disabled) {
+    background: linear-gradient(135deg, var(--primaryColorDark), var(--secondaryColorDark));
+    @include hover-lift;
+  }
+}
+
+// Button shapes
+.btn-rounded {
+  border-radius: var(--radius-full);
+}
+
+.btn-square {
+  border-radius: 0;
+}
+
+// Button groups
+.btn-group {
+  display: inline-flex;
+  
+  .btn {
+    border-radius: 0;
+    
+    &:first-child {
+      border-top-left-radius: var(--radius-md);
+      border-bottom-left-radius: var(--radius-md);
+    }
+    
+    &:last-child {
+      border-top-right-radius: var(--radius-md);
+      border-bottom-right-radius: var(--radius-md);
+    }
+    
+    &:not(:last-child) {
+      border-right: none;
+    }
+  }
+}
+
+// Floating action button
+.btn-fab {
+  @include flex-center;
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-full);
+  background: var(--primaryColor);
+  color: var(--text-inverse);
+  box-shadow: var(--shadow-lg);
+  position: fixed;
+  bottom: var(--space-6);
+  right: var(--space-6);
+  z-index: var(--z-fixed);
+  
+  &:hover:not(:disabled) {
+    background: var(--primaryColorDark);
+    box-shadow: var(--shadow-xl);
+    @include hover-lift;
+  }
+  
+  .icon {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+// Icon-only buttons
+.btn-icon {
+  @include flex-center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  
+  &.btn-sm {
+    width: 32px;
+    height: 32px;
+  }
+  
+  &.btn-lg {
+    width: 48px;
+    height: 48px;
+  }
+  
+  .icon {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+// Full width button
+.btn-block {
+  width: 100%;
+}
+
+// Button animations
+.btn-bounce {
+  &:hover:not(:disabled) {
+    @include bounce-in(0.3s);
+  }
+}
+
+.btn-pulse {
+  &:hover:not(:disabled) {
+    @include pulse(1s);
+  }
+}
+
+// Responsive button utilities
+@include mobile-only {
+  .btn-mobile-block {
+    width: 100%;
+  }
+  
+  .btn-mobile-sm {
+    @include button-size('sm');
+  }
+}
+
+// Dark theme adjustments
+[data-theme="dark"] {
+  .btn-outline {
+    border-color: var(--border-medium);
+    color: var(--text-primary);
+    
+    &:hover:not(:disabled) {
+      background: var(--bg-secondary);
+      border-color: var(--border-strong);
+    }
+  }
+  
+  .btn-ghost {
+    color: var(--text-primary);
+    
+    &:hover:not(:disabled) {
+      background: var(--bg-secondary);
+    }
+  }
+}
