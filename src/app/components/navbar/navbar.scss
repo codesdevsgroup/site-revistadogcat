@@ -1,27 +1,72 @@
+// Navbar Configuration
+$navbar-height: 70px;
+$navbar-padding-y: var(--space-3);
+$navbar-padding-x: var(--space-4);
+$navbar-brand-height: 46px;
+$navbar-transition: var(--transition-fast);
+
+// Mixins
+@mixin navbar-item-base {
+  color: var(--secondaryColor);
+  font-weight: var(--fontWeight-medium);
+  text-decoration: none;
+  transition: $navbar-transition;
+  position: relative;
+}
+
+@mixin hover-effect {
+  &:hover {
+    color: var(--white) !important;
+    transform: translateY(-1px);
+  }
+}
+
+@mixin active-indicator {
+  &::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: var(--goldenColor);
+    transition: $navbar-transition;
+    transform: translateX(-50%);
+  }
+  
+  &:hover::before,
+  &.active::before {
+    width: 80%;
+  }
+}
+
 .navbar {
   background: linear-gradient(135deg, var(--primaryColor) 0%, var(--primaryColorLight) 100%);
   backdrop-filter: blur(10px);
   box-shadow: var(--shadow-lg);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: var(--z-sticky);
-  transition: var(--transition-normal);
+  transition: $navbar-transition;
+  min-height: $navbar-height;
 
-  .navbar-brand {
-    color: var(--secondaryColor);
-    font-weight: var(--fontWeight-bold);
+  // Brand styling
+  &-brand {
+    @include navbar-item-base;
     font-size: 1.6875rem;
-    text-decoration: none;
+    font-weight: var(--fontWeight-bold);
     display: flex;
     align-items: center;
-    transition: var(--transition-fast);
-
+    
     img {
-      height: 46px;
+      height: $navbar-brand-height;
+      width: auto;
       margin-right: var(--space-3);
       filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
-      transition: var(--transition-fast);
+      transition: $navbar-transition;
     }
 
     &:hover {
@@ -34,50 +79,35 @@
     }
   }
 
+  // Navigation links
   .nav-link {
-    color: var(--secondaryColor) !important;
-    font-weight: var(--fontWeight-medium);
-    margin-left: var(--space-4);
+    @include navbar-item-base;
+    @include hover-effect;
+    @include active-indicator;
+    
+    margin-left: $navbar-padding-x;
     padding: var(--space-2) var(--space-3);
     border-radius: var(--radius-md);
-    position: relative;
-    transition: var(--transition-fast);
-    
-    &::before {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 50%;
-      width: 0;
-      height: 2px;
-      background: var(--goldenColor);
-      transition: var(--transition-fast);
-      transform: translateX(-50%);
-    }
     
     &:hover {
-      color: var(--white) !important;
       background: rgba(255, 255, 255, 0.1);
-      transform: translateY(-2px);
-      
-      &::before {
-        width: 80%;
-      }
     }
   }
 
+  // Login button styling
   .btn-login {
     background: linear-gradient(135deg, var(--goldenColor) 0%, var(--goldenColorLight) 100%);
-    color: var(--primaryColor);
+    color: var(--primaryColor) !important;
     font-weight: var(--fontWeight-semibold);
     padding: var(--space-2) var(--space-4);
     border: none;
     border-radius: var(--radius-full);
-    margin-left: var(--space-4);
+    margin-left: $navbar-padding-x;
     transition: var(--transition-normal);
     box-shadow: var(--shadow-md);
     position: relative;
     overflow: hidden;
+    text-decoration: none;
     
     &::before {
       content: '';
@@ -94,6 +124,7 @@
       transform: translateY(-2px) scale(1.02);
       box-shadow: var(--shadow-xl);
       background: linear-gradient(135deg, var(--goldenColorLight) 0%, var(--goldenColor) 100%);
+      color: var(--primaryColor) !important;
       
       &::before {
         left: 100%;
@@ -103,18 +134,93 @@
     &:active {
       transform: translateY(0) scale(0.98);
     }
-  }
-
-  @keyframes pulse {
-    0% {
-      box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7);
-    }
-    70% {
-      box-shadow: 0 0 0 10px rgba(255, 215, 0, 0);
-    }
-    100% {
-      box-shadow: 0 0 0 0 rgba(255, 215, 0, 0);
+    
+    &:focus {
+      outline: 2px solid var(--goldenColor);
+      outline-offset: 2px;
     }
   }
 
+  // Mobile toggle button
+  .navbar-toggler {
+    border: none;
+    background: transparent;
+    padding: var(--space-2);
+    border-radius: var(--radius-md);
+    transition: $navbar-transition;
+    
+    &:focus {
+      box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+      outline: none;
+    }
+    
+    &:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+    
+    &-icon {
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.8%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='m4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+      width: 1.5em;
+      height: 1.5em;
+    }
+  }
+
+  // Responsive design
+  @media (max-width: 991.98px) {
+    .navbar-collapse {
+      background: rgba(var(--primaryColorRGB), 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: var(--radius-lg);
+      margin-top: var(--space-3);
+      padding: var(--space-4);
+      box-shadow: var(--shadow-lg);
+    }
+    
+    .navbar-nav {
+      gap: var(--space-2);
+    }
+    
+    .nav-link {
+      margin-left: 0;
+      padding: var(--space-3) var(--space-4);
+      border-radius: var(--radius-md);
+      
+      &::before {
+        display: none;
+      }
+      
+      &:hover,
+      &.active {
+        background: rgba(255, 255, 255, 0.15);
+        transform: translateX(var(--space-2));
+      }
+    }
+    
+    .btn-login {
+      margin-left: 0;
+      margin-top: var(--space-3);
+      text-align: center;
+      width: 100%;
+    }
+  }
+
+  @media (max-width: 575.98px) {
+    .container {
+      padding-left: var(--space-3);
+      padding-right: var(--space-3);
+    }
+    
+    .navbar-brand {
+      font-size: 1.4rem;
+      
+      img {
+        height: 38px;
+      }
+    }
+  }
+}
+
+// Body padding to compensate for fixed navbar
+body {
+  padding-top: $navbar-height;
 }

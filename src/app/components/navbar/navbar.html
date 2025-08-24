@@ -1,41 +1,52 @@
 <nav class="navbar navbar-expand-lg shadow-sm fixed-top">
   <div class="container">
-    <a class="navbar-brand d-flex align-items-center" routerLink="/">
-      <img src="./logo2.png" alt="Logo DogCat" />
+    <!-- Brand -->
+    <a 
+      class="navbar-brand d-flex align-items-center" 
+      [routerLink]="brandConfig.route"
+      (click)="closeMenu()"
+    >
+      <img 
+        [src]="brandConfig.logoSrc" 
+        [alt]="brandConfig.logoAlt" 
+        loading="lazy"
+      />
     </a>
 
+    <!-- Mobile Toggle Button -->
     <button
       class="navbar-toggler"
       type="button"
-      data-bs-toggle="collapse"
-      data-bs-target="#navbarNav"
-      aria-controls="navbarNav"
-      aria-expanded="false"
+      [attr.aria-expanded]="isMenuOpen"
+      [attr.aria-controls]="'navbarNav'"
       aria-label="Toggle navigation"
+      (click)="toggleMenu()"
     >
       <span class="navbar-toggler-icon"></span>
     </button>
 
-    <div class="collapse navbar-collapse" id="navbarNav">
+    <!-- Navigation Menu -->
+    <div 
+      class="navbar-collapse" 
+      [class.collapse]="!isMenuOpen"
+      [class.show]="isMenuOpen"
+      id="navbarNav"
+    >
       <ul class="navbar-nav ms-auto align-items-center">
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/">Home</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/assinaturas">Assinaturas</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/expo-dog">Expo Dog</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/edicoes">Edições</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/top-canis">Top Canis</a>
-        </li>
-
-        <li class="nav-item">
-          <a class="btn btn-login" routerLink="/area-leitor">Área do Leitor</a>
+        <li 
+          class="nav-item" 
+          *ngFor="let item of navigationItems; trackBy: trackByRoute"
+        >
+          <a 
+            [class]="item.isButton ? item.buttonClass : 'nav-link'"
+            [routerLink]="item.route"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: item.route === '/' }"
+            (click)="closeMenu()"
+          >
+            <i *ngIf="item.icon" [class]="item.icon" aria-hidden="true"></i>
+            {{ item.label }}
+          </a>
         </li>
       </ul>
     </div>
