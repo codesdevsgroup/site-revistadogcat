@@ -1,7 +1,9 @@
 // Newsletter Component - Redesigned
 .newsletter {
-  padding: 80px 0;
+  padding: 56px 0;
+  margin-top: 60px;
   background: linear-gradient(135deg, var(--primaryColor) 0%, var(--primaryColorDark) 100%);
+  border-radius: 24px;
   position: relative;
   overflow: hidden;
 
@@ -29,12 +31,12 @@
     padding: 0 20px;
     display: grid;
     grid-template-columns: 1fr;
-    gap: 60px;
+    gap: 42px;
     align-items: start;
 
     @media (min-width: 768px) {
       grid-template-columns: 1fr 400px;
-      gap: 80px;
+      gap: 56px;
     }
   }
 }
