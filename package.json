@@ -5,7 +5,9 @@
     "ng": "ng",
     "bun:start": "bunx ng serve",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ng build --configuration development",
+    "build:dev": "ng build --configuration development",
+    "build:prod": "ng build --configuration production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
