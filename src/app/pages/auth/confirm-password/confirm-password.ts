@@ -33,6 +33,30 @@ export class ConfirmPasswordComponent implements OnInit {
     this.token = this.route.snapshot.queryParamMap.get('token');
   }
 
+  get password() {
+    return this.confirmPasswordForm.get('password')?.value || '';
+  }
+
+  get hasMinLength() {
+    return this.password.length >= 8;
+  }
+
+  get hasUpper() {
+    return /[A-Z]/.test(this.password);
+  }
+
+  get hasLower() {
+    return /[a-z]/.test(this.password);
+  }
+
+  get hasNumber() {
+    return /[0-9]/.test(this.password);
+  }
+
+  get hasSpecialChar() {
+    return /[!@#$%^&*(),.?":{}|<>]/.test(this.password);
+  }
+
   passwordValidator(control: AbstractControl): {[key: string]: any} | null {
     const value = control.value;
     if (!value) return null;
