@@ -41,8 +41,12 @@ $navbar-transition: var(--transition-fast);
 }
 
 .navbar {
-  background: linear-gradient(135deg, var(--primaryColor) 0%, var(--primaryColorLight) 100%);
-  backdrop-filter: blur(10px);
+  background: linear-gradient(135deg, 
+    #1a3d1e 0%, 
+    #2a5d34 50%, 
+    #1a3d1e 100%);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
   box-shadow: var(--shadow-lg);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   position: fixed;
@@ -52,6 +56,23 @@ $navbar-transition: var(--transition-fast);
   z-index: var(--z-sticky);
   transition: $navbar-transition;
   min-height: $navbar-height;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, 
+      transparent 0%, 
+      rgba(255, 255, 255, 0.05) 25%, 
+      transparent 50%, 
+      rgba(255, 255, 255, 0.03) 75%, 
+      transparent 100%);
+    pointer-events: none;
+    z-index: -1;
+  }
 
   // Brand styling
   &-brand {
@@ -86,11 +107,31 @@ $navbar-transition: var(--transition-fast);
     @include active-indicator;
     
     margin-left: $navbar-padding-x;
-    padding: var(--space-2) var(--space-3);
+    padding: var(--space-2) var(--space-4);
     border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.95);
+    transition: all var(--transition-normal);
     
     &:hover {
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.15);
+      border-color: rgba(255, 255, 255, 0.3);
+      color: rgba(255, 255, 255, 1);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    
+    &.active {
+      color: rgba(255, 255, 255, 1);
+      font-weight: var(--fontWeight-semibold);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    &:focus,
+    &:focus-visible {
+      outline: none !important;
+      box-shadow: none !important;
     }
   }
 
@@ -136,8 +177,8 @@ $navbar-transition: var(--transition-fast);
     }
     
     &:focus {
-      outline: 2px solid var(--goldenColor);
-      outline-offset: 2px;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.3);
     }
   }
 
@@ -168,7 +209,7 @@ $navbar-transition: var(--transition-fast);
   // Responsive design
   @media (max-width: 991.98px) {
     .navbar-collapse {
-      background: rgba(var(--primaryColorRGB), 0.95);
+      background: rgba(26, 61, 30, 0.95);
       backdrop-filter: blur(10px);
       border-radius: var(--radius-lg);
       margin-top: var(--space-3);
