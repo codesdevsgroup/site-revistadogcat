@@ -67,17 +67,63 @@ Algumas bibliotecas são carregadas via CDN no arquivo `src/index.html` para oti
 -   **DearFlip.js (CSS e JS):** Biblioteca que renderiza o leitor de revistas interativo.
 -   **Font Awesome:** Para a utilização de ícones em toda a aplicação.
 
-## 🛠️ Comandos Úteis do Angular CLI
+## 🛠️ Scripts Disponíveis
 
--   **Gerar um novo componente:**
-    ```bash
-    ng generate component nome-do-componente
-    ```
--   **Build para produção:**
-    ```bash
-    ng build
-    ```
--   **Executar testes unitários:**
-    ```bash
-    ng test
-    ```
+### Comandos de Desenvolvimento
+
+| Comando | Descrição |
+|---------|----------|
+| `npm start` | Inicia o servidor de desenvolvimento Angular (porta 4200) |
+| `npm run bun:start` | Inicia o servidor usando Bun como runtime |
+| `npm run build` | Build para desenvolvimento (sem otimizações) |
+| `npm run build:dev` | Build explícito para desenvolvimento |
+| `npm run watch` | Build contínuo com watch mode para desenvolvimento |
+
+### Comandos de Produção
+
+| Comando | Descrição |
+|---------|----------|
+| `npm run build:prod` | Build otimizado para produção (minificado, tree-shaking) |
+
+### Comandos de Teste e Utilitários
+
+| Comando | Descrição |
+|---------|----------|
+| `npm test` | Executa testes unitários com Karma |
+| `npm run ng` | Acesso direto ao Angular CLI |
+
+### Comandos Angular CLI Úteis
+
+```bash
+# Gerar componentes
+ng generate component nome-do-componente
+ng g c nome-do-componente
+
+# Gerar serviços
+ng generate service nome-do-servico
+ng g s nome-do-servico
+
+# Gerar módulos
+ng generate module nome-do-modulo
+ng g m nome-do-modulo
+
+# Gerar guards
+ng generate guard nome-do-guard
+ng g g nome-do-guard
+```
+
+## 🌍 Ambientes de Configuração
+
+O projeto possui configurações específicas para diferentes ambientes:
+
+### Desenvolvimento (`environment.ts`)
+- API local: `http://localhost:3000/api`
+- Debug e logging habilitados
+- Recursos de monitoramento desabilitados
+- Tamanho máximo de upload: 10MB
+
+### Produção (`environment.prod.ts`)
+- API de produção: `https://api.revistadogcat.com.br/api`
+- Otimizações de performance ativadas
+- Analytics e monitoramento habilitados
+- Tamanho máximo de upload: 5MB
