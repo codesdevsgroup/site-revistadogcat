@@ -23,7 +23,7 @@
     .whatsapp-tooltip {
       opacity: 1;
       visibility: visible;
-      transform: translateX(-50%) translateY(0);
+      transform: translateY(0);
     }
   }
 
@@ -44,8 +44,8 @@
   .whatsapp-tooltip {
     position: absolute;
     bottom: 70px;
-    left: 50%;
-    transform: translateX(-50%) translateY(var(--space-2));
+    right: 0;
+    transform: translateY(var(--space-2));
     background: var(--gray-800);
     color: var(--text-inverse);
     padding: var(--space-2) var(--space-3);
@@ -64,8 +64,7 @@
       content: '';
       position: absolute;
       top: 100%;
-      left: 50%;
-      transform: translateX(-50%);
+      right: 20px;
       border: 5px solid transparent;
       border-top-color: var(--gray-800);
     }
