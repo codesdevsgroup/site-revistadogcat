@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -12,6 +12,8 @@ import { TiptapEditorComponent } from '../../../components/tiptap-editor/tiptap-
   styleUrl: './artigo-detalhe.scss'
 })
 export class ArtigoDetalheComponent implements OnInit {
+  @ViewChild('fotoDestaqueInput') fotoDestaqueInput!: ElementRef<HTMLInputElement>;
+
   artigoForm: FormGroup;
   artigoId: string | null = null;
   isEditMode = false;
@@ -67,7 +69,7 @@ export class ArtigoDetalheComponent implements OnInit {
   ngOnInit(): void {
     this.artigoId = this.route.snapshot.paramMap.get('id');
     this.isEditMode = this.artigoId !== null && this.artigoId !== 'novo';
-    
+
     if (this.isEditMode) {
       this.carregarArtigo();
     } else {
@@ -89,7 +91,7 @@ export class ArtigoDetalheComponent implements OnInit {
       conteudo: '<h2>Introdução</h2><p>Este artigo aborda os principais cuidados com a saúde dos pets...</p>',
       fotoDestaque: 'https://via.placeholder.com/400x240/4CAF50/FFFFFF?text=Foto+de+Destaque'
     };
-    
+
     this.artigoForm.patchValue(artigoMock);
     this.fotoDestaque = artigoMock.fotoDestaque;
   }
@@ -98,7 +100,7 @@ export class ArtigoDetalheComponent implements OnInit {
     if (this.artigoForm.valid) {
       const formData = this.artigoForm.value;
       console.log('Dados do artigo:', formData);
-      
+
       // Aqui seria feita a chamada para o backend
       alert('Artigo salvo com sucesso!');
     } else {
@@ -108,7 +110,7 @@ export class ArtigoDetalheComponent implements OnInit {
   }
 
   onCancel(): void {
-    this.router.navigate(['/admin/artigos']);
+    this.router.navigate(['/artigos']);
   }
 
   private markFormGroupTouched(): void {
@@ -142,7 +144,7 @@ export class ArtigoDetalheComponent implements OnInit {
       }
 
       this.fotoDestaqueFile = file;
-      
+
       // Criar preview da imagem
       const reader = new FileReader();
       reader.onload = (e: any) => {
@@ -158,11 +160,10 @@ export class ArtigoDetalheComponent implements OnInit {
     this.fotoDestaque = null;
     this.fotoDestaqueFile = null;
     this.artigoForm.patchValue({ fotoDestaque: '' });
-    
-    // Limpar o input file
-    const fileInput = document.getElementById('fotoDestaque') as HTMLInputElement;
-    if (fileInput) {
-      fileInput.value = '';
+
+    // Limpar o input file usando a referência do ViewChild
+    if (this.fotoDestaqueInput) {
+      this.fotoDestaqueInput.nativeElement.value = '';
     }
   }
 

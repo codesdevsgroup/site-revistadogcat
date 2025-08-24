@@ -4,7 +4,7 @@
   <!-- Main Content -->
   <div class="content-wrapper">
     <form [formGroup]="artigoForm" (ngSubmit)="onSubmit()">
-      
+
       <!-- Configurações Horizontais no Topo -->
       <div class="config-section">
         <div class="config-header">
@@ -35,9 +35,9 @@
               <div class="config-row">
                 <div class="form-group">
                   <label for="titulo" class="form-label">Título *</label>
-                  <input 
-                    type="text" 
-                    id="titulo" 
+                  <input
+                    type="text"
+                    id="titulo"
                     class="form-control"
                     formControlName="titulo"
                     [class.is-invalid]="titulo?.invalid && titulo?.touched"
@@ -49,13 +49,13 @@
                   </div>
                 </div>
               </div>
-              
+
               <!-- Segunda linha: Autor, Categoria e Público -->
               <div class="config-row config-row-three-cols">
                 <div class="form-group">
                   <label for="autor" class="form-label">Autor *</label>
-                  <select 
-                    id="autor" 
+                  <select
+                    id="autor"
                     class="form-select"
                     formControlName="autor"
                     [class.is-invalid]="autor?.invalid && autor?.touched"
@@ -69,11 +69,11 @@
                     Autor é obrigatório
                   </div>
                 </div>
-                
+
                 <div class="form-group">
                   <label for="categoria" class="form-label">Categoria *</label>
-                  <select 
-                    id="categoria" 
+                  <select
+                    id="categoria"
                     class="form-select"
                     formControlName="categoria"
                     [class.is-invalid]="categoria?.invalid && categoria?.touched"
@@ -87,11 +87,11 @@
                     Categoria é obrigatória
                   </div>
                 </div>
-                
+
                 <div class="form-group">
                   <label for="publico" class="form-label">Público *</label>
-                  <select 
-                    id="publico" 
+                  <select
+                    id="publico"
                     class="form-select"
                     formControlName="publico"
                     [class.is-invalid]="publico?.invalid && publico?.touched"
@@ -111,14 +111,14 @@
                   </div>
                 </div>
               </div>
-              
+
               <!-- Terceira linha: Data de Publicação e Status -->
               <div class="config-row config-row-two-cols">
                 <div class="form-group">
                   <label for="dataPublicacao" class="form-label">Data de Publicação *</label>
-                  <input 
-                    type="date" 
-                    id="dataPublicacao" 
+                  <input
+                    type="date"
+                    id="dataPublicacao"
                     class="form-control"
                     formControlName="dataPublicacao"
                     [class.is-invalid]="dataPublicacao?.invalid && dataPublicacao?.touched"
@@ -127,11 +127,11 @@
                     Data de publicação é obrigatória
                   </div>
                 </div>
-                
+
                 <div class="form-group">
                   <label for="status" class="form-label">Status *</label>
-                  <select 
-                    id="status" 
+                  <select
+                    id="status"
                     class="form-select"
                     formControlName="status"
                     [class.is-invalid]="status?.invalid && status?.touched"
@@ -146,12 +146,12 @@
                 </div>
               </div>
             </div>
-            
+
             <!-- Coluna Direita: Apenas Foto de Destaque -->
             <div class="right-column">
               <div class="form-group foto-destaque-group">
                 <label for="fotoDestaque" class="form-label">Foto de Destaque *</label>
-                
+
                 <!-- Preview da imagem -->
                 <div class="foto-destaque-container" *ngIf="fotoDestaque">
                   <div class="foto-preview">
@@ -161,12 +161,13 @@
                     </button>
                   </div>
                 </div>
-                
+
                 <!-- Input de upload -->
                 <div class="upload-area" *ngIf="!fotoDestaque">
-                  <input 
-                    type="file" 
-                    id="fotoDestaque" 
+                  <input
+                    #fotoDestaqueInput
+                    type="file"
+                    id="fotoDestaque"
                     class="form-control-file"
                     accept="image/jpeg,image/png,image/webp"
                     (change)="onFotoDestaqueChange($event)"
@@ -186,7 +187,7 @@
               </div>
             </div>
           </div>
-          
+
           <!-- Terceira linha - Informações do Artigo -->
           <div class="config-row" *ngIf="isEditMode">
 
@@ -231,14 +232,14 @@
         <div class="editor-container">
           <div class="tiptap-placeholder">
             <div class="placeholder-content">
-                           
+
               <!-- Tiptap Editor -->
-              <app-tiptap-editor 
+              <app-tiptap-editor
                 formControlName="conteudo"
                 placeholder="Digite o conteúdo do artigo aqui..."
                 [class.is-invalid]="conteudo?.invalid && conteudo?.touched"
               ></app-tiptap-editor>
-              
+
               <div class="invalid-feedback" *ngIf="conteudo?.invalid && conteudo?.touched">
                 Conteúdo é obrigatório
               </div>
