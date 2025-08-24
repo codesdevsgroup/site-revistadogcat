@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { FooterComponent } from '../../components/footer/footer';
+import { FooterComponent } from '../../components/footer/footer.component';
 import { SocialMediaService } from '../../services/social-media.service';
 
 @Component({

@@ -343,12 +343,14 @@
 }
 
 .btn-cta:hover {
-  background: #f4d03f;
+  background: var(--goldenColorLight);
   transform: translateY(-3px);
   box-shadow: 0 8px 30px rgba(224, 181, 58, 0.4);
   color: var(--primaryColor);
   text-decoration: none;
 }
+
+
 
 // Responsive
 @media (max-width: 992px) {

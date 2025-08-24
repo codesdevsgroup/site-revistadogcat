@@ -354,24 +354,3 @@
     @include button-size('sm');
   }
 }
-
-// Dark theme adjustments
-[data-theme="dark"] {
-  .btn-outline {
-    border-color: var(--border-medium);
-    color: var(--text-primary);
-    
-    &:hover:not(:disabled) {
-      background: var(--bg-secondary);
-      border-color: var(--border-strong);
-    }
-  }
-  
-  .btn-ghost {
-    color: var(--text-primary);
-    
-    &:hover:not(:disabled) {
-      background: var(--bg-secondary);
-    }
-  }
-}

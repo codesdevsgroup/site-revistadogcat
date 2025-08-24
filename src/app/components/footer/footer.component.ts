@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import { SocialMediaService } from '../../services/social-media.service';
+import { NewsletterComponent } from '../newsletter/newsletter.component';
 
 @Component({
   selector: 'app-footer',
-  imports: [],
-  templateUrl: './footer.html',
-  styleUrl: './footer.scss'
+  imports: [NewsletterComponent],
+  templateUrl: './footer.component.html',
+  styleUrl: './footer.component.scss'
 })
 export class FooterComponent {
   socialMedia: any;

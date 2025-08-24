@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { DestaqueEdicaoComponent } from '../../components/destaque-edicao/destaque-edicao';
-import { FooterComponent } from '../../components/footer/footer';
+import { FooterComponent } from '../../components/footer/footer.component';
 import { ExpoDogComponent } from '../../components/expo-dog/expo-dog';
 import { AnuncieAquiComponent } from '../../components/anuncie-aqui/anuncie-aqui';
 
