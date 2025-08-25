@@ -1,6 +1,7 @@
-import { Component, HostListener, ElementRef } from '@angular/core';
+import { Component, HostListener, ElementRef, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
+import { AuthService } from '../../../../services/auth.service';
 
 @Component({
   selector: 'app-top-menu',
@@ -9,13 +10,51 @@ import { Router, RouterModule } from '@angular/router';
   templateUrl: './top-menu.html',
   styleUrls: ['./top-menu.scss']
 })
-export class TopMenuComponent {
+export class TopMenuComponent implements OnInit, OnDestroy {
   userMenuOpen = false;
+  username = '';
+  userRole = '';
+  isScrolled = false;
 
-  constructor(private router: Router, private elementRef: ElementRef) {}
+  constructor(private router: Router, private elementRef: ElementRef, private authService: AuthService) {}
+
+  ngOnInit() {
+    this.loadUserData();
+    this.checkScrollPosition();
+  }
+
+  ngOnDestroy() {
+  }
+
+  private loadUserData() {
+    try {
+      const userData = localStorage.getItem('auth_user');
+      if (userData) {
+        const user = JSON.parse(userData);
+        this.username = user.userName || user.name || '';
+        this.userRole = this.translateRole(user.role) || '';
+      }
+    } catch (error) {
+      console.error('Erro ao carregar dados do usuário:', error);
+    }
+  }
+
+  private translateRole(role: string): string {
+    const roleTranslations: { [key: string]: string } = {
+      'ADMIN': 'Administrador',
+      'EDITOR': 'Editor',
+      'FUNCIONARIO': 'Funcionário',
+    };
+    return roleTranslations[role] || role;
+  }
 
   toggleUserMenu() {
     this.userMenuOpen = !this.userMenuOpen;
+  }
+
+  @HostListener('window:scroll', [])
+  onWindowScroll() {
+    this.checkScrollPosition();
   }
 
   @HostListener('document:click', ['$event'])
@@ -25,24 +64,27 @@ export class TopMenuComponent {
     const target = event.target as HTMLElement;
     const menuUserElement = this.elementRef.nativeElement.querySelector('.menu-user');
     
-    // Verifica se o clique foi fora do menu do usuário
     if (menuUserElement && !menuUserElement.contains(target)) {
       this.userMenuOpen = false;
     }
   }
 
+  private checkScrollPosition() {
+    this.isScrolled = window.scrollY > 20;
+  }
+
   logout() {
-    // Lógica de logout será implementada depois
-    this.router.navigate(['/auth/login']);
+    this.authService.logout();
   }
 
   navigateToProfile() {
-    // Navegação para perfil
-    console.log('Navegar para perfil');
+    this.userMenuOpen = false;
+    this.router.navigateByUrl('/perfil');
   }
 
   navigateToSettings() {
-    // Navegação para configurações
-    console.log('Navegar para configurações');
+    this.userMenuOpen = false;
+    // TODO: Implementar página de configurações
+    console.log('Configurações - funcionalidade a ser implementada');
   }
 }

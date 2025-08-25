@@ -5,7 +5,7 @@ export const routes: Routes = [
   { path: '', loadChildren: () => import('./pages/public/public.routes').then(m => m.publicRoutes) },
   
   // Rotas privadas/administrativas
-  { path: '', loadChildren: () => import('./pages/admin/admin.routes').then(m => m.adminRoutes) },
+  { path: 'admin', loadChildren: () => import('./pages/admin/admin.routes').then(m => m.adminRoutes) },
   
   // Fallback para rotas não encontradas
   { path: '**', redirectTo: '', pathMatch: 'full' }

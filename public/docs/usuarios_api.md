@@ -54,12 +54,37 @@ O campo `role` define as permissões de um usuário no sistema. O sistema possui
 - **Resposta de Sucesso (200 OK - O raro momento em que tudo funciona.)**
 - **Resposta de Erro (401 Unauthorized - Você não tem permissão, jovem gafanhoto.)**
 
-### 4. Solicitar Redefinição de Senha
+### 4. Obter Perfil do Usuário Autenticado
+
+- **Endpoint:** `GET /api/auth/me`
+- **Descrição:** Retorna os dados completos do usuário autenticado.
+- **Autenticação:** Requer token Bearer JWT válido no header `Authorization`
+- **Resposta de Sucesso (200 OK - O raro momento em que tudo funciona.):**
+  ```json
+  {
+    "userId": "clxyz123abc456def789",
+    "userName": "joao_silva",
+    "name": "João Silva",
+    "email": "joao.silva@email.com",
+    "role": "DONO_PET_APROVADO",
+    "avatarUrl": "https://example.com/uploads/avatars/joao_avatar.jpg",
+    "active": true,
+    "createdAt": "2024-01-15T10:30:00.000Z"
+  }
+  ```
+- **Resposta de Erro (401 Unauthorized - Você não tem permissão, jovem gafanhoto.):** Token inválido, expirado ou ausente.
+- **Notas:**
+  - Este endpoint é útil para obter dados atualizados do usuário logado
+  - Retorna todos os campos do perfil, exceto informações sensíveis como senha
+  - Pode ser usado para verificar se o token ainda é válido
+  - Ideal para atualizar dados do usuário na interface após login
+
+### 5. Solicitar Redefinição de Senha
 
 - **Endpoint:** `POST /api/auth/forgot-password`
 - **Resposta de Sucesso (200 OK - O raro momento em que tudo funciona.)**
 
-### 5. Redefinir Senha
+### 6. Redefinir Senha
 
 - **Endpoint:** `POST /api/auth/reset-password`
 - **Resposta de Sucesso (200 OK - O raro momento em que tudo funciona.)**

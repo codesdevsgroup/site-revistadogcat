@@ -1,4 +1,4 @@
-<header class="top-menu">
+<header class="top-menu" [class.scrolled]="isScrolled">
   <div class="menu-container">
     <!-- Logo/Brand -->
     <div class="menu-brand">
@@ -8,19 +8,19 @@
 
     <!-- Navigation Links -->
     <nav class="menu-nav">
-      <a routerLink="/dashboard" routerLinkActive="active" class="nav-link">
+      <a routerLink="/admin/dashboard" routerLinkActive="active" class="nav-link">
         <i class="fas fa-chart-line"></i>
         <span>Dashboard</span>
       </a>
-      <a routerLink="/usuarios" routerLinkActive="active" class="nav-link">
+      <a routerLink="/admin/usuarios" routerLinkActive="active" class="nav-link">
         <i class="fas fa-users"></i>
         <span>Usuários</span>
       </a>
-      <a routerLink="/artigos" routerLinkActive="active" class="nav-link">
+      <a routerLink="/admin/artigos" routerLinkActive="active" class="nav-link">
         <i class="fas fa-newspaper"></i>
         <span>Artigos</span>
       </a>
-      <a routerLink="/documentacao" routerLinkActive="active" class="nav-link">
+      <a routerLink="/admin/documentacao" routerLinkActive="active" class="nav-link">
         <i class="fas fa-book"></i>
         <span>Documentação</span>
       </a>
@@ -33,26 +33,26 @@
           <i class="fas fa-user"></i>
         </div>
         <div class="user-info">
-          <span class="user-name">Admin</span>
-          <span class="user-role">Administrador</span>
+          <span class="user-name">{{ username }}</span>
+          <span class="user-role">{{ userRole }}</span>
         </div>
         <i class="fas fa-chevron-down user-arrow"></i>
       </button>
 
       <div class="user-dropdown" *ngIf="userMenuOpen">
-        <a href="#" class="dropdown-item" (click)="navigateToProfile()">
+        <button type="button" class="dropdown-item" (click)="navigateToProfile()">
           <i class="fas fa-user-circle"></i>
           <span>Meu Perfil</span>
-        </a>
-        <a href="#" class="dropdown-item" (click)="navigateToSettings()">
-          <i class="fas fa-cog"></i>
-          <span>Configurações</span>
-        </a>
+        </button>
+        <button type="button" class="dropdown-item" (click)="navigateToSettings()">
+            <i class="fas fa-cog"></i>
+            <span>Configurações</span>
+          </button>
         <hr class="dropdown-divider">
-        <a href="#" class="dropdown-item logout" (click)="logout()">
-          <i class="fas fa-sign-out-alt"></i>
-          <span>Sair</span>
-        </a>
+        <button type="button" class="dropdown-item logout" (click)="logout()">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Sair</span>
+          </button>
       </div>
     </div>
   </div>

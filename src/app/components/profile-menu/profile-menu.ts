@@ -8,10 +8,10 @@ import { User } from '../../services/auth.service';
   selector: 'app-profile-menu',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './profile-menu.component.html',
-  styleUrls: ['./profile-menu.component.scss']
+  templateUrl: './profile-menu.html',
+  styleUrls: ['./profile-menu.scss']
 })
-export class ProfileMenuComponent implements OnInit {
+export class ProfileMenu implements OnInit {
   user: User | null = null;
   isDropdownOpen = false;
 
@@ -24,41 +24,24 @@ export class ProfileMenuComponent implements OnInit {
     this.user = this.authService.getCurrentUser();
   }
 
-  /**
-   * Alterna a visibilidade do dropdown
-   */
   toggleDropdown(): void {
     this.isDropdownOpen = !this.isDropdownOpen;
   }
 
-  /**
-   * Fecha o dropdown
-   */
   closeDropdown(): void {
     this.isDropdownOpen = false;
   }
 
-  /**
-   * Navega para a página de perfil (futuramente implementada)
-   */
   goToProfile(): void {
     this.closeDropdown();
-    // TODO: Implementar navegação para página de perfil
-    console.log('Navegação para perfil será implementada futuramente');
+    this.router.navigate(['/perfil']);
   }
 
-  /**
-   * Realiza logout (futuramente implementado)
-   */
   logout(): void {
     this.closeDropdown();
-    // TODO: Implementar funcionalidade de logout
-    console.log('Funcionalidade de logout será implementada futuramente');
+    this.authService.logout();
   }
 
-  /**
-   * Obtém as iniciais do nome do usuário para exibir no avatar
-   */
   getUserInitials(): string {
     if (!this.user?.name) {
       return 'U';
@@ -72,9 +55,6 @@ export class ProfileMenuComponent implements OnInit {
     return (names[0].charAt(0) + names[names.length - 1].charAt(0)).toUpperCase();
   }
 
-  /**
-   * Obtém a descrição da role do usuário
-   */
   getUserRoleDescription(): string {
     if (!this.user?.role) {
       return 'Usuário';

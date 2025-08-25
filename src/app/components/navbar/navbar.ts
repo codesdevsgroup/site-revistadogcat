@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService, User } from '../../services/auth.service';
-import { ProfileMenuComponent } from '../profile-menu/profile-menu.component';
+import { ProfileMenu } from '../profile-menu/profile-menu';
 import { Subscription } from 'rxjs';
 
 interface NavItem {
@@ -15,7 +15,7 @@ interface NavItem {
 
 @Component({
   selector: 'app-navbar',
-  imports: [RouterModule, CommonModule, ProfileMenuComponent],
+  imports: [RouterModule, CommonModule, ProfileMenu],
   templateUrl: './navbar.html',
   styleUrl: './navbar.scss'
 })
@@ -65,7 +65,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     if (this.authService.hasAdminAccess()) {
       return {
         label: 'Painel',
-        route: '/admin',
+        route: '/admin/dashboard',
         isButton: true,
         buttonClass: 'btn btn-admin'
       };

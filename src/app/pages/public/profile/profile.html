@@ -1,0 +1,200 @@
+<div class="profile-container">
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Carregando...</span>
+    </div>
+    <p class="mt-3">Carregando perfil...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !loading" class="alert alert-danger" role="alert">
+    <i class="fas fa-exclamation-triangle me-2"></i>
+    {{ error }}
+  </div>
+
+  <!-- Profile Content -->
+  <div *ngIf="!loading && !error && user" class="profile-content">
+    <!-- Header -->
+    <div class="profile-header">
+      <div class="row align-items-center">
+        <div class="col-md-8">
+          <h1 class="page-title">
+            <i class="fas fa-user-circle me-3"></i>
+            Meu Perfil
+          </h1>
+          <p class="text-muted">Gerencie suas informações pessoais e seus cães cadastrados</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+          <button class="btn btn-primary" (click)="onEditProfile()">
+            <i class="fas fa-edit me-2"></i>
+            Editar Perfil
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- User Basic Info -->
+    <div class="profile-section">
+      <div class="section-header">
+        <h3>
+          <i class="fas fa-id-card me-2"></i>
+          Dados Cadastrais
+        </h3>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-bold">Nome Completo</label>
+              <p class="form-control-plaintext">{{ user.name || user.userName || 'Não informado' }}</p>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-bold">E-mail</label>
+              <p class="form-control-plaintext">{{ user.email || 'Não informado' }}</p>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-bold">Telefone</label>
+              <p class="form-control-plaintext">{{ user.telefone || 'Não informado' }}</p>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-bold">CPF</label>
+              <p class="form-control-plaintext">{{ user.cpf || 'Não informado' }}</p>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-bold">Data de Nascimento</label>
+              <p class="form-control-plaintext">{{ user.birthDate || 'Não informado' }}</p>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-bold">Tipo de Usuário</label>
+              <p class="form-control-plaintext">
+                <span class="badge bg-primary">{{ getRoleDisplayName(user.role) }}</span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Address Info -->
+    <div class="profile-section">
+      <div class="section-header">
+        <h3>
+          <i class="fas fa-map-marker-alt me-2"></i>
+          Endereço
+        </h3>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <div *ngIf="userAddress; else noAddress">
+            <div class="row">
+              <div class="col-md-8 mb-3">
+                <label class="form-label fw-bold">Logradouro</label>
+                <p class="form-control-plaintext">{{ userAddress.street }}</p>
+              </div>
+              <div class="col-md-4 mb-3">
+                <label class="form-label fw-bold">Complemento</label>
+                <p class="form-control-plaintext">{{ userAddress.complement || 'Não informado' }}</p>
+              </div>
+              <div class="col-md-4 mb-3">
+                <label class="form-label fw-bold">Bairro</label>
+                <p class="form-control-plaintext">{{ userAddress.neighborhood }}</p>
+              </div>
+              <div class="col-md-4 mb-3">
+                <label class="form-label fw-bold">Cidade</label>
+                <p class="form-control-plaintext">{{ userAddress.city }}</p>
+              </div>
+              <div class="col-md-2 mb-3">
+                <label class="form-label fw-bold">Estado</label>
+                <p class="form-control-plaintext">{{ userAddress.state }}</p>
+              </div>
+              <div class="col-md-2 mb-3">
+                <label class="form-label fw-bold">CEP</label>
+                <p class="form-control-plaintext">{{ userAddress.zipCode }}</p>
+              </div>
+            </div>
+          </div>
+          <ng-template #noAddress>
+            <div class="text-center py-4">
+              <i class="fas fa-map-marker-alt fa-3x text-muted mb-3"></i>
+              <p class="text-muted">Nenhum endereço cadastrado</p>
+              <button class="btn btn-outline-primary" (click)="onEditProfile()">
+                <i class="fas fa-plus me-2"></i>
+                Adicionar Endereço
+              </button>
+            </div>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dogs List -->
+    <div class="profile-section">
+      <div class="section-header">
+        <div class="row align-items-center">
+          <div class="col-md-8">
+            <h3>
+              <i class="fas fa-dog me-2"></i>
+              Meus Cães
+              <span class="badge bg-secondary ms-2">{{ userDogs.length }}</span>
+            </h3>
+          </div>
+          <div class="col-md-4 text-md-end">
+            <button class="btn btn-success" (click)="onAddDog()">
+              <i class="fas fa-plus me-2"></i>
+              Cadastrar Cão
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <div *ngIf="userDogs.length > 0; else noDogs">
+        <div class="row">
+          <div class="col-lg-6 mb-4" *ngFor="let dog of userDogs">
+            <div class="card dog-card">
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                  <h5 class="card-title mb-0">
+                    <i class="fas fa-paw me-2 text-primary"></i>
+                    {{ dog.name }}
+                  </h5>
+                  <button class="btn btn-sm btn-outline-primary" (click)="onEditDog(dog.id)">
+                    <i class="fas fa-edit"></i>
+                  </button>
+                </div>
+                <div class="dog-info">
+                  <div class="info-item">
+                    <strong>Raça:</strong> {{ dog.breed }}
+                  </div>
+                  <div class="info-item">
+                    <strong>Idade:</strong> {{ dog.age }} anos
+                  </div>
+                  <div class="info-item">
+                    <strong>Sexo:</strong> {{ dog.gender }}
+                  </div>
+                  <div class="info-item">
+                    <strong>Cadastrado em:</strong> {{ dog.registrationDate | date:'dd/MM/yyyy' }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <ng-template #noDogs>
+        <div class="card">
+          <div class="card-body text-center py-5">
+            <i class="fas fa-dog fa-4x text-muted mb-4"></i>
+            <h4 class="text-muted mb-3">Nenhum cão cadastrado</h4>
+            <p class="text-muted mb-4">Cadastre seu primeiro cão para participar da ExpoDog e outros eventos!</p>
+            <button class="btn btn-primary btn-lg" (click)="onAddDog()">
+              <i class="fas fa-plus me-2"></i>
+              Cadastrar Primeiro Cão
+            </button>
+          </div>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</div>
