@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
+import { AuthService } from './auth.service';
 import {
   Cao,
   ProprietarioCao,
@@ -18,15 +20,20 @@ import {
   providedIn: 'root'
 })
 export class CaoService {
-  private readonly apiUrl = '/api/cadastro-cao';
+  private readonly apiUrl = `${environment.apiUrl}/cadastro-cao`;
+  private readonly cepApiUrl = `${environment.apiUrl}/enderecos`;
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService
+  ) {}
 
   /**
    * Realiza o cadastro completo do cão
    */
   cadastrarCao(payload: CadastroCaoPayload): Observable<CadastroCaoResponse> {
-    return this.http.post<CadastroCaoResponse>(this.apiUrl, payload)
+    const headers = this.authService.getAuthHeaders();
+    return this.http.post<CadastroCaoResponse>(this.apiUrl, payload, { headers })
       .pipe(
         catchError(this.handleError)
       );
@@ -40,7 +47,12 @@ export class CaoService {
     formData.append('fotoPerfil', fotoPerfil);
     formData.append('fotoLateral', fotoLateral);
 
-    return this.http.post<{ fotoPerfilUrl: string; fotoLateralUrl: string }>(`${this.apiUrl}/fotos-upload`, formData)
+    // Para FormData, não incluir Content-Type no header
+    const headers = new HttpHeaders({
+      'Authorization': this.authService.getToken() ? `Bearer ${this.authService.getToken()}` : ''
+    });
+
+    return this.http.post<{ fotoPerfilUrl: string; fotoLateralUrl: string }>(`${this.apiUrl}/fotos-upload`, formData, { headers })
       .pipe(
         catchError(this.handleError)
       );
@@ -53,7 +65,11 @@ export class CaoService {
     const formData = new FormData();
     formData.append('video', video);
 
-    return this.http.post<{ videoUrl: string }>(`${this.apiUrl}/video-upload`, formData)
+    const headers = new HttpHeaders({
+      'Authorization': this.authService.getToken() ? `Bearer ${this.authService.getToken()}` : ''
+    });
+
+    return this.http.post<{ videoUrl: string }>(`${this.apiUrl}/video-upload`, formData, { headers })
       .pipe(
         catchError(this.handleError)
       );
@@ -73,7 +89,11 @@ export class CaoService {
       formData.append('pedigreeVerso', pedigreeVerso);
     }
 
-    return this.http.post<{ pedigreeFrenteUrl?: string; pedigreeVersoUrl?: string }>(`${this.apiUrl}/pedigree-upload`, formData)
+    const headers = new HttpHeaders({
+      'Authorization': this.authService.getToken() ? `Bearer ${this.authService.getToken()}` : ''
+    });
+
+    return this.http.post<{ pedigreeFrenteUrl?: string; pedigreeVersoUrl?: string }>(`${this.apiUrl}/pedigree-upload`, formData, { headers })
       .pipe(
         catchError(this.handleError)
       );

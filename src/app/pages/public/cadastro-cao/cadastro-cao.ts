@@ -6,6 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import { FooterComponent } from '../../../components/footer/footer';
 import { SocialMediaService } from '../../../services/social-media.service';
 import { CaoService } from '../../../services/cao.service';
+import { AuthService } from '../../../services/auth.service';
 import { 
   Cao, 
   ProprietarioCao, 
@@ -73,17 +74,8 @@ export class CadastroCaoComponent {
   isCepLoading = false;
   cepStatus: 'none' | 'loading' | 'success' | 'error' = 'none';
   
-  // Dados do usuário logado (simulado - em produção viria de um serviço de autenticação)
-  usuarioLogado = {
-    nomeCompleto: 'João Silva',
-    cpf: '123.456.789-00',
-    email: 'joao@email.com',
-    telefone: '(11) 99999-9999',
-    endereco: 'Rua das Flores, 123',
-    cep: '01234-567',
-    cidade: 'São Paulo',
-    estado: 'SP'
-  };
+  // Dados do usuário logado obtidos do AuthService
+  usuarioLogado: any = null;
   
   // Propriedades para fotos obrigatórias
   fotoPerfil: File | null = null;
@@ -104,7 +96,8 @@ export class CadastroCaoComponent {
     private fb: FormBuilder, 
     private http: HttpClient, 
     private socialMediaService: SocialMediaService,
-    private caoService: CaoService
+    private caoService: CaoService,
+    private authService: AuthService
   ) {
     this.socialMedia = this.socialMediaService.getSocialMedia();
     this.userForm = this.fb.group({
@@ -163,16 +156,21 @@ export class CadastroCaoComponent {
 
   // Preencher formulário com dados do usuário logado
   preencherDadosUsuarioLogado() {
-    this.userForm.patchValue({
-      nomeCompleto: this.usuarioLogado.nomeCompleto,
-      cpf: this.usuarioLogado.cpf,
-      email: this.usuarioLogado.email,
-      telefone: this.usuarioLogado.telefone,
-      endereco: this.usuarioLogado.endereco,
-      cep: this.usuarioLogado.cep,
-      cidade: this.usuarioLogado.cidade,
-      estado: this.usuarioLogado.estado
-    });
+    const user = this.authService.getCurrentUser();
+    if (user) {
+      this.usuarioLogado = user;
+      this.userForm.patchValue({
+        nomeCompleto: user.nome || '',
+        cpf: user.cpf || '',
+        email: user.email || '',
+        telefone: user.telefone || '',
+        // Campos de endereço podem ser preenchidos se disponíveis no perfil do usuário
+        endereco: '',
+        cep: '',
+        cidade: '',
+        estado: ''
+      });
+    }
   }
 
   // Limpar dados do proprietário para entrada manual

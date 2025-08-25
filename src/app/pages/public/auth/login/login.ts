@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../../../../services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -14,14 +15,18 @@ export class LoginComponent implements OnInit {
   loginForm: FormGroup;
   isSubmitting = false;
   showPassword = false;
+  errorMessage = '';
+  returnUrl = '';
 
   constructor(
     private formBuilder: FormBuilder,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute,
+    private authService: AuthService
   ) {
     this.loginForm = this.formBuilder.group({
       identification: ['', [Validators.required, this.emailOrCpfValidator]],
-      password: ['', [Validators.required, Validators.minLength(6)]]
+      password: ['', [Validators.required]]
     });
   }
 
@@ -47,7 +52,15 @@ export class LoginComponent implements OnInit {
     return { invalidIdentification: true };
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    // Capturar URL de retorno se existir
+    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/admin';
+    
+    // Se já estiver logado, redirecionar
+    if (this.authService.isAuthenticated()) {
+      this.router.navigate([this.returnUrl]);
+    }
+  }
 
   togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;
@@ -56,20 +69,28 @@ export class LoginComponent implements OnInit {
   onSubmit(): void {
     if (this.loginForm.valid && !this.isSubmitting) {
       this.isSubmitting = true;
+      this.errorMessage = '';
       
       const loginData = {
         identification: this.loginForm.get('identification')?.value,
         password: this.loginForm.get('password')?.value
       };
 
-      console.log('Login data:', loginData);
-      
-      // Simular chamada de API
-      setTimeout(() => {
-        this.isSubmitting = false;
-        // Redirecionar para o painel após login bem-sucedido
-        this.router.navigate(['/admin']);
-      }, 2000);
+      this.authService.login(loginData).subscribe({
+        next: (response) => {
+          this.isSubmitting = false;
+          if (response.success) {
+            // Redirecionar para a URL de retorno ou admin
+            this.router.navigate([this.returnUrl]);
+          } else {
+            this.errorMessage = response.message || 'Erro no login';
+          }
+        },
+        error: (error) => {
+          this.isSubmitting = false;
+          this.errorMessage = error.message || 'Erro de conexão. Tente novamente.';
+        }
+      });
     } else {
       this.markFormGroupTouched();
     }

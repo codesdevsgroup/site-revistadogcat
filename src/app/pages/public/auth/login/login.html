@@ -44,9 +44,15 @@
           </div>
           <div class="error-message" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
             <span *ngIf="loginForm.get('password')?.errors?.['required']">Senha é obrigatória</span>
-            <span *ngIf="loginForm.get('password')?.errors?.['minlength']">Senha deve ter pelo menos 6 caracteres</span>
+            <span *ngIf="loginForm.get('password')?.errors?.['minlength']">Senha é obrigatória</span>
           </div>
         </div>
+
+      <!-- Mensagem de erro -->
+      <div class="error-message" *ngIf="errorMessage">
+        <i class="fas fa-exclamation-circle"></i>
+        {{ errorMessage }}
+      </div>
 
       <div class="form-actions">
         <a routerLink="/auth/reset-password" class="forgot-password-link">

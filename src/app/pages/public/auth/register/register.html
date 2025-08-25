@@ -55,18 +55,7 @@
                 </div>
               </div>
 
-              <div class="input-group">
-                <div class="floating-label">
-                  <input
-                    type="text"
-                    id="userName"
-                    formControlName="userName"
-                    placeholder=" "
-                  />
-                  <label for="userName">Nome de Usuário (Opcional)</label>
-                </div>
-                <small class="input-hint">Como gostaria de ser chamado?</small>
-              </div>
+
 
               <div class="input-row">
                 <div class="input-group">
@@ -146,8 +135,7 @@
                 </div>
                 <div class="error-message" *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched">
                   <span *ngIf="registerForm.get('password')?.errors?.['required']">Senha é obrigatória</span>
-                  <span *ngIf="registerForm.get('password')?.errors?.['minlength']">Senha deve ter pelo menos 8 caracteres</span>
-                  <span *ngIf="registerForm.get('password')?.errors?.['passwordStrength']">Senha deve conter maiúscula, minúscula, número e símbolo</span>
+                  <span *ngIf="registerForm.get('password')?.errors?.['minlength']">Senha deve ter pelo menos 6 caracteres</span>
                 </div>
               </div>
 
@@ -178,35 +166,7 @@
                 </div>
               </div>
 
-              <!-- Password Strength Indicator -->
-              <div class="password-strength">
-                <div class="strength-bars">
-                  <div class="strength-bar"></div>
-                  <div class="strength-bar"></div>
-                  <div class="strength-bar"></div>
-                  <div class="strength-bar"></div>
-                </div>
-                <div class="strength-requirements">
-                  <div class="requirement">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                      <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="currentColor"/>
-                    </svg>
-                    <span>Pelo menos 8 caracteres</span>
-                  </div>
-                  <div class="requirement">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                      <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="currentColor"/>
-                    </svg>
-                    <span>Maiúscula e minúscula</span>
-                  </div>
-                  <div class="requirement">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                      <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="currentColor"/>
-                    </svg>
-                    <span>Número e símbolo</span>
-                  </div>
-                </div>
-              </div>
+
             </div>
           </div>
         </div>

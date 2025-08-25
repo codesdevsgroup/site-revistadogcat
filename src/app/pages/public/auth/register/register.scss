@@ -188,7 +188,7 @@
 
       .card-content {
         .input-group {
-          margin-bottom: var(--space-6);
+          margin-bottom: var(--space-8);
 
           &:last-child {
             margin-bottom: 0;
@@ -221,11 +221,15 @@
               }
 
               &:focus + label,
-              &:not(:placeholder-shown) + label {
-                transform: translateY(-24px) scale(0.85);
+              &:not(:placeholder-shown) + label,
+              &:valid + label {
+                transform: translateY(-32px) scale(0.85);
                 color: var(--primaryColor);
                 background: var(--bg-card);
                 padding: 0 var(--space-2);
+                z-index: var(--z-dropdown);
+                position: absolute;
+                top: 0;
               }
             }
 

@@ -23,7 +23,7 @@ export class ConfirmPasswordComponent implements OnInit {
     private route: ActivatedRoute
   ) {
     this.confirmPasswordForm = this.formBuilder.group({
-      password: ['', [Validators.required, Validators.minLength(8), this.passwordValidator]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', [Validators.required]]
     }, { validators: this.passwordMatchValidator });
   }
@@ -37,41 +37,7 @@ export class ConfirmPasswordComponent implements OnInit {
     return this.confirmPasswordForm.get('password')?.value || '';
   }
 
-  get hasMinLength() {
-    return this.password.length >= 8;
-  }
 
-  get hasUpper() {
-    return /[A-Z]/.test(this.password);
-  }
-
-  get hasLower() {
-    return /[a-z]/.test(this.password);
-  }
-
-  get hasNumber() {
-    return /[0-9]/.test(this.password);
-  }
-
-  get hasSpecialChar() {
-    return /[!@#$%^&*(),.?":{}|<>]/.test(this.password);
-  }
-
-  passwordValidator(control: AbstractControl): {[key: string]: any} | null {
-    const value = control.value;
-    if (!value) return null;
-
-    const hasNumber = /[0-9]/.test(value);
-    const hasUpper = /[A-Z]/.test(value);
-    const hasLower = /[a-z]/.test(value);
-    const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(value);
-
-    const valid = hasNumber && hasUpper && hasLower && hasSpecial;
-    if (!valid) {
-      return { passwordStrength: true };
-    }
-    return null;
-  }
 
   passwordMatchValidator(group: AbstractControl): {[key: string]: any} | null {
     const password = group.get('password');
