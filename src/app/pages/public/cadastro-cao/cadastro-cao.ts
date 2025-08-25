@@ -160,7 +160,7 @@ export class CadastroCaoComponent {
     if (user) {
       this.usuarioLogado = user;
       this.userForm.patchValue({
-        nomeCompleto: user.nome || '',
+        nomeCompleto: user.name || '',
         cpf: user.cpf || '',
         email: user.email || '',
         telefone: user.telefone || '',

@@ -33,12 +33,13 @@
       id="navbarNav"
     >
       <ul class="navbar-nav ms-auto align-items-center">
+        <!-- Itens de navegação normais -->
         <li 
           class="nav-item" 
           *ngFor="let item of navigationItems; trackBy: trackByRoute"
         >
           <a 
-            [class]="item.isButton ? item.buttonClass : 'nav-link'"
+            class="nav-link"
             [routerLink]="item.route"
             routerLinkActive="active"
             [routerLinkActiveOptions]="{ exact: item.route === '/' }"
@@ -47,6 +48,23 @@
             <i *ngIf="item.icon" [class]="item.icon" aria-hidden="true"></i>
             {{ item.label }}
           </a>
+        </li>
+        
+        <!-- Botão dinâmico (Login/Painel) -->
+        <li class="nav-item" *ngIf="dynamicNavItem">
+          <a 
+            [class]="dynamicNavItem.buttonClass"
+            [routerLink]="dynamicNavItem.route"
+            (click)="closeMenu()"
+          >
+            <i *ngIf="dynamicNavItem.icon" [class]="dynamicNavItem.icon" aria-hidden="true"></i>
+            {{ dynamicNavItem.label }}
+          </a>
+        </li>
+        
+        <!-- Menu de perfil para usuários não-administrativos -->
+        <li class="nav-item" *ngIf="shouldShowProfileMenu()">
+          <app-profile-menu></app-profile-menu>
         </li>
       </ul>
     </div>

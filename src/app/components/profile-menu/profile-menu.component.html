@@ -1,0 +1,74 @@
+<div class="profile-menu" *ngIf="user">
+  <!-- Botão do perfil -->
+  <button 
+    class="profile-button" 
+    (click)="toggleDropdown()"
+    [class.active]="isDropdownOpen"
+    type="button"
+    aria-label="Menu do perfil"
+    [attr.aria-expanded]="isDropdownOpen">
+    
+    <!-- Avatar do usuário -->
+    <div class="profile-avatar">
+      <img 
+        *ngIf="user.avatarUrl" 
+        [src]="user.avatarUrl" 
+        [alt]="user.name"
+        class="avatar-image">
+      <div 
+        *ngIf="!user.avatarUrl" 
+        class="avatar-initials">
+        {{ getUserInitials() }}
+      </div>
+    </div>
+    
+    <!-- Ícone de dropdown -->
+    <span class="material-icons dropdown-icon">keyboard_arrow_down</span>
+  </button>
+
+  <!-- Dropdown menu -->
+  <div 
+    class="dropdown-menu" 
+    [class.show]="isDropdownOpen"
+    (click)="$event.stopPropagation()">
+    
+    <!-- Cabeçalho do usuário -->
+    <div class="dropdown-header">
+      <div class="user-info">
+        <div class="user-name">{{ user.name }}</div>
+        <div class="user-role">{{ getUserRoleDescription() }}</div>
+        <div class="user-email">{{ user.email }}</div>
+      </div>
+    </div>
+    
+    <!-- Divisor -->
+    <div class="dropdown-divider"></div>
+    
+    <!-- Opções do menu -->
+    <div class="dropdown-body">
+      <!-- Opção Perfil -->
+      <button 
+        class="dropdown-item" 
+        (click)="goToProfile()"
+        type="button">
+        <span class="material-icons">person</span>
+        <span class="item-text">Perfil</span>
+      </button>
+      
+      <!-- Opção Sair -->
+      <button 
+        class="dropdown-item logout" 
+        (click)="logout()"
+        type="button">
+        <span class="material-icons">logout</span>
+        <span class="item-text">Sair</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Overlay para fechar o dropdown -->
+  <div 
+    *ngIf="isDropdownOpen" 
+    class="dropdown-overlay" 
+    (click)="closeDropdown()"></div>
+</div>

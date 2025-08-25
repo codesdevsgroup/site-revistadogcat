@@ -5,11 +5,13 @@ import { UsuariosComponent } from './usuarios/usuarios';
 import { ArtigosComponent } from './artigos/artigos';
 import { ArtigoDetalheComponent } from './artigo-detalhe/artigo-detalhe';
 import { DocumentacaoComponent } from './documentacao/documentacao';
+import { AdminGuard } from '../../guards/admin.guard';
 
 export const adminRoutes: Routes = [
   {
     path: '',
     component: AdminComponent,
+    canActivate: [AdminGuard],
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: DashboardComponent },

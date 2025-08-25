@@ -54,7 +54,7 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
     // Capturar URL de retorno se existir
-    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/admin';
+    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || this.getDefaultRedirectUrl();
     
     // Se já estiver logado, redirecionar
     if (this.authService.isAuthenticated()) {
@@ -79,9 +79,12 @@ export class LoginComponent implements OnInit {
       this.authService.login(loginData).subscribe({
         next: (response) => {
           this.isSubmitting = false;
-          if (response.success) {
-            // Redirecionar para a URL de retorno ou admin
-            this.router.navigate([this.returnUrl]);
+          if (response.statusCode === 200) {
+            // Determinar URL de redirecionamento baseado na role
+            const redirectUrl = this.returnUrl === this.getDefaultRedirectUrl() 
+              ? this.getRedirectUrlByRole() 
+              : this.returnUrl;
+            this.router.navigate([redirectUrl]);
           } else {
             this.errorMessage = response.message || 'Erro no login';
           }
@@ -101,6 +104,25 @@ export class LoginComponent implements OnInit {
       const control = this.loginForm.get(key);
       control?.markAsTouched();
     });
+  }
+
+  private getDefaultRedirectUrl(): string {
+    return '/admin';
+  }
+
+  private getRedirectUrlByRole(): string {
+    const user = this.authService.getCurrentUser();
+    if (!user) {
+      return '/';
+    }
+
+    // Verificar se tem acesso administrativo
+    if (this.authService.hasAdminAccess()) {
+      return '/admin';
+    }
+
+    // Se não tem role administrativa, redirecionar para home
+    return '/';
   }
 
   navigateToCreatePassword(): void {

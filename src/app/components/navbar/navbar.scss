@@ -182,6 +182,53 @@ $navbar-transition: var(--transition-fast);
     }
   }
 
+  // Admin panel button styling
+  .btn-admin {
+    background: linear-gradient(135deg, var(--primaryColor) 0%, var(--primaryColorDark) 100%);
+    color: var(--white) !important;
+    font-weight: var(--fontWeight-semibold);
+    padding: var(--space-2) var(--space-4);
+    border: none;
+    border-radius: var(--radius-full);
+    margin-left: $navbar-padding-x;
+    transition: var(--transition-normal);
+    box-shadow: var(--shadow-md);
+    position: relative;
+    overflow: hidden;
+    text-decoration: none;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: var(--transition-slow);
+    }
+    
+    &:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: var(--shadow-xl);
+      background: linear-gradient(135deg, var(--primaryColorDark) 0%, var(--primaryColor) 100%);
+      color: var(--white) !important;
+      
+      &::before {
+        left: 100%;
+      }
+    }
+    
+    &:active {
+      transform: translateY(0) scale(0.98);
+    }
+    
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(26, 61, 30, 0.3);
+    }
+  }
+
   // Mobile toggle button
   .navbar-toggler {
     border: none;
@@ -237,7 +284,8 @@ $navbar-transition: var(--transition-fast);
       }
     }
     
-    .btn-login {
+    .btn-login,
+    .btn-admin {
       margin-left: 0;
       margin-top: var(--space-3);
       text-align: center;

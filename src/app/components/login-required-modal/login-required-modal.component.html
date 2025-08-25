@@ -1,0 +1,46 @@
+<div class="modal fade" id="loginRequiredModal" tabindex="-1" aria-labelledby="loginRequiredModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header border-0">
+        <h5 class="modal-title" id="loginRequiredModalLabel">
+          <i class="material-icons me-2">lock</i>
+          Login Necessário
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body text-center">
+        <div class="login-required-icon mb-3">
+          <i class="material-icons">account_circle</i>
+        </div>
+        <h6 class="mb-3">Faça login para continuar</h6>
+        <p class="text-muted mb-4">
+          Para cadastrar seu cão na ExpoDog, você precisa estar logado em sua conta. 
+          É rápido e fácil!
+        </p>
+        <div class="benefits-list mb-4">
+          <div class="benefit-item">
+            <i class="material-icons text-success">check_circle</i>
+            <span>Cadastro seguro e protegido</span>
+          </div>
+          <div class="benefit-item">
+            <i class="material-icons text-success">check_circle</i>
+            <span>Acompanhe o status da inscrição</span>
+          </div>
+          <div class="benefit-item">
+            <i class="material-icons text-success">check_circle</i>
+            <span>Histórico de participações</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer border-0 justify-content-center">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Cancelar
+        </button>
+        <button type="button" class="btn btn-primary" (click)="redirectToLogin()">
+          <i class="material-icons me-1">login</i>
+          Fazer Login
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

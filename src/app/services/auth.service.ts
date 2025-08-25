@@ -4,6 +4,7 @@ import { Observable, BehaviorSubject, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
+import { Role, RoleUtils } from '../enums/role.enum';
 
 export interface LoginRequest {
   identification: string; // email ou CPF
@@ -11,30 +12,32 @@ export interface LoginRequest {
 }
 
 export interface LoginResponse {
-  success: boolean;
+  statusCode: number;
+  message: string;
   data: {
-    token: string;
+    access_token: string;
+    refresh_token: string;
     user: {
       userId: string;
-      nome: string;
+      userName: string;
+      name: string;
       email: string;
-      cpf?: string;
-      telefone?: string;
       role: string;
-      avatar?: string;
+      avatarUrl?: string;
     };
   };
-  message?: string;
+  timestamp: string;
 }
 
 export interface User {
   userId: string;
-  nome: string;
+  userName: string;
+  name: string;
   email: string;
   cpf?: string;
   telefone?: string;
   role: string;
-  avatar?: string;
+  avatarUrl?: string;
 }
 
 @Injectable({
@@ -43,6 +46,7 @@ export interface User {
 export class AuthService {
   private apiUrl = `${environment.apiUrl}/auth`;
   private tokenKey = 'auth_token';
+  private refreshTokenKey = 'refresh_token';
   private userKey = 'auth_user';
   
   // BehaviorSubject para gerenciar estado de autenticação
@@ -64,8 +68,9 @@ export class AuthService {
     return this.http.post<LoginResponse>(`${this.apiUrl}/login`, credentials)
       .pipe(
         tap(response => {
-          if (response.success && response.data.token) {
-            this.setSession(response.data.token, response.data.user);
+          if (response.statusCode === 200 && response.data.access_token) {
+            this.setTokens(response.data.access_token, response.data.refresh_token);
+            this.setUserData(response.data.user);
           }
         }),
         catchError(this.handleError)
@@ -102,6 +107,13 @@ export class AuthService {
   }
 
   /**
+   * Obtém o refresh token
+   */
+  getRefreshToken(): string | null {
+    return localStorage.getItem(this.refreshTokenKey);
+  }
+
+  /**
    * Obtém headers com token de autenticação
    */
   getAuthHeaders(): HttpHeaders {
@@ -115,7 +127,7 @@ export class AuthService {
   /**
    * Verifica se o usuário tem uma role específica
    */
-  hasRole(role: string): boolean {
+  hasRole(role: string | Role): boolean {
     const user = this.getCurrentUser();
     return user ? user.role === role : false;
   }
@@ -123,9 +135,25 @@ export class AuthService {
   /**
    * Verifica se o usuário tem uma das roles especificadas
    */
-  hasAnyRole(roles: string[]): boolean {
+  hasAnyRole(roles: (string | Role)[]): boolean {
     const user = this.getCurrentUser();
-    return user ? roles.includes(user.role) : false;
+    return user ? roles.includes(user.role as Role) : false;
+  }
+
+  /**
+   * Verifica se o usuário tem acesso administrativo
+   */
+  hasAdminAccess(): boolean {
+    const user = this.getCurrentUser();
+    return user ? RoleUtils.hasAdminAccess(user.role) : false;
+  }
+
+  /**
+   * Verifica se o usuário tem role administrativa
+   */
+  isAdminRole(): boolean {
+    const user = this.getCurrentUser();
+    return user ? RoleUtils.isAdminRole(user.role) : false;
   }
 
   /**
@@ -140,7 +168,32 @@ export class AuthService {
   }
 
   /**
-   * Define sessão do usuário
+   * Define tokens de acesso e refresh
+   */
+  private setTokens(accessToken: string, refreshToken: string): void {
+    localStorage.setItem(this.tokenKey, accessToken);
+    localStorage.setItem(this.refreshTokenKey, refreshToken);
+    this.isAuthenticatedSubject.next(true);
+  }
+
+  /**
+   * Define dados do usuário no localStorage
+   */
+  private setUserData(userData: any): void {
+    const user: User = {
+      userId: userData.userId,
+      userName: userData.userName,
+      name: userData.name,
+      email: userData.email,
+      role: userData.role,
+      avatarUrl: userData.avatarUrl
+    };
+    localStorage.setItem(this.userKey, JSON.stringify(user));
+    this.currentUserSubject.next(user);
+  }
+
+  /**
+   * Define sessão do usuário (mantido para compatibilidade)
    */
   private setSession(token: string, user: User): void {
     localStorage.setItem(this.tokenKey, token);
@@ -154,6 +207,7 @@ export class AuthService {
    */
   private clearSession(): void {
     localStorage.removeItem(this.tokenKey);
+    localStorage.removeItem(this.refreshTokenKey);
     localStorage.removeItem(this.userKey);
     this.currentUserSubject.next(null);
     this.isAuthenticatedSubject.next(false);

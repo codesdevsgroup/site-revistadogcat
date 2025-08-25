@@ -13,9 +13,9 @@
               e valoriza criadores e suas raças em todo o país.
             </p>
             <div class="hero-buttons">
-              <a routerLink="/cadastro-cao" class="btn-primary">
+              <button type="button" class="btn-primary" (click)="onCadastrarCaoClick($event)">
                 <i class="icon">📱</i> Cadastrar meu Cão
-              </a>
+              </button>
               <a href="https://revistadogcat.com.br/expo-dog-cronograma/" class="btn-secondary" target="_blank">
                 <i class="icon">📅</i> Ver Cronograma
               </a>
@@ -267,9 +267,9 @@
           <h2>Pronto para participar da Expo Dog BR?</h2>
           <p>Cadastre seu cão através do nosso formulário completo!</p>
           <div class="cta-buttons">
-            <a routerLink="/cadastro-cao" class="btn-cta">
+            <button type="button" class="btn-primary-cta" (click)="onCadastrarCaoClick($event)">
               <i class="icon">📱</i> Cadastrar meu Cão
-            </a>
+            </button>
             <a href="https://revistadogcat.com.br/planos-de-assinatura/" class="btn-secondary-cta" target="_blank">
               <i class="icon">📖</i> Assinar Revista
             </a>
@@ -283,5 +283,8 @@
     </div>
   </section>
 </div>
+
+<!-- Modal de Login Necessário -->
+<app-login-required-modal></app-login-required-modal>
 
 <app-footer />
