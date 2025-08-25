@@ -2,6 +2,48 @@
 @use '../../../../styles/mixins' as *;
 
 // Artigo Detalhe Component - Layout Horizontal
+
+// Estilos específicos para o campo de resumo
+.resumo-field {
+  .form-control {
+    resize: vertical;
+    min-height: 80px;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+
+    &:focus {
+      border-color: #80bdff;
+      box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+
+    &.is-invalid {
+      border-color: #dc3545;
+      
+      &:focus {
+        border-color: #dc3545;
+        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+      }
+    }
+  }
+
+  .character-counter {
+    font-size: 0.875rem;
+    color: #6c757d;
+    margin-top: 0.25rem;
+
+    &.text-warning {
+      color: #ffc107 !important;
+    }
+
+    &.text-danger {
+      color: #dc3545 !important;
+    }
+  }
+
+  .invalid-feedback {
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+  }
+}
 .artigo-detalhe-container {
   min-height: 80vh;
   background-color: var(--bg-primary);

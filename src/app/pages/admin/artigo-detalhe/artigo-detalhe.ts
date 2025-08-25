@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TiptapEditorComponent } from '../../../components/tiptap-editor/tiptap-editor';
+import { ArtigosService, Artigo, ArtigoInput } from '../../../services/artigos.service';
 
 @Component({
   selector: 'app-artigo-detalhe',
@@ -52,10 +53,12 @@ export class ArtigoDetalheComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private artigosService: ArtigosService
   ) {
     this.artigoForm = this.fb.group({
       titulo: ['', [Validators.required, Validators.minLength(3)]],
+      resumo: ['', [Validators.maxLength(300)]], // Resumo opcional do artigo (máximo 300 caracteres)
       autor: ['', Validators.required],
       categoria: ['', Validators.required],
       status: ['rascunho', Validators.required],
@@ -83,6 +86,7 @@ export class ArtigoDetalheComponent implements OnInit {
     // Simular carregamento de dados do artigo
     const artigoMock = {
       titulo: 'Como Cuidar da Saúde do seu Pet',
+      resumo: 'Descubra as melhores práticas para manter seu pet saudável e feliz, incluindo dicas de alimentação, exercícios e cuidados veterinários essenciais.',
       autor: '1',
       categoria: '1',
       status: 'publicado',
@@ -169,6 +173,7 @@ export class ArtigoDetalheComponent implements OnInit {
 
   // Getters para facilitar acesso aos controles do formulário
   get titulo() { return this.artigoForm.get('titulo'); }
+  get resumo() { return this.artigoForm.get('resumo'); }
   get autor() { return this.artigoForm.get('autor'); }
   get categoria() { return this.artigoForm.get('categoria'); }
   get status() { return this.artigoForm.get('status'); }

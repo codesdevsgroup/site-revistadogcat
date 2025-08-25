@@ -342,6 +342,96 @@
                   </div>
                 </div>
 
+                <!-- Seção de Upload de Fotos Obrigatórias -->
+                <div class="photos-section mb-4">
+                  <div class="section-card">
+                    <h4><i class="fas fa-camera"></i> Fotos do Cão *</h4>
+                    <p class="section-description">As fotos são obrigatórias para participação na Expo Dog. Siga as orientações para melhor avaliação.</p>
+                    
+                    <div class="row">
+                      <!-- Foto de Perfil -->
+                      <div class="col-md-6 mb-3">
+                        <label class="form-label">Foto de Perfil *</label>
+                        <div class="photo-upload-container">
+                          <div class="reference-image">
+                            <img src="./dog/perfil.jpg" alt="Exemplo de foto de perfil" class="reference-img">
+                            <div class="reference-label">Exemplo</div>
+                          </div>
+                          <div class="upload-area" [class.has-file]="fotoPerfil">
+                            <input type="file" id="fotoPerfil" (change)="onFotoPerfilSelected($event)" accept="image/jpeg,image/jpg,image/png,image/webp" class="file-input">
+                            <label for="fotoPerfil" class="file-upload-label">
+                              <div class="upload-content" *ngIf="!fotoPerfil">
+                                <i class="fas fa-camera upload-icon"></i>
+                                <span class="upload-text">Clique para enviar foto de perfil</span>
+                                <small class="upload-hint">Cabeça e peito do animal</small>
+                              </div>
+                              <div class="file-preview" *ngIf="fotoPerfil">
+                                <img [src]="fotoPerfilPreview" alt="Preview" class="preview-img">
+                                <div class="file-info">
+                                  <span class="file-name">{{ fotoPerfil.name }}</span>
+                                  <span class="file-size">{{ formatFileSize(fotoPerfil.size) }}</span>
+                                </div>
+                                <button type="button" class="btn-remove" (click)="removeFotoPerfil($event)">
+                                  <i class="fas fa-times"></i>
+                                </button>
+                              </div>
+                            </label>
+                          </div>
+                        </div>
+                        <small class="form-text">JPEG, JPG, PNG, WebP • Máx. 5MB • Min. 300x300px</small>
+                        <div class="invalid-feedback" *ngIf="!fotoPerfil && dogForm.get('nome')?.touched">
+                          Foto de perfil é obrigatória
+                        </div>
+                      </div>
+
+                      <!-- Foto Lateral -->
+                      <div class="col-md-6 mb-3">
+                        <label class="form-label">Foto Lateral *</label>
+                        <div class="photo-upload-container">
+                          <div class="reference-image">
+                            <img src="./dog/lateral.jpg" alt="Exemplo de foto lateral" class="reference-img">
+                            <div class="reference-label">Exemplo</div>
+                          </div>
+                          <div class="upload-area" [class.has-file]="fotoLateral">
+                            <input type="file" id="fotoLateral" (change)="onFotoLateralSelected($event)" accept="image/jpeg,image/jpg,image/png,image/webp" class="file-input">
+                            <label for="fotoLateral" class="file-upload-label">
+                              <div class="upload-content" *ngIf="!fotoLateral">
+                                <i class="fas fa-camera upload-icon"></i>
+                                <span class="upload-text">Clique para enviar foto lateral</span>
+                                <small class="upload-hint">Animal de perfil completo</small>
+                              </div>
+                              <div class="file-preview" *ngIf="fotoLateral">
+                                <img [src]="fotoLateralPreview" alt="Preview" class="preview-img">
+                                <div class="file-info">
+                                  <span class="file-name">{{ fotoLateral.name }}</span>
+                                  <span class="file-size">{{ formatFileSize(fotoLateral.size) }}</span>
+                                </div>
+                                <button type="button" class="btn-remove" (click)="removeFotoLateral($event)">
+                                  <i class="fas fa-times"></i>
+                                </button>
+                              </div>
+                            </label>
+                          </div>
+                        </div>
+                        <small class="form-text">JPEG, JPG, PNG, WebP • Máx. 5MB • Min. 400x300px</small>
+                        <div class="invalid-feedback" *ngIf="!fotoLateral && dogForm.get('nome')?.touched">
+                          Foto lateral é obrigatória
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div class="photo-guidelines">
+                      <h5><i class="fas fa-info-circle"></i> Orientações para as Fotos</h5>
+                      <ul>
+                        <li><strong>Foto de Perfil:</strong> Mostre claramente a cabeça e peito do animal, similar ao exemplo</li>
+                        <li><strong>Foto Lateral:</strong> Animal em posição de exposição, mostrando o perfil completo</li>
+                        <li><strong>Qualidade:</strong> Imagens nítidas, bem iluminadas e com boa resolução</li>
+                        <li><strong>Fundo:</strong> Prefira fundos neutros que destaquem o animal</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
                 <!-- Seção Pedigree -->
                 <div class="pedigree-section mb-4">
                   <div class="section-card">

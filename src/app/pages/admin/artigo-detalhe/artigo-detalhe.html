@@ -50,7 +50,40 @@
                 </div>
               </div>
 
-              <!-- Segunda linha: Autor, Categoria e Público -->
+              <!-- Segunda linha: Resumo (Opcional) -->
+              <div class="config-row">
+                <div class="form-group resumo-field">
+                  <label for="resumo" class="form-label">
+                    Resumo
+                    <small class="text-muted">(opcional)</small>
+                  </label>
+                  <textarea
+                    id="resumo"
+                    class="form-control"
+                    formControlName="resumo"
+                    [class.is-invalid]="resumo?.invalid && resumo?.touched"
+                    rows="3"
+                    placeholder="Digite um breve resumo sobre o artigo (opcional)"
+                    maxlength="300"
+                  ></textarea>
+                  <div class="form-text">
+                    <small class="character-counter"
+                           [class.text-warning]="(resumo?.value?.length || 0) > 250"
+                           [class.text-danger]="(resumo?.value?.length || 0) > 290">
+                      <i class="fas fa-info-circle me-1"></i>
+                      O resumo ajuda os leitores a entender rapidamente o conteúdo do artigo.
+                      Máximo de 300 caracteres. ({{ resumo?.value?.length || 0 }}/300)
+                    </small>
+                    <div *ngIf="resumo?.invalid && resumo?.touched" class="invalid-feedback d-block">
+                      <small *ngIf="resumo?.errors?.['maxlength']" class="text-danger">
+                        O resumo deve ter no máximo 300 caracteres.
+                      </small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Terceira linha: Autor, Categoria e Público -->
               <div class="config-row config-row-three-cols">
                 <div class="form-group">
                   <label for="autor" class="form-label">Autor *</label>

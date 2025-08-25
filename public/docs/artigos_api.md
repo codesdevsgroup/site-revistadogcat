@@ -11,7 +11,7 @@ O objeto `Artigo` representa uma notícia ou artigo no sistema.
 | `id` | `number` | Identificador único do artigo. | Sim (na resposta) |
 | `titulo` | `string` | Título do artigo. | Sim |
 | `conteudo` | `object` | Conteúdo do artigo em formato JSON, gerado pelo editor TipTap. | Sim |
-| `resumo` | `string` | Um breve resumo do artigo. | Sim |
+| `resumo` | `string` | Um breve resumo do artigo. | Não |
 | `autor` | `string` | Nome do autor do artigo. | Sim |
 | `categoria` | `string` | Categoria do artigo (ex: "Cuidados", "Nutrição", "Saúde"). | Sim |
 | `status` | `string` | Status do artigo (`publicado`, `rascunho`, `revisao`). | Sim |
@@ -110,7 +110,7 @@ O objeto `Artigo` representa uma notícia ou artigo no sistema.
       "type": "doc",
       "content": [{"type": "paragraph", "content": [{"type": "text", "text": "Conteúdo do novo artigo."}]}]
     },
-    "resumo": "Resumo do novo artigo.",
+    "resumo": "Resumo do novo artigo (opcional).",
     "autor": "Novo Autor",
     "categoria": "Saúde",
     "status": "rascunho",
@@ -121,6 +121,23 @@ O objeto `Artigo` representa uma notícia ou artigo no sistema.
   ```
 - **Resposta de Sucesso (201 Created - E você jurando que não ia dar certo.):** Retorna o artigo recém-criado.
 - **Resposta de Erro (400 Bad Request - A culpa é do usuário. Sempre.):** Se os dados fornecidos forem inválidos.
+
+**Exemplo de artigo sem resumo (campo opcional):**
+```json
+{
+  "titulo": "Dicas de Adestramento para Filhotes",
+  "conteudo": {
+    "type": "doc",
+    "content": [{"type": "paragraph", "content": [{"type": "text", "text": "Conteúdo sobre adestramento de filhotes..."}]}]
+  },
+  "autor": "Especialista em Comportamento",
+  "categoria": "Comportamento",
+  "status": "publicado",
+  "imagemCapa": "https://example.com/filhote_adestramento.jpg",
+  "destaque": true,
+  "tags": ["adestramento", "filhotes", "comportamento"]
+}
+```
 
 ### 4. Atualizar um artigo
 

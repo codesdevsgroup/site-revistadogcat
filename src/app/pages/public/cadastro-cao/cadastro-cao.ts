@@ -5,6 +5,22 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { FooterComponent } from '../../../components/footer/footer';
 import { SocialMediaService } from '../../../services/social-media.service';
+import { CaoService } from '../../../services/cao.service';
+import { 
+  Cao, 
+  ProprietarioCao, 
+  CadastroCaoPayload, 
+  CadastroCaoResponse,
+  ImageUploadResponse,
+  FileValidation,
+  SexoCao,
+  VideoOption,
+  TipoPropriedade,
+  RACAS_CAO,
+  TIPOS_ARQUIVO_IMAGEM,
+  TAMANHO_MAX_IMAGEM,
+  TAMANHO_MAX_VIDEO
+} from '../../../interfaces/cao.interface';
 
 // Interface para resposta da API ViaCEP
 interface ViaCepResponse {
@@ -47,7 +63,7 @@ export class CadastroCaoComponent {
   socialMedia: any;
 
   currentStep = 1;
-  videoOption: 'upload' | 'youtube' | 'whatsapp' = 'upload';
+  videoOption: VideoOption = 'upload';
   proprietarioDiferente = false; // Nova propriedade para controlar se o proprietário é diferente
   userForm: FormGroup;
   dogForm: FormGroup;
@@ -69,6 +85,12 @@ export class CadastroCaoComponent {
     estado: 'SP'
   };
   
+  // Propriedades para fotos obrigatórias
+  fotoPerfil: File | null = null;
+  fotoLateral: File | null = null;
+  fotoPerfilPreview: string | null = null;
+  fotoLateralPreview: string | null = null;
+  
   // Propriedades para pedigree
   temPedigree: boolean = false;
   pedigreeFrente: File | null = null;
@@ -78,7 +100,12 @@ export class CadastroCaoComponent {
   temMicrochip: boolean = false;
   numeroMicrochip: string = '';
 
-  constructor(private fb: FormBuilder, private http: HttpClient, private socialMediaService: SocialMediaService) {
+  constructor(
+    private fb: FormBuilder, 
+    private http: HttpClient, 
+    private socialMediaService: SocialMediaService,
+    private caoService: CaoService
+  ) {
     this.socialMedia = this.socialMediaService.getSocialMedia();
     this.userForm = this.fb.group({
       nomeCompleto: ['', [Validators.required, Validators.minLength(2)]],
@@ -209,6 +236,83 @@ export class CadastroCaoComponent {
     }
   }
   
+  // Métodos para fotos obrigatórias
+  onFotoPerfilSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      const validation = this.caoService.validarArquivoImagem(file);
+      if (validation.isValid) {
+        this.fotoPerfil = file;
+        this.createImagePreview(file, 'perfil');
+      } else {
+        alert(validation.error);
+        event.target.value = '';
+      }
+    }
+  }
+
+  onFotoLateralSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      const validation = this.caoService.validarArquivoImagem(file);
+      if (validation.isValid) {
+        this.fotoLateral = file;
+        this.createImagePreview(file, 'lateral');
+      } else {
+        alert(validation.error);
+        event.target.value = '';
+      }
+    }
+  }
+
+  removeFotoPerfil(event: Event) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.fotoPerfil = null;
+    this.fotoPerfilPreview = null;
+    // Reset input file
+    const input = document.getElementById('fotoPerfil') as HTMLInputElement;
+    if (input) input.value = '';
+  }
+
+  removeFotoLateral(event: Event) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.fotoLateral = null;
+    this.fotoLateralPreview = null;
+    // Reset input file
+    const input = document.getElementById('fotoLateral') as HTMLInputElement;
+    if (input) input.value = '';
+  }
+
+  private async createImagePreview(file: File, type: 'perfil' | 'lateral') {
+    try {
+      const preview = await this.caoService.criarPreviewImagem(file);
+      if (type === 'perfil') {
+        this.fotoPerfilPreview = preview;
+      } else {
+        this.fotoLateralPreview = preview;
+      }
+    } catch (error) {
+      console.error('Erro ao criar preview da imagem:', error);
+      alert('Erro ao processar a imagem. Tente novamente.');
+    }
+  }
+
+  private isValidPhotoFile(file: File): boolean {
+    if (!TIPOS_ARQUIVO_IMAGEM.includes(file.type as any)) {
+      alert('Por favor, selecione um arquivo de imagem válido (JPEG, JPG, PNG, WebP)');
+      return false;
+    }
+    
+    if (file.size > TAMANHO_MAX_IMAGEM) {
+      alert('O arquivo deve ter no máximo 5MB');
+      return false;
+    }
+    
+    return true;
+  }
+
   // Métodos para microchip
   toggleMicrochip() {
     this.temMicrochip = !this.temMicrochip;
@@ -329,17 +433,16 @@ export class CadastroCaoComponent {
   }
 
   formatFileSize(bytes: number): string {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    return this.caoService.formatarTamanhoArquivo(bytes);
   }
 
   isFormValid(): boolean {
     // Validar dados do proprietário apenas se for diferente do usuário logado
     const userValid = this.proprietarioDiferente ? this.userForm.valid : true;
     const dogValid = this.dogForm.valid;
+    
+    // Validar fotos obrigatórias
+    const fotosValid = this.fotoPerfil !== null && this.fotoLateral !== null;
     
     let videoValid = false;
     
@@ -371,47 +474,119 @@ export class CadastroCaoComponent {
       }
     }
     
-    return userValid && dogValid && videoValid;
+    return userValid && dogValid && fotosValid && videoValid;
   }
 
-  submitForm() {
+  async submitForm() {
     if (this.isFormValid()) {
-      // Preparar dados para envio
-      const dadosEnvio = {
-        proprietarioDiferente: this.proprietarioDiferente,
-        ...this.dogForm.value,
-        videoOption: this.videoOption,
-        ...this.videoForm.value,
-        temPedigree: this.temPedigree,
-        temMicrochip: this.temMicrochip,
-        numeroMicrochip: this.temMicrochip ? this.dogForm.get('numeroMicrochip')?.value : null
-      };
-      
-      // Incluir dados do proprietário apenas se for diferente do usuário logado
-      if (this.proprietarioDiferente) {
-        dadosEnvio.nomeProprietario = this.userForm.value.nomeCompleto;
-        dadosEnvio.cpfProprietario = this.userForm.value.cpf;
-        dadosEnvio.emailProprietario = this.userForm.value.email;
-        dadosEnvio.telefoneProprietario = this.userForm.value.telefone;
-        dadosEnvio.enderecoProprietario = this.userForm.value.endereco;
-        dadosEnvio.cidade = this.userForm.value.cidade;
-        dadosEnvio.estado = this.userForm.value.estado;
+      try {
+        // Primeiro, fazer upload das fotos obrigatórias
+        if (!this.fotoPerfil || !this.fotoLateral) {
+          alert('Por favor, selecione as fotos de perfil e lateral do cão.');
+          return;
+        }
+
+        // Upload das fotos obrigatórias
+        const uploadFotosResponse = await this.caoService.uploadFotos(
+          this.fotoPerfil,
+          this.fotoLateral
+        ).toPromise();
+
+        if (!uploadFotosResponse) {
+          alert('Erro ao fazer upload das fotos. Tente novamente.');
+          return;
+        }
+
+        // Preparar dados do cão
+        const dadosCao: Cao = {
+          nome: this.dogForm.value.nome,
+          raca: this.dogForm.value.raca,
+          sexo: this.dogForm.value.sexo as SexoCao,
+          dataNascimento: this.dogForm.value.dataNascimento,
+          cor: this.dogForm.value.cor,
+          peso: this.dogForm.value.peso,
+          altura: this.dogForm.value.altura,
+          fotoPerfil: uploadFotosResponse.fotoPerfilUrl,
+          fotoLateral: uploadFotosResponse.fotoLateralUrl,
+          temPedigree: this.temPedigree,
+          temMicrochip: this.temMicrochip,
+          numeroMicrochip: this.temMicrochip ? this.dogForm.get('numeroMicrochip')?.value : undefined,
+          informacoesAdicionais: this.dogForm.value.informacoesAdicionais
+        };
+
+        // Upload do pedigree se existir
+        if (this.temPedigree && this.pedigreeFrente && this.pedigreeVerso) {
+          const pedigreeResponse = await this.caoService.uploadPedigree(
+            this.pedigreeFrente,
+            this.pedigreeVerso
+          ).toPromise();
+          
+          if (pedigreeResponse) {
+            dadosCao.pedigreeFrenteUrl = pedigreeResponse.pedigreeFrenteUrl;
+            dadosCao.pedigreeVersoUrl = pedigreeResponse.pedigreeVersoUrl;
+          }
+        }
+
+        // Upload do vídeo se necessário
+        if (this.videoOption === 'upload' && this.selectedFile) {
+          const videoResponse = await this.caoService.uploadVideo(this.selectedFile).toPromise();
+          if (videoResponse) {
+            dadosCao.videoUrl = videoResponse.videoUrl;
+          }
+        } else if (this.videoOption === 'youtube') {
+          dadosCao.videoUrl = this.videoForm.value.videoUrl;
+        }
+
+        // Preparar payload final
+        const payload: CadastroCaoPayload = {
+          cao: dadosCao,
+          videoOption: this.videoOption,
+          confirmaWhatsapp: this.videoOption === 'whatsapp' ? this.videoForm.value.confirmaWhatsapp : undefined
+        };
+
+        // Adicionar dados do proprietário se for diferente
+        if (this.proprietarioDiferente) {
+          payload.proprietario = {
+            tipoPropriedade: 'TERCEIRO',
+            dadosProprietario: {
+              nome: this.userForm.value.nomeCompleto,
+              cpf: this.userForm.value.cpf,
+              email: this.userForm.value.email,
+              telefone: this.userForm.value.telefone,
+              endereco: {
+                logradouro: this.userForm.value.endereco,
+                cep: this.userForm.value.cep,
+                cidade: this.userForm.value.cidade,
+                estado: this.userForm.value.estado
+              }
+            }
+          };
+        } else {
+          payload.proprietario = {
+            tipoPropriedade: 'PROPRIO'
+          };
+        }
+
+        // Enviar cadastro
+        const response = await this.caoService.cadastrarCao(payload).toPromise();
+        
+        if (response && response.success) {
+          console.log('Cadastro realizado com sucesso:', response);
+          this.currentStep = 4; // Ir para tela de sucesso
+        } else {
+          alert('Erro ao cadastrar o cão. Tente novamente.');
+        }
+        
+      } catch (error) {
+        console.error('Erro no cadastro:', error);
+        alert('Erro ao cadastrar o cão. Verifique os dados e tente novamente.');
       }
-      
-      // Simular envio dos dados
-      console.log('Dados para envio:', dadosEnvio);
-      console.log('Proprietário diferente:', this.proprietarioDiferente);
-      console.log('Arquivo selecionado:', this.selectedFile);
-      
-      // Ir para a tela de sucesso
-      this.currentStep = 4;
-      
-      // Aqui você enviaria os dados para o backend
-      // this.cadastroService.submitCadastro(dadosEnvio).subscribe(...)
     } else {
       let message = 'Por favor, preencha todos os campos obrigatórios';
       
-      if (this.videoOption === 'upload' && !this.selectedFile) {
+      if (!this.fotoPerfil || !this.fotoLateral) {
+        message += ' e selecione as fotos obrigatórias do cão.';
+      } else if (this.videoOption === 'upload' && !this.selectedFile) {
         message += ' e envie um vídeo.';
       } else if (this.videoOption === 'youtube' && !this.videoForm.get('videoUrl')?.valid) {
         message += ' e forneça um link válido do YouTube.';
@@ -458,24 +633,21 @@ export class CadastroCaoComponent {
       this.cepStatus = 'loading';
       
       try {
-        // Primeiro tenta a ViaCEP
-        let result = await this.searchCepViaCep(cep);
+        // Usar o serviço de cães para buscar endereço
+        const endereco = await this.caoService.buscarEnderecoPorCep(cep).toPromise();
         
-        if (result) {
-          this.fillAddressFromViaCep(result);
+        if (endereco) {
+          // Preencher os campos do formulário com os dados retornados
+          this.userForm.patchValue({
+            endereco: endereco.logradouro,
+            cidade: endereco.cidade,
+            estado: endereco.estado
+          });
           this.cepStatus = 'success';
         } else {
-          // Se falhar, tenta a API dos Correios como backup
-          const correiosResult = await this.searchCepCorreios(cep);
-          if (correiosResult) {
-            this.fillAddressFromCorreios(correiosResult);
-            this.cepStatus = 'success';
-          } else {
-            // Se ambas falharem, limpa os campos e mostra mensagem
-            this.clearAddressFields();
-            this.cepStatus = 'error';
-            alert('CEP não encontrado. Verifique o CEP digitado ou preencha o endereço manualmente.');
-          }
+          this.clearAddressFields();
+          this.cepStatus = 'error';
+          alert('CEP não encontrado. Verifique o CEP digitado ou preencha o endereço manualmente.');
         }
       } catch (error) {
         console.error('Erro ao buscar CEP:', error);

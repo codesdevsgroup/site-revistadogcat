@@ -14,6 +14,7 @@ export interface Artigo {
   comentarios: number;
   destaque: boolean;
   fotoDestaque?: string; // URL da foto de destaque
+  resumo?: string; // Resumo opcional do artigo
 }
 
 @Component({
