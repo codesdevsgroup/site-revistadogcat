@@ -1,7 +1,51 @@
+// Mixins para otimização
+@mixin card-base {
+  background: white;
+  border-radius: 15px;
+  box-shadow: var(--borderBoxShadow);
+  height: 100%;
+  transition: transform 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-5px);
+  }
+}
+
+@mixin btn-base {
+  padding: 1rem 2rem;
+  border-radius: 50px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  
+  .icon {
+    font-size: 1.08rem;
+  }
+  
+  &:hover {
+    transform: translateY(-2px);
+  }
+}
+
+@mixin section-base {
+  padding: 5rem 0;
+  
+  &:nth-child(even) {
+    background: var(--tertiaryColor);
+  }
+}
+
+@mixin gradient-primary {
+  background: linear-gradient(135deg, var(--primaryColor) 0%, #2d5a32 100%);
+}
+
 .expo-dog-container {
 
   .hero-expo {
-    background: linear-gradient(135deg, var(--primaryColor) 0%, #2d5a32 100%);
+    @include gradient-primary;
     color: white;
     position: relative;
     overflow: hidden;
@@ -67,18 +111,7 @@
       animation: fadeInUp 0.8s ease-out 0.6s both;
 
       .btn-primary, .btn-secondary {
-        padding: 1rem 2rem;
-        border-radius: 50px;
-        text-decoration: none;
-        font-weight: 600;
-        transition: all 0.3s ease;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-
-        .icon {
-          font-size: 1.08rem;
-        }
+        @include btn-base;
       }
 
       .btn-primary {
@@ -403,11 +436,7 @@
   .como-funciona-section,
   .categorias-section,
   .cronograma-section {
-    padding: 5rem 0;
-
-    &:nth-child(even) {
-      background: var(--tertiaryColor);
-    }
+    @include section-base;
   }
 
   .section-title {
@@ -425,17 +454,9 @@
 
   // Cards de benefícios
   .benefit-card {
-    background: white;
+    @include card-base;
     padding: 2rem;
-    border-radius: 15px;
     text-align: center;
-    box-shadow: var(--borderBoxShadow);
-    height: 100%;
-    transition: transform 0.3s ease;
-
-    &:hover {
-      transform: translateY(-5px);
-    }
 
     .benefit-icon {
       font-size: 2.7rem;
@@ -456,12 +477,9 @@
 
   // Cards de passos
   .step-card {
-    background: white;
+    @include card-base;
     padding: 2rem;
-    border-radius: 15px;
     text-align: center;
-    box-shadow: var(--borderBoxShadow);
-    height: 100%;
     position: relative;
 
     .step-number {
@@ -495,11 +513,8 @@
 
   // Cards de categoria
   .categoria-card {
-    background: white;
+    @include card-base;
     padding: 2rem;
-    border-radius: 15px;
-    box-shadow: var(--borderBoxShadow);
-    height: 100%;
 
     .categoria-icon {
       font-size: 2.7rem;
@@ -663,7 +678,7 @@
 
   // CTA Section
   .cta-section {
-    background: linear-gradient(135deg, var(--primaryColor) 0%, #2d5a32 100%);
+    @include gradient-primary;
     color: white;
     padding: 5rem 0;
     text-align: center;
@@ -689,22 +704,7 @@
     }
 
     .btn-cta, .btn-secondary-cta {
-      padding: 1rem 2rem;
-      border-radius: 50px;
-      text-decoration: none;
-      font-weight: 600;
-      transition: all 0.3s ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-
-      .icon {
-        font-size: 1.08rem;
-      }
-
-      &:hover {
-        transform: translateY(-2px);
-      }
+      @include btn-base;
     }
 
     .btn-cta {

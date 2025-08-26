@@ -2,51 +2,19 @@ import { Component, ViewChild, ElementRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
-import { FooterComponent } from '../../../components/footer/footer';
+import { FooterComponent } from '../components/footer/footer';
 import { SocialMediaService } from '../../../services/social-media.service';
 import { CaoService } from '../../../services/cao.service';
 import { AuthService } from '../../../services/auth.service';
+import { ValidationService } from '../../../services/validation.service';
 import { 
   Cao, 
   ProprietarioCao, 
   CadastroCaoPayload, 
-  CadastroCaoResponse,
-  ImageUploadResponse,
-  FileValidation,
-  SexoCao,
   VideoOption,
-  TipoPropriedade,
-  RACAS_CAO,
-  TIPOS_ARQUIVO_IMAGEM,
-  TAMANHO_MAX_IMAGEM,
-  TAMANHO_MAX_VIDEO
+  SexoCao,
+  RACAS_CAO
 } from '../../../interfaces/cao.interface';
-
-// Interface para resposta da API ViaCEP
-interface ViaCepResponse {
-  cep: string;
-  logradouro: string;
-  complemento: string;
-  bairro: string;
-  localidade: string;
-  uf: string;
-  ibge: string;
-  gia: string;
-  ddd: string;
-  siafi: string;
-  erro?: boolean;
-}
-
-// Interface para resposta da API dos Correios
-interface CorreiosResponse {
-  cep: string;
-  street: string;
-  district: string;
-  city: string;
-  state: string;
-  status: number;
-}
 
 @Component({
   selector: 'app-cadastro-cao',
@@ -93,11 +61,11 @@ export class CadastroCaoComponent {
   numeroMicrochip: string = '';
 
   constructor(
-    private fb: FormBuilder, 
-    private http: HttpClient, 
+    private fb: FormBuilder,
     private socialMediaService: SocialMediaService,
     private caoService: CaoService,
-    private authService: AuthService
+    private authService: AuthService,
+    private validationService: ValidationService
   ) {
     this.socialMedia = this.socialMediaService.getSocialMedia();
     this.userForm = this.fb.group({
@@ -204,62 +172,37 @@ export class CadastroCaoComponent {
     this.userForm.get('telefone')?.clearValidators();
     this.userForm.updateValueAndValidity();
   }
-  
-  // Métodos para pedigree
-  togglePedigree() {
-    this.temPedigree = !this.temPedigree;
-    if (!this.temPedigree) {
-      this.pedigreeFrente = null;
-      this.pedigreeVerso = null;
-    }
-  }
-  
-  onPedigreeFrenteSelected(event: any) {
-    const file = event.target.files[0];
-    if (file && this.isValidImageFile(file)) {
-      this.pedigreeFrente = file;
-    } else {
-      event.target.value = '';
-      alert('Por favor, selecione um arquivo de imagem válido (JPG, PNG, PDF)');
-    }
-  }
-  
-  onPedigreeVersoSelected(event: any) {
-    const file = event.target.files[0];
-    if (file && this.isValidImageFile(file)) {
-      this.pedigreeVerso = file;
-    } else {
-      event.target.value = '';
-      alert('Por favor, selecione um arquivo de imagem válido (JPG, PNG, PDF)');
-    }
-  }
-  
-  // Métodos para fotos obrigatórias
+
+  get racasCao() { return RACAS_CAO; }
+
+  // Métodos para fotos
   onFotoPerfilSelected(event: any) {
     const file = event.target.files[0];
     if (file) {
-      const validation = this.caoService.validarArquivoImagem(file);
-      if (validation.isValid) {
-        this.fotoPerfil = file;
-        this.createImagePreview(file, 'perfil');
-      } else {
+      const validation = this.validationService.validateImageFile(file);
+      if (!validation.valid) {
         alert(validation.error);
-        event.target.value = '';
+        return;
       }
+      this.fotoPerfil = file;
+      const reader = new FileReader();
+      reader.onload = (e: any) => this.fotoPerfilPreview = e.target.result;
+      reader.readAsDataURL(file);
     }
   }
 
   onFotoLateralSelected(event: any) {
     const file = event.target.files[0];
     if (file) {
-      const validation = this.caoService.validarArquivoImagem(file);
-      if (validation.isValid) {
-        this.fotoLateral = file;
-        this.createImagePreview(file, 'lateral');
-      } else {
+      const validation = this.validationService.validateImageFile(file);
+      if (!validation.valid) {
         alert(validation.error);
-        event.target.value = '';
+        return;
       }
+      this.fotoLateral = file;
+      const reader = new FileReader();
+      reader.onload = (e: any) => this.fotoLateralPreview = e.target.result;
+      reader.readAsDataURL(file);
     }
   }
 
@@ -268,7 +211,6 @@ export class CadastroCaoComponent {
     event.stopPropagation();
     this.fotoPerfil = null;
     this.fotoPerfilPreview = null;
-    // Reset input file
     const input = document.getElementById('fotoPerfil') as HTMLInputElement;
     if (input) input.value = '';
   }
@@ -278,62 +220,58 @@ export class CadastroCaoComponent {
     event.stopPropagation();
     this.fotoLateral = null;
     this.fotoLateralPreview = null;
-    // Reset input file
     const input = document.getElementById('fotoLateral') as HTMLInputElement;
     if (input) input.value = '';
   }
 
-  private async createImagePreview(file: File, type: 'perfil' | 'lateral') {
-    try {
-      const preview = await this.caoService.criarPreviewImagem(file);
-      if (type === 'perfil') {
-        this.fotoPerfilPreview = preview;
-      } else {
-        this.fotoLateralPreview = preview;
+  // Métodos para pedigree
+  onTemPedigreeChange(event: any) {
+    this.temPedigree = event.target.checked;
+    const control = this.dogForm.get('registroPedigree');
+    if (this.temPedigree) {
+      control?.setValidators([Validators.required]);
+    } else {
+      control?.clearValidators();
+      this.pedigreeFrente = this.pedigreeVerso = null;
+    }
+    control?.updateValueAndValidity();
+  }
+
+  onPedigreeFrenteSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      const validation = this.validationService.validateImageFile(file);
+      if (!validation.valid) {
+        alert(validation.error);
+        return;
       }
-    } catch (error) {
-      console.error('Erro ao criar preview da imagem:', error);
-      alert('Erro ao processar a imagem. Tente novamente.');
+      this.pedigreeFrente = file;
     }
   }
 
-  private isValidPhotoFile(file: File): boolean {
-    if (!TIPOS_ARQUIVO_IMAGEM.includes(file.type as any)) {
-      alert('Por favor, selecione um arquivo de imagem válido (JPEG, JPG, PNG, WebP)');
-      return false;
+  onPedigreeVersoSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      const validation = this.validationService.validateImageFile(file);
+      if (!validation.valid) {
+        alert(validation.error);
+        return;
+      }
+      this.pedigreeVerso = file;
     }
-    
-    if (file.size > TAMANHO_MAX_IMAGEM) {
-      alert('O arquivo deve ter no máximo 5MB');
-      return false;
-    }
-    
-    return true;
   }
 
   // Métodos para microchip
-  toggleMicrochip() {
-    this.temMicrochip = !this.temMicrochip;
-    if (!this.temMicrochip) {
+  onTemMicrochipChange(event: any) {
+    this.temMicrochip = event.target.checked;
+    const control = this.dogForm.get('numeroMicrochip');
+    if (this.temMicrochip) {
+      control?.setValidators([Validators.required]);
+    } else {
+      control?.clearValidators();
       this.numeroMicrochip = '';
     }
-  }
-  
-  // Método auxiliar para validar arquivos de imagem
-  private isValidImageFile(file: File): boolean {
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'];
-    const maxSize = 5 * 1024 * 1024; // 5MB
-    
-    if (!allowedTypes.includes(file.type)) {
-      return false;
-    }
-    
-    if (file.size > maxSize) {
-      alert('O arquivo deve ter no máximo 5MB');
-      return false;
-    }
-    
-    return true;
+    control?.updateValueAndValidity();
   }
 
   selectVideoOption(option: 'upload' | 'youtube' | 'whatsapp') {
@@ -364,51 +302,21 @@ export class CadastroCaoComponent {
     }
   }
 
-  nextStep() {
-    if (this.currentStep < 4) {
-      this.currentStep++;
-    }
-  }
-
-  prevStep() {
-    if (this.currentStep > 1) {
-      this.currentStep--;
-    }
-  }
-
-  triggerFileInput() {
-    this.fileInput.nativeElement.click();
-  }
+  nextStep() { if (this.currentStep < 4) this.currentStep++; }
+  prevStep() { if (this.currentStep > 1) this.currentStep--; }
+  triggerFileInput() { this.fileInput.nativeElement.click(); }
 
   onFileSelected(event: any) {
     const file = event.target.files[0];
     if (file) {
-      // Validar tamanho do arquivo (50MB)
-      const maxSize = 50 * 1024 * 1024; // 50MB em bytes
-      if (file.size > maxSize) {
-        alert('Arquivo muito grande. Tamanho máximo: 50MB');
+      const validation = this.validationService.validateVideoFile(file);
+      if (!validation.valid) {
+        alert(validation.error);
         return;
       }
-
-      // Validar tipo de arquivo
-      const allowedTypes = ['video/mp4', 'video/mov', 'video/avi', 'video/quicktime'];
-      if (!allowedTypes.includes(file.type)) {
-        alert('Formato não suportado. Use MP4, MOV ou AVI');
+      if (validation.warning && !window.confirm(validation.warning)) {
         return;
       }
-
-      // Validar duração do vídeo (aproximadamente através do tamanho)
-      // Para vídeos de boa qualidade, 20 segundos ≈ 10-30MB dependendo da resolução
-      if (file.size > 30 * 1024 * 1024) {
-        const confirm = window.confirm(
-          'O arquivo parece grande para um vídeo de 20 segundos. ' +
-          'Tem certeza que o vídeo tem no máximo 20 segundos?'
-        );
-        if (!confirm) {
-          return;
-        }
-      }
-
       this.selectedFile = file;
       this.simulateUpload();
     }
@@ -424,14 +332,12 @@ export class CadastroCaoComponent {
     this.uploadProgress = 0;
     const interval = setInterval(() => {
       this.uploadProgress += 10;
-      if (this.uploadProgress >= 100) {
-        clearInterval(interval);
-      }
+      if (this.uploadProgress >= 100) clearInterval(interval);
     }, 200);
   }
 
   formatFileSize(bytes: number): string {
-    return this.caoService.formatarTamanhoArquivo(bytes);
+    return this.validationService.formatFileSize(bytes);
   }
 
   isFormValid(): boolean {
@@ -596,46 +502,17 @@ export class CadastroCaoComponent {
     }
   }
 
-  // Método para buscar CEP usando ViaCEP
-  searchCepViaCep(cep: string): Promise<ViaCepResponse | null> {
-    return this.http.get<ViaCepResponse>(`https://viacep.com.br/ws/${cep}/json/`)
-      .toPromise()
-      .then(response => {
-        if (response && !response.erro) {
-          return response;
-        }
-        return null;
-      })
-      .catch(() => null);
-  }
-
-  // Método para buscar CEP usando API dos Correios (backup)
-  searchCepCorreios(cep: string): Promise<CorreiosResponse | null> {
-    return this.http.get<CorreiosResponse>(`https://apps.correios.com.br/SigepMasterJPA/AtendeClienteService/AtendeCliente/consultaCEP?cep=${cep}`)
-      .toPromise()
-      .then(response => {
-        if (response && response.status === 200) {
-          return response;
-        }
-        return null;
-      })
-      .catch(() => null);
-  }
-
-  // Método principal para buscar CEP
   async onCepChange(event: any) {
-    const cep = event.target.value.replace(/\D/g, ''); // Remove caracteres não numéricos
+    const cep = event.target.value.replace(/\D/g, '');
     
     if (cep.length === 8) {
       this.isCepLoading = true;
       this.cepStatus = 'loading';
       
       try {
-        // Usar o serviço de cães para buscar endereço
         const endereco = await this.caoService.buscarEnderecoPorCep(cep).toPromise();
         
         if (endereco) {
-          // Preencher os campos do formulário com os dados retornados
           this.userForm.patchValue({
             endereco: endereco.logradouro,
             cidade: endereco.cidade,
@@ -655,33 +532,11 @@ export class CadastroCaoComponent {
         this.isCepLoading = false;
       }
     } else if (cep.length === 0) {
-      // Se o CEP foi apagado, limpa os campos
       this.clearAddressFields();
       this.cepStatus = 'none';
     }
   }
 
-  // Preenche os campos com dados da ViaCEP
-  fillAddressFromViaCep(data: ViaCepResponse) {
-    const endereco = data.logradouro + (data.complemento ? ' - ' + data.complemento : '');
-    
-    this.userForm.patchValue({
-      endereco: endereco,
-      cidade: data.localidade,
-      estado: data.uf
-    });
-  }
-
-  // Preenche os campos com dados da API dos Correios
-  fillAddressFromCorreios(data: CorreiosResponse) {
-    this.userForm.patchValue({
-      endereco: data.street,
-      cidade: data.city,
-      estado: data.state
-    });
-  }
-
-  // Limpa os campos de endereço
   clearAddressFields() {
     this.userForm.patchValue({
       endereco: '',
@@ -690,17 +545,11 @@ export class CadastroCaoComponent {
     });
   }
 
-  // Formatar CEP enquanto digita
   formatCep(event: any) {
-    let value = event.target.value.replace(/\D/g, '');
-    if (value.length > 5) {
-      value = value.substring(0, 5) + '-' + value.substring(5, 8);
-    }
-    event.target.value = value;
+    event.target.value = this.validationService.formatCep(event.target.value);
   }
 
   openWhatsAppRegistration() {
-    const whatsappNumber = '5515998350750'; // Número do WhatsApp da revista
     const message = encodeURIComponent(
       '🏆 Olá! Gostaria de fazer o cadastro para a Expo Dog BR via WhatsApp.\n\n' +
       'Informações que preciso fornecer:\n' +
@@ -709,18 +558,25 @@ export class CadastroCaoComponent {
       '🎥 Vídeo de apresentação\n\n' +
       'Aguardo o atendimento!'
     );
-    
-    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${message}`;
-    window.open(whatsappUrl, '_blank');
+    window.open(`https://wa.me/5515998350750?text=${message}`, '_blank');
   }
 
   scrollToForm() {
-    const progressSection = document.querySelector('.progress-section');
-    if (progressSection) {
-      progressSection.scrollIntoView({ 
-        behavior: 'smooth', 
-        block: 'start' 
-      });
+    document.querySelector('.progress-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  // Métodos de compatibilidade para o template
+  togglePedigree() {
+    this.temPedigree = !this.temPedigree;
+    if (!this.temPedigree) {
+      this.pedigreeFrente = this.pedigreeVerso = null;
+    }
+  }
+
+  toggleMicrochip() {
+    this.temMicrochip = !this.temMicrochip;
+    if (!this.temMicrochip) {
+      this.numeroMicrochip = '';
     }
   }
 }

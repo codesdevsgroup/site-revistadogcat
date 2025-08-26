@@ -33,16 +33,16 @@
     (click)="$event.stopPropagation()">
     
     <!-- Cabeçalho do usuário -->
-    <div class="dropdown-header">
+    <div class="dropdown-header" *ngIf="showUserInfo">
       <div class="user-info">
         <div class="user-name">{{ user.name }}</div>
         <div class="user-role">{{ getUserRoleDescription() }}</div>
-        <div class="user-email">{{ user.email }}</div>
+        <div class="user-email" *ngIf="!isAdminContext()">{{ user.email }}</div>
       </div>
     </div>
     
     <!-- Divisor -->
-    <div class="dropdown-divider"></div>
+    <div class="dropdown-divider" *ngIf="showUserInfo"></div>
     
     <!-- Opções do menu -->
     <div class="dropdown-body">
@@ -51,16 +51,35 @@
         class="dropdown-item" 
         (click)="goToProfile()"
         type="button">
-        <span class="material-icons">person</span>
-        <span class="item-text">Perfil</span>
+        <i class="fas fa-user-circle" *ngIf="isAdminContext(); else publicIcon"></i>
+        <ng-template #publicIcon>
+          <span class="material-icons">person</span>
+        </ng-template>
+        <span class="item-text">{{ isAdminContext() ? 'Meu Perfil' : 'Perfil' }}</span>
       </button>
+      
+      <!-- Opção Configurações (apenas para admin) -->
+      <button 
+        *ngIf="shouldShowSettings()"
+        class="dropdown-item" 
+        (click)="goToSettings()"
+        type="button">
+        <i class="fas fa-cog"></i>
+        <span class="item-text">Configurações</span>
+      </button>
+      
+      <!-- Divisor antes do logout -->
+      <hr class="dropdown-divider" *ngIf="shouldShowSettings()">
       
       <!-- Opção Sair -->
       <button 
         class="dropdown-item logout" 
         (click)="logout()"
         type="button">
-        <span class="material-icons">logout</span>
+        <i class="fas fa-sign-out-alt" *ngIf="isAdminContext(); else publicLogoutIcon"></i>
+        <ng-template #publicLogoutIcon>
+          <span class="material-icons">logout</span>
+        </ng-template>
         <span class="item-text">Sair</span>
       </button>
     </div>

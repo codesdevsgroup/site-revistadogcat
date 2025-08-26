@@ -1,21 +1,27 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { ModalCadastroAnuncianteComponent } from '../modal-cadastro-anunciante/modal-cadastro-anunciante';
-import { SocialMediaService } from '../../services/social-media.service';
 
 @Component({
   selector: 'app-anuncie-aqui',
   standalone: true,
-  imports: [ModalCadastroAnuncianteComponent],
+  imports: [CommonModule, ModalCadastroAnuncianteComponent],
   templateUrl: './anuncie-aqui.html',
   styleUrl: './anuncie-aqui.scss'
 })
 export class AnuncieAquiComponent {
-  socialMedia: any;
+  socialMedia = {
+    whatsapp: {
+      number: '5515998350750',
+      url: 'https://wa.me/5515998350750',
+      displayName: 'WhatsApp',
+      formattedNumber: '(15) 99835-0750'
+    }
+  };
+  whatsappData = this.socialMedia.whatsapp;
   isModalOpen = false;
 
-  constructor(private socialMediaService: SocialMediaService) {
-    this.socialMedia = this.socialMediaService.getSocialMedia();
-  }
+  constructor() {}
 
   openModal() {
     this.isModalOpen = true;

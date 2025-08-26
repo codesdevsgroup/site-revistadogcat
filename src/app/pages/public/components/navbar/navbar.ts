@@ -1,9 +1,14 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { AuthService, User } from '../../services/auth.service';
-import { ProfileMenu } from '../profile-menu/profile-menu';
+import { ProfileMenu } from '../../../../components/profile-menu/profile-menu';
 import { Subscription } from 'rxjs';
+
+interface User {
+  id: string;
+  email: string;
+  name?: string;
+}
 
 interface NavItem {
   label: string;
@@ -15,6 +20,7 @@ interface NavItem {
 
 @Component({
   selector: 'app-navbar',
+  standalone: true,
   imports: [RouterModule, CommonModule, ProfileMenu],
   templateUrl: './navbar.html',
   styleUrl: './navbar.scss'
@@ -62,15 +68,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
       };
     }
     
-    if (this.authService.hasAdminAccess()) {
-      return {
-        label: 'Painel',
-        route: '/admin/dashboard',
-        isButton: true,
-        buttonClass: 'btn btn-admin'
-      };
-    }
-    
+    // Temporariamente sem verificação de admin
     return null;
   }
 
@@ -79,22 +77,12 @@ export class NavbarComponent implements OnInit, OnDestroy {
   isAuthenticated = false;
   private subscriptions = new Subscription();
 
-  constructor(private authService: AuthService) {}
+  constructor() {}
 
   ngOnInit(): void {
-    // Observa mudanças no estado de autenticação
-    this.subscriptions.add(
-      this.authService.isAuthenticated$.subscribe(isAuth => {
-        this.isAuthenticated = isAuth;
-      })
-    );
-
-    // Observa mudanças no usuário atual
-    this.subscriptions.add(
-      this.authService.currentUser$.subscribe(user => {
-        this.currentUser = user;
-      })
-    );
+    // Temporariamente sem autenticação
+    this.isAuthenticated = false;
+    this.currentUser = null;
   }
 
   ngOnDestroy(): void {
@@ -105,9 +93,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
    * Verifica se deve exibir o menu de perfil para usuários não-administrativos
    */
   shouldShowProfileMenu(): boolean {
-    return this.isAuthenticated && 
-           this.currentUser !== null && 
-           !this.authService.hasAdminAccess();
+    return this.isAuthenticated;
   }
 
   toggleMenu(): void {

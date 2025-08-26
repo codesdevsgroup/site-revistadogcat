@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TiptapEditorComponent } from '../../../components/tiptap-editor/tiptap-editor';
+import { TiptapEditorComponent } from '../components/tiptap-editor/tiptap-editor';
 import { ArtigosService, Artigo, ArtigoInput } from '../../../services/artigos.service';
 
 @Component({

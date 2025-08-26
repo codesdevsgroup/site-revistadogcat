@@ -1,9 +1,9 @@
 import { Component, ViewChild } from '@angular/core';
 import { RouterModule, Router } from '@angular/router';
-import { FooterComponent } from '../../../components/footer/footer';
+import { FooterComponent } from '../components/footer/footer';
 import { SocialMediaService } from '../../../services/social-media.service';
 import { AuthService } from '../../../services/auth.service';
-import { LoginRequiredModalComponent } from '../../../components/login-required-modal/login-required-modal.component';
+import { LoginRequiredModalComponent } from '../components/login-required-modal/login-required-modal.component';
 
 @Component({
   selector: 'app-expo-dog',

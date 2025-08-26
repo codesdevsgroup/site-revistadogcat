@@ -1,7 +1,6 @@
-import { Component, Input } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { SocialMediaService } from '../../services/social-media.service';
 
 @Component({
   selector: 'app-newsletter',
@@ -10,26 +9,19 @@ import { SocialMediaService } from '../../services/social-media.service';
   templateUrl: './newsletter.html',
   styleUrl: './newsletter.scss'
 })
-export class NewsletterComponent {
-  @Input() showInstagramCall: boolean = true;
-  
+export class NewsletterComponent implements OnInit {
   newsletterForm: FormGroup;
   isSubmitting = false;
   submitMessage = '';
   submitSuccess = false;
-  socialMedia: any;
 
-  constructor(
-    private fb: FormBuilder,
-    private socialMediaService: SocialMediaService
-  ) {
-    this.socialMedia = this.socialMediaService.getSocialMedia();
-    
+  constructor(private fb: FormBuilder) {
     this.newsletterForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-      acceptTerms: [false, Validators.requiredTrue]
+      email: ['', [Validators.required, Validators.email]]
     });
   }
+
+  ngOnInit() {}
 
   get email() {
     return this.newsletterForm.get('email');

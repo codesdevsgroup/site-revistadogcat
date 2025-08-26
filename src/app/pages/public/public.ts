@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
-import { NavbarComponent } from '../../components/navbar/navbar';
-import { WhatsappFloatComponent } from '../../components/whatsapp-float/whatsapp-float';
+import { NavbarComponent } from './components/navbar/navbar';
+import { WhatsappFloatComponent } from './components/whatsapp-float/whatsapp-float';
 
 @Component({
   selector: 'app-public',
