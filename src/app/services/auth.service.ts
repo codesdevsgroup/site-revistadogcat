@@ -45,14 +45,15 @@ export interface User {
 })
 export class AuthService {
   private apiUrl = `${environment.apiUrl}/auth`;
-  private tokenKey = 'auth_token';
+  // Chave corrigida para corresponder ao interceptor
+  private tokenKey = 'access_token';
   private refreshTokenKey = 'refresh_token';
   private userKey = 'auth_user';
-  
+
   // BehaviorSubject para gerenciar estado de autenticação
   private currentUserSubject = new BehaviorSubject<User | null>(this.getUserFromStorage());
   public currentUser$ = this.currentUserSubject.asObservable();
-  
+
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(this.hasValidToken());
   public isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
 
@@ -219,7 +220,7 @@ export class AuthService {
   private hasValidToken(): boolean {
     const token = localStorage.getItem(this.tokenKey);
     if (!token) return false;
-    
+
     // Aqui você pode adicionar validação de expiração do token
     // Por exemplo, decodificar JWT e verificar exp
     return true;
@@ -246,9 +247,9 @@ export class AuthService {
    */
   private handleError(error: any): Observable<never> {
     console.error('Erro na autenticação:', error);
-    
+
     let errorMessage = 'Erro interno do servidor';
-    
+
     if (error.error?.message) {
       errorMessage = error.error.message;
     } else if (error.status === 401) {
@@ -256,7 +257,7 @@ export class AuthService {
     } else if (error.status === 0) {
       errorMessage = 'Erro de conexão com o servidor';
     }
-    
+
     return throwError(() => ({ message: errorMessage }));
   }
 }

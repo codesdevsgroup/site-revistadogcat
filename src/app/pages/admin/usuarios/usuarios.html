@@ -12,102 +12,92 @@
     </div>
   </div>
 
-  <div class="usuarios-stats">
-    <div class="stat-card">
-      <div class="stat-icon">
-        <i class="fas fa-users"></i>
+  <!-- Container principal que aguarda a resolução do Observable -->
+  <ng-container *ngIf="usuarios$ | async as usuarios; else loadingOrError">
+    <div class="usuarios-table-container">
+      <div class="table-header">
+        <h2>Lista de Usuários ({{ usuarios.length }})</h2>
+        <div class="table-filters">
+          <input type="text" placeholder="Buscar usuários..." class="search-input">
+          <select class="filter-select">
+            <option value="">Todos os tipos</option>
+            <option value="ADMIN">Administrador</option>
+            <option value="EDITOR">Editor</option>
+            <option value="ASSINANTE">Assinante</option>
+          </select>
+        </div>
       </div>
-      <div class="stat-content">
-        <h3>{{ usuarios.length }}</h3>
-        <p>Total de Usuários</p>
-      </div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon active">
-        <i class="fas fa-user-check"></i>
-      </div>
-      <div class="stat-content">
-        <h3>{{ getActiveCount() }}</h3>
-        <p>Usuários Ativos</p>
-      </div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon admin">
-        <i class="fas fa-user-shield"></i>
-      </div>
-      <div class="stat-content">
-        <h3>{{ getAdminCount() }}</h3>
-        <p>Administradores</p>
-      </div>
-    </div>
-  </div>
 
-  <div class="usuarios-table-container">
-    <div class="table-header">
-      <h2>Lista de Usuários</h2>
-      <div class="table-filters">
-        <input type="text" placeholder="Buscar usuários..." class="search-input">
-        <select class="filter-select">
-          <option value="">Todos os tipos</option>
-          <option value="admin">Administrador</option>
-          <option value="editor">Editor</option>
-          <option value="leitor">Leitor</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="table-responsive">
-      <table class="usuarios-table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Nome</th>
-            <th>Email</th>
-            <th>Tipo</th>
-            <th>Status</th>
-            <th>Data Cadastro</th>
-            <th>Último Acesso</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let usuario of usuarios; trackBy: trackByUserId" class="table-row">
-            <td class="user-id">#{{ usuario.id }}</td>
-            <td class="user-name">
-              <div class="user-info">
-                <div class="user-avatar">
-                  <i class="fas fa-user"></i>
+      <div class="table-responsive">
+        <table class="usuarios-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nome</th>
+              <th>Email</th>
+              <th>Tipo (Role)</th>
+              <th>Status</th>
+              <th>Data Cadastro</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Loop com os dados da API -->
+            <tr *ngFor="let usuario of usuarios; trackBy: trackByUserId" class="table-row">
+              <td class="user-id">#{{ usuario.userId.substring(0, 8) }}...</td>
+              <td class="user-name">
+                <div class="user-info">
+                  <div class="user-avatar">
+                    <img *ngIf="usuario.avatarUrl; else defaultAvatar" [src]="usuario.avatarUrl" alt="Avatar de {{usuario.name}}" class="avatar-image">
+                    <ng-template #defaultAvatar>
+                      <i class="fas fa-user"></i>
+                    </ng-template>
+                  </div>
+                  <span>{{ usuario.name }}</span>
                 </div>
-                <span>{{ usuario.nome }}</span>
-              </div>
-            </td>
-            <td class="user-email">{{ usuario.email }}</td>
-            <td class="user-tipo">
-              <span class="badge" [ngClass]="getTipoClass(usuario.tipo)">
-                {{ usuario.tipo | titlecase }}
-              </span>
-            </td>
-            <td class="user-status">
-              <span class="status-indicator" [ngClass]="getStatusClass(usuario.status)">
-                <i class="fas" [ngClass]="usuario.status === 'ativo' ? 'fa-check-circle' : 'fa-times-circle'"></i>
-                {{ usuario.status | titlecase }}
-              </span>
-            </td>
-            <td class="user-date">{{ usuario.dataCadastro | date:'dd/MM/yyyy' }}</td>
-            <td class="user-access">{{ usuario.ultimoAcesso | date:'dd/MM/yyyy' }}</td>
-            <td class="user-actions">
-              <div class="action-buttons">
-                <button class="btn-action btn-edit" (click)="editarUsuario(usuario)" title="Editar">
-                  <i class="fas fa-edit"></i>
-                </button>
-                <button class="btn-action btn-delete" (click)="excluirUsuario(usuario)" title="Excluir">
-                  <i class="fas fa-trash"></i>
-                </button>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+              </td>
+              <td class="user-email">{{ usuario.email }}</td>
+              <td class="user-tipo">
+                <span class="badge" [ngClass]="getRoleClass(usuario.role)">
+                  {{ usuario.role }}
+                </span>
+              </td>
+              <td class="user-status">
+                <span class="status-indicator" [ngClass]="getStatusClass(usuario.active)">
+                  <i class="fas" [ngClass]="usuario.active ? 'fa-check-circle' : 'fa-times-circle'"></i>
+                  {{ usuario.active ? 'Ativo' : 'Inativo' }}
+                </span>
+              </td>
+              <td class="user-date">{{ usuario.createdAt | date:'dd/MM/yyyy' }}</td>
+              <td class="user-actions">
+                <div class="action-buttons">
+                  <button class="btn-action btn-edit" (click)="editarUsuario(usuario)" title="Editar">
+                    <i class="fas fa-edit"></i>
+                  </button>
+                  <button class="btn-action btn-delete" (click)="excluirUsuario(usuario)" title="Excluir">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Mensagem para quando não houver usuários -->
+      <div *ngIf="usuarios.length === 0" class="empty-state">
+        <i class="fas fa-user-slash"></i>
+        <p>Nenhum usuário encontrado.</p>
+      </div>
     </div>
-  </div>
+  </ng-container>
+
+  <!-- Template para estado de carregamento ou erro -->
+  <ng-template #loadingOrError>
+    <div class="loading-state">
+      <i class="fas fa-spinner fa-spin"></i>
+      <p>Carregando usuários...</p>
+    </div>
+  </ng-template>
+
 </div>
