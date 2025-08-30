@@ -1,0 +1,68 @@
+<div class="modal-overlay" [class.visible]="isVisible" (click)="onClose()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <!-- Cabeçalho do Modal -->
+    <div class="modal-header">
+      <h2 class="modal-title">{{ isEditMode ? 'Editar Usuário' : 'Adicionar Novo Usuário' }}</h2>
+      <button class="close-button" (click)="onClose()" title="Fechar">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <!-- Corpo do Modal com o Formulário -->
+    <div class="modal-body">
+      <form [formGroup]="usuarioForm" (ngSubmit)="onSave()">
+        <!-- Linha 1: Nome Completo e Nome de Usuário -->
+        <div class="form-row">
+          <div class="form-group">
+            <label for="name">Nome Completo</label>
+            <input id="name" type="text" formControlName="name" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="userName">Nome de Usuário</label>
+            <input id="userName" type="text" formControlName="userName" class="form-control">
+          </div>
+        </div>
+
+        <!-- Linha 2: Email -->
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input id="email" type="email" formControlName="email" class="form-control">
+        </div>
+
+        <!-- Linha 3: Senha (apenas para novos usuários) -->
+        <div class="form-group" *ngIf="!isEditMode">
+          <label for="password">Senha</label>
+          <input id="password" type="password" formControlName="password" class="form-control">
+          <small class="form-text">Mínimo de 8 caracteres. Deixe em branco na edição para não alterar.</small>
+        </div>
+
+        <!-- Linha 4: Role e Status -->
+        <div class="form-row">
+          <div class="form-group">
+            <label for="role">Tipo (Role)</label>
+            <select id="role" formControlName="role" class="form-select">
+              <option value="USUARIO_COMUM">Usuário Comum</option>
+              <option value="ASSINANTE">Assinante</option>
+              <option value="EDITOR">Editor</option>
+              <option value="ADMIN">Admin</option>
+            </select>
+          </div>
+          <div class="form-group form-check-group">
+            <label class="form-check-label">
+              <input type="checkbox" formControlName="active" class="form-check-input">
+              Usuário Ativo
+            </label>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Rodapé do Modal -->
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="onClose()">Cancelar</button>
+      <button type="submit" class="btn btn-primary" (click)="onSave()" [disabled]="usuarioForm.invalid">
+        {{ isEditMode ? 'Salvar Alterações' : 'Criar Usuário' }}
+      </button>
+    </div>
+  </div>
+</div>

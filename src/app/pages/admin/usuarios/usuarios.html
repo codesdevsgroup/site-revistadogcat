@@ -5,7 +5,8 @@
       Usuários
     </h1>
     <div class="page-actions">
-      <button class="btn btn-primary">
+      <!-- Botão para abrir o modal em modo de adição -->
+      <button class="btn btn-primary" (click)="openModal()">
         <i class="fas fa-plus"></i>
         Novo Usuário
       </button>
@@ -42,7 +43,6 @@
             </tr>
           </thead>
           <tbody>
-            <!-- Loop com os dados da API -->
             <tr *ngFor="let usuario of usuarios; trackBy: trackByUserId" class="table-row">
               <td class="user-id">#{{ usuario.userId.substring(0, 8) }}...</td>
               <td class="user-name">
@@ -71,7 +71,8 @@
               <td class="user-date">{{ usuario.createdAt | date:'dd/MM/yyyy' }}</td>
               <td class="user-actions">
                 <div class="action-buttons">
-                  <button class="btn-action btn-edit" (click)="editarUsuario(usuario)" title="Editar">
+                  <!-- Botão para abrir o modal em modo de edição -->
+                  <button class="btn-action btn-edit" (click)="openModal(usuario)" title="Editar">
                     <i class="fas fa-edit"></i>
                   </button>
                   <button class="btn-action btn-delete" (click)="excluirUsuario(usuario)" title="Excluir">
@@ -84,7 +85,6 @@
         </table>
       </div>
 
-      <!-- Mensagem para quando não houver usuários -->
       <div *ngIf="usuarios.length === 0" class="empty-state">
         <i class="fas fa-user-slash"></i>
         <p>Nenhum usuário encontrado.</p>
@@ -92,7 +92,6 @@
     </div>
   </ng-container>
 
-  <!-- Template para estado de carregamento ou erro -->
   <ng-template #loadingOrError>
     <div class="loading-state">
       <i class="fas fa-spinner fa-spin"></i>
@@ -101,3 +100,11 @@
   </ng-template>
 
 </div>
+
+<!-- Componente do Modal -->
+<app-usuario-modal
+  [isVisible]="isModalVisible"
+  [usuario]="selectedUsuario"
+  (close)="closeModal()"
+  (save)="handleSave($event)">
+</app-usuario-modal>

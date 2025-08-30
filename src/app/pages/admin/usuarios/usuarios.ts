@@ -3,28 +3,67 @@ import { CommonModule } from '@angular/common';
 import { UsuarioService } from '../../../services/usuario.service';
 import { Usuario } from '../../../interfaces/usuario.interface';
 import { Observable } from 'rxjs';
+import { UsuarioModalComponent } from '../../../components/usuario-modal/usuario-modal';
 
 @Component({
   selector: 'app-usuarios',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, UsuarioModalComponent], // Adicionado o UsuarioModalComponent
   templateUrl: './usuarios.html',
   styleUrls: ['./usuarios.scss']
 })
 export class UsuariosComponent implements OnInit {
-  // Agora os usuários virão de um Observable do serviço
   public usuarios$: Observable<Usuario[]>;
+
+  // Variáveis para controlar o modal
+  isModalVisible = false;
+  selectedUsuario: Usuario | null = null;
 
   constructor(private usuarioService: UsuarioService) {
     this.usuarios$ = this.usuarioService.getUsers();
   }
 
-  ngOnInit(): void {
-    // A subscrição será feita no template com o pipe 'async'
+  ngOnInit(): void {}
+
+  // --- Métodos de controle do Modal ---
+
+  openModal(usuario?: Usuario): void {
+    this.selectedUsuario = usuario || null;
+    this.isModalVisible = true;
   }
 
+  closeModal(): void {
+    this.isModalVisible = false;
+    this.selectedUsuario = null;
+  }
+
+  handleSave(usuario: Usuario): void {
+    console.log('Dados recebidos do modal para salvar:', usuario);
+    if (this.selectedUsuario) {
+      // Lógica para ATUALIZAR usuário (chamar o serviço de update)
+      console.log('Modo Edição');
+    } else {
+      // Lógica para CRIAR novo usuário (chamar o serviço de create)
+      console.log('Modo Adição');
+    }
+    this.closeModal();
+    // Futuramente, aqui devemos recarregar a lista de usuários
+  }
+
+  // --- Métodos existentes ---
+
+  excluirUsuario(usuario: Usuario): void {
+    console.log('Excluir usuário:', usuario);
+    // Lógica para abrir um modal de confirmação e chamar o serviço de exclusão
+  }
+
+  trackByUserId(index: number, usuario: Usuario): string {
+    return usuario.userId;
+  }
+
+  // --- Funções de estilo para o template ---
+
   getRoleClass(role: string): string {
-    // Mapeia as roles da API para as classes CSS do template
     const roleMap: { [key: string]: string } = {
       'ADMIN': 'badge-admin',
       'EDITOR': 'badge-editor',
@@ -38,20 +77,5 @@ export class UsuariosComponent implements OnInit {
 
   getStatusClass(active: boolean): string {
     return active ? 'status-ativo' : 'status-inativo';
-  }
-
-  editarUsuario(usuario: Usuario): void {
-    console.log('Editar usuário:', usuario);
-    // Lógica para navegar para a página de edição, por exemplo:
-    // this.router.navigate(['/admin/usuarios', usuario.userId]);
-  }
-
-  excluirUsuario(usuario: Usuario): void {
-    console.log('Excluir usuário:', usuario);
-    // Lógica para abrir um modal de confirmação e chamar o serviço de exclusão
-  }
-
-  trackByUserId(index: number, usuario: Usuario): string {
-    return usuario.userId;
   }
 }

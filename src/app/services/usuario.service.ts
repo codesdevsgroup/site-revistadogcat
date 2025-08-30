@@ -1,16 +1,29 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { tap, catchError } from 'rxjs/operators';
+import { tap, catchError, map } from 'rxjs/operators';
 import { Usuario } from '../interfaces/usuario.interface';
 import { environment } from '../../environments/environment';
+
+// Interface que descreve a estrutura completa da resposta da API
+export interface PaginatedUsersResponse {
+  statusCode: number;
+  message: string;
+  data: {
+    data: Usuario[];
+    total: number;
+    page: number;
+    limit: number;
+  };
+  timestamp: string;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class UsuarioService {
 
-  private apiUrl = `${environment.apiUrl}/users`; // Corrigido conforme a implementação real
+  private apiUrl = `${environment.apiUrl}/users`;
 
   constructor(private http: HttpClient) { }
 
@@ -19,17 +32,17 @@ export class UsuarioService {
    * @returns Um Observable com um array de usuários.
    */
   getUsers(): Observable<Usuario[]> {
-    console.log('Buscando usuários em:', this.apiUrl); // Log para confirmar a URL da chamada
+    console.log('Buscando usuários em:', this.apiUrl);
 
-    return this.http.get<Usuario[]>(this.apiUrl).pipe(
+    // Agora esperamos o objeto de paginação completo
+    return this.http.get<PaginatedUsersResponse>(this.apiUrl).pipe(
       tap(response => {
-        // Log para ver a resposta de sucesso crua do backend
         console.log('Resposta crua da API de usuários:', response);
       }),
+      // Usamos o operador map para extrair o array de usuários de dentro da resposta
+      map(response => response.data.data),
       catchError(error => {
-        // Log para ver o objeto de erro completo
         console.error('Erro cru na chamada da API de usuários:', error);
-        // Re-lança o erro para que o componente possa lidar com ele se necessário
         return throwError(() => error);
       })
     );
