@@ -1,8 +1,8 @@
-# Documentação da API de Usuários e Autenticação
+# Documentação da API de Usuários
 
-Esta documentação descreve os endpoints para gerenciamento de usuários e autenticação.
+Esta documentação descreve os endpoints para gerenciamento de usuários.
 
-**Prefixo das Rotas:** `/auth` e `/users`
+**Prefixo da Rota:** `/users`
 
 ---
 
@@ -37,28 +37,56 @@ Este é o objeto de usuário retornado na maioria das respostas da API.
 
 ---
 
-## Endpoints de Autenticação (`/auth`)
-
-(Endpoints de registro, login, refresh, etc. permanecem os mesmos)
-
----
-
 ## Endpoints de Gerenciamento de Usuários (`/users`)
 
 ### 1. Listar Usuários
 
 - **Endpoint:** `GET /users`
 - **Autenticação:** 🔒 `ADMIN`
-- **Descrição:** Retorna uma lista paginada de todos os usuários, com suporte a filtros e busca.
-- **Query Params:**
-  - `page` (opcional): Número da página (padrão: 1).
-  - `limit` (opcional): Itens por página (padrão: 10).
-  - `role` (opcional): Filtra por uma role específica (ex: `ADMIN`, `ASSINANTE`).
-  - `search` (opcional): Termo de busca. **O backend deve procurar este termo nos campos `name`, `email` e `cpf` de forma case-insensitive.**
+- **Descrição:** Retorna uma lista paginada de todos os usuários.
+- **Query Params:** `page`, `limit`, `search`, `role`.
 - **Resposta (200 OK):** Objeto de paginação com a lista de usuários.
 
-(Demais endpoints de gerenciamento de usuários permanecem os mesmos)
+### 2. Obter Usuário por ID
 
----
+- **Endpoint:** `GET /users/{id}`
+- **Autenticação:** 🔒 Requer `access_token`.
+- **Descrição:** Retorna o perfil público de um usuário específico.
+- **Resposta (200 OK):** Objeto `User`.
 
-(Seções de Tratamento de Erros e Guia de Integração permanecem as mesmas)
+### 3. Atualizar Próprio Perfil
+
+- **Endpoint:** `PATCH /users/profile`
+- **Autenticação:** 🔒 Requer `access_token`.
+- **Descrição:** Permite que o usuário autenticado atualize seu próprio perfil (`name`, `userName`, `telefone`, etc.).
+- **Resposta (200 OK):** Objeto `User` atualizado.
+
+### 4. Upload de Avatar
+
+- **Endpoint:** `POST /users/avatar-upload`
+- **Autenticação:** 🔒 Requer `access_token`.
+- **Descrição:** Faz o upload de uma imagem de avatar para o usuário autenticado.
+- **Corpo da Requisição:** `multipart/form-data` com o campo `avatar`.
+- **Resposta (200 OK):** `{ "avatarUrl": "..." }`
+
+### 5. Bloquear Usuário
+
+- **Endpoint:** `PATCH /users/{id}/block`
+- **Autenticação:** 🔒 `ADMIN`
+- **Descrição:** Bloqueia a conta de um usuário.
+- **Resposta (200 OK):** Objeto `User` atualizado.
+
+### 6. Desbloquear Usuário
+
+- **Endpoint:** `PATCH /users/{id}/unblock`
+- **Autenticação:** 🔒 `ADMIN`
+- **Descrição:** Desbloqueia a conta de um usuário.
+- **Resposta (200 OK):** Objeto `User` atualizado.
+
+### 7. Atualizar Role de Usuário
+
+- **Endpoint:** `PATCH /users/{id}/role`
+- **Autenticação:** 🔒 `ADMIN`
+- **Descrição:** Altera o nível de acesso (role) de um usuário.
+- **Corpo da Requisição:** `{ "role": "ASSINANTE" }`
+- **Resposta (200 OK):** Objeto `User` atualizado.

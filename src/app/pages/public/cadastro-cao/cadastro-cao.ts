@@ -1,39 +1,30 @@
-import { Component, ViewChild, ElementRef } from '@angular/core';
+import { Component, ViewChild, ElementRef, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { Subscription } from 'rxjs';
 import { FooterComponent } from '../components/footer/footer';
 import { SocialMediaService } from '../../../services/social-media.service';
 import { CaoService } from '../../../services/cao.service';
 import { AuthService } from '../../../services/auth.service';
 import { ValidationService } from '../../../services/validation.service';
-import { 
-  Cao, 
-  ProprietarioCao, 
-  CadastroCaoPayload, 
-  VideoOption,
-  SexoCao,
-  RACAS_CAO
-} from '../../../interfaces/cao.interface';
+import { EnderecoService } from '../../../services/endereco.service'; // Importar o novo serviço
+import { Cao, CadastroCaoPayload, VideoOption, SexoCao } from '../../../interfaces/cao.interface';
 
 @Component({
   selector: 'app-cadastro-cao',
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    RouterModule,
-    FooterComponent
-  ],
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, FooterComponent],
   templateUrl: './cadastro-cao.html',
-  styleUrl: './cadastro-cao.scss'
+  styleUrls: ['./cadastro-cao.scss']
 })
-export class CadastroCaoComponent {
+export class CadastroCaoComponent implements OnInit, OnDestroy {
   @ViewChild('fileInput') fileInput!: ElementRef;
   socialMedia: any;
 
   currentStep = 1;
   videoOption: VideoOption = 'upload';
-  proprietarioDiferente = false; // Nova propriedade para controlar se o proprietário é diferente
+  proprietarioDiferente = false;
   userForm: FormGroup;
   dogForm: FormGroup;
   videoForm: FormGroup;
@@ -41,31 +32,26 @@ export class CadastroCaoComponent {
   uploadProgress = 0;
   isCepLoading = false;
   cepStatus: 'none' | 'loading' | 'success' | 'error' = 'none';
-  
-  // Dados do usuário logado obtidos do AuthService
+  racas: string[] = [];
+
   usuarioLogado: any = null;
-  
-  // Propriedades para fotos obrigatórias
   fotoPerfil: File | null = null;
   fotoLateral: File | null = null;
   fotoPerfilPreview: string | null = null;
   fotoLateralPreview: string | null = null;
-  
-  // Propriedades para pedigree
-  temPedigree: boolean = false;
   pedigreeFrente: File | null = null;
   pedigreeVerso: File | null = null;
-  
-  // Propriedades para microchip
-  temMicrochip: boolean = false;
-  numeroMicrochip: string = '';
+
+  private subscriptions = new Subscription();
 
   constructor(
     private fb: FormBuilder,
     private socialMediaService: SocialMediaService,
     private caoService: CaoService,
     private authService: AuthService,
-    private validationService: ValidationService
+    private validationService: ValidationService,
+    private enderecoService: EnderecoService, // Injetar o EnderecoService
+    private router: Router
   ) {
     this.socialMedia = this.socialMediaService.getSocialMedia();
     this.userForm = this.fb.group({
@@ -78,9 +64,6 @@ export class CadastroCaoComponent {
       cidade: [''],
       estado: ['']
     });
-    
-    // Preencher automaticamente com dados do usuário logado
-    this.preencherDadosUsuarioLogado();
 
     this.dogForm = this.fb.group({
       nome: ['', [Validators.required, Validators.minLength(2)]],
@@ -89,8 +72,9 @@ export class CadastroCaoComponent {
       dataNascimento: ['', [Validators.required]],
       peso: [''],
       altura: [''],
-      registroPedigree: ['', [Validators.required]],
-      microchip: [''],
+      temPedigree: [false, Validators.required],
+      registroPedigree: [''],
+      temMicrochip: [false, Validators.required],
       numeroMicrochip: [''],
       nomePai: [''],
       nomeMae: [''],
@@ -105,24 +89,92 @@ export class CadastroCaoComponent {
     });
   }
 
-  // Método para alternar entre proprietário diferente ou mesmo usuário logado
+  ngOnInit(): void {
+    this.preencherDadosUsuarioLogado();
+    this.setupConditionalValidators();
+    this.carregarRacas();
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
+  }
+
+  private carregarRacas(): void {
+    this.subscriptions.add(
+      this.caoService.getRacas().subscribe({
+        next: (racas) => {
+          this.racas = racas;
+        },
+        error: (err) => {
+          console.error('Erro ao carregar raças:', err);
+          alert('Não foi possível carregar a lista de raças. Tente novamente mais tarde.');
+        }
+      })
+    );
+  }
+
+  private setupConditionalValidators(): void {
+    const pedigreeSub = this.dogForm.get('temPedigree')?.valueChanges.subscribe(hasPedigree => {
+      const control = this.dogForm.get('registroPedigree');
+      if (hasPedigree) {
+        control?.setValidators([Validators.required]);
+      } else {
+        control?.clearValidators();
+        control?.reset();
+        this.pedigreeFrente = this.pedigreeVerso = null;
+      }
+      control?.updateValueAndValidity();
+    });
+
+    const microchipSub = this.dogForm.get('temMicrochip')?.valueChanges.subscribe(hasMicrochip => {
+      const control = this.dogForm.get('numeroMicrochip');
+      if (hasMicrochip) {
+        control?.setValidators([Validators.required, Validators.minLength(15), Validators.maxLength(15)]);
+      } else {
+        control?.clearValidators();
+        control?.reset();
+      }
+      control?.updateValueAndValidity();
+    });
+
+    this.subscriptions.add(pedigreeSub);
+    this.subscriptions.add(microchipSub);
+  }
+
+  // --- Métodos de Controle do Formulário ---
+
+  nextStep() { if (this.currentStep < 4) this.currentStep++; }
+  prevStep() { if (this.currentStep > 1) this.currentStep--; }
+
+  scrollToForm() {
+    document.querySelector('.progress-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  openWhatsAppRegistration() {
+    const message = encodeURIComponent(
+      '🏆 Olá! Gostaria de fazer o cadastro para a Expo Dog BR via WhatsApp.\n\n' +
+      'Informações que preciso fornecer:\n' +
+      '👤 Dados pessoais (nome, CPF, email, telefone)\n' +
+      '🐕 Dados do cão (nome, raça, idade, etc.)\n' +
+      '🎥 Vídeo de apresentação\n\n' +
+      'Aguardo o atendimento!'
+    );
+    window.open(`https://wa.me/5515998350750?text=${message}`, '_blank');
+  }
+
+  // --- Métodos de Dados do Proprietário ---
+
   toggleProprietarioDiferente() {
     this.proprietarioDiferente = !this.proprietarioDiferente;
-    
     if (this.proprietarioDiferente) {
-      // Limpar campos para permitir entrada manual
       this.limparDadosProprietario();
-      // Habilitar validações para campos obrigatórios
       this.habilitarValidacoesProprietario();
     } else {
-      // Preencher com dados do usuário logado
       this.preencherDadosUsuarioLogado();
-      // Desabilitar validações já que os dados vêm do usuário logado
       this.desabilitarValidacoesProprietario();
     }
   }
 
-  // Preencher formulário com dados do usuário logado
   preencherDadosUsuarioLogado() {
     const user = this.authService.getCurrentUser();
     if (user) {
@@ -131,31 +183,15 @@ export class CadastroCaoComponent {
         nomeCompleto: user.name || '',
         cpf: user.cpf || '',
         email: user.email || '',
-        telefone: user.telefone || '',
-        // Campos de endereço podem ser preenchidos se disponíveis no perfil do usuário
-        endereco: '',
-        cep: '',
-        cidade: '',
-        estado: ''
+        telefone: user.telefone || ''
       });
     }
   }
 
-  // Limpar dados do proprietário para entrada manual
   limparDadosProprietario() {
-    this.userForm.patchValue({
-      nomeCompleto: '',
-      cpf: '',
-      email: '',
-      telefone: '',
-      endereco: '',
-      cep: '',
-      cidade: '',
-      estado: ''
-    });
+    this.userForm.reset();
   }
 
-  // Habilitar validações quando proprietário é diferente
   habilitarValidacoesProprietario() {
     this.userForm.get('nomeCompleto')?.setValidators([Validators.required, Validators.minLength(2)]);
     this.userForm.get('cpf')?.setValidators([Validators.required]);
@@ -164,7 +200,6 @@ export class CadastroCaoComponent {
     this.userForm.updateValueAndValidity();
   }
 
-  // Desabilitar validações quando usar dados do usuário logado
   desabilitarValidacoesProprietario() {
     this.userForm.get('nomeCompleto')?.clearValidators();
     this.userForm.get('cpf')?.clearValidators();
@@ -173,9 +208,8 @@ export class CadastroCaoComponent {
     this.userForm.updateValueAndValidity();
   }
 
-  get racasCao() { return RACAS_CAO; }
+  // --- Métodos de Upload e Arquivos ---
 
-  // Métodos para fotos
   onFotoPerfilSelected(event: any) {
     const file = event.target.files[0];
     if (file) {
@@ -224,19 +258,6 @@ export class CadastroCaoComponent {
     if (input) input.value = '';
   }
 
-  // Métodos para pedigree
-  onTemPedigreeChange(event: any) {
-    this.temPedigree = event.target.checked;
-    const control = this.dogForm.get('registroPedigree');
-    if (this.temPedigree) {
-      control?.setValidators([Validators.required]);
-    } else {
-      control?.clearValidators();
-      this.pedigreeFrente = this.pedigreeVerso = null;
-    }
-    control?.updateValueAndValidity();
-  }
-
   onPedigreeFrenteSelected(event: any) {
     const file = event.target.files[0];
     if (file) {
@@ -261,51 +282,6 @@ export class CadastroCaoComponent {
     }
   }
 
-  // Métodos para microchip
-  onTemMicrochipChange(event: any) {
-    this.temMicrochip = event.target.checked;
-    const control = this.dogForm.get('numeroMicrochip');
-    if (this.temMicrochip) {
-      control?.setValidators([Validators.required]);
-    } else {
-      control?.clearValidators();
-      this.numeroMicrochip = '';
-    }
-    control?.updateValueAndValidity();
-  }
-
-  selectVideoOption(option: 'upload' | 'youtube' | 'whatsapp') {
-    this.videoOption = option;
-    
-    // Reset form validations based on selected option
-    const videoUrlControl = this.videoForm.get('videoUrl');
-    const confirmaWhatsappControl = this.videoForm.get('confirmaWhatsapp');
-    
-    // Clear previous validations
-    videoUrlControl?.clearValidators();
-    confirmaWhatsappControl?.clearValidators();
-    
-    // Set validations based on option
-    if (option === 'youtube') {
-      videoUrlControl?.setValidators([Validators.required]);
-    } else if (option === 'whatsapp') {
-      confirmaWhatsappControl?.setValidators([Validators.requiredTrue]);
-    }
-    
-    // Update form validity
-    videoUrlControl?.updateValueAndValidity();
-    confirmaWhatsappControl?.updateValueAndValidity();
-    
-    // Clear file if switching from upload
-    if (option !== 'upload') {
-      this.removeFile();
-    }
-  }
-
-  nextStep() { if (this.currentStep < 4) this.currentStep++; }
-  prevStep() { if (this.currentStep > 1) this.currentStep--; }
-  triggerFileInput() { this.fileInput.nativeElement.click(); }
-
   onFileSelected(event: any) {
     const file = event.target.files[0];
     if (file) {
@@ -328,6 +304,8 @@ export class CadastroCaoComponent {
     this.fileInput.nativeElement.value = '';
   }
 
+  triggerFileInput() { this.fileInput.nativeElement.click(); }
+
   simulateUpload() {
     this.uploadProgress = 0;
     const interval = setInterval(() => {
@@ -340,16 +318,13 @@ export class CadastroCaoComponent {
     return this.validationService.formatFileSize(bytes);
   }
 
+  // --- Métodos de Validação e Submissão ---
+
   isFormValid(): boolean {
-    // Validar dados do proprietário apenas se for diferente do usuário logado
     const userValid = this.proprietarioDiferente ? this.userForm.valid : true;
     const dogValid = this.dogForm.valid;
-    
-    // Validar fotos obrigatórias
     const fotosValid = this.fotoPerfil !== null && this.fotoLateral !== null;
-    
     let videoValid = false;
-    
     switch (this.videoOption) {
       case 'upload':
         videoValid = this.selectedFile !== null;
@@ -361,47 +336,36 @@ export class CadastroCaoComponent {
         videoValid = this.videoForm.get('confirmaWhatsapp')?.value === true;
         break;
     }
-    
-    // Validar pedigree se selecionado
-    if (this.temPedigree) {
+    if (this.dogForm.get('temPedigree')?.value) {
       const registroPedigree = this.dogForm.get('registroPedigree')?.value;
       if (!registroPedigree || !this.pedigreeFrente || !this.pedigreeVerso) {
         return false;
       }
     }
-    
-    // Validar microchip se selecionado
-    if (this.temMicrochip) {
+    if (this.dogForm.get('temMicrochip')?.value) {
       const numeroMicrochip = this.dogForm.get('numeroMicrochip')?.value;
       if (!numeroMicrochip || numeroMicrochip.trim().length === 0) {
         return false;
       }
     }
-    
     return userValid && dogValid && fotosValid && videoValid;
   }
 
   async submitForm() {
     if (this.isFormValid()) {
       try {
-        // Primeiro, fazer upload das fotos obrigatórias
         if (!this.fotoPerfil || !this.fotoLateral) {
           alert('Por favor, selecione as fotos de perfil e lateral do cão.');
           return;
         }
-
-        // Upload das fotos obrigatórias
         const uploadFotosResponse = await this.caoService.uploadFotos(
           this.fotoPerfil,
           this.fotoLateral
         ).toPromise();
-
         if (!uploadFotosResponse) {
           alert('Erro ao fazer upload das fotos. Tente novamente.');
           return;
         }
-
-        // Preparar dados do cão
         const dadosCao: Cao = {
           nome: this.dogForm.value.nome,
           raca: this.dogForm.value.raca,
@@ -412,26 +376,21 @@ export class CadastroCaoComponent {
           altura: this.dogForm.value.altura,
           fotoPerfil: uploadFotosResponse.fotoPerfilUrl,
           fotoLateral: uploadFotosResponse.fotoLateralUrl,
-          temPedigree: this.temPedigree,
-          temMicrochip: this.temMicrochip,
-          numeroMicrochip: this.temMicrochip ? this.dogForm.get('numeroMicrochip')?.value : undefined,
+          temPedigree: this.dogForm.get('temPedigree')?.value,
+          temMicrochip: this.dogForm.get('temMicrochip')?.value,
+          numeroMicrochip: this.dogForm.get('temMicrochip')?.value ? this.dogForm.get('numeroMicrochip')?.value : undefined,
           informacoesAdicionais: this.dogForm.value.informacoesAdicionais
         };
-
-        // Upload do pedigree se existir
-        if (this.temPedigree && this.pedigreeFrente && this.pedigreeVerso) {
+        if (dadosCao.temPedigree && this.pedigreeFrente && this.pedigreeVerso) {
           const pedigreeResponse = await this.caoService.uploadPedigree(
             this.pedigreeFrente,
             this.pedigreeVerso
           ).toPromise();
-          
           if (pedigreeResponse) {
             dadosCao.pedigreeFrenteUrl = pedigreeResponse.pedigreeFrenteUrl;
             dadosCao.pedigreeVersoUrl = pedigreeResponse.pedigreeVersoUrl;
           }
         }
-
-        // Upload do vídeo se necessário
         if (this.videoOption === 'upload' && this.selectedFile) {
           const videoResponse = await this.caoService.uploadVideo(this.selectedFile).toPromise();
           if (videoResponse) {
@@ -440,15 +399,11 @@ export class CadastroCaoComponent {
         } else if (this.videoOption === 'youtube') {
           dadosCao.videoUrl = this.videoForm.value.videoUrl;
         }
-
-        // Preparar payload final
         const payload: CadastroCaoPayload = {
           cao: dadosCao,
           videoOption: this.videoOption,
           confirmaWhatsapp: this.videoOption === 'whatsapp' ? this.videoForm.value.confirmaWhatsapp : undefined
         };
-
-        // Adicionar dados do proprietário se for diferente
         if (this.proprietarioDiferente) {
           payload.proprietario = {
             tipoPropriedade: 'TERCEIRO',
@@ -470,24 +425,19 @@ export class CadastroCaoComponent {
             tipoPropriedade: 'PROPRIO'
           };
         }
-
-        // Enviar cadastro
         const response = await this.caoService.cadastrarCao(payload).toPromise();
-        
         if (response && response.success) {
           console.log('Cadastro realizado com sucesso:', response);
-          this.currentStep = 4; // Ir para tela de sucesso
+          this.currentStep = 4;
         } else {
           alert('Erro ao cadastrar o cão. Tente novamente.');
         }
-        
       } catch (error) {
         console.error('Erro no cadastro:', error);
         alert('Erro ao cadastrar o cão. Verifique os dados e tente novamente.');
       }
     } else {
       let message = 'Por favor, preencha todos os campos obrigatórios';
-      
       if (!this.fotoPerfil || !this.fotoLateral) {
         message += ' e selecione as fotos obrigatórias do cão.';
       } else if (this.videoOption === 'upload' && !this.selectedFile) {
@@ -497,40 +447,36 @@ export class CadastroCaoComponent {
       } else if (this.videoOption === 'whatsapp' && !this.videoForm.get('confirmaWhatsapp')?.value) {
         message += ' e confirme o envio por WhatsApp.';
       }
-      
       alert(message);
     }
   }
 
-  async onCepChange(event: any) {
+  // --- Métodos de CEP ---
+  onCepChange(event: any) {
     const cep = event.target.value.replace(/\D/g, '');
-    
     if (cep.length === 8) {
       this.isCepLoading = true;
       this.cepStatus = 'loading';
-      
-      try {
-        const endereco = await this.caoService.buscarEnderecoPorCep(cep).toPromise();
-        
-        if (endereco) {
-          this.userForm.patchValue({
-            endereco: endereco.logradouro,
-            cidade: endereco.cidade,
-            estado: endereco.estado
-          });
-          this.cepStatus = 'success';
-        } else {
-          this.clearAddressFields();
-          this.cepStatus = 'error';
-          alert('CEP não encontrado. Verifique o CEP digitado ou preencha o endereço manualmente.');
-        }
-      } catch (error) {
-        console.error('Erro ao buscar CEP:', error);
-        this.cepStatus = 'error';
-        alert('Erro ao buscar CEP. Preencha o endereço manualmente.');
-      } finally {
-        this.isCepLoading = false;
-      }
+      this.subscriptions.add(
+        this.enderecoService.buscarEnderecoPorCep(cep).subscribe({
+          next: (endereco) => {
+            this.userForm.patchValue({
+              endereco: endereco.logradouro,
+              cidade: endereco.cidade,
+              estado: endereco.estado
+            });
+            this.cepStatus = 'success';
+            this.isCepLoading = false;
+          },
+          error: (err) => {
+            this.clearAddressFields();
+            this.cepStatus = 'error';
+            this.isCepLoading = false;
+            alert('CEP não encontrado. Verifique o CEP digitado ou preencha o endereço manualmente.');
+            console.error('Erro ao buscar CEP:', err);
+          }
+        })
+      );
     } else if (cep.length === 0) {
       this.clearAddressFields();
       this.cepStatus = 'none';
@@ -549,35 +495,23 @@ export class CadastroCaoComponent {
     event.target.value = this.validationService.formatCep(event.target.value);
   }
 
-  openWhatsAppRegistration() {
-    const message = encodeURIComponent(
-      '🏆 Olá! Gostaria de fazer o cadastro para a Expo Dog BR via WhatsApp.\n\n' +
-      'Informações que preciso fornecer:\n' +
-      '👤 Dados pessoais (nome, CPF, email, telefone)\n' +
-      '🐕 Dados do cão (nome, raça, idade, etc.)\n' +
-      '🎥 Vídeo de apresentação\n\n' +
-      'Aguardo o atendimento!'
-    );
-    window.open(`https://wa.me/5515998350750?text=${message}`, '_blank');
-  }
+  // --- Outros ---
 
-  scrollToForm() {
-    document.querySelector('.progress-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
-
-  // Métodos de compatibilidade para o template
-  togglePedigree() {
-    this.temPedigree = !this.temPedigree;
-    if (!this.temPedigree) {
-      this.pedigreeFrente = this.pedigreeVerso = null;
+  selectVideoOption(option: 'upload' | 'youtube' | 'whatsapp') {
+    this.videoOption = option;
+    const videoUrlControl = this.videoForm.get('videoUrl');
+    const confirmaWhatsappControl = this.videoForm.get('confirmaWhatsapp');
+    videoUrlControl?.clearValidators();
+    confirmaWhatsappControl?.clearValidators();
+    if (option === 'youtube') {
+      videoUrlControl?.setValidators([Validators.required]);
+    } else if (option === 'whatsapp') {
+      confirmaWhatsappControl?.setValidators([Validators.requiredTrue]);
     }
-  }
-
-  toggleMicrochip() {
-    this.temMicrochip = !this.temMicrochip;
-    if (!this.temMicrochip) {
-      this.numeroMicrochip = '';
+    videoUrlControl?.updateValueAndValidity();
+    confirmaWhatsappControl?.updateValueAndValidity();
+    if (option !== 'upload') {
+      this.removeFile();
     }
   }
 }
-

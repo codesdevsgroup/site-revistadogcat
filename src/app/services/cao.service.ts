@@ -18,11 +18,17 @@ import {
 })
 export class CaoService {
   private readonly apiUrl = `${environment.apiUrl}/cadastro-cao`;
+  private readonly apiRacasUrl = `${environment.apiUrl}/racas`;
 
   constructor(
     private http: HttpClient,
     private authService: AuthService
   ) {}
+
+  getRacas(): Observable<string[]> {
+    return this.http.get<string[]>(this.apiRacasUrl)
+      .pipe(catchError(this.handleError));
+  }
 
   cadastrarCao(payload: CadastroCaoPayload): Observable<CadastroCaoResponse> {
     // O AuthInterceptor cuidará do cabeçalho de autorização
@@ -99,20 +105,6 @@ export class CaoService {
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`;
-  }
-
-  buscarEnderecoPorCep(cep: string): Observable<any> {
-    const cepLimpo = cep.replace(/\D/g, '');
-    if (cepLimpo.length !== 8) {
-      return throwError(() => new Error('CEP deve ter 8 dígitos'));
-    }
-    return this.http.get(`https://viacep.com.br/ws/${cepLimpo}/json/`).pipe(
-      map((response: any) => {
-        if (response.erro) throw new Error('CEP não encontrado');
-        return response;
-      }),
-      catchError(this.handleError)
-    );
   }
 
   private handleError(error: any): Observable<never> {

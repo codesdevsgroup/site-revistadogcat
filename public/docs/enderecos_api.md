@@ -23,6 +23,74 @@ Esta documentação descreve os endpoints da API para gerenciamento de endereço
 | `createdAt` | `string` | Data de criação do endereço. | Não (gerado pelo servidor) |
 | `updatedAt` | `string` | Data da última atualização. | Não (gerado pelo servidor) |
 
+## Integração com BuscaCEP (Frontend)
+
+### Funcionalidade de Preenchimento Automático
+
+O frontend implementa integração com a API BuscaCEP para facilitar o preenchimento de endereços:
+
+#### Como Funciona
+1. **Entrada do CEP:** Usuário digita o CEP no campo correspondente
+2. **Validação:** Sistema valida o formato (00000-000)
+3. **Busca Automática:** Consulta a API BuscaCEP quando o CEP está completo
+4. **Preenchimento:** Campos são preenchidos automaticamente com os dados retornados
+
+#### Campos Preenchidos Automaticamente
+- **Logradouro:** Rua, avenida, etc.
+- **Bairro:** Nome do bairro
+- **Cidade:** Nome da cidade
+- **Estado:** UF do estado
+
+#### Estados Visuais do Campo CEP
+- **Normal:** Campo padrão para digitação
+- **Carregando:** Indicador visual durante a busca (classe `cep-loading`)
+- **Sucesso:** CEP encontrado e dados preenchidos (classe `cep-success`)
+- **Erro:** CEP não encontrado ou inválido (classe `cep-error`)
+
+#### Tratamento de Erros
+- **CEP Inválido:** Mensagem de erro e campo destacado em vermelho
+- **CEP Não Encontrado:** Permite preenchimento manual dos campos
+- **Erro de Conexão:** Fallback para preenchimento manual
+
+#### Experiência do Usuário
+- Campos são preenchidos em tempo real
+- Usuário pode editar campos preenchidos automaticamente
+- Validação visual imediata do CEP
+- Feedback claro sobre o status da busca
+
+### Implementação Técnica (Frontend)
+
+```typescript
+// Exemplo de uso no componente Angular
+export class EnderecoFormComponent {
+  cepStatus: 'normal' | 'loading' | 'success' | 'error' = 'normal';
+  
+  async buscarCep(cep: string) {
+    if (this.validarFormatoCep(cep)) {
+      this.cepStatus = 'loading';
+      
+      try {
+        const endereco = await this.buscaCepService.buscar(cep);
+        this.preencherCampos(endereco);
+        this.cepStatus = 'success';
+      } catch (error) {
+        this.cepStatus = 'error';
+        console.error('Erro ao buscar CEP:', error);
+      }
+    }
+  }
+  
+  private preencherCampos(endereco: any) {
+    this.enderecoForm.patchValue({
+      logradouro: endereco.logradouro,
+      bairro: endereco.bairro,
+      cidade: endereco.cidade,
+      estado: endereco.uf
+    });
+  }
+}
+```
+
 ## Tipos de Endereço
 
 O campo `tipo` define a categoria do endereço:
@@ -53,12 +121,13 @@ O campo `tipo` define a categoria do endereço:
 - Estado deve ser uma UF válida
 - Não é possível desativar o último endereço ativo do usuário
 - Não é possível excluir o endereço principal (deve definir outro como principal primeiro)
+- **Integração BuscaCEP:** Validação automática de CEP via API externa
 
-## Endpoints da API
+## Endpoints
 
 ### 1. Listar Endereços do Usuário
 
-- **Endpoint:** `GET /api/users/{userId}/enderecos`
+- **Endpoint:** `GET /users/{userId}/enderecos`
 - **Descrição:** Lista todos os endereços de um usuário específico.
 - **Permissões:** Usuário pode ver apenas seus próprios endereços, ADMIN pode ver de qualquer usuário.
 - **Parâmetros de Query:**
@@ -90,12 +159,13 @@ O campo `tipo` define a categoria do endereço:
     "total": 1
   }
   ```
+- **Nota sobre Resposta Vazia:** Se o usuário não possuir endereços cadastrados, o endpoint retornará uma resposta de sucesso (`200 OK`) com uma lista vazia (`"enderecos": []`) e `total: 0`.
 - **Resposta de Erro (403 Forbidden):** Se tentar acessar endereços de outro usuário sem ser ADMIN.
 - **Resposta de Erro (404 Not Found):** Se o usuário não for encontrado.
 
 ### 2. Obter Endereço Específico
 
-- **Endpoint:** `GET /api/enderecos/{enderecoId}`
+- **Endpoint:** `GET /enderecos/{enderecoId}`
 - **Descrição:** Obtém detalhes de um endereço específico.
 - **Permissões:** Usuário pode ver apenas seus próprios endereços, ADMIN pode ver qualquer endereço.
 - **Resposta de Sucesso (200 OK):** Objeto do endereço
@@ -104,7 +174,7 @@ O campo `tipo` define a categoria do endereço:
 
 ### 3. Criar Novo Endereço
 
-- **Endpoint:** `POST /api/users/{userId}/enderecos`
+- **Endpoint:** `POST /users/{userId}/enderecos`
 - **Descrição:** Cria um novo endereço para o usuário.
 - **Permissões:** Usuário pode criar apenas para si mesmo, ADMIN pode criar para qualquer usuário.
 - **Corpo da Requisição:**
@@ -129,7 +199,7 @@ O campo `tipo` define a categoria do endereço:
 
 ### 4. Atualizar Endereço
 
-- **Endpoint:** `PUT /api/enderecos/{enderecoId}`
+- **Endpoint:** `PUT /enderecos/{enderecoId}`
 - **Descrição:** Atualiza um endereço existente.
 - **Permissões:** Usuário pode atualizar apenas seus próprios endereços, ADMIN pode atualizar qualquer endereço.
 - **Corpo da Requisição:** Mesma estrutura do POST (campos opcionais)
@@ -140,7 +210,7 @@ O campo `tipo` define a categoria do endereço:
 
 ### 5. Definir Endereço como Principal
 
-- **Endpoint:** `PATCH /api/enderecos/{enderecoId}/principal`
+- **Endpoint:** `PATCH /enderecos/{enderecoId}/principal`
 - **Descrição:** Define um endereço como principal do usuário.
 - **Permissões:** Usuário pode definir apenas seus próprios endereços, ADMIN pode definir qualquer endereço.
 - **Resposta de Sucesso (200 OK):** Objeto do endereço atualizado
@@ -149,7 +219,7 @@ O campo `tipo` define a categoria do endereço:
 
 ### 6. Desativar Endereço
 
-- **Endpoint:** `PATCH /api/enderecos/{enderecoId}/desativar`
+- **Endpoint:** `PATCH /enderecos/{enderecoId}/desativar`
 - **Descrição:** Desativa um endereço (soft delete).
 - **Permissões:** Usuário pode desativar apenas seus próprios endereços, ADMIN pode desativar qualquer endereço.
 - **Resposta de Sucesso (200 OK):** Objeto do endereço atualizado
@@ -159,7 +229,7 @@ O campo `tipo` define a categoria do endereço:
 
 ### 7. Reativar Endereço
 
-- **Endpoint:** `PATCH /api/enderecos/{enderecoId}/reativar`
+- **Endpoint:** `PATCH /enderecos/{enderecoId}/reativar`
 - **Descrição:** Reativa um endereço desativado.
 - **Permissões:** Usuário pode reativar apenas seus próprios endereços, ADMIN pode reativar qualquer endereço.
 - **Resposta de Sucesso (200 OK):** Objeto do endereço atualizado
@@ -169,7 +239,7 @@ O campo `tipo` define a categoria do endereço:
 
 ### 8. Excluir Endereço
 
-- **Endpoint:** `DELETE /api/enderecos/{enderecoId}`
+- **Endpoint:** `DELETE /enderecos/{enderecoId}`
 - **Descrição:** Exclui permanentemente um endereço.
 - **Permissões:** Usuário pode excluir apenas seus próprios endereços, ADMIN pode excluir qualquer endereço.
 - **Resposta de Sucesso (204 No Content)**
@@ -177,13 +247,14 @@ O campo `tipo` define a categoria do endereço:
 - **Resposta de Erro (403 Forbidden):** Se tentar excluir endereço de outro usuário.
 - **Resposta de Erro (404 Not Found):** Se o endereço não for encontrado.
 
-## Integração com Outras APIs
+## Integração com Outros Módulos
 
 ### Cadastro de Pets (ExpoDog)
 Quando um usuário cadastra um pet, o sistema pode:
 - Usar o endereço principal do usuário como padrão
 - Permitir seleção de endereço específico para o pet
 - Criar novo endereço temporário se necessário
+- **Utilizar BuscaCEP:** Para facilitar o preenchimento de novos endereços durante o cadastro
 
 ### Assinaturas e Entregas
 - Endereços do tipo `ENTREGA` são priorizados para envio de revistas
@@ -192,15 +263,18 @@ Quando um usuário cadastra um pet, o sistema pode:
 
 ## Exemplos de Uso
 
-### Fluxo de Cadastro de Endereço
-1. **Usuário acessa perfil:** Visualiza endereços existentes
-2. **Adiciona novo endereço:** `POST /api/users/{userId}/enderecos`
-3. **Define como principal:** `PATCH /api/enderecos/{enderecoId}/principal`
+### Fluxo de Cadastro de Endereço com BuscaCEP
+1. **Usuário acessa formulário:** Visualiza campos de endereço
+2. **Digita CEP:** Sistema busca automaticamente via BuscaCEP
+3. **Campos preenchidos:** Logradouro, bairro, cidade e estado são preenchidos
+4. **Usuário completa:** Adiciona número, complemento e outros dados
+5. **Salva endereço:** `POST /users/{userId}/enderecos`
+6. **Define como principal:** `PATCH /enderecos/{enderecoId}/principal` (se necessário)
 
 ### Fluxo de Mudança
-1. **Cadastra novo endereço:** `POST /api/users/{userId}/enderecos`
-2. **Define como principal:** `PATCH /api/enderecos/{enderecoId}/principal`
-3. **Desativa endereço antigo:** `PATCH /api/enderecos/{enderecoId}/desativar`
+1. **Cadastra novo endereço:** `POST /users/{userId}/enderecos`
+2. **Define como principal:** `PATCH /enderecos/{enderecoId}/principal`
+3. **Desativa endereço antigo:** `PATCH /enderecos/{enderecoId}/desativar`
 
 ## Códigos de Erro Específicos
 
@@ -213,6 +287,8 @@ Quando um usuário cadastra um pet, o sistema pode:
 | `ENDERECO_005` | Estado (UF) inválido |
 | `ENDERECO_006` | Tipo de endereço inválido |
 | `ENDERECO_007` | Endereço não pertence ao usuário |
+| `ENDERECO_008` | Erro na consulta BuscaCEP (frontend) |
+| `ENDERECO_009` | CEP não encontrado na base de dados (frontend) |
 
 ## Notas de Implementação
 
@@ -225,6 +301,7 @@ Quando um usuário cadastra um pet, o sistema pode:
 - Índices em `userId` e `principal` para consultas rápidas
 - Cache de endereço principal por usuário
 - Paginação em listagens quando necessário
+- **BuscaCEP:** Cache local de CEPs consultados para melhor performance
 
 ### Validações
 - CEP deve seguir formato brasileiro: 00000-000
@@ -233,6 +310,13 @@ Quando um usuário cadastra um pet, o sistema pode:
 - Tipo deve ser um dos valores válidos definidos
 
 ### Integração com APIs Externas
-- Validação de CEP via API dos Correios (opcional)
+- **BuscaCEP (Frontend):** Preenchimento automático de endereços via CEP
+- Validação de CEP via API dos Correios (opcional - backend)
 - Geocodificação para coordenadas (futuro)
 - Validação de endereço via Google Maps API (futuro)
+
+### Considerações de UX
+- Interface responsiva para diferentes dispositivos
+- Feedback visual claro durante busca de CEP
+- Possibilidade de edição manual mesmo com preenchimento automático
+- Validação em tempo real dos campos obrigatórios

@@ -15,7 +15,7 @@ export const publicRoutes: Routes = [
       { path: '', component: HomeComponent },
       { path: 'assinaturas', component: AssinaturasComponent },
       { path: 'expo-dog', component: ExpoDogComponent },
-      { path: 'cadastro-cao', component: CadastroCaoComponent, canActivate: [AuthGuard] },
+      { path: 'cadastro-cao', component: CadastroCaoComponent },
       { path: 'perfil', component: ProfileComponent, canActivate: [AuthGuard] },
       { path: 'area-leitor', redirectTo: '/auth/login', pathMatch: 'full' },
       { path: 'auth', loadChildren: () => import('./auth/auth.routes').then(m => m.authRoutes) }

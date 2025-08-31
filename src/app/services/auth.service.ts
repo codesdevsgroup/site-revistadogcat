@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, BehaviorSubject, throwError } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { Observable, BehaviorSubject, throwError, of } from 'rxjs';
+import { catchError, switchMap, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
 import { Role, RoleUtils } from '../enums/role.enum';
@@ -40,7 +40,6 @@ export interface LoginResponse extends ApiResponse {
 export interface RefreshTokenResponse {
   access_token: string;
   refresh_token: string;
-  user: User;
 }
 
 export interface User {
@@ -52,7 +51,7 @@ export interface User {
   telefone?: string;
   role: string;
   avatarUrl?: string;
-  active: boolean; // Garantindo que a propriedade existe
+  active: boolean;
 }
 
 @Injectable({
@@ -70,6 +69,10 @@ export class AuthService {
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(this.hasValidToken());
   public isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
 
+  // Lógica para evitar múltiplas chamadas de refresh
+  private isRefreshing = false;
+  private refreshTokenSubject = new BehaviorSubject<any>(null);
+
   constructor(
     private http: HttpClient,
     private router: Router
@@ -80,8 +83,7 @@ export class AuthService {
       .pipe(
         tap(response => {
           if (response.statusCode === 200 && response.data.access_token) {
-            this.setTokens(response.data.access_token, response.data.refresh_token);
-            this.setUserData(response.data.user);
+            this.handleAuthentication(response.data.access_token, response.data.refresh_token, response.data.user);
           }
         }),
         catchError(this.handleError)
@@ -95,29 +97,43 @@ export class AuthService {
     );
   }
 
-  refreshToken(): Observable<RefreshTokenResponse> {
-    const refreshToken = this.getRefreshToken();
-    if (!refreshToken) {
-      this.logout();
-      return throwError(() => new Error('Refresh token não encontrado'));
+  refreshToken(): Observable<any> {
+    if (this.isRefreshing) {
+      return this.refreshTokenSubject;
     }
 
-    // Usando o novo endpoint específico para refresh token
-    return this.http.post<RefreshTokenResponse>(`${this.apiUrl}/refresh-token`, { refreshToken }).pipe(
-      tap(response => {
+    this.isRefreshing = true;
+    this.refreshTokenSubject.next(null);
+
+    const refreshToken = this.getRefreshToken();
+    if (!refreshToken) {
+      this.isRefreshing = false;
+      this.logout();
+      return throwError(() => new Error('Refresh token não encontrado.'));
+    }
+
+    return this.http.post<RefreshTokenResponse>(`${this.apiUrl}/refresh`, { refreshToken }).pipe(
+      tap((response) => {
+        this.isRefreshing = false;
         this.setTokens(response.access_token, response.refresh_token);
-        this.setUserData(response.user);
+        this.refreshTokenSubject.next(response.access_token);
       }),
-      catchError(error => {
-        this.logout();
+      catchError((error) => {
+        this.isRefreshing = false;
+        this.logout(); // Se o refresh token falhar, desloga o usuário
         return throwError(() => error);
       })
     );
   }
 
   logout(): void {
-    this.clearSession();
-    this.router.navigate(['/auth/login']);
+    // Idealmente, chamar a API de logout para invalidar o token no backend
+    this.http.post(`${this.apiUrl}/logout`, {}).pipe(
+      catchError(() => of(null)) // Ignora erros no logout
+    ).subscribe(() => {
+      this.clearSession();
+      this.router.navigate(['/auth/login']);
+    });
   }
 
   isAuthenticated(): boolean {
@@ -136,32 +152,20 @@ export class AuthService {
     return localStorage.getItem(this.refreshTokenKey);
   }
 
-  getAuthHeaders(): HttpHeaders {
-    const token = this.getToken();
-    return new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': token ? `Bearer ${token}` : ''
-    });
+  private handleAuthentication(accessToken: string, refreshToken: string, user: User): void {
+    this.setTokens(accessToken, refreshToken);
+    this.setUserData(user);
   }
 
-  private setTokens(accessToken: string, refreshToken: string): void {
+  public setTokens(accessToken: string, refreshToken: string): void {
     localStorage.setItem(this.tokenKey, accessToken);
     localStorage.setItem(this.refreshTokenKey, refreshToken);
     this.isAuthenticatedSubject.next(true);
   }
 
-  private setUserData(userData: any): void {
-    const user: User = {
-      userId: userData.userId,
-      userName: userData.userName,
-      name: userData.name,
-      email: userData.email,
-      role: userData.role,
-      avatarUrl: userData.avatarUrl,
-      active: userData.active
-    };
-    localStorage.setItem(this.userKey, JSON.stringify(user));
-    this.currentUserSubject.next(user);
+  private setUserData(userData: User): void {
+    localStorage.setItem(this.userKey, JSON.stringify(userData));
+    this.currentUserSubject.next(userData);
   }
 
   private clearSession(): void {
