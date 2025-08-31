@@ -1,36 +1,40 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormControl } from '@angular/forms'; // Importado
+import { ReactiveFormsModule, FormControl } from '@angular/forms';
 import { UsuarioService, UserFilters } from '../../../services/usuario.service';
 import { Usuario } from '../../../interfaces/usuario.interface';
-import { Observable, combineLatest } from 'rxjs';
-import { startWith, debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
+import { Observable, combineLatest, BehaviorSubject } from 'rxjs';
+import { startWith, debounceTime, distinctUntilChanged, switchMap, catchError } from 'rxjs/operators';
 import { UsuarioModalComponent } from '../../../components/usuario-modal/usuario-modal';
+import { NotificationService } from '../../../services/notification.service';
 
 @Component({
   selector: 'app-usuarios',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, UsuarioModalComponent], // Adicionado ReactiveFormsModule
+  imports: [CommonModule, ReactiveFormsModule, UsuarioModalComponent],
   templateUrl: './usuarios.html',
   styleUrls: ['./usuarios.scss']
 })
 export class UsuariosComponent implements OnInit {
   public usuarios$: Observable<Usuario[]>;
 
-  // Controles de formulário para os filtros
   public searchControl = new FormControl('');
   public roleControl = new FormControl('');
+
+  // Subject para disparar a atualização da lista
+  private refreshUsers$ = new BehaviorSubject<void>(undefined);
 
   isModalVisible = false;
   selectedUsuario: Usuario | null = null;
 
-  constructor(private usuarioService: UsuarioService) {
-    // Inicializa o observable, que será definido em ngOnInit
+  constructor(
+    private usuarioService: UsuarioService,
+    private notificationService: NotificationService
+  ) {
     this.usuarios$ = new Observable<Usuario[]>();
   }
 
   ngOnInit(): void {
-    // Combina os valores dos dois filtros em um único observable
     const filters$ = combineLatest([
       this.searchControl.valueChanges.pipe(startWith(''), debounceTime(300)),
       this.roleControl.valueChanges.pipe(startWith(''))
@@ -38,14 +42,19 @@ export class UsuariosComponent implements OnInit {
       distinctUntilChanged((prev, curr) => JSON.stringify(prev) === JSON.stringify(curr))
     );
 
-    // Usa switchMap para fazer a chamada à API com os filtros mais recentes
-    this.usuarios$ = filters$.pipe(
-      switchMap(([searchTerm, role]) => {
+    // Combina os filtros com o gatilho de atualização
+    this.usuarios$ = combineLatest([filters$, this.refreshUsers$]).pipe(
+      switchMap(([[searchTerm, role]]) => {
         const filters: UserFilters = {
           search: searchTerm || undefined,
           role: role || undefined
         };
-        return this.usuarioService.getUsers(filters);
+        return this.usuarioService.getUsers(filters).pipe(
+          catchError(err => {
+            this.notificationService.error('Falha ao carregar usuários.');
+            return []; // Retorna um array vazio em caso de erro para não quebrar o template
+          })
+        );
       })
     );
   }
@@ -61,13 +70,29 @@ export class UsuariosComponent implements OnInit {
   }
 
   handleSave(usuario: Usuario): void {
-    console.log('Dados recebidos do modal para salvar:', usuario);
-    // Futuramente, aqui devemos recarregar a lista
-    this.closeModal();
+    const operation$ = this.selectedUsuario
+      ? this.usuarioService.updateUser(this.selectedUsuario.userId, usuario)
+      : this.usuarioService.createUser(usuario);
+
+    const successMessage = this.selectedUsuario
+      ? 'Usuário atualizado com sucesso!'
+      : 'Usuário criado com sucesso!';
+
+    operation$.subscribe({
+      next: () => {
+        this.notificationService.success(successMessage);
+        this.closeModal();
+        this.refreshUsers$.next(); // Dispara a atualização da lista
+      },
+      error: (err) => {
+        this.notificationService.error(err.error?.message || 'Ocorreu um erro ao salvar o usuário.');
+      }
+    });
   }
 
   excluirUsuario(usuario: Usuario): void {
     console.log('Excluir usuário:', usuario);
+    // Lógica futura para exclusão com confirmação
   }
 
   trackByUserId(index: number, usuario: Usuario): string {
