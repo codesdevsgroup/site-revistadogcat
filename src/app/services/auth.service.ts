@@ -19,7 +19,7 @@ export interface RegisterRequest {
   email: string;
   password: string;
   telefone?: string;
-  cpf?: string; // Adicionado de volta
+  cpf?: string;
 }
 
 export interface ApiResponse {
@@ -35,6 +35,12 @@ export interface LoginResponse extends ApiResponse {
     refresh_token: string;
     user: User;
   };
+}
+
+export interface RefreshTokenResponse {
+  access_token: string;
+  refresh_token: string;
+  user: User;
 }
 
 export interface User {
@@ -68,9 +74,6 @@ export class AuthService {
     private router: Router
   ) {}
 
-  /**
-   * Realiza login do usuário
-   */
   login(credentials: LoginRequest): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(`${this.apiUrl}/login`, credentials)
       .pipe(
@@ -84,28 +87,36 @@ export class AuthService {
       );
   }
 
-  /**
-   * Registra um novo usuário
-   */
   register(userData: RegisterRequest): Observable<ApiResponse> {
     return this.http.post<ApiResponse>(`${this.apiUrl}/register`, userData).pipe(
-      tap(response => {
-        // Opcional: logar a resposta de sucesso
-        console.log('Usuário registrado com sucesso:', response);
-      }),
+      tap(response => console.log('Usuário registrado com sucesso:', response)),
       catchError(this.handleError)
     );
   }
 
-  /**
-   * Realiza logout do usuário
-   */
+  refreshToken(): Observable<RefreshTokenResponse> {
+    const refreshToken = this.getRefreshToken();
+    if (!refreshToken) {
+      this.logout();
+      return throwError(() => new Error('Refresh token não encontrado'));
+    }
+
+    return this.http.post<RefreshTokenResponse>(`${this.apiUrl}/refresh`, { refreshToken }).pipe(
+      tap(response => {
+        this.setTokens(response.access_token, response.refresh_token);
+        this.setUserData(response.user);
+      }),
+      catchError(error => {
+        this.logout();
+        return throwError(() => error);
+      })
+    );
+  }
+
   logout(): void {
     this.clearSession();
     this.router.navigate(['/auth/login']);
   }
-
-  // ... (demais métodos permanecem os mesmos)
 
   isAuthenticated(): boolean {
     return this.hasValidToken();
@@ -123,40 +134,13 @@ export class AuthService {
     return localStorage.getItem(this.refreshTokenKey);
   }
 
+  // Método adicionado de volta para corrigir o erro de build
   getAuthHeaders(): HttpHeaders {
     const token = this.getToken();
     return new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': token ? `Bearer ${token}` : ''
     });
-  }
-
-  hasRole(role: string | Role): boolean {
-    const user = this.getCurrentUser();
-    return user ? user.role === role : false;
-  }
-
-  hasAnyRole(roles: (string | Role)[]): boolean {
-    const user = this.getCurrentUser();
-    return user ? roles.includes(user.role as Role) : false;
-  }
-
-  hasAdminAccess(): boolean {
-    const user = this.getCurrentUser();
-    return user ? RoleUtils.hasAdminAccess(user.role) : false;
-  }
-
-  isAdminRole(): boolean {
-    const user = this.getCurrentUser();
-    return user ? RoleUtils.isAdminRole(user.role) : false;
-  }
-
-  redirectToLoginIfNotAuthenticated(): boolean {
-    if (!this.isAuthenticated()) {
-      this.router.navigate(['/auth/login']);
-      return false;
-    }
-    return true;
   }
 
   private setTokens(accessToken: string, refreshToken: string): void {
@@ -187,9 +171,7 @@ export class AuthService {
   }
 
   private hasValidToken(): boolean {
-    const token = localStorage.getItem(this.tokenKey);
-    if (!token) return false;
-    return true;
+    return !!localStorage.getItem(this.tokenKey);
   }
 
   private getUserFromStorage(): User | null {
@@ -198,8 +180,8 @@ export class AuthService {
       try {
         return JSON.parse(userStr);
       } catch (error) {
-        console.error('Erro ao parsear usuário do localStorage:', error);
         this.clearSession();
+        return null;
       }
     }
     return null;
@@ -207,14 +189,12 @@ export class AuthService {
 
   private handleError(error: any): Observable<never> {
     console.error('Erro na autenticação:', error);
-    let errorMessage = 'Erro interno do servidor';
-    if (error.error?.message) {
-      errorMessage = error.error.message;
-    } else if (error.status === 401) {
-      errorMessage = 'Credenciais inválidas';
-    } else if (error.status === 0) {
-      errorMessage = 'Erro de conexão com o servidor';
-    }
+    const errorMessage = error.error?.message || 'Erro de conexão com o servidor';
     return throwError(() => ({ message: errorMessage }));
+  }
+
+  hasAdminAccess(): boolean {
+    const user = this.getCurrentUser();
+    return user ? RoleUtils.hasAdminAccess(user.role) : false;
   }
 }

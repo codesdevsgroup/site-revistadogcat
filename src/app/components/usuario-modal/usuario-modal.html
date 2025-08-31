@@ -29,14 +29,26 @@
           <input id="email" type="email" formControlName="email" class="form-control">
         </div>
 
-        <!-- Linha 3: Senha (apenas para novos usuários) -->
+        <!-- Linha 3: CPF e Telefone -->
+        <div class="form-row">
+          <div class="form-group">
+            <label for="cpf">CPF (Opcional)</label>
+            <input id="cpf" type="text" formControlName="cpf" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="telefone">Telefone (Opcional)</label>
+            <input id="telefone" type="tel" formControlName="telefone" class="form-control">
+          </div>
+        </div>
+
+        <!-- Linha 4: Senha (apenas para novos usuários) -->
         <div class="form-group" *ngIf="!isEditMode">
           <label for="password">Senha</label>
           <input id="password" type="password" formControlName="password" class="form-control">
           <small class="form-text">Mínimo de 8 caracteres. Deixe em branco na edição para não alterar.</small>
         </div>
 
-        <!-- Linha 4: Role e Status -->
+        <!-- Linha 5: Role e Status -->
         <div class="form-row">
           <div class="form-group">
             <label for="role">Tipo (Role)</label>

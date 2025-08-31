@@ -23,7 +23,7 @@
 /* Container principal do modal */
 .modal-container {
   background-color: #fff;
-  padding: 2rem;
+  padding: 1rem; /* Padding reduzido para 1rem */
   border-radius: 8px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
   width: 100%;
@@ -65,16 +65,17 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1.5rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem; // Espaçamento reduzido
   }
 
   .form-group {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem; // Espaçamento reduzido
 
     label {
       display: block;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0; // Espaçamento zerado conforme solicitado
       font-weight: 600;
+      padding-bottom: 0.5rem; // Adicionado padding para compensar a falta de margem
     }
 
     .form-control, .form-select {
@@ -88,7 +89,7 @@
   .form-check-group {
       display: flex;
       align-items: center;
-      margin-top: 2rem;
+      margin-top: 1.5rem; // Ajustado
   }
 }
 

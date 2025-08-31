@@ -25,6 +25,8 @@ export class UsuarioModalComponent implements OnInit, OnChanges {
       name: ['', Validators.required],
       userName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
+      cpf: [''], // Adicionado
+      telefone: [''], // Adicionado
       role: ['USUARIO_COMUM', Validators.required],
       active: [true, Validators.required],
       password: [''] // A lógica de validação da senha será tratada separadamente
