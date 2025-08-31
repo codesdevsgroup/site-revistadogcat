@@ -1,21 +1,14 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ProfileMenu } from '../../../../components/profile-menu/profile-menu';
-import { Subscription } from 'rxjs';
-
-interface User {
-  id: string;
-  email: string;
-  name?: string;
-}
+import { Observable } from 'rxjs';
+import { AuthService, User } from '../../../../services/auth.service';
 
 interface NavItem {
   label: string;
   route: string;
   icon?: string;
-  isButton?: boolean;
-  buttonClass?: string;
 }
 
 @Component({
@@ -25,7 +18,7 @@ interface NavItem {
   templateUrl: './navbar.html',
   styleUrl: './navbar.scss'
 })
-export class NavbarComponent implements OnInit, OnDestroy {
+export class NavbarComponent {
   readonly brandConfig = {
     logoSrc: './logo2.png',
     logoAlt: 'Logo DogCat',
@@ -33,67 +26,22 @@ export class NavbarComponent implements OnInit, OnDestroy {
   };
 
   readonly navigationItems: NavItem[] = [
-    {
-      label: 'Home',
-      route: '/'
-    },
-    {
-      label: 'Assinaturas',
-      route: '/assinaturas'
-    },
-    {
-      label: 'Expo Dog',
-      route: '/expo-dog'
-    },
-    {
-      label: 'Edições',
-      route: '/edicoes'
-    },
-    {
-      label: 'Top Canis',
-      route: '/top-canis'
-    }
+    { label: 'Home', route: '/' },
+    { label: 'Assinaturas', route: '/assinaturas' },
+    { label: 'Expo Dog', route: '/expo-dog' },
+    { label: 'Edições', route: '/edicoes' },
+    { label: 'Top Canis', route: '/top-canis' }
   ];
 
-  /**
-   * Retorna o item de navegação dinâmico baseado no status de autenticação
-   */
-  get dynamicNavItem(): NavItem | null {
-    if (!this.isAuthenticated) {
-      return {
-        label: 'Login',
-        route: '/auth/login',
-        isButton: true,
-        buttonClass: 'btn btn-login'
-      };
-    }
-    
-    // Temporariamente sem verificação de admin
-    return null;
-  }
-
   isMenuOpen = false;
-  currentUser: User | null = null;
-  isAuthenticated = false;
-  private subscriptions = new Subscription();
 
-  constructor() {}
+  // Observables para o estado de autenticação e dados do usuário
+  public isAuthenticated$: Observable<boolean>;
+  public currentUser$: Observable<User | null>;
 
-  ngOnInit(): void {
-    // Temporariamente sem autenticação
-    this.isAuthenticated = false;
-    this.currentUser = null;
-  }
-
-  ngOnDestroy(): void {
-    this.subscriptions.unsubscribe();
-  }
-
-  /**
-   * Verifica se deve exibir o menu de perfil para usuários não-administrativos
-   */
-  shouldShowProfileMenu(): boolean {
-    return this.isAuthenticated;
+  constructor(private authService: AuthService) {
+    this.isAuthenticated$ = this.authService.isAuthenticated$;
+    this.currentUser$ = this.authService.currentUser$;
   }
 
   toggleMenu(): void {

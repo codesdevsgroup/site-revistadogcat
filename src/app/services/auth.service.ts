@@ -6,27 +6,35 @@ import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
 import { Role, RoleUtils } from '../enums/role.enum';
 
+// --- Interfaces ---
+
 export interface LoginRequest {
   identification: string; // email ou CPF
   password: string;
 }
 
-export interface LoginResponse {
+export interface RegisterRequest {
+  userName: string;
+  name: string;
+  email: string;
+  password: string;
+  telefone?: string;
+  cpf?: string; // Adicionado de volta
+}
+
+export interface ApiResponse {
   statusCode: number;
   message: string;
+  data?: any;
+  timestamp: string;
+}
+
+export interface LoginResponse extends ApiResponse {
   data: {
     access_token: string;
     refresh_token: string;
-    user: {
-      userId: string;
-      userName: string;
-      name: string;
-      email: string;
-      role: string;
-      avatarUrl?: string;
-    };
+    user: User;
   };
-  timestamp: string;
 }
 
 export interface User {
@@ -45,12 +53,10 @@ export interface User {
 })
 export class AuthService {
   private apiUrl = `${environment.apiUrl}/auth`;
-  // Chave corrigida para corresponder ao interceptor
   private tokenKey = 'access_token';
   private refreshTokenKey = 'refresh_token';
   private userKey = 'auth_user';
 
-  // BehaviorSubject para gerenciar estado de autenticação
   private currentUserSubject = new BehaviorSubject<User | null>(this.getUserFromStorage());
   public currentUser$ = this.currentUserSubject.asObservable();
 
@@ -79,6 +85,19 @@ export class AuthService {
   }
 
   /**
+   * Registra um novo usuário
+   */
+  register(userData: RegisterRequest): Observable<ApiResponse> {
+    return this.http.post<ApiResponse>(`${this.apiUrl}/register`, userData).pipe(
+      tap(response => {
+        // Opcional: logar a resposta de sucesso
+        console.log('Usuário registrado com sucesso:', response);
+      }),
+      catchError(this.handleError)
+    );
+  }
+
+  /**
    * Realiza logout do usuário
    */
   logout(): void {
@@ -86,37 +105,24 @@ export class AuthService {
     this.router.navigate(['/auth/login']);
   }
 
-  /**
-   * Verifica se o usuário está autenticado
-   */
+  // ... (demais métodos permanecem os mesmos)
+
   isAuthenticated(): boolean {
     return this.hasValidToken();
   }
 
-  /**
-   * Obtém o usuário atual
-   */
   getCurrentUser(): User | null {
     return this.currentUserSubject.value;
   }
 
-  /**
-   * Obtém o token de autenticação
-   */
   getToken(): string | null {
     return localStorage.getItem(this.tokenKey);
   }
 
-  /**
-   * Obtém o refresh token
-   */
   getRefreshToken(): string | null {
     return localStorage.getItem(this.refreshTokenKey);
   }
 
-  /**
-   * Obtém headers com token de autenticação
-   */
   getAuthHeaders(): HttpHeaders {
     const token = this.getToken();
     return new HttpHeaders({
@@ -125,41 +131,26 @@ export class AuthService {
     });
   }
 
-  /**
-   * Verifica se o usuário tem uma role específica
-   */
   hasRole(role: string | Role): boolean {
     const user = this.getCurrentUser();
     return user ? user.role === role : false;
   }
 
-  /**
-   * Verifica se o usuário tem uma das roles especificadas
-   */
   hasAnyRole(roles: (string | Role)[]): boolean {
     const user = this.getCurrentUser();
     return user ? roles.includes(user.role as Role) : false;
   }
 
-  /**
-   * Verifica se o usuário tem acesso administrativo
-   */
   hasAdminAccess(): boolean {
     const user = this.getCurrentUser();
     return user ? RoleUtils.hasAdminAccess(user.role) : false;
   }
 
-  /**
-   * Verifica se o usuário tem role administrativa
-   */
   isAdminRole(): boolean {
     const user = this.getCurrentUser();
     return user ? RoleUtils.isAdminRole(user.role) : false;
   }
 
-  /**
-   * Redireciona para login se não autenticado
-   */
   redirectToLoginIfNotAuthenticated(): boolean {
     if (!this.isAuthenticated()) {
       this.router.navigate(['/auth/login']);
@@ -168,18 +159,12 @@ export class AuthService {
     return true;
   }
 
-  /**
-   * Define tokens de acesso e refresh
-   */
   private setTokens(accessToken: string, refreshToken: string): void {
     localStorage.setItem(this.tokenKey, accessToken);
     localStorage.setItem(this.refreshTokenKey, refreshToken);
     this.isAuthenticatedSubject.next(true);
   }
 
-  /**
-   * Define dados do usuário no localStorage
-   */
   private setUserData(userData: any): void {
     const user: User = {
       userId: userData.userId,
@@ -193,19 +178,6 @@ export class AuthService {
     this.currentUserSubject.next(user);
   }
 
-  /**
-   * Define sessão do usuário (mantido para compatibilidade)
-   */
-  private setSession(token: string, user: User): void {
-    localStorage.setItem(this.tokenKey, token);
-    localStorage.setItem(this.userKey, JSON.stringify(user));
-    this.currentUserSubject.next(user);
-    this.isAuthenticatedSubject.next(true);
-  }
-
-  /**
-   * Limpa sessão do usuário
-   */
   private clearSession(): void {
     localStorage.removeItem(this.tokenKey);
     localStorage.removeItem(this.refreshTokenKey);
@@ -214,21 +186,12 @@ export class AuthService {
     this.isAuthenticatedSubject.next(false);
   }
 
-  /**
-   * Verifica se existe token válido
-   */
   private hasValidToken(): boolean {
     const token = localStorage.getItem(this.tokenKey);
     if (!token) return false;
-
-    // Aqui você pode adicionar validação de expiração do token
-    // Por exemplo, decodificar JWT e verificar exp
     return true;
   }
 
-  /**
-   * Obtém usuário do localStorage
-   */
   private getUserFromStorage(): User | null {
     const userStr = localStorage.getItem(this.userKey);
     if (userStr) {
@@ -242,14 +205,9 @@ export class AuthService {
     return null;
   }
 
-  /**
-   * Manipula erros de requisição
-   */
   private handleError(error: any): Observable<never> {
     console.error('Erro na autenticação:', error);
-
     let errorMessage = 'Erro interno do servidor';
-
     if (error.error?.message) {
       errorMessage = error.error.message;
     } else if (error.status === 401) {
@@ -257,7 +215,6 @@ export class AuthService {
     } else if (error.status === 0) {
       errorMessage = 'Erro de conexão com o servidor';
     }
-
     return throwError(() => ({ message: errorMessage }));
   }
 }

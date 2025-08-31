@@ -1,37 +1,37 @@
 <div class="profile-menu" *ngIf="user">
   <!-- Botão do perfil -->
-  <button 
-    class="profile-button" 
+  <button
+    class="profile-button"
     (click)="toggleDropdown()"
     [class.active]="isDropdownOpen"
     type="button"
     aria-label="Menu do perfil"
     [attr.aria-expanded]="isDropdownOpen">
-    
+
     <!-- Avatar do usuário -->
     <div class="profile-avatar">
-      <img 
-        *ngIf="user.avatarUrl" 
-        [src]="user.avatarUrl" 
+      <img
+        *ngIf="user.avatarUrl"
+        [src]="user.avatarUrl"
         [alt]="user.name"
         class="avatar-image">
-      <div 
-        *ngIf="!user.avatarUrl" 
+      <div
+        *ngIf="!user.avatarUrl"
         class="avatar-initials">
         {{ getUserInitials() }}
       </div>
     </div>
-    
+
     <!-- Ícone de dropdown -->
     <span class="material-icons dropdown-icon">keyboard_arrow_down</span>
   </button>
 
   <!-- Dropdown menu -->
-  <div 
-    class="dropdown-menu" 
+  <div
+    class="dropdown-menu"
     [class.show]="isDropdownOpen"
     (click)="$event.stopPropagation()">
-    
+
     <!-- Cabeçalho do usuário -->
     <div class="dropdown-header" *ngIf="showUserInfo">
       <div class="user-info">
@@ -40,54 +40,48 @@
         <div class="user-email" *ngIf="!isAdminContext()">{{ user.email }}</div>
       </div>
     </div>
-    
+
     <!-- Divisor -->
     <div class="dropdown-divider" *ngIf="showUserInfo"></div>
-    
+
     <!-- Opções do menu -->
     <div class="dropdown-body">
       <!-- Opção Perfil -->
-      <button 
-        class="dropdown-item" 
+      <button
+        class="dropdown-item"
         (click)="goToProfile()"
         type="button">
-        <i class="fas fa-user-circle" *ngIf="isAdminContext(); else publicIcon"></i>
-        <ng-template #publicIcon>
-          <span class="material-icons">person</span>
-        </ng-template>
-        <span class="item-text">{{ isAdminContext() ? 'Meu Perfil' : 'Perfil' }}</span>
+        <span class="material-icons">person</span>
+        <span class="item-text">Meu Perfil</span>
       </button>
-      
-      <!-- Opção Configurações (apenas para admin) -->
-      <button 
-        *ngIf="shouldShowSettings()"
-        class="dropdown-item" 
-        (click)="goToSettings()"
+
+      <!-- Opção Painel Admin (condicional) -->
+      <button
+        *ngIf="canAccessAdminPanel"
+        class="dropdown-item"
+        (click)="goToAdminPanel()"
         type="button">
-        <i class="fas fa-cog"></i>
-        <span class="item-text">Configurações</span>
+        <span class="material-icons">admin_panel_settings</span>
+        <span class="item-text">Painel Admin</span>
       </button>
-      
+
       <!-- Divisor antes do logout -->
-      <hr class="dropdown-divider" *ngIf="shouldShowSettings()">
-      
+      <hr class="dropdown-divider">
+
       <!-- Opção Sair -->
-      <button 
-        class="dropdown-item logout" 
+      <button
+        class="dropdown-item logout"
         (click)="logout()"
         type="button">
-        <i class="fas fa-sign-out-alt" *ngIf="isAdminContext(); else publicLogoutIcon"></i>
-        <ng-template #publicLogoutIcon>
-          <span class="material-icons">logout</span>
-        </ng-template>
+        <span class="material-icons">logout</span>
         <span class="item-text">Sair</span>
       </button>
     </div>
   </div>
 
   <!-- Overlay para fechar o dropdown -->
-  <div 
-    *ngIf="isDropdownOpen" 
-    class="dropdown-overlay" 
+  <div
+    *ngIf="isDropdownOpen"
+    class="dropdown-overlay"
     (click)="closeDropdown()"></div>
 </div>

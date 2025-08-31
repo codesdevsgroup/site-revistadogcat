@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://api.revistadogcat.com.br',
+  apiUrl: 'https://apidogcat.codesdevs.com.br',
   appName: 'Revista Dog & Cat',
   version: '1.0.0',
   enableLogging: false,

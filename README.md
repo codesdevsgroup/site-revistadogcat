@@ -16,6 +16,7 @@ Este projeto foi gerado com [Angular CLI](https://github.com/angular/angular-cli
 - **[Angular](https://angular.io/):** Framework principal para a construção da interface.
 - **[Bootstrap](https://getbootstrap.com/):** Para a criação de layouts responsivos.
 - **[Font Awesome](https://fontawesome.com/):** Biblioteca de ícones.
+- **[Notyf](https://github.com/caroso1222/notyf):** Para notificações e alertas (toast).
 - **[DearFlip.js](https://dearflip.com/):** Para o leitor de revistas com efeito flipbook 3D.
 - **[Bun](https://bun.sh/):** Usado como um runtime JavaScript alternativo e rápido.
 

@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractContro
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../../services/auth.service';
+import { NotificationService } from '../../../../services/notification.service'; // Importado
 
 @Component({
   selector: 'app-login',
@@ -15,14 +16,15 @@ export class LoginComponent implements OnInit {
   loginForm: FormGroup;
   isSubmitting = false;
   showPassword = false;
-  errorMessage = '';
   returnUrl = '';
+  // A propriedade errorMessage não é mais necessária
 
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
     private route: ActivatedRoute,
-    private authService: AuthService
+    private authService: AuthService,
+    private notificationService: NotificationService // Injetado
   ) {
     this.loginForm = this.formBuilder.group({
       identification: ['', [Validators.required, this.emailOrCpfValidator]],
@@ -30,33 +32,17 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  // Validador personalizado para e-mail ou CPF
   emailOrCpfValidator(control: AbstractControl): ValidationErrors | null {
-    if (!control.value) {
-      return null; // Se estiver vazio, o Validators.required cuidará disso
-    }
-
-    const value = control.value.toString().replace(/\D/g, ''); // Remove caracteres não numéricos
-    
-    // Se tem 11 dígitos, assume que é CPF
-    if (value.length === 11) {
-      return null; // Aceita como CPF válido (validação básica)
-    }
-    
-    // Caso contrário, valida como e-mail
+    if (!control.value) return null;
+    const value = control.value.toString().replace(/\D/g, '');
+    if (value.length === 11) return null;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (emailRegex.test(control.value)) {
-      return null;
-    }
-    
+    if (emailRegex.test(control.value)) return null;
     return { invalidIdentification: true };
   }
 
   ngOnInit(): void {
-    // Capturar URL de retorno se existir
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || this.getDefaultRedirectUrl();
-    
-    // Se já estiver logado, redirecionar
     if (this.authService.isAuthenticated()) {
       this.router.navigate([this.returnUrl]);
     }
@@ -67,42 +53,36 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.loginForm.valid && !this.isSubmitting) {
-      this.isSubmitting = true;
-      this.errorMessage = '';
-      
-      const loginData = {
-        identification: this.loginForm.get('identification')?.value,
-        password: this.loginForm.get('password')?.value
-      };
-
-      this.authService.login(loginData).subscribe({
-        next: (response) => {
-          this.isSubmitting = false;
-          if (response.statusCode === 200) {
-            // Determinar URL de redirecionamento baseado na role
-            const redirectUrl = this.returnUrl === this.getDefaultRedirectUrl() 
-              ? this.getRedirectUrlByRole() 
-              : this.returnUrl;
-            this.router.navigate([redirectUrl]);
-          } else {
-            this.errorMessage = response.message || 'Erro no login';
-          }
-        },
-        error: (error) => {
-          this.isSubmitting = false;
-          this.errorMessage = error.message || 'Erro de conexão. Tente novamente.';
-        }
-      });
-    } else {
+    if (this.loginForm.invalid || this.isSubmitting) {
       this.markFormGroupTouched();
+      return;
     }
+
+    this.isSubmitting = true;
+    const loginData = {
+      identification: this.loginForm.get('identification')?.value,
+      password: this.loginForm.get('password')?.value
+    };
+
+    this.authService.login(loginData).subscribe({
+      next: (response) => {
+        this.isSubmitting = false;
+        const redirectUrl = this.returnUrl === this.getDefaultRedirectUrl()
+          ? this.getRedirectUrlByRole()
+          : this.returnUrl;
+        this.router.navigate([redirectUrl]);
+      },
+      error: (error) => {
+        this.isSubmitting = false;
+        // Chama o serviço de notificação em caso de erro
+        this.notificationService.error('E-mail ou senha inválidos. Por favor, tente novamente.');
+      }
+    });
   }
 
   private markFormGroupTouched(): void {
-    Object.keys(this.loginForm.controls).forEach(key => {
-      const control = this.loginForm.get(key);
-      control?.markAsTouched();
+    Object.values(this.loginForm.controls).forEach(control => {
+      control.markAsTouched();
     });
   }
 
@@ -112,16 +92,9 @@ export class LoginComponent implements OnInit {
 
   private getRedirectUrlByRole(): string {
     const user = this.authService.getCurrentUser();
-    if (!user) {
-      return '/';
-    }
-
-    // Verificar se tem acesso administrativo
     if (this.authService.hasAdminAccess()) {
       return '/admin';
     }
-
-    // Se não tem role administrativa, redirecionar para home
     return '/';
   }
 
