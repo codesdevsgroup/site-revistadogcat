@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { tap, catchError, map } from 'rxjs/operators';
 import { Usuario } from '../interfaces/usuario.interface';
 import { environment } from '../../environments/environment';
 
-// Interface que descreve a estrutura completa da resposta da API
 export interface PaginatedUsersResponse {
   statusCode: number;
   message: string;
@@ -18,6 +17,13 @@ export interface PaginatedUsersResponse {
   timestamp: string;
 }
 
+export interface UserFilters {
+  page?: number;
+  limit?: number;
+  search?: string;
+  role?: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -27,24 +33,43 @@ export class UsuarioService {
 
   constructor(private http: HttpClient) { }
 
-  /**
-   * Busca a lista de usuários da API.
-   * @returns Um Observable com um array de usuários.
-   */
-  getUsers(): Observable<Usuario[]> {
-    console.log('Buscando usuários em:', this.apiUrl);
+  getUsers(filters: UserFilters = {}): Observable<Usuario[]> {
+    let params = new HttpParams();
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value !== null && value !== undefined && value !== '') {
+        params = params.set(key, value);
+      }
+    });
 
-    // Agora esperamos o objeto de paginação completo
-    return this.http.get<PaginatedUsersResponse>(this.apiUrl).pipe(
-      tap(response => {
-        console.log('Resposta crua da API de usuários:', response);
-      }),
-      // Usamos o operador map para extrair o array de usuários de dentro da resposta
+    return this.http.get<PaginatedUsersResponse>(this.apiUrl, { params }).pipe(
       map(response => response.data.data),
-      catchError(error => {
-        console.error('Erro cru na chamada da API de usuários:', error);
-        return throwError(() => error);
-      })
+      catchError(this.handleError)
     );
+  }
+
+  /**
+   * Cria um novo usuário (requer permissão de Admin).
+   * @param usuario Dados do novo usuário.
+   */
+  createUser(usuario: Partial<Usuario>): Observable<Usuario> {
+    return this.http.post<Usuario>(this.apiUrl, usuario).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  /**
+   * Atualiza um usuário existente (requer permissão de Admin).
+   * @param userId ID do usuário a ser atualizado.
+   * @param usuario Dados a serem atualizados.
+   */
+  updateUser(userId: string, usuario: Partial<Usuario>): Observable<Usuario> {
+    return this.http.patch<Usuario>(`${this.apiUrl}/${userId}`, usuario).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  private handleError(error: any): Observable<never> {
+    console.error('Erro na chamada da API de usuários:', error);
+    return throwError(() => error);
   }
 }

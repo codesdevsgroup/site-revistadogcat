@@ -1,31 +1,54 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { UsuarioService } from '../../../services/usuario.service';
+import { ReactiveFormsModule, FormControl } from '@angular/forms'; // Importado
+import { UsuarioService, UserFilters } from '../../../services/usuario.service';
 import { Usuario } from '../../../interfaces/usuario.interface';
-import { Observable } from 'rxjs';
+import { Observable, combineLatest } from 'rxjs';
+import { startWith, debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { UsuarioModalComponent } from '../../../components/usuario-modal/usuario-modal';
 
 @Component({
   selector: 'app-usuarios',
   standalone: true,
-  imports: [CommonModule, UsuarioModalComponent], // Adicionado o UsuarioModalComponent
+  imports: [CommonModule, ReactiveFormsModule, UsuarioModalComponent], // Adicionado ReactiveFormsModule
   templateUrl: './usuarios.html',
   styleUrls: ['./usuarios.scss']
 })
 export class UsuariosComponent implements OnInit {
   public usuarios$: Observable<Usuario[]>;
 
-  // Variáveis para controlar o modal
+  // Controles de formulário para os filtros
+  public searchControl = new FormControl('');
+  public roleControl = new FormControl('');
+
   isModalVisible = false;
   selectedUsuario: Usuario | null = null;
 
   constructor(private usuarioService: UsuarioService) {
-    this.usuarios$ = this.usuarioService.getUsers();
+    // Inicializa o observable, que será definido em ngOnInit
+    this.usuarios$ = new Observable<Usuario[]>();
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    // Combina os valores dos dois filtros em um único observable
+    const filters$ = combineLatest([
+      this.searchControl.valueChanges.pipe(startWith(''), debounceTime(300)),
+      this.roleControl.valueChanges.pipe(startWith(''))
+    ]).pipe(
+      distinctUntilChanged((prev, curr) => JSON.stringify(prev) === JSON.stringify(curr))
+    );
 
-  // --- Métodos de controle do Modal ---
+    // Usa switchMap para fazer a chamada à API com os filtros mais recentes
+    this.usuarios$ = filters$.pipe(
+      switchMap(([searchTerm, role]) => {
+        const filters: UserFilters = {
+          search: searchTerm || undefined,
+          role: role || undefined
+        };
+        return this.usuarioService.getUsers(filters);
+      })
+    );
+  }
 
   openModal(usuario?: Usuario): void {
     this.selectedUsuario = usuario || null;
@@ -39,29 +62,17 @@ export class UsuariosComponent implements OnInit {
 
   handleSave(usuario: Usuario): void {
     console.log('Dados recebidos do modal para salvar:', usuario);
-    if (this.selectedUsuario) {
-      // Lógica para ATUALIZAR usuário (chamar o serviço de update)
-      console.log('Modo Edição');
-    } else {
-      // Lógica para CRIAR novo usuário (chamar o serviço de create)
-      console.log('Modo Adição');
-    }
+    // Futuramente, aqui devemos recarregar a lista
     this.closeModal();
-    // Futuramente, aqui devemos recarregar a lista de usuários
   }
-
-  // --- Métodos existentes ---
 
   excluirUsuario(usuario: Usuario): void {
     console.log('Excluir usuário:', usuario);
-    // Lógica para abrir um modal de confirmação e chamar o serviço de exclusão
   }
 
   trackByUserId(index: number, usuario: Usuario): string {
     return usuario.userId;
   }
-
-  // --- Funções de estilo para o template ---
 
   getRoleClass(role: string): string {
     const roleMap: { [key: string]: string } = {

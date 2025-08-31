@@ -52,6 +52,7 @@ export interface User {
   telefone?: string;
   role: string;
   avatarUrl?: string;
+  active: boolean; // Garantindo que a propriedade existe
 }
 
 @Injectable({
@@ -101,7 +102,8 @@ export class AuthService {
       return throwError(() => new Error('Refresh token não encontrado'));
     }
 
-    return this.http.post<RefreshTokenResponse>(`${this.apiUrl}/refresh`, { refreshToken }).pipe(
+    // Usando o novo endpoint específico para refresh token
+    return this.http.post<RefreshTokenResponse>(`${this.apiUrl}/refresh-token`, { refreshToken }).pipe(
       tap(response => {
         this.setTokens(response.access_token, response.refresh_token);
         this.setUserData(response.user);
@@ -134,7 +136,6 @@ export class AuthService {
     return localStorage.getItem(this.refreshTokenKey);
   }
 
-  // Método adicionado de volta para corrigir o erro de build
   getAuthHeaders(): HttpHeaders {
     const token = this.getToken();
     return new HttpHeaders({
@@ -156,7 +157,8 @@ export class AuthService {
       name: userData.name,
       email: userData.email,
       role: userData.role,
-      avatarUrl: userData.avatarUrl
+      avatarUrl: userData.avatarUrl,
+      active: userData.active
     };
     localStorage.setItem(this.userKey, JSON.stringify(user));
     this.currentUserSubject.next(user);

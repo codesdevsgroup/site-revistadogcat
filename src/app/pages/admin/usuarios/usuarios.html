@@ -19,12 +19,23 @@
       <div class="table-header">
         <h2>Lista de Usuários ({{ usuarios.length }})</h2>
         <div class="table-filters">
-          <input type="text" placeholder="Buscar usuários..." class="search-input">
-          <select class="filter-select">
+          <!-- Campo de busca conectado ao FormControl -->
+          <input
+            type="text"
+            placeholder="Buscar por nome, email ou CPF..."
+            class="search-input"
+            [formControl]="searchControl">
+
+          <!-- Seletor de role conectado ao FormControl -->
+          <select class="filter-select" [formControl]="roleControl">
             <option value="">Todos os tipos</option>
-            <option value="ADMIN">Administrador</option>
+            <option value="ADMIN">Admin</option>
             <option value="EDITOR">Editor</option>
+            <option value="FUNCIONARIO">Funcionário</option>
             <option value="ASSINANTE">Assinante</option>
+            <option value="DONO_PET_APROVADO_ASSINANTE">Dono de Pet (Assinante)</option>
+            <option value="DONO_PET_APROVADO">Dono de Pet</option>
+            <option value="USUARIO">Usuário Comum</option>
           </select>
         </div>
       </div>
