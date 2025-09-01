@@ -10,8 +10,6 @@ Esta documentação descreve os endpoints para autenticação de usuários.
 
 ### Objeto User (Resposta Pública)
 
-Este é o objeto de usuário retornado na maioria das respostas da API.
-
 | Campo | Tipo | Descrição |
 | --- | --- | --- |
 | `userId` | `string` | Identificador único do usuário. |
@@ -44,7 +42,7 @@ Este é o objeto de usuário retornado na maioria das respostas da API.
 - **Endpoint:** `POST /auth/register`
 - **Descrição:** Cria uma nova conta de usuário. Um e-mail de ativação é enviado.
 - **Corpo da Requisição:** `CreateUserDto` (contém `name`, `userName`, `email`, `password`, e campos opcionais como `cpf`, `telefone`).
-- **Resposta (201 Created):** Objeto do usuário criado (sem dados sensíveis) e uma mensagem de sucesso.
+- **Resposta (201 Created):** Mensagem de sucesso indicando que o e-mail foi enviado.
 
 ### 2. Ativar Conta
 
@@ -53,7 +51,14 @@ Este é o objeto de usuário retornado na maioria das respostas da API.
 - **Corpo da Requisição:** `{ "token": "activation-token-from-email" }`
 - **Resposta (200 OK):** Mensagem de sucesso.
 
-### 3. Login
+### 3. Reenviar Email de Ativação
+
+- **Endpoint:** `POST /auth/resend-activation`
+- **Descrição:** Reenvia o e-mail com o link de ativação para um usuário que ainda não ativou a conta.
+- **Corpo da Requisição:** `{ "email": "user@email.com" }`
+- **Resposta (200 OK):** Mensagem de sucesso.
+
+### 4. Login
 
 - **Endpoint:** `POST /auth/login`
 - **Descrição:** Autentica um usuário e retorna um par de tokens (acesso e refresh).
@@ -67,35 +72,51 @@ Este é o objeto de usuário retornado na maioria das respostas da API.
   }
   ```
 
-### 4. Renovar Token de Acesso
+### 5. Renovar Token de Acesso
 
 - **Endpoint:** `POST /auth/refresh`
-- **Descrição:** Gera um novo `access_token` usando um `refresh_token` válido.
-- **Corpo da Requisição:** `{ "refreshToken": "..." }`
-- **Resposta (200 OK):** Novo par de `access_token` e `refresh_token`.
+- **Descrição:** Gera um novo `access_token` usando um `refresh_token` válido. Este mecanismo permite que o usuário continue logado sem precisar inserir suas credenciais repetidamente.
+- **Quando usar:** Este endpoint deve ser chamado pela aplicação cliente sempre que uma requisição a um endpoint protegido falhar com um status `401 Unauthorized` e a mensagem de erro específica for `Token de acesso expirado`.
+- **Fluxo de Uso:**
+  1.  O cliente faz uma requisição para um endpoint protegido (ex: `GET /users/me`) usando o `access_token`.
+  2.  O servidor responde com `401 Unauthorized` porque o `access_token` expirou.
+  3.  O cliente intercepta esse erro e faz uma chamada para `POST /auth/refresh`, enviando o `refresh_token` que foi armazenado durante o login.
+  4.  O servidor valida o `refresh_token`. Se for válido, retorna um novo `access_token` e um novo `refresh_token`.
+  5.  O cliente substitui os tokens antigos pelos novos.
+  6.  O cliente refaz a requisição original que falhou (passo 1), agora com o novo `access_token`.
+- **Corpo da Requisição:** `{ "refreshToken": "o-refresh-token-armazenado" }`
+- **Resposta (200 OK):**
+  ```json
+  {
+    "access_token": "novo_access_token",
+    "refresh_token": "novo_refresh_token",
+    "user": { ... } // Objeto User
+  }
+  ```
+- **Resposta de Erro (401 Unauthorized):** Se o `refresh_token` for inválido, expirado ou revogado, o servidor retornará um erro `401`. Nesse caso, a sessão do usuário é considerada encerrada, e o cliente **deve** redirecioná-lo para a tela de login.
 
-### 5. Obter Perfil do Usuário Logado
+### 6. Obter Perfil do Usuário Logado
 
 - **Endpoint:** `GET /auth/me`
 - **Autenticação:** 🔒 Requer `access_token`.
 - **Descrição:** Retorna os dados completos do usuário autenticado.
 - **Resposta (200 OK):** Objeto `User`.
 
-### 6. Logout
+### 7. Logout
 
 - **Endpoint:** `POST /auth/logout`
 - **Autenticação:** 🔒 Requer `access_token`.
-- **Descrição:** Invalida os tokens do usuário no servidor (incrementa `tokenVersion`).
+- **Descrição:** Invalida os tokens do usuário no servidor.
 - **Resposta (200 OK):** Mensagem de sucesso.
 
-### 7. Esqueci Minha Senha
+### 8. Esqueci Minha Senha
 
 - **Endpoint:** `POST /auth/forgot-password`
 - **Descrição:** Inicia o fluxo de redefinição de senha. Envia um token por e-mail.
 - **Corpo da Requisição:** `{ "email": "user@email.com" }`
 - **Resposta (200 OK):** Mensagem de sucesso.
 
-### 8. Redefinir Senha
+### 9. Redefinir Senha
 
 - **Endpoint:** `POST /auth/reset-password`
 - **Descrição:** Define uma nova senha usando o token de redefinição.

@@ -10,14 +10,14 @@ Esta documentação descreve os endpoints para gerenciamento de usuários.
 
 ### Objeto User (Resposta Pública)
 
-Este é o objeto de usuário retornado na maioria das respostas da API.
-
 | Campo | Tipo | Descrição |
 | --- | --- | --- |
 | `userId` | `string` | Identificador único do usuário. |
-| `userName` | `string` | Nome de usuário único. |
+| `userName` | `string` | Nome de usuário |
 | `name` | `string` | Nome completo do usuário. |
 | `email` | `string` | Endereço de e-mail do usuário. |
+| `cpf` | `string` | (Opcional) CPF do usuário. |
+| `telefone` | `string` | (Opcional) Telefone do usuário. |
 | `avatarUrl` | `string` | URL da imagem de perfil. |
 | `role` | `Role` | Nível de acesso do usuário. |
 | `active` | `boolean`| Se a conta do usuário está ativa. |
@@ -47,21 +47,35 @@ Este é o objeto de usuário retornado na maioria das respostas da API.
 - **Query Params:** `page`, `limit`, `search`, `role`.
 - **Resposta (200 OK):** Objeto de paginação com a lista de usuários.
 
-### 2. Obter Usuário por ID
+### 2. Obter Perfil do Usuário Autenticado
+
+- **Endpoint:** `GET /users/me`
+- **Autenticação:** 🔒 Requer `access_token`.
+- **Descrição:** Retorna o perfil completo do usuário que está fazendo a requisição.
+- **Resposta (200 OK):** Objeto `User`.
+
+### 3. Obter Usuário por ID
 
 - **Endpoint:** `GET /users/{id}`
 - **Autenticação:** 🔒 Requer `access_token`.
 - **Descrição:** Retorna o perfil público de um usuário específico.
 - **Resposta (200 OK):** Objeto `User`.
 
-### 3. Atualizar Próprio Perfil
+### 4. Atualizar Próprio Perfil
 
-- **Endpoint:** `PATCH /users/profile`
+- **Endpoint:** `PATCH /users/me`
 - **Autenticação:** 🔒 Requer `access_token`.
-- **Descrição:** Permite que o usuário autenticado atualize seu próprio perfil (`name`, `userName`, `telefone`, etc.).
+- **Descrição:** Permite que o usuário autenticado atualize seu próprio perfil (`name`, `userName`, `telefone`, `cpf`, etc.).
 - **Resposta (200 OK):** Objeto `User` atualizado.
 
-### 4. Upload de Avatar
+### 5. Atualizar Dados de um Usuário
+
+- **Endpoint:** `PATCH /users/{id}`
+- **Autenticação:** 🔒 `ADMIN`
+- **Descrição:** Permite que um administrador atualize os dados de qualquer usuário.
+- **Resposta (200 OK):** Objeto `User` atualizado.
+
+### 6. Upload de Avatar
 
 - **Endpoint:** `POST /users/avatar-upload`
 - **Autenticação:** 🔒 Requer `access_token`.
@@ -69,21 +83,37 @@ Este é o objeto de usuário retornado na maioria das respostas da API.
 - **Corpo da Requisição:** `multipart/form-data` com o campo `avatar`.
 - **Resposta (200 OK):** `{ "avatarUrl": "..." }`
 
-### 5. Bloquear Usuário
+### 7. Criar Usuário para Terceiro
 
-- **Endpoint:** `PATCH /users/{id}/block`
+- **Endpoint:** `POST /users/register-third-party`
+- **Autenticação:** Nenhuma (Endpoint público)
+- **Descrição:** Cria um novo usuário com dados básicos.
+- **Corpo da Requisição:**
+  ```json
+  {
+    "nome": "Maria Santos",
+    "email": "maria.santos@example.com",
+    "cpf": "987.654.321-00",
+    "telefone": "(11) 98888-7777"
+  }
+  ```
+- **Resposta (201 Created):** `{ "userId": "cly123abcde" }`
+
+### 8. Excluir Usuário (Soft Delete)
+
+- **Endpoint:** `DELETE /users/{id}`
 - **Autenticação:** 🔒 `ADMIN`
-- **Descrição:** Bloqueia a conta de um usuário.
+- **Descrição:** Desativa a conta de um usuário (soft delete).
 - **Resposta (200 OK):** Objeto `User` atualizado.
 
-### 6. Desbloquear Usuário
+### 9. Restaurar Usuário
 
-- **Endpoint:** `PATCH /users/{id}/unblock`
+- **Endpoint:** `POST /users/{id}/restore`
 - **Autenticação:** 🔒 `ADMIN`
-- **Descrição:** Desbloqueia a conta de um usuário.
+- **Descrição:** Reativa a conta de um usuário que foi desativada.
 - **Resposta (200 OK):** Objeto `User` atualizado.
 
-### 7. Atualizar Role de Usuário
+### 10. Atualizar Role de Usuário
 
 - **Endpoint:** `PATCH /users/{id}/role`
 - **Autenticação:** 🔒 `ADMIN`

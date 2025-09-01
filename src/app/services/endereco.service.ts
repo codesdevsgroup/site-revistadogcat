@@ -9,36 +9,35 @@ import { Endereco } from '../interfaces/endereco.interface';
   providedIn: 'root'
 })
 export class EnderecoService {
-  private readonly apiUrl = `${environment.apiUrl}`;
+  // FIX: A rota base para todos os endpoints de endereço deve ser /enderecos
+  private readonly apiUrl = `${environment.apiUrl}/enderecos`;
 
   constructor(private http: HttpClient) { }
 
   // Busca a lista de endereços de um usuário
   getEnderecos(userId: string): Observable<Endereco[]> {
-    const url = `${this.apiUrl}/users/${userId}/enderecos`;
-    console.log('🔍 [EnderecoService] Buscando endereços para userId:', userId);
+    // FIX: A rota correta é a raiz do serviço de endereços.
+    // A API deve usar o token do usuário autenticado para filtrar os endereços corretos.
+    const url = this.apiUrl;
+    console.log(`🔍 [EnderecoService] Buscando endereços para o usuário autenticado (ID: ${userId})`);
     console.log('🔍 [EnderecoService] URL da requisição:', url);
-    
-    return this.http.get<{ enderecos: Endereco[] }>(url)
+
+    return this.http.get<Endereco[]>(url)
       .pipe(
         map(response => {
           console.log('✅ [EnderecoService] Resposta da API:', response);
-          const enderecos = response.enderecos || [];
+          // A resposta padrão para uma lista GET deve ser um array diretamente.
+          const enderecos = Array.isArray(response) ? response : [];
           console.log('✅ [EnderecoService] Endereços extraídos:', enderecos);
           return enderecos;
         }),
         catchError(error => {
           console.error('❌ [EnderecoService] Erro na requisição:', error);
-          console.error('❌ [EnderecoService] Status do erro:', error.status);
-          console.error('❌ [EnderecoService] Mensagem do erro:', error.message);
-          
-          // Se a API retornar 404 (Not Found), significa que o usuário não tem endereços.
-          // Nesses casos, retornamos um array vazio em vez de um erro.
+          // A API pode retornar 404 se não houver endereços, então tratamos isso como um array vazio.
           if (error.status === 404) {
-            console.log('ℹ️ [EnderecoService] Retornando array vazio para 404');
+            console.log('ℹ️ [EnderecoService] Nenhum endereço encontrado (404), retornando array vazio.');
             return of([]);
           }
-          // Para todos os outros erros, nós os propagamos.
           return this.handleError(error);
         })
       );
@@ -46,25 +45,27 @@ export class EnderecoService {
 
   // Cria um novo endereço para um usuário
   createEndereco(userId: string, endereco: Partial<Endereco>): Observable<Endereco> {
-    return this.http.post<Endereco>(`${this.apiUrl}/users/${userId}/enderecos`, endereco)
+    // FIX: A criação também deve usar a rota base /enderecos.
+    // A API associará o endereço ao usuário autenticado pelo token.
+    return this.http.post<Endereco>(this.apiUrl, endereco)
       .pipe(catchError(this.handleError));
   }
 
   // Atualiza um endereço existente
   updateEndereco(enderecoId: string, endereco: Partial<Endereco>): Observable<Endereco> {
-    return this.http.put<Endereco>(`${this.apiUrl}/enderecos/${enderecoId}`, endereco)
+    return this.http.put<Endereco>(`${this.apiUrl}/${enderecoId}`, endereco)
       .pipe(catchError(this.handleError));
   }
 
   // Exclui um endereço
   deleteEndereco(enderecoId: string): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/enderecos/${enderecoId}`)
+    return this.http.delete<void>(`${this.apiUrl}/${enderecoId}`)
       .pipe(catchError(this.handleError));
   }
 
   // Define um endereço como principal
   setEnderecoPrincipal(enderecoId: string): Observable<Endereco> {
-    return this.http.patch<Endereco>(`${this.apiUrl}/enderecos/${enderecoId}/principal`, {})
+    return this.http.patch<Endereco>(`${this.apiUrl}/${enderecoId}/principal`, {})
       .pipe(catchError(this.handleError));
   }
 
