@@ -3,17 +3,17 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { forkJoin, Subscription } from 'rxjs';
-
 import { AuthService } from '../../../services/auth.service';
 import { EnderecoService } from '../../../services/endereco.service';
-import { ProfileService, ProfileData, UserProfile, UserDog } from '../../../services/profile.service';
+import { ProfileService, UserProfile, UserDog } from '../../../services/profile.service';
 import { Endereco } from '../../../interfaces/endereco.interface';
-import { ValidationService } from '../../../services/validation.service';
+import { ProfileEditModalComponent } from '../../../components/profile-edit-modal/profile-edit-modal';
+import { AddressModalComponent } from '../../../components/address-modal/address-modal';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, ProfileEditModalComponent, AddressModalComponent],
   templateUrl: './profile.html',
   styleUrls: ['./profile.scss']
 })
@@ -25,12 +25,10 @@ export class ProfileComponent implements OnInit, OnDestroy {
   loading = true;
   error = '';
 
-  // Controle do Modal de Endereço
-  isModalOpen = false;
-  enderecoForm: FormGroup;
-  currentEnderecoId: string | null = null;
-  isCepLoading = false;
-  cepStatus: 'none' | 'loading' | 'success' | 'error' = 'none';
+  // Controle dos Modais
+  isProfileEditModalOpen = false;
+  isAddressModalOpen = false;
+  currentEditingAddress: Endereco | null = null;
 
   private subscriptions = new Subscription();
 
@@ -39,23 +37,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private profileService: ProfileService,
     private enderecoService: EnderecoService,
-    private validationService: ValidationService,
     private router: Router
-  ) {
-    this.enderecoForm = this.fb.group({
-      tipo: ['RESIDENCIAL', Validators.required],
-      nome: [''],
-      cep: ['', [Validators.required, Validators.pattern(/^\d{5}-\d{3}$/)]],
-      logradouro: ['', Validators.required],
-      numero: ['', Validators.required],
-      complemento: [''],
-      bairro: ['', Validators.required],
-      cidade: ['', Validators.required],
-      estado: ['', Validators.required],
-      pontoReferencia: [''],
-      principal: [false]
-    });
-  }
+  ) {}
 
   ngOnInit(): void {
     this.loadInitialData();
@@ -76,18 +59,29 @@ export class ProfileComponent implements OnInit, OnDestroy {
       return;
     }
 
+    console.log('🔍 [ProfileComponent] Carregando dados para userId:', currentUser.userId);
+
     const dataSub = forkJoin({
       profile: this.profileService.getProfileData(),
       enderecos: this.enderecoService.getEnderecos(currentUser.userId)
     }).subscribe({
       next: ({ profile, enderecos }) => {
+        console.log('✅ [ProfileComponent] Dados carregados com sucesso:');
+        console.log('  - Profile:', profile);
+        console.log('  - Endereços recebidos:', enderecos);
+        console.log('  - Quantidade de endereços:', enderecos?.length || 0);
+
         this.user = profile.user;
         this.userDogs = profile.dogs || [];
         this.enderecos = enderecos.sort((a, b) => (b.principal ? 1 : -1));
+
+        console.log('  - Endereços após ordenação:', this.enderecos);
+        console.log('  - Array enderecos.length:', this.enderecos.length);
+
         this.loading = false;
       },
       error: (err) => {
-        console.error('Erro ao carregar dados do perfil:', err);
+        console.error('❌ [ProfileComponent] Erro ao carregar dados do perfil:', err);
         this.error = err.message || 'Erro ao carregar a página.';
         this.loading = false;
       }
@@ -109,53 +103,46 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.subscriptions.add(enderecosSub);
   }
 
-  // --- Controle do Modal ---
+  // --- Controle dos Modais ---
 
-  openModal(endereco?: Endereco): void {
-    this.currentEnderecoId = endereco?.enderecoId || null;
-    if (endereco) {
-      this.enderecoForm.patchValue(endereco);
-    } else {
-      this.enderecoForm.reset({ tipo: 'RESIDENCIAL', principal: this.enderecos.length === 0 });
-    }
-    this.isModalOpen = true;
+  // Modal de Edição de Perfil
+  openProfileEditModal(): void {
+    this.isProfileEditModalOpen = true;
   }
 
-  closeModal(): void {
-    this.isModalOpen = false;
-    this.enderecoForm.reset();
-    this.currentEnderecoId = null;
-    this.cepStatus = 'none';
+  closeProfileEditModal(): void {
+    this.isProfileEditModalOpen = false;
+  }
+
+  onProfileUpdated(updatedUser: any): void {
+    // Atualiza os dados do usuário localmente
+    if (this.user) {
+      this.user = { ...this.user, ...updatedUser };
+    }
+    // Recarrega os dados para garantir sincronização
+    this.loadInitialData();
+  }
+
+  // Modal de Endereços
+  openAddressModal(endereco?: Endereco): void {
+    this.currentEditingAddress = endereco || null;
+    this.isAddressModalOpen = true;
+  }
+
+  closeAddressModal(): void {
+    this.isAddressModalOpen = false;
+    this.currentEditingAddress = null;
+  }
+
+  onAddressSaved(savedAddress: Endereco): void {
+    // Recarrega a lista de endereços
+    const userId = this.authService.getCurrentUser()?.userId;
+    if (userId) {
+      this.loadEnderecos(userId);
+    }
   }
 
   // --- Ações de Endereço ---
-
-  saveEndereco(): void {
-    if (this.enderecoForm.invalid) {
-      this.enderecoForm.markAllAsTouched();
-      return;
-    }
-
-    const userId = this.authService.getCurrentUser()?.userId;
-    if (!userId) return;
-
-    const formValue = this.enderecoForm.value;
-    const action = this.currentEnderecoId
-      ? this.enderecoService.updateEndereco(this.currentEnderecoId, formValue)
-      : this.enderecoService.createEndereco(userId, formValue);
-
-    const saveSub = action.subscribe({
-      next: () => {
-        this.loadEnderecos(userId);
-        this.closeModal();
-      },
-      error: (err) => {
-        console.error('Erro ao salvar endereço:', err);
-        alert(err.message || 'Não foi possível salvar o endereço.');
-      }
-    });
-    this.subscriptions.add(saveSub);
-  }
 
   deleteEndereco(enderecoId: string): void {
     if (confirm('Tem certeza que deseja excluir este endereço?')) {
@@ -185,42 +172,12 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.subscriptions.add(principalSub);
   }
 
-  // --- Busca de CEP ---
 
-  onCepChange(event: any): void {
-    const cep = event.target.value;
-    if (cep && cep.length === 9) { // Formato 00000-000
-      this.isCepLoading = true;
-      this.cepStatus = 'loading';
-      const cepSub = this.enderecoService.buscarEnderecoPorCep(cep).subscribe({
-        next: (data) => {
-          this.enderecoForm.patchValue({
-            logradouro: data.logradouro,
-            bairro: data.bairro,
-            cidade: data.cidade,
-            estado: data.estado
-          });
-          this.isCepLoading = false;
-          this.cepStatus = 'success';
-        },
-        error: (err) => {
-          this.isCepLoading = false;
-          this.cepStatus = 'error';
-          console.error('Erro ao buscar CEP:', err);
-        }
-      });
-      this.subscriptions.add(cepSub);
-    }
-  }
-
-  formatCep(event: any): void {
-    event.target.value = this.validationService.formatCep(event.target.value);
-  }
 
   // --- Ações do Perfil e Cães ---
 
   onEditProfile(): void {
-    this.router.navigate(['/profile/edit']);
+    this.openProfileEditModal();
   }
 
   onAddDog(): void {
@@ -239,5 +196,28 @@ export class ProfileComponent implements OnInit, OnDestroy {
       'USER': 'Usuário'
     };
     return roleMap[role] || role;
+  }
+
+  // Método de debug para testar carregamento de endereços
+  debugLoadEnderecos(): void {
+    const currentUser = this.authService.getCurrentUser();
+    console.log('🔧 [DEBUG] Usuário atual:', currentUser);
+
+    if (!currentUser?.userId) {
+      console.error('🔧 [DEBUG] Usuário não encontrado!');
+      return;
+    }
+
+    console.log('🔧 [DEBUG] Forçando carregamento de endereços para userId:', currentUser.userId);
+
+    this.enderecoService.getEnderecos(currentUser.userId).subscribe({
+      next: (enderecos) => {
+        console.log('🔧 [DEBUG] Endereços carregados:', enderecos);
+        this.enderecos = enderecos;
+      },
+      error: (err) => {
+        console.error('🔧 [DEBUG] Erro ao carregar endereços:', err);
+      }
+    });
   }
 }

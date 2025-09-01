@@ -15,13 +15,27 @@ export class EnderecoService {
 
   // Busca a lista de endereços de um usuário
   getEnderecos(userId: string): Observable<Endereco[]> {
-    return this.http.get<{ enderecos: Endereco[] }>(`${this.apiUrl}/users/${userId}/enderecos`)
+    const url = `${this.apiUrl}/users/${userId}/enderecos`;
+    console.log('🔍 [EnderecoService] Buscando endereços para userId:', userId);
+    console.log('🔍 [EnderecoService] URL da requisição:', url);
+    
+    return this.http.get<{ enderecos: Endereco[] }>(url)
       .pipe(
-        map(response => response.enderecos || []), // Garante que um array seja retornado mesmo se a chave 'enderecos' estiver ausente
+        map(response => {
+          console.log('✅ [EnderecoService] Resposta da API:', response);
+          const enderecos = response.enderecos || [];
+          console.log('✅ [EnderecoService] Endereços extraídos:', enderecos);
+          return enderecos;
+        }),
         catchError(error => {
+          console.error('❌ [EnderecoService] Erro na requisição:', error);
+          console.error('❌ [EnderecoService] Status do erro:', error.status);
+          console.error('❌ [EnderecoService] Mensagem do erro:', error.message);
+          
           // Se a API retornar 404 (Not Found), significa que o usuário não tem endereços.
           // Nesses casos, retornamos um array vazio em vez de um erro.
           if (error.status === 404) {
+            console.log('ℹ️ [EnderecoService] Retornando array vazio para 404');
             return of([]);
           }
           // Para todos os outros erros, nós os propagamos.

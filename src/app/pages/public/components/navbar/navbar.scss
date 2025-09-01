@@ -229,6 +229,10 @@ $navbar-transition: var(--transition-fast);
     }
   }
 
+  .profile-menu-item {
+    margin-left: $navbar-padding-x;
+  }
+
   // Mobile toggle button
   .navbar-toggler {
     border: none;

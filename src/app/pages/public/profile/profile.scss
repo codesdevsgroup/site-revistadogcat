@@ -20,15 +20,15 @@
 .profile-header {
   margin-bottom: 2rem;
   padding-bottom: 1rem;
-  border-bottom: 2px solid #e9ecef;
+  border-bottom: 2px solid var(--gray-200);
 
   .page-title {
-    color: #2c3e50;
-    font-weight: 600;
+    color: var(--primaryColor);
+    font-weight: var(--fontWeight-semibold);
     margin-bottom: 0.5rem;
     
     i {
-      color: #3498db;
+      color: var(--secondaryColor);
     }
   }
 
@@ -49,12 +49,12 @@
     margin-bottom: 1.5rem;
 
     h3 {
-      color: #2c3e50;
-      font-weight: 600;
+      color: var(--primaryColor);
+      font-weight: var(--fontWeight-semibold);
       margin-bottom: 0;
       
       i {
-        color: #3498db;
+        color: var(--secondaryColor);
       }
     }
   }
@@ -77,22 +77,23 @@
 }
 
 .form-label {
-  color: #495057;
+  color: var(--gray-600);
   font-size: 0.875rem;
   margin-bottom: 0.25rem;
+  font-weight: var(--fontWeight-medium);
 }
 
 .form-control-plaintext {
   padding: 0.375rem 0;
   margin-bottom: 0;
   font-size: 1rem;
-  color: #212529;
+  color: var(--gray-800);
   border: none;
   background-color: transparent;
   
   &:empty::before {
     content: "Não informado";
-    color: #6c757d;
+    color: var(--gray-500);
     font-style: italic;
   }
 }
@@ -106,15 +107,16 @@
 // Dog Cards
 .dog-card {
   transition: all 0.3s ease;
-  border-left: 4px solid #3498db;
+  border-left: 4px solid var(--secondaryColor);
 
   &:hover {
-    border-left-color: #2980b9;
+    border-left-color: var(--secondaryColorDark);
+    transform: translateY(-2px);
   }
 
   .card-title {
-    color: #2c3e50;
-    font-weight: 600;
+    color: var(--primaryColor);
+    font-weight: var(--fontWeight-semibold);
   }
 
   .dog-info {
@@ -123,8 +125,8 @@
       font-size: 0.95rem;
       
       strong {
-        color: #495057;
-        font-weight: 600;
+        color: var(--gray-700);
+        font-weight: var(--fontWeight-medium);
       }
     }
   }
@@ -140,43 +142,73 @@
 // Buttons
 .btn {
   border-radius: 8px;
-  font-weight: 500;
-  padding: 0.5rem 1rem;
+  font-weight: var(--fontWeight-medium);
+  padding: 0.625rem 1.25rem;
   transition: all 0.2s ease;
+  font-size: 0.9rem;
 
   &.btn-primary {
-    background: linear-gradient(135deg, #3498db, #2980b9);
-    border: none;
+    background: var(--primaryColor);
+    border-color: var(--primaryColor);
+    color: var(--white);
     
     &:hover {
-      background: linear-gradient(135deg, #2980b9, #1f5f8b);
+      background: var(--primaryColorDark);
+      border-color: var(--primaryColorDark);
       transform: translateY(-1px);
     }
   }
 
   &.btn-success {
-    background: linear-gradient(135deg, #27ae60, #229954);
-    border: none;
+    background: var(--success);
+    border-color: var(--success);
     
     &:hover {
-      background: linear-gradient(135deg, #229954, #1e8449);
+      background: var(--success-dark);
+      border-color: var(--success-dark);
       transform: translateY(-1px);
     }
   }
 
   &.btn-outline-primary {
-    border-color: #3498db;
-    color: #3498db;
+    border-color: var(--primaryColor);
+    color: var(--primaryColor);
     
     &:hover {
-      background-color: #3498db;
-      border-color: #3498db;
+      background-color: var(--primaryColor);
+      border-color: var(--primaryColor);
+      color: var(--white);
       transform: translateY(-1px);
     }
   }
 
   i {
     font-size: 0.875rem;
+  }
+
+  // Reduzir espaçamento entre botões em mobile
+  @media (max-width: 768px) {
+    margin-bottom: 0.5rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+    
+    &.btn-sm {
+      padding: 0.375rem 0.75rem;
+      font-size: 0.8rem;
+    }
+  }
+  
+  .section-header & {
+    @media (max-width: 768px) {
+      &.btn-sm {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+      }
+    }
   }
 }
 

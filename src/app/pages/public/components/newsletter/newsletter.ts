@@ -17,7 +17,8 @@ export class NewsletterComponent implements OnInit {
 
   constructor(private fb: FormBuilder) {
     this.newsletterForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]]
+      email: ['', [Validators.required, Validators.email]],
+      acceptTerms: [false, [Validators.requiredTrue]]
     });
   }
 

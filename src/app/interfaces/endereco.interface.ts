@@ -1,7 +1,9 @@
+import { TipoEndereco } from '../enums/tipo-endereco.enum';
+
 export interface Endereco {
   enderecoId: string;
   userId: string;
-  tipo: 'RESIDENCIAL' | 'COMERCIAL' | 'ENTREGA' | 'COBRANCA' | 'TEMPORARIO' | 'OUTRO';
+  tipo: TipoEndereco;
   nome?: string;
   logradouro: string;
   numero: string;

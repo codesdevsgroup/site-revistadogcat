@@ -119,7 +119,7 @@ export class ProfileService {
   }
 
   getUserAddress(userId: string): Observable<UserAddress | null> {
-    return this.http.get<any>(`${this.addressApiUrl}/usuario/${userId}`).pipe(
+    return this.http.get<any>(`${this.usersApiUrl}/${userId}/enderecos`).pipe(
       map(response => {
         const addressData = response.data || response;
         const address = Array.isArray(addressData)
@@ -144,7 +144,8 @@ export class ProfileService {
   }
 
   getUserDogs(userId: string): Observable<UserDog[]> {
-    return this.http.get<any>(`${this.dogsApiUrl}/usuario/${userId}`).pipe(
+    // Usa o endpoint correto para listar os cães do usuário autenticado
+    return this.http.get<any>(`${this.dogsApiUrl}/meus-cadastros`).pipe(
       map(response => {
         const dogsData = response.data || response;
         const dogs = Array.isArray(dogsData) ? dogsData : [dogsData];
@@ -172,21 +173,36 @@ export class ProfileService {
     );
   }
 
-  updateUserProfile(userId: string, profileData: Partial<UserProfile>): Observable<UserProfile> {
-    return this.http.put<any>(`${this.usersApiUrl}/${userId}`, profileData).pipe(
+  updateUserProfile(profileData: Partial<UserProfile>): Observable<UserProfile> {
+    return this.http.patch<any>(`${this.usersApiUrl}/profile`, profileData).pipe(
       map(response => response.data || response),
       catchError(this.handleError)
     );
   }
 
-  updateUserAddress(userId: string, addressData: Partial<UserAddress>): Observable<UserAddress> {
+  uploadAvatar(avatarFile: File): Observable<{ avatarUrl: string }> {
+    const formData = new FormData();
+    formData.append('avatar', avatarFile);
+    
+    return this.http.post<any>(`${this.usersApiUrl}/avatar-upload`, formData).pipe(
+      map(response => response.data || response),
+      catchError(this.handleError)
+    );
+  }
+
+  updateUserAddress(addressData: Partial<UserAddress>): Observable<UserAddress> {
+    const currentUser = this.authService.getCurrentUser();
+    if (!currentUser) {
+      return throwError(() => new Error('Usuário não autenticado'));
+    }
+
     if (addressData.id) {
       return this.http.put<any>(`${this.addressApiUrl}/${addressData.id}`, addressData).pipe(
         map(response => response.data || response),
         catchError(this.handleError)
       );
     } else {
-      return this.http.post<any>(`${this.addressApiUrl}`, { ...addressData, userId }).pipe(
+      return this.http.post<any>(`${this.addressApiUrl}`, { ...addressData, userId: currentUser.userId }).pipe(
         map(response => response.data || response),
         catchError(this.handleError)
       );

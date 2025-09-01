@@ -1,0 +1,232 @@
+<!-- Modal Backdrop -->
+<div class="modal-backdrop" *ngIf="isOpen" (click)="onClose()"></div>
+
+<!-- Modal -->
+<div class="modal address-modal" [class.show]="isOpen" *ngIf="isOpen">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <form [formGroup]="addressForm" (ngSubmit)="onSubmit()">
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h5 class="modal-title">
+            <i class="fas fa-map-marker-alt me-2"></i>
+            {{ isEditMode ? 'Editar Endereço' : 'Cadastrar Endereço' }}
+          </h5>
+          <button type="button" class="btn-close" (click)="onClose()" [disabled]="loading"></button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="modal-body">
+          <!-- Alerts -->
+          <div *ngIf="error" class="alert alert-danger" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            {{ error }}
+          </div>
+
+          <div *ngIf="success" class="alert alert-success" role="alert">
+            <i class="fas fa-check-circle me-2"></i>
+            {{ success }}
+          </div>
+
+          <!-- Address Type and CEP -->
+          <div class="row mb-3">
+            <!-- Tipo de Endereço -->
+            <div class="col-md-6">
+              <label for="tipo" class="form-label">Tipo de Endereço *</label>
+              <select
+                id="tipo"
+                class="form-select"
+                [class.is-invalid]="isFieldInvalid('tipo')"
+                formControlName="tipo"
+              >
+                <option value="" disabled>Selecione o tipo</option>
+                <option *ngFor="let tipo of tiposEndereco" [value]="tipo.value">
+                  {{ tipo.label }}
+                </option>
+              </select>
+              <div class="invalid-feedback" *ngIf="isFieldInvalid('tipo')">
+                {{ getFieldError('tipo') }}
+              </div>
+            </div>
+
+            <!-- CEP -->
+            <div class="col-md-6">
+              <label for="cep" class="form-label">CEP *</label>
+              <div class="input-group">
+                <input
+                  type="text"
+                  id="cep"
+                  class="form-control"
+                  [class.is-invalid]="isFieldInvalid('cep')"
+                  formControlName="cep"
+                  placeholder="00000-000"
+                  (input)="onCepInput($event)"
+                  (blur)="onCepBlur()"
+                  maxlength="9"
+                >
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  (click)="onCepBlur()"
+                  [disabled]="loadingCep || !addressForm.get('cep')?.value"
+                >
+                  <span *ngIf="loadingCep" class="spinner-border spinner-border-sm" role="status">
+                    <span class="visually-hidden">Buscando...</span>
+                  </span>
+                  <i *ngIf="!loadingCep" class="fas fa-search"></i>
+                </button>
+              </div>
+              <div class="invalid-feedback" *ngIf="isFieldInvalid('cep')">
+                {{ getFieldError('cep') }}
+              </div>
+              <small class="text-muted">Digite o CEP e pressione Tab ou clique na lupa para buscar automaticamente</small>
+            </div>
+          </div>
+
+          <!-- Address Details -->
+          <div class="row mb-3">
+            <!-- Logradouro -->
+            <div class="col-md-8">
+              <label for="logradouro" class="form-label">Logradouro *</label>
+              <input
+                type="text"
+                id="logradouro"
+                class="form-control"
+                [class.is-invalid]="isFieldInvalid('logradouro')"
+                formControlName="logradouro"
+                placeholder="Rua, Avenida, Travessa..."
+              >
+              <div class="invalid-feedback" *ngIf="isFieldInvalid('logradouro')">
+                {{ getFieldError('logradouro') }}
+              </div>
+            </div>
+
+            <!-- Número -->
+            <div class="col-md-4">
+              <label for="numero" class="form-label">Número *</label>
+              <input
+                type="text"
+                id="numero"
+                class="form-control"
+                [class.is-invalid]="isFieldInvalid('numero')"
+                formControlName="numero"
+                placeholder="123"
+              >
+              <div class="invalid-feedback" *ngIf="isFieldInvalid('numero')">
+                {{ getFieldError('numero') }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Complemento -->
+          <div class="row mb-3">
+            <div class="col-12">
+              <label for="complemento" class="form-label">Complemento</label>
+              <input
+                type="text"
+                id="complemento"
+                class="form-control"
+                formControlName="complemento"
+                placeholder="Apartamento, Bloco, Casa..."
+              >
+            </div>
+          </div>
+
+          <!-- Bairro, Cidade, Estado -->
+          <div class="row mb-3">
+            <!-- Bairro -->
+            <div class="col-md-4">
+              <label for="bairro" class="form-label">Bairro *</label>
+              <input
+                type="text"
+                id="bairro"
+                class="form-control"
+                [class.is-invalid]="isFieldInvalid('bairro')"
+                formControlName="bairro"
+                placeholder="Nome do bairro"
+              >
+              <div class="invalid-feedback" *ngIf="isFieldInvalid('bairro')">
+                {{ getFieldError('bairro') }}
+              </div>
+            </div>
+
+            <!-- Cidade -->
+            <div class="col-md-6">
+              <label for="cidade" class="form-label">Cidade *</label>
+              <input
+                type="text"
+                id="cidade"
+                class="form-control"
+                [class.is-invalid]="isFieldInvalid('cidade')"
+                formControlName="cidade"
+                placeholder="Nome da cidade"
+              >
+              <div class="invalid-feedback" *ngIf="isFieldInvalid('cidade')">
+                {{ getFieldError('cidade') }}
+              </div>
+            </div>
+
+            <!-- Estado -->
+            <div class="col-md-2">
+              <label for="estado" class="form-label">UF *</label>
+              <input
+                type="text"
+                id="estado"
+                class="form-control text-uppercase"
+                [class.is-invalid]="isFieldInvalid('estado')"
+                formControlName="estado"
+                placeholder="SP"
+                maxlength="2"
+                (input)="onEstadoInput($event)"
+              >
+              <div class="invalid-feedback" *ngIf="isFieldInvalid('estado')">
+                {{ getFieldError('estado') }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Endereço Principal -->
+          <div class="row mb-3">
+            <div class="col-12">
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  id="principal"
+                  formControlName="principal"
+                >
+                <label class="form-check-label" for="principal">
+                  <strong>Definir como endereço principal</strong>
+                  <small class="text-muted d-block">O endereço principal será usado como padrão para entregas e correspondências</small>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="onClose()"
+            [disabled]="loading"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="loading || addressForm.invalid"
+          >
+            <span *ngIf="loading" class="spinner-border spinner-border-sm me-2" role="status">
+              <span class="visually-hidden">Salvando...</span>
+            </span>
+            <i *ngIf="!loading" class="fas fa-save me-2"></i>
+            {{ loading ? 'Salvando...' : (isEditMode ? 'Atualizar Endereço' : 'Cadastrar Endereço') }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

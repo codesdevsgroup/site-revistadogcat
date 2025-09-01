@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { AbstractControl, ValidatorFn } from '@angular/forms';
 import { TIPOS_ARQUIVO_IMAGEM, TAMANHO_MAX_IMAGEM, TAMANHO_MAX_VIDEO } from '../interfaces/cao.interface';
 
 // Interface para resposta da API ViaCEP
@@ -172,5 +173,17 @@ export class ValidationService {
       return cleanValue.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
     }
     return cleanValue;
+  }
+
+  // Validador de CPF para formulários reativos
+  cpfValidator(): ValidatorFn {
+    return (control: AbstractControl): { [key: string]: any } | null => {
+      if (!control.value) {
+        return null; // Não valida se estiver vazio (use required para isso)
+      }
+      
+      const isValid = this.validateCpf(control.value);
+      return isValid ? null : { 'cpfInvalido': { value: control.value } };
+    };
   }
 }

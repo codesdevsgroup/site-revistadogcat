@@ -53,7 +53,7 @@
         <!-- Bloco de Autenticação Dinâmico -->
         <ng-container *ngIf="isAuthenticated$ | async; else loginButton">
           <!-- Mostrado quando o usuário ESTÁ logado -->
-          <li class="nav-item">
+          <li class="nav-item profile-menu-item">
             <app-profile-menu></app-profile-menu>
           </li>
         </ng-container>

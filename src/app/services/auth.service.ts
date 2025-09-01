@@ -168,6 +168,14 @@ export class AuthService {
     this.currentUserSubject.next(userData);
   }
 
+  public updateUserData(updatedData: Partial<User>): void {
+    const currentUser = this.getCurrentUser();
+    if (currentUser) {
+      const newUser = { ...currentUser, ...updatedData };
+      this.setUserData(newUser);
+    }
+  }
+
   private clearSession(): void {
     localStorage.removeItem(this.tokenKey);
     localStorage.removeItem(this.refreshTokenKey);

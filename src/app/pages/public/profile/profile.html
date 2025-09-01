@@ -62,39 +62,42 @@
     <!-- Address Info -->
     <div class="profile-section">
       <div class="section-header">
-        <div class="row align-items-center">
-          <div class="col-md-8">
-            <h3><i class="fas fa-map-marker-alt me-2"></i> Meus Endereços</h3>
-          </div>
-          <div class="col-md-4 text-md-end">
-            <button class="btn btn-primary" (click)="openModal()">
-              <i class="fas fa-plus me-2"></i> Adicionar Endereço
-            </button>
-          </div>
+        <h3><i class="fas fa-map-marker-alt me-2"></i> Meus Endereços</h3>
+        <!-- Debug Info -->
+        <div class="alert alert-info mt-2" style="font-size: 0.8em;">
+          <strong>Debug:</strong>
+          Loading: {{ loading }} |
+          Error: {{ error || 'Nenhum' }} |
+          Endereços Array Length: {{ enderecos.length || 0 }} |
+          User ID: {{ user.userId || 'N/A' }}
+          <br>
+          <button class="btn btn-sm btn-warning mt-1" (click)="debugLoadEnderecos()">
+            🔧 Testar Carregamento de Endereços
+          </button>
         </div>
       </div>
       <div *ngIf="enderecos.length > 0; else noAddress">
         <div class="row">
-          <div class="col-12 mb-3" *ngFor="let endereco of enderecos">
+          <div class="col-lg-6 mb-3" *ngFor="let endereco of enderecos">
             <div class="card address-card" [class.principal]="endereco.principal">
               <div class="card-body">
                 <div class="d-flex justify-content-between align-items-start">
-                  <div>
+                  <div class="flex-grow-1">
                     <h5 class="card-title">
                       {{ endereco.nome || (endereco.tipo | titlecase) }}
                       <span *ngIf="endereco.principal" class="badge bg-success ms-2">Principal</span>
                     </h5>
-                    <p class="card-text text-muted">
+                    <p class="card-text text-muted mb-2">
                       {{ endereco.logradouro }}, {{ endereco.numero }} <span *ngIf="endereco.complemento">- {{ endereco.complemento }}</span><br>
                       {{ endereco.bairro }} - {{ endereco.cidade }}, {{ endereco.estado }} - CEP: {{ endereco.cep }}
                     </p>
                   </div>
                   <div class="dropdown">
-                    <button class="btn btn-sm btn-light" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                      <i class="fas fa-ellipsis-v"></i>
+                    <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      <i class="fas fa-cog"></i>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
-                      <li><a class="dropdown-item" (click)="openModal(endereco)"><i class="fas fa-edit me-2"></i> Editar</a></li>
+                      <li><a class="dropdown-item" (click)="openAddressModal(endereco)"><i class="fas fa-edit me-2"></i> Editar</a></li>
                       <li *ngIf="!endereco.principal"><a class="dropdown-item" (click)="setPrincipal(endereco.enderecoId)"><i class="fas fa-star me-2"></i> Definir como Principal</a></li>
                       <li><hr class="dropdown-divider"></li>
                       <li><a class="dropdown-item text-danger" (click)="deleteEndereco(endereco.enderecoId)"><i class="fas fa-trash-alt me-2"></i> Excluir</a></li>
@@ -108,12 +111,12 @@
       </div>
       <ng-template #noAddress>
         <div class="card">
-          <div class="card-body text-center py-5">
-            <i class="fas fa-map-marked-alt fa-4x text-muted mb-4"></i>
-            <h4 class="text-muted mb-3">Nenhum endereço cadastrado</h4>
-            <p class="text-muted mb-4">Adicione um endereço para facilitar suas compras e participações.</p>
-            <button class="btn btn-primary btn-lg" (click)="openModal()">
-              <i class="fas fa-plus me-2"></i> Adicionar Primeiro Endereço
+          <div class="card-body text-center py-4">
+            <i class="fas fa-map-marked-alt fa-3x text-muted mb-3"></i>
+            <h5 class="text-muted mb-2">Nenhum endereço cadastrado</h5>
+            <p class="text-muted mb-3">Adicione um endereço para facilitar suas compras e participações.</p>
+            <button class="btn btn-primary" (click)="openAddressModal()">
+              <i class="fas fa-plus me-2"></i> Adicionar Endereço
             </button>
           </div>
         </div>
@@ -130,12 +133,6 @@
               Meus Cães
               <span class="badge bg-secondary ms-2">{{ userDogs.length }}</span>
             </h3>
-          </div>
-          <div class="col-md-4 text-md-end">
-            <button class="btn btn-success" (click)="onAddDog()">
-              <i class="fas fa-plus me-2"></i>
-              Cadastrar Cão
-            </button>
           </div>
         </div>
       </div>
@@ -166,13 +163,13 @@
       </div>
       <ng-template #noDogs>
         <div class="card">
-          <div class="card-body text-center py-5">
-            <i class="fas fa-dog fa-4x text-muted mb-4"></i>
-            <h4 class="text-muted mb-3">Nenhum cão cadastrado</h4>
-            <p class="text-muted mb-4">Cadastre seu primeiro cão para participar da ExpoDog e outros eventos!</p>
-            <button class="btn btn-primary btn-lg" (click)="onAddDog()">
+          <div class="card-body text-center py-4">
+            <i class="fas fa-dog fa-3x text-muted mb-3"></i>
+            <h5 class="text-muted mb-2">Nenhum cão cadastrado</h5>
+            <p class="text-muted mb-3">Cadastre seu primeiro cão para participar da ExpoDog e outros eventos!</p>
+            <button class="btn btn-success" (click)="onAddDog()">
               <i class="fas fa-plus me-2"></i>
-              Cadastrar Primeiro Cão
+              Cadastrar Cão
             </button>
           </div>
         </div>
@@ -181,87 +178,19 @@
 
   </div>
 
+  <!-- Profile Edit Modal -->
+  <app-profile-edit-modal
+    [isOpen]="isProfileEditModalOpen"
+    [user]="user"
+    (closeModal)="closeProfileEditModal()"
+    (profileUpdated)="onProfileUpdated($event)">
+  </app-profile-edit-modal>
+
   <!-- Address Modal -->
-  <div class="modal-backdrop" *ngIf="isModalOpen"></div>
-  <div class="modal" [class.show]="isModalOpen" *ngIf="isModalOpen">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-      <div class="modal-content">
-        <form [formGroup]="enderecoForm" (ngSubmit)="saveEndereco()">
-          <div class="modal-header">
-            <h5 class="modal-title">{{ currentEnderecoId ? 'Editar Endereço' : 'Adicionar Novo Endereço' }}</h5>
-            <button type="button" class="btn-close" (click)="closeModal()"></button>
-          </div>
-          <div class="modal-body">
-            <div class="row">
-              <div class="col-md-6 mb-3">
-                <label for="tipo" class="form-label">Tipo</label>
-                <select id="tipo" class="form-select" formControlName="tipo">
-                  <option value="RESIDENCIAL">Residencial</option>
-                  <option value="COMERCIAL">Comercial</option>
-                  <option value="ENTREGA">Entrega</option>
-                  <option value="COBRANCA">Cobrança</option>
-                  <option value="OUTRO">Outro</option>
-                </select>
-              </div>
-              <div class="col-md-6 mb-3">
-                <label for="nome" class="form-label">Apelido do Endereço <span class="text-muted">(Opcional)</span></label>
-                <input type="text" id="nome" class="form-control" formControlName="nome" placeholder="Ex: Casa, Trabalho">
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-4 mb-3">
-                <label for="cep" class="form-label">CEP *</label>
-                <div class="input-group">
-                  <input type="text" id="cep" class="form-control" formControlName="cep" placeholder="00000-000" (input)="formatCep($event)" (change)="onCepChange($event)">
-                  <span class="input-group-text" *ngIf="isCepLoading"><div class="spinner-border spinner-border-sm"></div></span>
-                  <span class="input-group-text" *ngIf="cepStatus === 'success'"><i class="fas fa-check text-success"></i></span>
-                  <span class="input-group-text" *ngIf="cepStatus === 'error'"><i class="fas fa-times text-danger"></i></span>
-                </div>
-              </div>
-              <div class="col-md-8 mb-3">
-                <label for="logradouro" class="form-label">Logradouro *</label>
-                <input type="text" id="logradouro" class="form-control" formControlName="logradouro" placeholder="Rua, Avenida...">
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-4 mb-3">
-                <label for="numero" class="form-label">Número *</label>
-                <input type="text" id="numero" class="form-control" formControlName="numero" placeholder="Ex: 123">
-              </div>
-              <div class="col-md-8 mb-3">
-                <label for="complemento" class="form-label">Complemento <span class="text-muted">(Opcional)</span></label>
-                <input type="text" id="complemento" class="form-control" formControlName="complemento" placeholder="Apto, Bloco, Casa...">
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-6 mb-3">
-                <label for="bairro" class="form-label">Bairro *</label>
-                <input type="text" id="bairro" class="form-control" formControlName="bairro">
-              </div>
-              <div class="col-md-4 mb-3">
-                <label for="cidade" class="form-label">Cidade *</label>
-                <input type="text" id="cidade" class="form-control" formControlName="cidade">
-              </div>
-              <div class="col-md-2 mb-3">
-                <label for="estado" class="form-label">Estado *</label>
-                <input type="text" id="estado" class="form-control" formControlName="estado">
-              </div>
-            </div>
-            <div class="mb-3">
-              <label for="pontoReferencia" class="form-label">Ponto de Referência <span class="text-muted">(Opcional)</span></label>
-              <input type="text" id="pontoReferencia" class="form-control" formControlName="pontoReferencia">
-            </div>
-            <div class="form-check form-switch">
-              <input class="form-check-input" type="checkbox" role="switch" id="principal" formControlName="principal">
-              <label class="form-check-label" for="principal">Definir como endereço principal</label>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancelar</button>
-            <button type="submit" class="btn btn-primary" [disabled]="enderecoForm.invalid || isCepLoading">Salvar Endereço</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
+  <app-address-modal
+    [isOpen]="isAddressModalOpen"
+    [address]="currentEditingAddress"
+    (closeModal)="closeAddressModal()"
+    (addressSaved)="onAddressSaved($event)">
+  </app-address-modal>
 </div>
