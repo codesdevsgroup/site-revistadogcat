@@ -1,8 +1,9 @@
-import { Component, OnInit, Input, HostListener, ElementRef } from '@angular/core';
+import { Component, OnInit, Input, HostListener, ElementRef, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { User } from '../../services/auth.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-profile-menu',
@@ -11,13 +12,15 @@ import { User } from '../../services/auth.service';
   templateUrl: './profile-menu.html',
   styleUrls: ['./profile-menu.scss']
 })
-export class ProfileMenu implements OnInit {
+export class ProfileMenu implements OnInit, OnDestroy {
   @Input() context: 'public' | 'admin' = 'public';
   @Input() showUserInfo: boolean = true;
 
   user: User | null = null;
   isDropdownOpen = false;
   canAccessAdminPanel = false;
+
+  private userSubscription: Subscription | undefined;
 
   constructor(
     private authService: AuthService,
@@ -26,8 +29,14 @@ export class ProfileMenu implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.user = this.authService.getCurrentUser();
-    this.canAccessAdminPanel = this.authService.hasAdminAccess();
+    this.userSubscription = this.authService.currentUser$.subscribe(user => {
+      this.user = user;
+      this.canAccessAdminPanel = this.authService.hasAdminAccess();
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.userSubscription?.unsubscribe();
   }
 
   @HostListener('document:click', ['$event'])
@@ -101,7 +110,6 @@ export class ProfileMenu implements OnInit {
     }
   }
 
-  // Método adicionado de volta para corrigir o erro de build
   isAdminContext(): boolean {
     return this.context === 'admin';
   }

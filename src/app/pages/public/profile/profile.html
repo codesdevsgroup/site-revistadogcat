@@ -23,7 +23,7 @@
             <i class="fas fa-user-circle me-3"></i>
             Meu Perfil
           </h1>
-          <p class="text-muted">Gerencie suas informações pessoais, endereços e seus cães cadastrados</p>
+          <p class="text-muted">Gerencie suas informações pessoais e endereços.</p>
         </div>
         <div class="col-md-4 text-md-end">
           <button class="btn btn-primary" (click)="onEditProfile()">
@@ -46,13 +46,6 @@
             <div class="col-md-6 mb-3"><label class="form-label fw-bold">E-mail</label><p class="form-control-plaintext">{{ user.email || 'Não informado' }}</p></div>
             <div class="col-md-6 mb-3"><label class="form-label fw-bold">Telefone</label><p class="form-control-plaintext">{{ user.telefone || 'Não informado' }}</p></div>
             <div class="col-md-6 mb-3"><label class="form-label fw-bold">CPF</label><p class="form-control-plaintext">{{ user.cpf || 'Não informado' }}</p></div>
-            <div class="col-md-6 mb-3">
-              <label class="form-label fw-bold">Data de Nascimento</label>
-              <p class="form-control-plaintext">
-                <span *ngIf="user.birthDate">{{ user.birthDate | date:'dd/MM/yyyy' }}</span>
-                <span *ngIf="!user.birthDate">Não informado</span>
-              </p>
-            </div>
             <div class="col-md-6 mb-3"><label class="form-label fw-bold">Tipo de Usuário</label><p class="form-control-plaintext"><span class="badge bg-primary">{{ getRoleDisplayName(user.role) }}</span></p></div>
           </div>
         </div>
@@ -61,116 +54,18 @@
 
     <!-- Address Info -->
     <div class="profile-section">
-      <div class="section-header">
+      <div class="section-header d-flex justify-content-between align-items-center">
         <h3><i class="fas fa-map-marker-alt me-2"></i> Meus Endereços</h3>
-        <!-- Debug Info -->
-        <div class="alert alert-info mt-2" style="font-size: 0.8em;">
-          <strong>Debug:</strong>
-          Loading: {{ loading }} |
-          Error: {{ error || 'Nenhum' }} |
-          Endereços Array Length: {{ enderecos.length || 0 }} |
-          User ID: {{ user.userId || 'N/A' }}
-          <br>
-          <button class="btn btn-sm btn-warning mt-1" (click)="debugLoadEnderecos()">
-            🔧 Testar Carregamento de Endereços
-          </button>
-        </div>
-      </div>
-      <div *ngIf="enderecos.length > 0; else noAddress">
-        <div class="row">
-          <div class="col-lg-6 mb-3" *ngFor="let endereco of enderecos">
-            <div class="card address-card" [class.principal]="endereco.principal">
-              <div class="card-body">
-                <div class="d-flex justify-content-between align-items-start">
-                  <div class="flex-grow-1">
-                    <h5 class="card-title">
-                      {{ endereco.nome || (endereco.tipo | titlecase) }}
-                      <span *ngIf="endereco.principal" class="badge bg-success ms-2">Principal</span>
-                    </h5>
-                    <p class="card-text text-muted mb-2">
-                      {{ endereco.logradouro }}, {{ endereco.numero }} <span *ngIf="endereco.complemento">- {{ endereco.complemento }}</span><br>
-                      {{ endereco.bairro }} - {{ endereco.cidade }}, {{ endereco.estado }} - CEP: {{ endereco.cep }}
-                    </p>
-                  </div>
-                  <div class="dropdown">
-                    <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                      <i class="fas fa-cog"></i>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                      <li><a class="dropdown-item" (click)="openAddressModal(endereco)"><i class="fas fa-edit me-2"></i> Editar</a></li>
-                      <li *ngIf="!endereco.principal"><a class="dropdown-item" (click)="setPrincipal(endereco.enderecoId)"><i class="fas fa-star me-2"></i> Definir como Principal</a></li>
-                      <li><hr class="dropdown-divider"></li>
-                      <li><a class="dropdown-item text-danger" (click)="deleteEndereco(endereco.enderecoId)"><i class="fas fa-trash-alt me-2"></i> Excluir</a></li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <button class="btn btn-success btn-sm" (click)="openAddressModal()">
+          <i class="fas fa-plus me-2"></i> Adicionar Endereço
+        </button>
       </div>
       <ng-template #noAddress>
         <div class="card">
           <div class="card-body text-center py-4">
             <i class="fas fa-map-marked-alt fa-3x text-muted mb-3"></i>
             <h5 class="text-muted mb-2">Nenhum endereço cadastrado</h5>
-            <p class="text-muted mb-3">Adicione um endereço para facilitar suas compras e participações.</p>
-            <button class="btn btn-primary" (click)="openAddressModal()">
-              <i class="fas fa-plus me-2"></i> Adicionar Endereço
-            </button>
-          </div>
-        </div>
-      </ng-template>
-    </div>
-
-    <!-- Dogs List -->
-    <div class="profile-section">
-      <div class="section-header">
-        <div class="row align-items-center">
-          <div class="col-md-8">
-            <h3>
-              <i class="fas fa-dog me-2"></i>
-              Meus Cães
-              <span class="badge bg-secondary ms-2">{{ userDogs.length }}</span>
-            </h3>
-          </div>
-        </div>
-      </div>
-      <div *ngIf="userDogs.length > 0; else noDogs">
-        <div class="row">
-          <div class="col-lg-6 mb-4" *ngFor="let dog of userDogs">
-            <div class="card dog-card">
-              <div class="card-body">
-                <div class="d-flex justify-content-between align-items-start mb-3">
-                  <h5 class="card-title mb-0">
-                    <i class="fas fa-paw me-2 text-primary"></i>
-                    {{ dog.name }}
-                  </h5>
-                  <button class="btn btn-sm btn-outline-primary" (click)="onEditDog(dog.id)">
-                    <i class="fas fa-edit"></i>
-                  </button>
-                </div>
-                <div class="dog-info">
-                  <div class="info-item"><strong>Raça:</strong> {{ dog.breed }}</div>
-                  <div class="info-item"><strong>Idade:</strong> {{ dog.age }} anos</div>
-                  <div class="info-item"><strong>Sexo:</strong> {{ dog.gender }}</div>
-                  <div class="info-item"><strong>Cadastrado em:</strong> {{ dog.registrationDate | date:'dd/MM/yyyy' }}</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <ng-template #noDogs>
-        <div class="card">
-          <div class="card-body text-center py-4">
-            <i class="fas fa-dog fa-3x text-muted mb-3"></i>
-            <h5 class="text-muted mb-2">Nenhum cão cadastrado</h5>
-            <p class="text-muted mb-3">Cadastre seu primeiro cão para participar da ExpoDog e outros eventos!</p>
-            <button class="btn btn-success" (click)="onAddDog()">
-              <i class="fas fa-plus me-2"></i>
-              Cadastrar Cão
-            </button>
+            <p class="text-muted mb-3">Adicione um endereço para ver seus detalhes aqui.</p>
           </div>
         </div>
       </ng-template>

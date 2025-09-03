@@ -52,9 +52,9 @@ Esta documentação descreve os endpoints da API para o gerenciamento de artigos
   ```
 - **Resposta de Sucesso (201 Created):** Retorna o artigo recém-criado.
 - **Respostas de Erro:**
-  - `400 Bad Request`: Dados inválidos.
-  - `401 Unauthorized`: Token JWT inválido ou ausente.
-  - `403 Forbidden`: O usuário não tem a role necessária.
+    - `400 Bad Request`: Dados inválidos.
+    - `401 Unauthorized`: Token JWT inválido ou ausente.
+    - `403 Forbidden`: O usuário não tem a role necessária.
 
 ### 2. 🔒 Listar Todos os Artigos (Admin)
 
@@ -75,7 +75,7 @@ Esta documentação descreve os endpoints da API para o gerenciamento de artigos
 - **Endpoint:** `GET /artigos/destaques`
 - **Descrição:** Retorna uma lista dos artigos em destaque.
 - **Parâmetros de Query:**
-  - `limit` (opcional): Número máximo de artigos a serem retornados. Padrão: `5`.
+    - `limit` (opcional): Número máximo de artigos a serem retornados. Padrão: `5`.
 - **Resposta de Sucesso (200 OK):** `ArtigoResponseDto[]`
 
 ### 5. Obter Artigo por ID
@@ -83,7 +83,7 @@ Esta documentação descreve os endpoints da API para o gerenciamento de artigos
 - **Endpoint:** `GET /artigos/{id}`
 - **Descrição:** Retorna os detalhes de um artigo específico.
 - **Parâmetros de Query:**
-  - `incrementView` (opcional): Se `true`, incrementa o contador de visualizações.
+    - `incrementView` (opcional): Se `true`, incrementa o contador de visualizações.
 - **Resposta de Sucesso (200 OK):** `ArtigoResponseDto`
 - **Resposta de Erro (404 Not Found):** Se o artigo não for encontrado.
 

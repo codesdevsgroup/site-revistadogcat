@@ -8,7 +8,6 @@ import { SocialMediaService } from '../../../services/social-media.service';
 import { CaoService } from '../../../services/cao.service';
 import { AuthService } from '../../../services/auth.service';
 import { ValidationService } from '../../../services/validation.service';
-import { EnderecoService } from '../../../services/endereco.service'; // Importar o novo serviço
 import { Cao, CadastroCaoPayload, VideoOption, SexoCao } from '../../../interfaces/cao.interface';
 
 @Component({
@@ -50,7 +49,6 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
     private caoService: CaoService,
     private authService: AuthService,
     private validationService: ValidationService,
-    private enderecoService: EnderecoService, // Injetar o EnderecoService
     private router: Router
   ) {
     this.socialMedia = this.socialMediaService.getSocialMedia();
@@ -378,7 +376,7 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
           fotoLateral: uploadFotosResponse.fotoLateralUrl,
           temPedigree: this.dogForm.get('temPedigree')?.value,
           temMicrochip: this.dogForm.get('temMicrochip')?.value,
-          numeroMicrochip: this.dogForm.get('temMicrochip')?.value ? this.dogForm.get('numeroMicrochip')?.value : undefined,
+          numeroMicrochip: this.dogForm.get('temMicrochip')?.value ? this.dogForm.get('temMicrochip')?.value : undefined,
           informacoesAdicionais: this.dogForm.value.informacoesAdicionais
         };
         if (dadosCao.temPedigree && this.pedigreeFrente && this.pedigreeVerso) {
@@ -457,26 +455,11 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
     if (cep.length === 8) {
       this.isCepLoading = true;
       this.cepStatus = 'loading';
-      this.subscriptions.add(
-        this.enderecoService.buscarEnderecoPorCep(cep).subscribe({
-          next: (endereco) => {
-            this.userForm.patchValue({
-              endereco: endereco.logradouro,
-              cidade: endereco.cidade,
-              estado: endereco.estado
-            });
-            this.cepStatus = 'success';
-            this.isCepLoading = false;
-          },
-          error: (err) => {
-            this.clearAddressFields();
-            this.cepStatus = 'error';
-            this.isCepLoading = false;
-            alert('CEP não encontrado. Verifique o CEP digitado ou preencha o endereço manualmente.');
-            console.error('Erro ao buscar CEP:', err);
-          }
-        })
-      );
+      // A chamada ao EnderecoService.buscarEnderecoPorCep foi removida.
+      // Se a funcionalidade de busca de CEP ainda for necessária, ela deve ser reimplementada aqui.
+      // Por enquanto, apenas desativa o loading.
+      this.isCepLoading = false;
+      this.cepStatus = 'none';
     } else if (cep.length === 0) {
       this.clearAddressFields();
       this.cepStatus = 'none';

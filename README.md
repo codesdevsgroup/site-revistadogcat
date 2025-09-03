@@ -1,130 +1,177 @@
-# Revista Dog & Cat BR - Website
+# Documentação da API de Usuários
 
-Este é o repositório oficial do site da **Revista Dog & Cat BR**, uma plataforma de conteúdo dedicada a apaixonados por cães e gatos. O site oferece acesso às edições digitais da revista, informações sobre eventos, e um espaço para criadores e anunciantes.
+Esta documentação descreve os endpoints para gerenciamento de usuários.
 
-Este projeto foi gerado com [Angular CLI](https://github.com/angular/angular-cli) versão 20.1.6.
+**Prefixo da Rota:** `/users`
 
-## ✨ Funcionalidades
+---
 
-- **Leitor de Revistas Interativo:** Visualize as edições da revista com um efeito de virar a página (flipbook) em 3D.
-- **Expo Dog BR:** Participe da primeira mostra de cães 100% online do Brasil, com um formulário de cadastro completo.
-- **Anuncie Conosco:** Uma seção dedicada para empresas e marcas que desejam anunciar na revista.
-- **Design Moderno e Responsivo:** Interface amigável e adaptada para todos os dispositivos.
+## Modelos de Dados e Enums
 
-## 🚀 Tecnologias Utilizadas
+### Objeto User (Resposta Pública)
 
-- **[Angular](https://angular.io/):** Framework principal para a construção da interface.
-- **[Bootstrap](https://getbootstrap.com/):** Para a criação de layouts responsivos.
-- **[Font Awesome](https://fontawesome.com/):** Biblioteca de ícones.
-- **[Notyf](https://github.com/caroso1222/notyf):** Para notificações e alertas (toast).
-- **[DearFlip.js](https://dearflip.com/):** Para o leitor de revistas com efeito flipbook 3D.
-- **[Bun](https://bun.sh/):** Usado como um runtime JavaScript alternativo e rápido.
+Este é o objeto de usuário padrão retornado pela maioria dos endpoints.
 
-## ⚙️ Como Começar
+| Campo | Tipo | Descrição |
+| --- | --- | --- |
+| `userId` | `string` | Identificador único do usuário. |
+| `userName` | `string` | Nome de usuário. |
+| `name` | `string` | Nome completo do usuário. |
+| `email` | `string` | Endereço de e-mail do usuário. |
+| `cpf` | `string` | (Opcional) CPF do usuário. |
+| `avatarUrl` | `string` | URL da imagem de perfil. |
+| `role` | `Role` | Nível de acesso do usuário. |
+| `active` | `boolean`| Se a conta do usuário está ativa. |
+| `createdAt` | `string` | Data de criação da conta. |
+| `endereco` | `Endereco` | Objeto contendo o **endereço principal** do usuário. Se não houver, os campos virão vazios. |
 
-### Pré-requisitos
+### Objeto User (Resposta Completa - `FullUserDto`)
 
-- [Node.js](https://nodejs.org/) (versão 18 ou superior)
-- [Angular CLI](https://angular.io/cli)
-- [Bun](https://bun.sh/) (opcional, para usar os scripts `bun:*`)
+Este objeto é retornado **apenas** pelo endpoint `GET /users/me` e inclui todos os dados do usuário.
 
-### Instalação e Execução
+| Campo | Tipo | Descrição |
+| --- | --- | --- |
+| *(todos os campos da Resposta Pública)* | | |
+| `telefone` | `string` | (Opcional) Telefone do usuário. |
+| `enderecos` | `Endereco[]` | Uma **lista completa** de todos os endereços cadastrados para o usuário. |
 
-1.  Clone o repositório:
-    ```bash
-    git clone https://github.com/seu-usuario/site-revistadogcat.git
-    cd site-revistadogcat
-    ```
+### Objeto Endereco
 
-2.  Instale as dependências:
-    ```bash
-    npm install
-    ```
+| Campo | Tipo | Descrição |
+| --- | --- | --- |
+| `logradouro` | `string` | Rua, avenida, etc. |
+| `numero` | `string` | Número do imóvel. |
+| `complemento`| `string` | (Opcional) Complemento do endereço. |
+| `bairro` | `string` | Bairro. |
+| `cidade` | `string` | Cidade. |
+| `estado` | `string` | Sigla do estado (UF). |
+| `cep` | `string` | Código de Endereçamento Postal. |
 
-3.  Inicie o servidor de desenvolvimento:
-    ```bash
-    ng serve
-    ```
-    ou com Bun:
-    ```bash
-    bun run ng serve
-    ```
+### Enum: `Role`
 
-4.  Abra seu navegador e acesse `http://localhost:4200/`.
+| Valor | Descrição |
+| --- | --- |
+| `USUARIO` | Usuário padrão com acesso a conteúdo público. |
+| `DONO_PET_APROVADO` | Dono de pet com cadastro verificado. |
+| `ASSINANTE` | Usuário com assinatura premium ativa. |
+| `DONO_PET_APROVADO_ASSINANTE` | Dono de pet verificado e assinante. |
+| `EDITOR` | Permissão para criar e gerenciar artigos. |
+| `ADMIN` | Acesso total ao sistema. |
+| `FUNCIONARIO` | Acesso a funcionalidades internas específicas. |
 
-## 📂 Estrutura do Projeto
+---
 
-O projeto segue a estrutura padrão do Angular, com as seguintes pastas principais dentro de `src/app`:
+## Endpoints de Gerenciamento de Usuários (`/users`)
 
--   `components/`: Componentes reutilizáveis (navbar, footer, etc.).
--   `pages/`: Componentes que representam as páginas principais do site (home, edições, etc.).
--   `services/`: Serviços para lógica de negócio e comunicação com APIs.
+### 1. Listar Usuários
 
-## 🔗 Dependências Externas (CDN)
+- **Endpoint:** `GET /users`
+- **Autenticação:** 🔒 `ADMIN`
+- **Descrição:** Retorna uma lista paginada de todos os usuários.
+- **Query Params:** `page`, `limit`, `search`, `role`.
+- **Resposta (200 OK):** Objeto de paginação com a lista de usuários. Cada usuário na lista é um `Objeto User (Resposta Pública)`.
 
-Algumas bibliotecas são carregadas via CDN no arquivo `src/index.html` para otimizar o build inicial:
+### 2. Obter Perfil Completo do Usuário Autenticado
 
--   **jQuery:** Dependência para a biblioteca DearFlip.js.
--   **DearFlip.js (CSS e JS):** Biblioteca que renderiza o leitor de revistas interativo.
--   **Font Awesome:** Para a utilização de ícones em toda a aplicação.
+- **Endpoint:** `GET /users/me`
+- **Autenticação:** 🔒 Requer `access_token`.
+- **Descrição:** Retorna o perfil **completo** do usuário que está fazendo a requisição.
+- **Resposta (200 OK):** `Objeto User (Resposta Completa - FullUserDto)`.
+  ```json
+  {
+    "userId": "cly123abcde",
+    "name": "João da Silva",
+    "email": "joao.silva@example.com",
+    "cpf": "111.222.333-44",
+    "telefone": "(11) 99999-8888",
+    // ... outros campos
+    "endereco": { // Endereço principal
+      "logradouro": "Rua Principal",
+      "numero": "100",
+      "complemento": null,
+      "bairro": "Centro",
+      "cidade": "São Paulo",
+      "estado": "SP",
+      "cep": "01000-000"
+    },
+    "enderecos": [ // Lista completa de endereços
+      {
+        "logradouro": "Rua Principal",
+        "numero": "100",
+        // ...
+      },
+      {
+        "logradouro": "Avenida Secundária",
+        "numero": "200",
+        // ...
+      }
+    ]
+  }
+  ```
 
-## 🛠️ Scripts Disponíveis
+### 3. Obter Usuário por ID
 
-### Comandos de Desenvolvimento
+- **Endpoint:** `GET /users/{id}`
+- **Autenticação:** 🔒 Requer `access_token`.
+- **Descrição:** Retorna o perfil público de um usuário específico.
+- **Resposta (200 OK):** `Objeto User (Resposta Pública)`.
 
-| Comando | Descrição |
-|---------|----------|
-| `npm start` | Inicia o servidor de desenvolvimento Angular (porta 4200) |
-| `npm run bun:start` | Inicia o servidor usando Bun como runtime |
-| `npm run build` | Build para desenvolvimento (sem otimizações) |
-| `npm run build:dev` | Build explícito para desenvolvimento |
-| `npm run watch` | Build contínuo com watch mode para desenvolvimento |
+### 4. Atualizar Próprio Perfil
 
-### Comandos de Produção
+- **Endpoint:** `PATCH /users/me`
+- **Autenticação:** 🔒 Requer `access_token`.
+- **Descrição:** Permite que o usuário autenticado atualize seu próprio perfil.
+- **Resposta (200 OK):** `Objeto User (Resposta Pública)` atualizado.
 
-| Comando | Descrição |
-|---------|----------|
-| `npm run build:prod` | Build otimizado para produção (minificado, tree-shaking) |
+### 5. Atualizar Dados de um Usuário
 
-### Comandos de Teste e Utilitários
+- **Endpoint:** `PATCH /users/{id}`
+- **Autenticação:** 🔒 `ADMIN`
+- **Descrição:** Permite que um administrador atualize os dados de qualquer usuário.
+- **Resposta (200 OK):** `Objeto User (Resposta Pública)` atualizado.
 
-| Comando | Descrição |
-|---------|----------|
-| `npm test` | Executa testes unitários com Karma |
-| `npm run ng` | Acesso direto ao Angular CLI |
+### 6. Upload de Avatar
 
-### Comandos Angular CLI Úteis
+- **Endpoint:** `POST /users/avatar-upload`
+- **Autenticação:** 🔒 Requer `access_token`.
+- **Descrição:** Faz o upload de uma imagem de avatar para o usuário autenticado.
+- **Corpo da Requisição:** `multipart/form-data` com o campo `avatar`.
+- **Resposta (200 OK):** `{ "avatarUrl": "..." }`
 
-```bash
-# Gerar componentes
-ng generate component nome-do-componente
-ng g c nome-do-componente
+### 7. Criar Usuário para Terceiro
 
-# Gerar serviços
-ng generate service nome-do-servico
-ng g s nome-do-servico
+- **Endpoint:** `POST /users/register-third-party`
+- **Autenticação:** Nenhuma (Endpoint público)
+- **Descrição:** Cria um novo usuário com dados básicos.
+- **Corpo da Requisição:**
+  ```json
+  {
+    "nome": "Maria Santos",
+    "email": "maria.santos@example.com",
+    "cpf": "987.654.321-00",
+    "telefone": "(11) 98888-7777"
+  }
+  ```
+- **Resposta (201 Created):** `{ "userId": "cly123abcde" }`
 
-# Gerar módulos
-ng generate module nome-do-modulo
-ng g m nome-do-modulo
+### 8. Excluir Usuário (Soft Delete)
 
-# Gerar guards
-ng generate guard nome-do-guard
-ng g g nome-do-guard
-```
+- **Endpoint:** `DELETE /users/{id}`
+- **Autenticação:** 🔒 `ADMIN`
+- **Descrição:** Desativa a conta de um usuário (soft delete).
+- **Resposta (200 OK):** `Objeto User (Resposta Pública)` atualizado.
 
-## 🌍 Ambientes de Configuração
+### 9. Restaurar Usuário
 
-O projeto possui configurações específicas para diferentes ambientes:
+- **Endpoint:** `POST /users/{id}/restore`
+- **Autenticação:** 🔒 `ADMIN`
+- **Descrição:** Reativa a conta de um usuário que foi desativada.
+- **Resposta (200 OK):** `Objeto User (Resposta Pública)` atualizado.
 
-### Desenvolvimento (`environment.ts`)
-- API local: `http://localhost:3000/api`
-- Debug e logging habilitados
-- Recursos de monitoramento desabilitados
-- Tamanho máximo de upload: 10MB
+### 10. Atualizar Role de Usuário
 
-### Produção (`environment.prod.ts`)
-- API de produção: `https://api.revistadogcat.com.br/api`
-- Otimizações de performance ativadas
-- Analytics e monitoramento habilitados
-- Tamanho máximo de upload: 5MB
+- **Endpoint:** `PATCH /users/{id}/role`
+- **Autenticação:** 🔒 `ADMIN`
+- **Descrição:** Altera o nível de acesso (role) de um usuário.
+- **Corpo da Requisição:** `{ "role": "ASSINANTE" }`
+- **Resposta (200 OK):** `Objeto User (Resposta Pública)` atualizado.
