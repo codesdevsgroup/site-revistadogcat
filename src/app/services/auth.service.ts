@@ -62,20 +62,88 @@ export class AuthService {
   private apiUrl = `${environment.apiUrl}/auth`;
   private userKey = 'auth_user';
   private refreshTokenKey = 'refresh_token'; // Key used to store in localStorage (matches backend response)
+  private accessTokenKey = 'access_token'; // Key for sessionStorage
 
   // access_token is stored in memory for better security (XSS)
   private accessToken: string | null = null;
 
+  // Flag para evitar múltiplas chamadas de logout simultâneas
+  private isLoggingOut = false;
+
   private currentUserSubject = new BehaviorSubject<User | null>(this.getUserFromStorage());
   public currentUser$ = this.currentUserSubject.asObservable();
 
-  private isAuthenticatedSubject = new BehaviorSubject<boolean>(!!this.getRefreshToken());
+  private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
   public isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
 
   constructor(
     private http: HttpClient,
     private router: Router
-  ) {}
+  ) {
+    // Inicializa o estado de autenticação de forma síncrona
+    this.initializeAuthenticationState();
+    // Agenda a inicialização para o próximo ciclo para evitar dependência circular
+    setTimeout(() => this.initializeAuth(), 0);
+  }
+
+  private initializeAuthenticationState(): void {
+    const refreshToken = this.getRefreshToken();
+    const user = this.getUserFromStorage();
+    const accessToken = sessionStorage.getItem(this.accessTokenKey);
+    
+    // Se há um access token no sessionStorage, restaura para a memória
+    if (accessToken) {
+      this.accessToken = accessToken;
+      console.log('AuthService: Access token restaurado do sessionStorage.');
+    }
+    
+    // Define o estado inicial baseado na presença de refresh token e dados válidos do usuário
+    const hasValidSession = !!(refreshToken && user && user.userId && user.email);
+    this.isAuthenticatedSubject.next(hasValidSession);
+    
+    console.log('AuthService: Estado inicial de autenticação:', hasValidSession);
+  }
+
+  private initializeAuth(): void {
+    const refreshToken = this.getRefreshToken();
+    const user = this.getUserFromStorage();
+    
+    if (refreshToken && user && !this.accessToken) {
+      console.log('AuthService: Detectado refresh token após reload, verificando validade...');
+      
+      // Verifica se há dados de usuário válidos antes de tentar refresh
+      if (!user.userId || !user.email) {
+        console.log('AuthService: Dados de usuário inválidos, limpando sessão.');
+        this.clearSession();
+        return;
+      }
+      
+      console.log('AuthService: Tentando recuperar access token...');
+      this.refreshToken().subscribe({
+        next: () => {
+          console.log('AuthService: Token recuperado com sucesso após reload.');
+          // Garante que o estado de autenticação seja atualizado
+          this.isAuthenticatedSubject.next(true);
+        },
+        error: (error) => {
+          console.log('AuthService: Falha ao recuperar token após reload:', error);
+          // Se falhar, a sessão já foi limpa pelo método refreshToken
+          // Redireciona para login se não estiver já na página de auth
+          if (!this.router.url.includes('/auth/')) {
+            this.router.navigate(['/auth/login']);
+          }
+        }
+      });
+    } else if (refreshToken && !user) {
+      // Refresh token existe mas não há dados de usuário - sessão corrompida
+      console.log('AuthService: Refresh token existe mas dados de usuário ausentes, limpando sessão.');
+      this.clearSession();
+    } else if (!refreshToken) {
+      // Não há refresh token, garante que o estado seja false
+      console.log('AuthService: Nenhum refresh token encontrado.');
+      this.isAuthenticatedSubject.next(false);
+    }
+  }
 
   login(credentials: LoginRequest): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(`${this.apiUrl}/login`, credentials)
@@ -97,11 +165,25 @@ export class AuthService {
   }
 
   logout(): void {
+    // Evita múltiplas chamadas de logout simultâneas
+    if (this.isLoggingOut) {
+      console.log('AuthService: Logout já em andamento, ignorando chamada duplicada.');
+      return;
+    }
+
+    this.isLoggingOut = true;
+    console.log('AuthService: Iniciando processo de logout...');
+
     this.http.post(`${this.apiUrl}/logout`, {}).pipe(
-      catchError(() => of(null)) // Ignore errors on logout, just clear session
+      catchError((error) => {
+        console.log('AuthService: Erro no logout do servidor (ignorado):', error);
+        return of(null); // Ignore errors on logout, just clear session
+      })
     ).subscribe(() => {
+      console.log('AuthService: Limpando sessão e redirecionando...');
       this.clearSession();
       this.router.navigate(['/auth/login']);
+      this.isLoggingOut = false;
     });
   }
 
@@ -120,6 +202,7 @@ export class AuthService {
         this.handleAuthentication(response.data.access_token, response.data.refresh_token, response.data.user);
       }),
       catchError((error) => {
+        console.log('AuthService: Erro no refresh token, limpando sessão:', error);
         this.clearSession();
         this.router.navigate(['/auth/login']);
         return throwError(() => error);
@@ -138,7 +221,21 @@ export class AuthService {
   }
 
   getAccessToken(): string | null {
-    return this.accessToken;
+    // Se já temos o token em memória, retorna
+    if (this.accessToken) {
+      return this.accessToken;
+    }
+
+    // Tenta recuperar do sessionStorage (persiste durante a sessão)
+    const storedToken = sessionStorage.getItem(this.accessTokenKey);
+    if (storedToken) {
+      console.log('AuthService: Access token recuperado do sessionStorage.');
+      this.accessToken = storedToken;
+      return this.accessToken;
+    }
+
+    console.log('AuthService: Nenhum access token disponível.');
+    return null;
   }
 
   getRefreshToken(): string | null {
@@ -155,6 +252,8 @@ export class AuthService {
   public setTokens(accessToken: string, refreshToken: string): void {
     console.log('AuthService: Salvando tokens. AccessToken (memória): ', accessToken ? 'presente' : 'ausente', '; RefreshToken (localStorage): ', refreshToken ? 'presente' : 'ausente');
     this.accessToken = accessToken;
+    // Armazena o access token no sessionStorage para persistir durante a sessão
+    sessionStorage.setItem(this.accessTokenKey, accessToken);
     localStorage.setItem(this.refreshTokenKey, refreshToken);
     this.isAuthenticatedSubject.next(true);
     console.log('AuthService: Tokens salvos. RefreshToken no localStorage agora é:', localStorage.getItem(this.refreshTokenKey));
@@ -178,11 +277,13 @@ export class AuthService {
   public clearSession(): void {
     console.log('AuthService: Limpando sessão...');
     this.accessToken = null;
+    this.isLoggingOut = false; // Reset da flag de logout
+    sessionStorage.removeItem(this.accessTokenKey);
     localStorage.removeItem(this.refreshTokenKey);
     localStorage.removeItem(this.userKey);
     this.currentUserSubject.next(null);
     this.isAuthenticatedSubject.next(false);
-    console.log('AuthService: Sessão limpa.');
+    console.log('AuthService: Sessão limpa e flags resetadas.');
   }
 
   private getUserFromStorage(): User | null {
