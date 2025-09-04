@@ -53,8 +53,34 @@
         <!-- Bloco de Autenticação Dinâmico -->
         <ng-container *ngIf="isAuthenticated$ | async; else loginButton">
           <!-- Mostrado quando o usuário ESTÁ logado -->
-          <li class="nav-item profile-menu-item">
-            <app-profile-menu></app-profile-menu>
+          <li class="nav-item">
+            <div class="menu-user" [class.open]="userMenuOpen">
+              <button class="user-button" (click)="toggleUserMenu()">
+                <div class="user-avatar">
+                  <i class="fas fa-user"></i>
+                </div>
+                <div class="user-info">
+                  <span class="user-name">{{ username }}</span>
+                </div>
+                <i class="fas fa-chevron-down user-arrow"></i>
+              </button>
+
+              <div class="user-dropdown" *ngIf="userMenuOpen">
+                <button type="button" class="dropdown-item" (click)="navigateToProfile()">
+                  <i class="fas fa-user-circle"></i>
+                  <span>Meu Perfil</span>
+                </button>
+                <button *ngIf="canAccessAdminPanel()" type="button" class="dropdown-item" (click)="navigateToAdminPanel()">
+                  <i class="fas fa-tachometer-alt"></i>
+                  <span>Painel</span>
+                </button>
+                <hr class="dropdown-divider">
+                <button type="button" class="dropdown-item logout" (click)="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Sair</span>
+                  </button>
+              </div>
+            </div>
           </li>
         </ng-container>
 
