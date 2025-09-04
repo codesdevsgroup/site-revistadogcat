@@ -87,43 +87,40 @@ export class AuthService {
   }
 
   private initializeAuthenticationState(): void {
-    const refreshToken = this.getRefreshToken();
-    const user = this.getUserFromStorage();
     const accessToken = sessionStorage.getItem(this.accessTokenKey);
-    
-    // Se há um access token no sessionStorage, restaura para a memória
+
+    // If an access token is present in sessionStorage, restore it to memory and set authenticated state to true
     if (accessToken) {
       this.accessToken = accessToken;
-      console.log('AuthService: Access token restaurado do sessionStorage.');
+      this.isAuthenticatedSubject.next(true);
+      console.log('AuthService: Access token restaurado do sessionStorage. Estado de autenticação: true');
+    } else {
+      // If no access token, assume not authenticated initially.
+      // initializeAuth will handle refresh token logic.
+      this.isAuthenticatedSubject.next(false);
+      console.log('AuthService: Nenhum access token encontrado no sessionStorage. Estado de autenticação: false');
     }
-    
-    // Define o estado inicial baseado na presença de refresh token e dados válidos do usuário
-    const hasValidSession = !!(refreshToken && user && user.userId && user.email);
-    this.isAuthenticatedSubject.next(hasValidSession);
-    
-    console.log('AuthService: Estado inicial de autenticação:', hasValidSession);
   }
 
   private initializeAuth(): void {
     const refreshToken = this.getRefreshToken();
     const user = this.getUserFromStorage();
-    
+
     if (refreshToken && user && !this.accessToken) {
       console.log('AuthService: Detectado refresh token após reload, verificando validade...');
-      
+
       // Verifica se há dados de usuário válidos antes de tentar refresh
       if (!user.userId || !user.email) {
         console.log('AuthService: Dados de usuário inválidos, limpando sessão.');
         this.clearSession();
         return;
       }
-      
+
       console.log('AuthService: Tentando recuperar access token...');
       this.refreshToken().subscribe({
         next: () => {
           console.log('AuthService: Token recuperado com sucesso após reload.');
-          // Garante que o estado de autenticação seja atualizado
-          this.isAuthenticatedSubject.next(true);
+          // isAuthenticatedSubject.next(true) is already handled in setTokens via handleAuthentication
         },
         error: (error) => {
           console.log('AuthService: Falha ao recuperar token após reload:', error);
@@ -195,25 +192,29 @@ export class AuthService {
     }
 
     // Send the refresh token with the key 'refresh_token' (snake_case) as expected by the backend
-    return this.http.post<RefreshResponse>(`${this.apiUrl}/refresh`, { refresh_token: storedRefreshToken }).pipe(
+    const refreshUrl = `${this.apiUrl}/refresh`;
+    return this.http.post<RefreshResponse>(refreshUrl, { refresh_token: storedRefreshToken }).pipe(
       tap(response => {
-        console.log('AuthService: Resposta do refresh token recebida:', response);
         // Access data from the 'data' property
         this.handleAuthentication(response.data.access_token, response.data.refresh_token, response.data.user);
       }),
       catchError((error) => {
-        console.log('AuthService: Erro no refresh token, limpando sessão:', error);
-        this.clearSession();
-        this.router.navigate(['/auth/login']);
+        // Só limpa a sessão se for erro 401/403 (refresh token inválido)
+        // Para outros erros (rede, servidor), mantém o refresh token
+        if (error.status === 401 || error.status === 403) {
+          this.clearSession();
+          this.router.navigate(['/auth/login']);
+        } else {
+          // Apenas limpa o access token em memória e sessionStorage
+          this.clearAccessToken();
+        }
         return throwError(() => error);
       })
     );
   }
 
   isAuthenticated(): boolean {
-    // Verifica se há um refresh token no localStorage para determinar se está autenticado
-    // O access_token em memória pode ser nulo se a página for recarregada
-    return !!this.getRefreshToken();
+    return this.isAuthenticatedSubject.value;
   }
 
   getCurrentUser(): User | null {
@@ -274,8 +275,19 @@ export class AuthService {
     }
   }
 
+  /**
+   * Limpa apenas o access token (memória e sessionStorage)
+   * Mantém o refresh token e dados do usuário
+   */
+  private clearAccessToken(): void {
+    this.accessToken = null;
+    sessionStorage.removeItem(this.accessTokenKey);
+  }
+
+  /**
+   * Limpa toda a sessão (access token, refresh token e dados do usuário)
+   */
   public clearSession(): void {
-    console.log('AuthService: Limpando sessão...');
     this.accessToken = null;
     this.isLoggingOut = false; // Reset da flag de logout
     sessionStorage.removeItem(this.accessTokenKey);
@@ -283,7 +295,6 @@ export class AuthService {
     localStorage.removeItem(this.userKey);
     this.currentUserSubject.next(null);
     this.isAuthenticatedSubject.next(false);
-    console.log('AuthService: Sessão limpa e flags resetadas.');
   }
 
   private getUserFromStorage(): User | null {
