@@ -67,6 +67,28 @@ export class ArtigosService {
   }
 
   /**
+   * Lista artigos em destaque (público)
+   * API docs: GET /artigos/destaques?limit=5 -> ArtigoResponseDto[]
+   */
+  listarDestaques(limit = 9): Observable<Artigo[]> {
+    let params = new HttpParams().set('limit', limit);
+    return this.http.get<Artigo[]>(`${this.apiUrl}/destaques`, { params });
+  }
+
+  /**
+   * Lista artigos publicados (público)
+   * API docs: GET /artigos/publicados -> ArtigosListResponseDto (paginação)
+   * Para simplificar o componente de destaque, retornamos apenas um array de artigos quando possível.
+   */
+  listarPublicados(limit = 9, page = 1, sort = 'dataPublicacao:desc'): Observable<Artigo[]> {
+    let params = new HttpParams()
+      .set('limit', limit)
+      .set('page', page)
+      .set('sort', sort);
+    return this.http.get<Artigo[]>(`${this.apiUrl}/publicados`, { params });
+  }
+
+  /**
    * Obtém um artigo específico por ID
    */
   obterArtigo(id: number): Observable<Artigo> {
