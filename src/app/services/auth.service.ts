@@ -108,35 +108,17 @@ export class AuthService {
 
     if (refreshToken && user && !this.accessToken) {
       console.log('AuthService: Detectado refresh token após reload, verificando validade...');
-
-      // Verifica se há dados de usuário válidos antes de tentar refresh
       if (!user.userId || !user.email) {
         console.log('AuthService: Dados de usuário inválidos, limpando sessão.');
         this.clearSession();
         return;
       }
 
-      console.log('AuthService: Tentando recuperar access token...');
-      this.refreshToken().subscribe({
-        next: () => {
-          console.log('AuthService: Token recuperado com sucesso após reload.');
-          // isAuthenticatedSubject.next(true) is already handled in setTokens via handleAuthentication
-        },
-        error: (error) => {
-          console.log('AuthService: Falha ao recuperar token após reload:', error);
-          // Se falhar, a sessão já foi limpa pelo método refreshToken
-          // Redireciona para login se não estiver já na página de auth
-          if (!this.router.url.includes('/auth/')) {
-            this.router.navigate(['/auth/login']);
-          }
-        }
-      });
+      console.log('AuthService: Adiando refresh do token até que seja necessário (rota protegida).');
     } else if (refreshToken && !user) {
-      // Refresh token existe mas não há dados de usuário - sessão corrompida
       console.log('AuthService: Refresh token existe mas dados de usuário ausentes, limpando sessão.');
       this.clearSession();
     } else if (!refreshToken) {
-      // Não há refresh token, garante que o estado seja false
       console.log('AuthService: Nenhum refresh token encontrado.');
       this.isAuthenticatedSubject.next(false);
     }
@@ -195,18 +177,14 @@ export class AuthService {
     const refreshUrl = `${this.apiUrl}/refresh`;
     return this.http.post<RefreshResponse>(refreshUrl, { refresh_token: storedRefreshToken }).pipe(
       tap(response => {
-        // Access data from the 'data' property
         this.handleAuthentication(response.data.access_token, response.data.refresh_token, response.data.user);
       }),
       catchError((error) => {
-        // Só limpa a sessão se for erro 401/403 (refresh token inválido)
-        // Para outros erros (rede, servidor), mantém o refresh token
         if (error.status === 401 || error.status === 403) {
           this.clearSession();
-          this.router.navigate(['/auth/login']);
         } else {
-          // Apenas limpa o access token em memória e sessionStorage
           this.clearAccessToken();
+          this.isAuthenticatedSubject.next(false);
         }
         return throwError(() => error);
       })

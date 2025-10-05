@@ -29,7 +29,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
     { label: 'Assinaturas', route: '/assinaturas' },
     { label: 'Expo Dog', route: '/expo-dog' },
     { label: 'Edições', route: '/edicoes' },
-    { label: 'Top Canis', route: '/top-canis' }
   ];
 
   isMenuOpen = false;

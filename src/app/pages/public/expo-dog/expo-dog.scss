@@ -434,7 +434,6 @@
   // Seções gerais
   .beneficios-section,
   .como-funciona-section,
-  .categorias-section,
   .cronograma-section {
     @include section-base;
   }
@@ -511,42 +510,7 @@
     }
   }
 
-  // Cards de categoria
-  .categoria-card {
-    @include card-base;
-    padding: 2rem;
-
-    .categoria-icon {
-      font-size: 2.7rem;
-      margin-bottom: 1rem;
-    }
-
-    h4 {
-      color: var(--primaryColor);
-      font-weight: 600;
-      margin-bottom: 1rem;
-    }
-
-    p {
-      color: #666;
-      margin-bottom: 1rem;
-    }
-
-    ul {
-      list-style: none;
-      padding: 0;
-
-      li {
-        color: #666;
-        padding: 0.25rem 0;
-
-        &::before {
-          content: "🐕";
-          margin-right: 0.5rem;
-        }
-      }
-    }
-  }
+  // Cards de categoria removidos
 
   // Timeline do cronograma
   .cronograma-timeline {
