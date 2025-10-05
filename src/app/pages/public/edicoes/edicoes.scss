@@ -1,0 +1,164 @@
+.edicoes-container {
+  padding: var(--space-10) var(--space-6);
+}
+
+.edicoes-header {
+  text-align: center;
+  margin-bottom: var(--space-8);
+
+  h1 {
+    font-size: clamp(2rem, 4vw, 3rem);
+    color: var(--primaryColor);
+    font-weight: var(--fontWeight-extrabold);
+    margin: 0 0 var(--space-2) 0;
+  }
+
+  .subtitle {
+    color: var(--gray-600);
+    font-size: 1rem;
+  }
+}
+
+.edicoes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: var(--space-5);
+}
+
+.edicao-card {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  border: 1px solid rgba(0,0,0,0.06);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: var(--transition-normal);
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-3) var(--space-4);
+    background: linear-gradient(135deg, var(--gray-50), var(--gray-100));
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+  }
+
+  .card-year {
+    font-weight: var(--fontWeight-bold);
+    color: var(--primaryColor);
+  }
+
+  .card-bimestre {
+    font-size: 0.9rem;
+    color: var(--gray-700);
+  }
+
+  .card-body {
+    padding: var(--space-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .card-title {
+    font-size: 1.1rem;
+    margin: 0;
+    color: var(--gray-900);
+    font-weight: var(--fontWeight-semibold);
+  }
+
+  .btn-open {
+    background: var(--primaryColor);
+    color: var(--white);
+    border: none;
+    border-radius: var(--radius-full);
+    padding: var(--space-3) var(--space-5);
+    font-weight: var(--fontWeight-bold);
+    cursor: pointer;
+    transition: var(--transition-normal);
+
+    &:disabled {
+      background: var(--gray-300);
+      color: var(--gray-700);
+      cursor: not-allowed;
+    }
+
+    &:not(:disabled):hover {
+      background: var(--primaryColorDark);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+  }
+}
+
+.pdf-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+}
+
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+}
+
+.modal-content {
+  position: relative;
+  margin: auto;
+  width: min(1000px, 95vw);
+  height: min(80vh, 800px);
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--gray-200);
+
+  h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: var(--gray-900);
+  }
+
+  .btn-close {
+    background: var(--gray-100);
+    color: var(--gray-800);
+    border: 1px solid var(--gray-300);
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    transition: var(--transition-normal);
+
+    &:hover {
+      background: var(--gray-200);
+    }
+  }
+}
+
+.modal-body {
+  flex: 1;
+  padding: 0;
+
+  object {
+    width: 100%;
+    height: 100%;
+  }
+}

@@ -1,0 +1,41 @@
+<section class="edicoes-container">
+  <header class="edicoes-header">
+    <h1>Edições</h1>
+    <p class="subtitle">Lançamento a cada 2 meses. Clique em uma edição para visualizar o PDF.</p>
+  </header>
+
+  <div class="edicoes-grid">
+    <div class="edicao-card" *ngFor="let edicao of edicoes">
+      <div class="card-header">
+        <span class="card-year">{{ edicao.ano }}</span>
+        <span class="card-bimestre">{{ edicao.bimestre }}</span>
+      </div>
+      <div class="card-body">
+        <h2 class="card-title">{{ edicao.titulo }}</h2>
+        <button class="btn btn-open" [disabled]="!edicao.pdfUrl" (click)="abrirPdf(edicao)">
+          {{ edicao.pdfUrl ? 'Abrir PDF' : 'Em breve' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="pdf-modal" *ngIf="showModal">
+    <div class="modal-backdrop" (click)="fecharModal()"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Visualização da Edição</h3>
+        <button class="btn btn-close" (click)="fecharModal()">Fechar</button>
+      </div>
+      <div class="modal-body">
+        <ng-container *ngIf="currentPdfUrl; else noPdf">
+          <object [data]="currentPdfUrl" type="application/pdf" width="100%" height="100%">
+            <p>Seu navegador não conseguiu mostrar o PDF. <a [href]="currentPdfUrl" target="_blank" rel="noopener">Abrir em nova aba</a>.</p>
+          </object>
+        </ng-container>
+        <ng-template #noPdf>
+          <p>PDF não disponível.</p>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</section>
