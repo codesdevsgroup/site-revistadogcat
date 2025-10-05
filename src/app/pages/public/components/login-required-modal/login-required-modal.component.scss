@@ -6,8 +6,8 @@
 }
 
 .modal-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: linear-gradient(135deg, var(--primaryColor) 0%, var(--primaryColorDark) 100%);
+  color: var(--white);
   padding: 1.5rem;
   
   .modal-title {
@@ -37,13 +37,13 @@
   .login-required-icon {
     .material-icons {
       font-size: 4rem;
-      color: #667eea;
+      color: var(--primaryColor);
       opacity: 0.8;
     }
   }
   
   h6 {
-    color: #333;
+    color: var(--gray-900);
     font-weight: 600;
     font-size: 1.1rem;
   }
@@ -57,10 +57,11 @@
       .material-icons {
         font-size: 1.25rem;
         margin-right: 0.75rem;
+        color: var(--primaryColor) !important;
       }
       
       span {
-        color: #555;
+        color: var(--gray-700);
         font-size: 0.95rem;
       }
     }
@@ -77,7 +78,7 @@
     transition: all 0.3s ease;
     
     &.btn-primary {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, var(--primaryColor) 0%, var(--primaryColorDark) 100%);
       border: none;
       
       &:hover {
@@ -91,13 +92,13 @@
     }
     
     &.btn-secondary {
-      background: #f8f9fa;
-      border: 1px solid #dee2e6;
-      color: #6c757d;
+      background: var(--white);
+      border: 1px solid var(--gray-300);
+      color: var(--gray-700);
       
       &:hover {
-        background: #e9ecef;
-        border-color: #adb5bd;
+        background: var(--gray-100);
+        border-color: var(--gray-400);
       }
     }
   }

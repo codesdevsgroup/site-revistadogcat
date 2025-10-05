@@ -15,7 +15,13 @@ import { WhatsappFloatComponent } from './components/whatsapp-float/whatsapp-flo
     </div>
     <app-whatsapp-float />
   `,
-  styles: []
+  styles: [
+    `
+    .main-content.with-navbar {
+      padding-top: var(--navbar-height);
+    }
+    `
+  ]
 })
 export class PublicComponent {
   constructor() {}

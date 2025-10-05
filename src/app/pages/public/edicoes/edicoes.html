@@ -1,20 +1,22 @@
 <section class="edicoes-container">
-  <header class="edicoes-header">
-    <h1>Edições</h1>
-    <p class="subtitle">Lançamento a cada 2 meses. Clique em uma edição para visualizar o PDF.</p>
-  </header>
+  <div class="container">
+    <header class="edicoes-header">
+      <h1>Edições</h1>
+      <p class="subtitle">Lançamento a cada 2 meses. Clique em uma edição para visualizar o PDF.</p>
+    </header>
 
-  <div class="edicoes-grid">
-    <div class="edicao-card" *ngFor="let edicao of edicoes">
-      <div class="card-header">
-        <span class="card-year">{{ edicao.ano }}</span>
-        <span class="card-bimestre">{{ edicao.bimestre }}</span>
-      </div>
-      <div class="card-body">
-        <h2 class="card-title">{{ edicao.titulo }}</h2>
-        <button class="btn btn-open" [disabled]="!edicao.pdfUrl" (click)="abrirPdf(edicao)">
-          {{ edicao.pdfUrl ? 'Abrir PDF' : 'Em breve' }}
-        </button>
+    <div class="edicoes-grid">
+      <div class="edicao-card" *ngFor="let edicao of edicoes">
+        <div class="card-header">
+          <span class="card-year">{{ edicao.ano }}</span>
+          <span class="card-bimestre">{{ edicao.bimestre }}</span>
+        </div>
+        <div class="card-body">
+          <h2 class="card-title">{{ edicao.titulo }}</h2>
+          <button class="btn btn-open" [disabled]="!edicao.pdfUrl" (click)="abrirPdf(edicao)">
+            {{ edicao.pdfUrl ? 'Abrir PDF' : 'Em breve' }}
+          </button>
+        </div>
       </div>
     </div>
   </div>
