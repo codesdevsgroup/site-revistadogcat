@@ -2,7 +2,8 @@ import { Component, HostListener, ElementRef, OnInit, OnDestroy } from '@angular
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Observable } from 'rxjs';
-import { AuthService, User } from '../../../../services/auth.service';
+import { AuthService } from '../../../../services/auth.service';
+import type { Usuario } from '../../../../interfaces/usuario.interface';
 
 interface NavItem {
   label: string;
@@ -38,7 +39,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   // Observables para o estado de autenticação e dados do usuário
   public isAuthenticated$: Observable<boolean>;
-  public currentUser$: Observable<User | null>;
+  public currentUser$: Observable<Usuario | null>;
 
   constructor(
     private router: Router,

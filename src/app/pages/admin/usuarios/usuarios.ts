@@ -1,7 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
-import { UsuarioService, UserFilters } from '../../../services/usuario.service';
+import { UsuarioService } from '../../../services/usuario.service';
+import { UserFilters } from '../../../dtos/usuario.dto';
 import { Usuario } from '../../../interfaces/usuario.interface';
 import { Observable, combineLatest, BehaviorSubject, Subject, of } from 'rxjs';
 import { startWith, debounceTime, distinctUntilChanged, switchMap, catchError, takeUntil, tap } from 'rxjs/operators';

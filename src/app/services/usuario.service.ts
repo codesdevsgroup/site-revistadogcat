@@ -3,26 +3,10 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { tap, catchError, map } from 'rxjs/operators';
 import { Usuario } from '../interfaces/usuario.interface';
+import { PaginatedUsersResponse, UserFilters } from '../dtos/usuario.dto';
 import { environment } from '../../environments/environment';
 
-export interface PaginatedUsersResponse {
-  statusCode: number;
-  message: string;
-  data: {
-    data: Usuario[];
-    total: number;
-    page: number;
-    limit: number;
-  };
-  timestamp: string;
-}
-
-export interface UserFilters {
-  page?: number;
-  limit?: number;
-  search?: string;
-  role?: string;
-}
+// Tipagens movidas para src/app/dtos/usuario.dto.ts
 
 @Injectable({
   providedIn: 'root'

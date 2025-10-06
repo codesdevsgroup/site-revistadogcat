@@ -5,55 +5,10 @@ import { catchError, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
 import { Role, RoleUtils } from '../enums/role.enum';
+import { LoginRequest, RegisterRequest, AuthData, LoginResponse, RefreshResponse } from '../dtos/auth.dto';
+import { Usuario } from '../interfaces/usuario.interface';
 
-// --- Interfaces ---
-
-export interface LoginRequest {
-  identification: string; // email ou CPF
-  password: string;
-}
-
-export interface RegisterRequest {
-  userName: string;
-  name: string;
-  email: string;
-  password: string;
-  telefone?: string;
-  cpf?: string;
-}
-
-// Based on auth_api.md - Adjusted to match backend response structure
-export interface AuthData {
-  access_token: string;
-  refresh_token: string; // Backend sends snake_case
-  user: User;
-}
-
-export interface LoginResponse {
-  statusCode: number;
-  message: string;
-  data: AuthData;
-  timestamp: string;
-}
-
-export interface RefreshResponse {
-  statusCode: number;
-  message: string;
-  data: AuthData;
-  timestamp: string;
-}
-
-export interface User {
-  userId: string;
-  userName: string;
-  name: string;
-  email: string;
-  cpf?: string;
-  telefone?: string;
-  role: string;
-  avatarUrl?: string;
-  active: boolean;
-}
+// Tipagens movidas para src/app/dtos/auth.dto.ts e src/app/interfaces/usuario.interface.ts
 
 @Injectable({
   providedIn: 'root'
@@ -70,7 +25,7 @@ export class AuthService {
   // Flag para evitar múltiplas chamadas de logout simultâneas
   private isLoggingOut = false;
 
-  private currentUserSubject = new BehaviorSubject<User | null>(this.getUserFromStorage());
+  private currentUserSubject = new BehaviorSubject<Usuario | null>(this.getUserFromStorage());
   public currentUser$ = this.currentUserSubject.asObservable();
 
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
@@ -195,7 +150,7 @@ export class AuthService {
     return this.isAuthenticatedSubject.value;
   }
 
-  getCurrentUser(): User | null {
+  getCurrentUser(): Usuario | null {
     return this.currentUserSubject.value;
   }
 
@@ -221,7 +176,7 @@ export class AuthService {
     return localStorage.getItem(this.refreshTokenKey);
   }
 
-  private handleAuthentication(accessToken: string, refreshToken: string, user: User): void {
+  private handleAuthentication(accessToken: string, refreshToken: string, user: Usuario): void {
     console.log('AuthService: Chamando handleAuthentication...');
     this.setTokens(accessToken, refreshToken);
     this.setUserData(user);
@@ -238,14 +193,14 @@ export class AuthService {
     console.log('AuthService: Tokens salvos. RefreshToken no localStorage agora é:', localStorage.getItem(this.refreshTokenKey));
   }
 
-  private setUserData(userData: User): void {
+  private setUserData(userData: Usuario): void {
     console.log('AuthService: Salvando dados do usuário no localStorage:', userData);
     localStorage.setItem(this.userKey, JSON.stringify(userData));
     this.currentUserSubject.next(userData);
     console.log('AuthService: Dados do usuário salvos. Usuário no localStorage agora é:', localStorage.getItem(this.userKey));
   }
 
-  public updateUserData(updatedData: Partial<User>): void {
+  public updateUserData(updatedData: Partial<Usuario>): void {
     const currentUser = this.getCurrentUser();
     if (currentUser) {
       const newUser = { ...currentUser, ...updatedData };
@@ -275,11 +230,11 @@ export class AuthService {
     this.isAuthenticatedSubject.next(false);
   }
 
-  private getUserFromStorage(): User | null {
+  private getUserFromStorage(): Usuario | null {
     const userStr = localStorage.getItem(this.userKey);
     if (userStr) {
       try {
-        return JSON.parse(userStr);
+        return JSON.parse(userStr) as Usuario;
       } catch (error) {
         console.error('AuthService: Erro ao parsear dados do usuário do localStorage:', error);
         this.clearSession();

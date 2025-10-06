@@ -1,13 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-type Edicao = {
-  id: string;
-  titulo: string;
-  bimestre: string;
-  ano: number;
-  pdfUrl?: string;
-};
+import { Edicao } from '../../../interfaces/edicao';
 
 @Component({
   selector: 'app-edicoes',

@@ -3,35 +3,20 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Endereco } from '../interfaces/endereco.interface';
+import { Usuario } from '../interfaces/usuario.interface';
 
-// Base User interface, mirroring AuthService
-export interface User {
-  userId: string;
-  userName: string;
-  name: string;
-  email: string;
-  cpf?: string;
-  telefone?: string;
-  role: string;
-  avatarUrl?: string;
-  active: boolean;
-}
-
-// Extended user profile including address
-export interface UserProfile extends User {
+// Perfil de usuário estendido incluindo endereço
+export interface UserProfile extends Usuario {
   endereco?: Endereco;
 }
 
-// Interface for user's dogs (structure inferred from components)
+// Interface para cães do usuário (estrutura exemplo)
 export interface UserDog {
   dogId: string;
   name: string;
   breed: string; // Example property
   // Add other dog properties as needed
 }
-
-// Alias for Endereco to resolve component dependency
-export type UserAddress = Endereco;
 
 @Injectable({
   providedIn: 'root'
