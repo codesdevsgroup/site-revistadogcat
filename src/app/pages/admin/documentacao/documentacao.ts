@@ -50,6 +50,14 @@ export class DocumentacaoComponent implements OnInit {
       descricao: 'Padrão de códigos de status HTTP',
       icone: 'fas fa-exclamation-triangle'
     }
+    ,
+    {
+      id: 'edicoes',
+      titulo: 'API de Edições da Revista',
+      arquivo: 'edicoes_api.md',
+      descricao: 'Endpoints para listar e cadastrar edições (upload de PDF)',
+      icone: 'fas fa-book'
+    }
   ];
 
   documentoAtual: string | null = null;

@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Edicao } from '../../../interfaces/edicao';
+import { EdicoesService } from '../../../services/edicoes.service';
 
 @Component({
   selector: 'app-edicoes',
@@ -9,18 +10,29 @@ import { Edicao } from '../../../interfaces/edicao';
   templateUrl: './edicoes.html',
   styleUrl: './edicoes.scss'
 })
-export class EdicoesComponent {
-  edicoes: Edicao[] = [
-    { id: '2026-01', titulo: 'Edição Jan/Fev', bimestre: 'Jan/Fev', ano: 2026 },
-    { id: '2026-02', titulo: 'Edição Mar/Abr', bimestre: 'Mar/Abr', ano: 2026 },
-    { id: '2026-03', titulo: 'Edição Mai/Jun', bimestre: 'Mai/Jun', ano: 2026 },
-    { id: '2026-04', titulo: 'Edição Jul/Ago', bimestre: 'Jul/Ago', ano: 2026 },
-    { id: '2026-05', titulo: 'Edição Set/Out', bimestre: 'Set/Out', ano: 2026 },
-    { id: '2026-06', titulo: 'Edição Nov/Dez', bimestre: 'Nov/Dez', ano: 2026 }
-  ];
+export class EdicoesComponent implements OnInit {
+  edicoes: Edicao[] = [];
+  loading = true;
+  error?: string;
 
   showModal = false;
   currentPdfUrl: string | null = null;
+
+  constructor(private edicoesService: EdicoesService) {}
+
+  ngOnInit(): void {
+    this.edicoesService.listarEdicoes({ limit: 12 }).subscribe({
+      next: (data) => {
+        this.edicoes = data || [];
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Erro ao carregar edições', err);
+        this.error = 'Não foi possível carregar as edições. Tente novamente mais tarde.';
+        this.loading = false;
+      }
+    });
+  }
 
   abrirPdf(edicao: Edicao) {
     if (!edicao.pdfUrl) {
