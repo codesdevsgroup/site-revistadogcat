@@ -6,7 +6,7 @@
       Gerenciar Artigos
     </h1>
     <div class="page-actions">
-      <button class="btn btn-primary" routerLink="/artigos/novo">
+      <button class="btn btn-primary" routerLink="novo">
         <i class="fas fa-plus"></i>
         Novo Artigo
       </button>
@@ -161,7 +161,8 @@
               <div class="action-buttons">
                 <button 
                   class="btn-action btn-edit" 
-                  [routerLink]="['/artigos', artigo.id]"
+                  [routerLink]="[artigo.id]"
+                  (click)="editarArtigo(artigo)"
                   title="Editar artigo"
                 >
                   <i class="fas fa-edit"></i>
