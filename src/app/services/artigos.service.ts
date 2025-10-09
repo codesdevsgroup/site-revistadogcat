@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 
 // Interface para o modelo de artigo
 export interface Artigo {
@@ -25,9 +27,9 @@ export interface ArtigoInput {
   titulo: string;
   conteudo: any;
   resumo?: string;
-  autor: string;
+  autorId: string; // UUID do autor conforme API de usuários
   categoria: string;
-  status: 'publicado' | 'rascunho' | 'revisao';
+  status: string; // mapeado para o enum do backend (ex.: RASCUNHO, PUBLICADO)
   dataPublicacao?: string;
   imagemCapa: string;
   destaque: boolean;
@@ -42,11 +44,24 @@ export interface ArtigoFiltros {
   sort?: string; // ex: 'dataPublicacao:desc'
 }
 
+// Resposta paginada conforme documentação
+export interface ArtigosListResponseDto {
+  data: Artigo[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    hasNext: boolean;
+    hasPrev: boolean;
+  };
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class ArtigosService {
-  private readonly apiUrl = '/api/artigos';
+  private readonly apiUrl = `${environment.apiUrl}/artigos`;
 
   constructor(private http: HttpClient) {}
 
@@ -55,7 +70,7 @@ export class ArtigosService {
    */
   listarArtigos(filtros?: ArtigoFiltros): Observable<Artigo[]> {
     let params = new HttpParams();
-    
+
     if (filtros) {
       if (filtros.q) params = params.set('q', filtros.q);
       if (filtros.categoria) params = params.set('categoria', filtros.categoria);
@@ -63,7 +78,10 @@ export class ArtigosService {
       if (filtros.sort) params = params.set('sort', filtros.sort);
     }
 
-    return this.http.get<Artigo[]>(this.apiUrl, { params });
+    // Backend retorna objeto paginado (ArtigosListResponseDto) em /artigos
+    return this.http.get<ArtigosListResponseDto | Artigo[]>(this.apiUrl, { params }).pipe(
+      map((resp) => Array.isArray(resp) ? resp : resp.data)
+    );
   }
 
   /**
@@ -85,7 +103,10 @@ export class ArtigosService {
       .set('limit', limit)
       .set('page', page)
       .set('sort', sort);
-    return this.http.get<Artigo[]>(`${this.apiUrl}/publicados`, { params });
+    // /artigos/publicados retorna lista paginada; mapeamos para data
+    return this.http.get<ArtigosListResponseDto | Artigo[]>(`${this.apiUrl}/publicados`, { params }).pipe(
+      map((resp) => Array.isArray(resp) ? resp : resp.data)
+    );
   }
 
   /**
@@ -129,7 +150,8 @@ export class ArtigosService {
   uploadImagem(arquivo: File): Observable<{ url: string }> {
     const formData = new FormData();
     formData.append('image', arquivo);
-    
-    return this.http.post<{ url: string }>('/api/imagens/upload', formData);
+
+    // Endpoint conforme docs: POST /artigos/imagens/upload
+    return this.http.post<{ url: string }>(`${this.apiUrl}/imagens/upload`, formData);
   }
 }
