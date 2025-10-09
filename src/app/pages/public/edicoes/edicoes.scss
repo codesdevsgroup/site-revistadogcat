@@ -111,6 +111,7 @@
   position: absolute;
   inset: 0;
   background: rgba(0,0,0,0.5);
+  z-index: 1000; /* garante que o backdrop fique abaixo do conteúdo do modal */
 }
 
 .modal-content {
@@ -124,6 +125,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  z-index: 1001; /* acima do backdrop */
 }
 
 .modal-header {

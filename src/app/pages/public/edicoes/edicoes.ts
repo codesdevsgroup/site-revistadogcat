@@ -46,4 +46,16 @@ export class EdicoesComponent implements OnInit {
     this.showModal = false;
     this.currentPdfUrl = null;
   }
+
+  // Abre um PDF a partir de uma URL direta (usado pelo card de demonstração)
+  abrirPdfUrl(url: string) {
+    if (!url) return;
+    this.currentPdfUrl = url;
+    this.showModal = true;
+  }
+
+  // Protege o *ngFor contra valores não iteráveis vindos do backend
+  get edicoesList(): Edicao[] {
+    return Array.isArray(this.edicoes) ? this.edicoes : [];
+  }
 }
