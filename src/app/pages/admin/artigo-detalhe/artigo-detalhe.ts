@@ -4,6 +4,10 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { ActivatedRoute, Router } from '@angular/router';
 import { TiptapEditorComponent } from '../components/tiptap-editor/tiptap-editor';
 import { ArtigosService, Artigo, ArtigoInput } from '../../../services/artigos.service';
+import { UsuarioService } from '../../../services/usuario.service';
+import type { Usuario } from '../../../interfaces/usuario.interface';
+import { of } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-artigo-detalhe',
@@ -21,13 +25,8 @@ export class ArtigoDetalheComponent implements OnInit {
   fotoDestaque: string | null = null;
   fotoDestaqueFile: File | null = null;
 
-  // Opções para os selects
-  autores = [
-    { id: 1, nome: 'Dr. João Silva' },
-    { id: 2, nome: 'Dra. Maria Santos' },
-    { id: 3, nome: 'Dr. Pedro Costa' },
-    { id: 4, nome: 'Dra. Ana Oliveira' }
-  ];
+  // Autores carregados da API de usuários
+  autores: Usuario[] = [];
 
   categorias = [
     { id: 1, nome: 'Saúde' },
@@ -54,7 +53,8 @@ export class ArtigoDetalheComponent implements OnInit {
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private artigosService: ArtigosService
+    private artigosService: ArtigosService,
+    private usuarioService: UsuarioService
   ) {
     this.artigoForm = this.fb.group({
       titulo: ['', [Validators.required, Validators.minLength(3)]],
@@ -72,6 +72,16 @@ export class ArtigoDetalheComponent implements OnInit {
   ngOnInit(): void {
     this.artigoId = this.route.snapshot.paramMap.get('id');
     this.isEditMode = this.artigoId !== null && this.artigoId !== 'novo';
+
+    // Carregar autores do backend (roles EDITOR/ADMIN)
+    this.usuarioService.getUsers().subscribe({
+      next: (users) => {
+        this.autores = (users || []).filter(u => ['EDITOR', 'ADMIN'].includes(u.role));
+      },
+      error: (err) => {
+        console.error('Falha ao carregar autores:', err);
+      }
+    });
 
     if (this.isEditMode) {
       this.carregarArtigo();
@@ -101,16 +111,67 @@ export class ArtigoDetalheComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.artigoForm.valid) {
-      const formData = this.artigoForm.value;
-      console.log('Dados do artigo:', formData);
-
-      // Aqui seria feita a chamada para o backend
-      alert('Artigo salvo com sucesso!');
-    } else {
+    if (!this.artigoForm.valid) {
       console.log('Formulário inválido');
       this.markFormGroupTouched();
+      return;
     }
+
+    const formData = this.artigoForm.value;
+
+    // Normalizar status para o enum do backend
+    const statusMap: Record<string, string> = {
+      rascunho: 'RASCUNHO',
+      revisao: 'REVISAO',
+      publicado: 'PUBLICADO',
+      arquivado: 'ARQUIVADO'
+    };
+
+    const categoriaMap: Record<string, string> = {
+      'Saúde': 'SAUDE',
+      'Comportamento': 'COMPORTAMENTO',
+      'Alimentação': 'ALIMENTACAO',
+      'Cuidados': 'CUIDADOS',
+      'Treinamento': 'TREINAMENTO'
+    };
+
+    const payloadBase: Omit<ArtigoInput, 'imagemCapa'> = {
+      titulo: formData.titulo,
+      conteudo: { html: formData.conteudo },
+      resumo: formData.resumo || undefined,
+      autorId: formData.autor, // userId do autor selecionado
+      categoria: categoriaMap[formData.categoria] || formData.categoria,
+      status: statusMap[formData.status] || 'RASCUNHO',
+      dataPublicacao: formData.dataPublicacao,
+      destaque: false,
+      tags: undefined
+    };
+
+    // Upload da imagem de capa antes de criar o artigo
+    const upload$ = this.fotoDestaqueFile
+      ? this.artigosService.uploadImagem(this.fotoDestaqueFile)
+      : of({ url: this.fotoDestaque || '' });
+
+    upload$
+      .pipe(
+        switchMap(({ url }) => {
+          const payload: ArtigoInput = {
+            ...payloadBase,
+            imagemCapa: url || ''
+          };
+          return this.artigosService.criarArtigo(payload);
+        })
+      )
+      .subscribe({
+        next: (artigoCriado: Artigo) => {
+          alert('Artigo salvo com sucesso!');
+          this.router.navigate(['/admin/artigos']);
+        },
+        error: (error) => {
+          console.error('Erro ao salvar artigo:', error);
+          alert('Erro ao salvar artigo. Verifique os campos obrigatórios e tente novamente.');
+        }
+      });
   }
 
   onCancel(): void {

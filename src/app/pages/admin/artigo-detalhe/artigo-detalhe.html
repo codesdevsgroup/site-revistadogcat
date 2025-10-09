@@ -94,8 +94,8 @@
                     [class.is-invalid]="autor?.invalid && autor?.touched"
                   >
                     <option value="">Selecione um autor</option>
-                    <option *ngFor="let autor of autores" [value]="autor.id">
-                      {{ autor.nome }}
+                    <option *ngFor="let autor of autores" [value]="autor.userId">
+                      {{ autor.name }}
                     </option>
                   </select>
                   <div class="invalid-feedback" *ngIf="autor?.invalid && autor?.touched">
@@ -112,7 +112,7 @@
                     [class.is-invalid]="categoria?.invalid && categoria?.touched"
                   >
                     <option value="">Selecione uma categoria</option>
-                    <option *ngFor="let cat of categorias" [value]="cat.id">
+                    <option *ngFor="let cat of categorias" [value]="cat.nome">
                       {{ cat.nome }}
                     </option>
                   </select>

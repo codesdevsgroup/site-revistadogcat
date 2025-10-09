@@ -1,21 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-
-export interface Artigo {
-  id: number;
-  titulo: string;
-  autor: string;
-  categoria: string;
-  status: 'publicado' | 'rascunho' | 'revisao';
-  dataPublicacao: string;
-  visualizacoes: number;
-  curtidas: number;
-  comentarios: number;
-  destaque: boolean;
-  fotoDestaque?: string; // URL da foto de destaque
-  resumo?: string; // Resumo opcional do artigo
-}
+import { ArtigosService, Artigo } from '../../../services/artigos.service';
 
 @Component({
   selector: 'app-artigos',
@@ -25,133 +11,26 @@ export interface Artigo {
   styleUrls: ['./artigos.scss']
 })
 export class ArtigosComponent {
-  artigos: Artigo[] = [
-    {
-      id: 1,
-      titulo: 'Como Cuidar do Seu Cão no Inverno',
-      autor: 'Dr. Maria Silva',
-      categoria: 'Cuidados',
-      status: 'publicado',
-      dataPublicacao: '2024-01-15',
-      visualizacoes: 1250,
-      curtidas: 89,
-      comentarios: 23,
-      destaque: true,
-      fotoDestaque: 'https://via.placeholder.com/400x240/2196F3/FFFFFF?text=Cuidados+Inverno'
-    },
-    {
-      id: 2,
-      titulo: 'Alimentação Balanceada para Gatos',
-      autor: 'Dra. Ana Costa',
-      categoria: 'Nutrição',
-      status: 'publicado',
-      dataPublicacao: '2024-01-12',
-      visualizacoes: 980,
-      curtidas: 67,
-      comentarios: 15,
-      destaque: false,
-       fotoDestaque: 'https://via.placeholder.com/400x240/4CAF50/FFFFFF?text=Alimentação+Gatos'
-     },
-     {
-      id: 3,
-      titulo: 'Primeiros Socorros para Pets',
-      autor: 'Dr. João Santos',
-      categoria: 'Saúde',
-      status: 'revisao',
-      dataPublicacao: '2024-01-10',
-      visualizacoes: 0,
-      curtidas: 0,
-      comentarios: 0,
-      destaque: false,
-      fotoDestaque: 'https://via.placeholder.com/400x240/FF9800/FFFFFF?text=Primeiros+Socorros'
-    },
-    {
-      id: 4,
-      titulo: 'Adestramento Positivo: Técnicas Eficazes',
-      autor: 'Carlos Mendes',
-      categoria: 'Comportamento',
-      status: 'publicado',
-      dataPublicacao: '2024-01-08',
-      visualizacoes: 2100,
-      curtidas: 156,
-      comentarios: 42,
-      destaque: true,
-       fotoDestaque: 'https://via.placeholder.com/400x240/9C27B0/FFFFFF?text=Adestramento'
-     },
-     {
-      id: 5,
-      titulo: 'Vacinação: Calendário Completo',
-      autor: 'Dra. Carla Ferreira',
-      categoria: 'Saúde',
-      status: 'publicado',
-      dataPublicacao: '2024-01-05',
-      visualizacoes: 1800,
-      curtidas: 134,
-      comentarios: 28,
-      destaque: false,
-      fotoDestaque: 'https://via.placeholder.com/400x240/E91E63/FFFFFF?text=Vacinação'
-    },
-    {
-      id: 6,
-      titulo: 'Brinquedos Seguros para Filhotes',
-      autor: 'Marina Oliveira',
-      categoria: 'Cuidados',
-      status: 'rascunho',
-      dataPublicacao: '2024-01-03',
-      visualizacoes: 0,
-      curtidas: 0,
-      comentarios: 0,
-      destaque: false
-    },
-    {
-      id: 7,
-      titulo: 'Sinais de Estresse em Animais',
-      autor: 'Dr. Roberto Ferreira',
-      categoria: 'Comportamento',
-      status: 'publicado',
-      dataPublicacao: '2024-01-01',
-      visualizacoes: 1450,
-      curtidas: 98,
-      comentarios: 31,
-      destaque: false
-    },
-    {
-      id: 8,
-      titulo: 'Higiene Dental em Pets',
-      autor: 'Dra. Fernanda Rocha',
-      categoria: 'Saúde',
-      status: 'publicado',
-      dataPublicacao: '2023-12-28',
-      visualizacoes: 890,
-      curtidas: 45,
-      comentarios: 12,
-      destaque: false
-    },
-    {
-      id: 9,
-      titulo: 'Exercícios para Cães Idosos',
-      autor: 'Prof. Lucas Martins',
-      categoria: 'Cuidados',
-      status: 'revisao',
-      dataPublicacao: '2023-12-25',
-      visualizacoes: 0,
-      curtidas: 0,
-      comentarios: 0,
-      destaque: false
-    },
-    {
-      id: 10,
-      titulo: 'Plantas Tóxicas para Animais',
-      autor: 'Dra. Camila Souza',
-      categoria: 'Segurança',
-      status: 'publicado',
-      dataPublicacao: '2023-12-22',
-      visualizacoes: 3200,
-      curtidas: 245,
-      comentarios: 67,
-      destaque: true
-    }
-  ];
+  artigos: Artigo[] = [];
+  loading = true;
+  error?: string;
+
+  constructor(private artigosService: ArtigosService) {}
+
+  ngOnInit(): void {
+    // Busca artigos do backend (NestJS)
+    this.artigosService.listarArtigos({ sort: 'dataPublicacao:desc' }).subscribe({
+      next: (data) => {
+        this.artigos = Array.isArray(data) ? data : [];
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Erro ao carregar artigos', err);
+        this.error = 'Não foi possível carregar os artigos. Tente novamente mais tarde.';
+        this.loading = false;
+      }
+    });
+  }
 
   getStatusClass(status: string): string {
     switch (status) {
@@ -191,12 +70,27 @@ export class ArtigosComponent {
   }
 
   excluirArtigo(artigo: Artigo): void {
-    console.log('Excluir artigo:', artigo);
+    // Opcional: integrar com backend
+    this.artigosService.excluirArtigo(artigo.id).subscribe({
+      next: () => {
+        this.artigos = this.artigos.filter(a => a.id !== artigo.id);
+      },
+      error: (err) => {
+        console.error('Erro ao excluir artigo', err);
+      }
+    });
   }
 
   alterarDestaque(artigo: Artigo): void {
-    artigo.destaque = !artigo.destaque;
-    console.log('Alterar destaque:', artigo);
+    const novoDestaque = !artigo.destaque;
+    this.artigosService.atualizarParcialArtigo(artigo.id, { destaque: novoDestaque }).subscribe({
+      next: (atualizado) => {
+        artigo.destaque = atualizado.destaque;
+      },
+      error: (err) => {
+        console.error('Erro ao atualizar destaque', err);
+      }
+    });
   }
 
   trackByArtigoId(index: number, artigo: Artigo): number {
@@ -204,14 +98,19 @@ export class ArtigosComponent {
   }
 
   getPublishedCount(): number {
-    return this.artigos.filter(a => a.status === 'publicado').length;
+    return this.artigosList.filter(a => a.status === 'publicado').length;
   }
 
   getFeaturedCount(): number {
-    return this.artigos.filter(a => a.destaque).length;
+    return this.artigosList.filter(a => a.destaque).length;
   }
 
   getTotalViews(): number {
-    return this.artigos.reduce((total, a) => total + a.visualizacoes, 0);
+    return this.artigosList.reduce((total, a) => total + (a.visualizacoes || 0), 0);
+  }
+
+  // Garante array para evitar erros quando a resposta não for iterável
+  get artigosList(): Artigo[] {
+    return Array.isArray(this.artigos) ? this.artigos : [];
   }
 }
