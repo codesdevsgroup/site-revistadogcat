@@ -55,9 +55,10 @@ Este objeto é retornado **apenas** pelo endpoint `GET /users/me` e inclui todos
 | `DONO_PET_APROVADO` | Dono de pet com cadastro verificado. |
 | `ASSINANTE` | Usuário com assinatura premium ativa. |
 | `DONO_PET_APROVADO_ASSINANTE` | Dono de pet verificado e assinante. |
-| `EDITOR` | Permissão para criar e gerenciar artigos. |
-| `ADMIN` | Acesso total ao sistema. |
-| `FUNCIONARIO` | Acesso a funcionalidades internas específicas. |
+| `ADMIN` | Acesso total ao sistema e aos painéis administrativos. |
+| `EDITOR` | Permissão para criar, editar e gerenciar artigos. |
+| `FUNCIONARIO` | Acesso a funcionalidades internas específicas da operação. |
+| `JURADO` | Papel destinado à avaliação em concursos/eventos (acesso restrito a funcionalidades de julgamento). |
 
 ---
 
@@ -68,8 +69,56 @@ Este objeto é retornado **apenas** pelo endpoint `GET /users/me` e inclui todos
 - **Endpoint:** `GET /users`
 - **Autenticação:** 🔒 `ADMIN`
 - **Descrição:** Retorna uma lista paginada de todos os usuários.
-- **Query Params:** `page`, `limit`, `search`, `role`.
-- **Resposta (200 OK):** Objeto de paginação com a lista de usuários. Cada usuário na lista é um `Objeto User (Resposta Pública)`.
+- **Ordenação padrão:** `createdAt` em ordem decrescente (mais recentes primeiro).
+- **Query Params:**
+
+  | Parâmetro | Tipo | Padrão | Descrição |
+  | --- | --- | --- | --- |
+  | `page` | `number` | `1` | Número da página (mínimo 1). |
+  | `limit` | `number` | `20` | Itens por página (1–100). |
+  | `search` | `string` | | Busca textual por nome, email ou userName (case-insensitive). |
+  | `role` | `Role` | | Filtra por papel do usuário. Valores: `USUARIO`, `DONO_PET_APROVADO`, `ASSINANTE`, `DONO_PET_APROVADO_ASSINANTE`, `ADMIN`, `EDITOR`, `FUNCIONARIO`, `JURADO`. |
+  | `userName` | `string` | | Filtro adicional por userName (contains, case-insensitive). |
+  | `email` | `string` | | Filtro adicional por email (contains, case-insensitive). |
+
+- **Resposta (200 OK):** Objeto com paginação e dados públicos do usuário.
+
+  ```json
+  {
+    "data": [
+      {
+        "userId": "clxy123abc",
+        "userName": "maria.souza",
+        "name": "Maria Souza",
+        "email": "maria@example.com",
+        "cpf": null,
+        "avatarUrl": null,
+        "role": "USUARIO",
+        "active": true,
+        "blocked": false,
+        "createdAt": "2025-08-25T12:34:56.000Z",
+        "updatedAt": "2025-08-31T08:10:00.000Z",
+        "lastLogin": "2025-09-01T10:00:00.000Z",
+        "endereco": {
+          "logradouro": "Rua das Flores",
+          "numero": "123",
+          "complemento": "Apto 12",
+          "bairro": "Centro",
+          "cidade": "São Paulo",
+          "estado": "SP",
+          "cep": "01000-000"
+        }
+      }
+    ],
+    "total": 1,
+    "page": 1,
+    "limit": 20
+  }
+  ```
+
+- **Observações:**
+  - Os filtros `search`, `userName` e `email` podem ser combinados com `role`.
+  - Quando não houver resultados, `data` será um array vazio e `total` será `0`.
 
 ### 2. Obter Perfil Completo do Usuário Autenticado
 

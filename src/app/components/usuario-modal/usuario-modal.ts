@@ -27,7 +27,7 @@ export class UsuarioModalComponent implements OnInit, OnChanges {
       email: ['', [Validators.required, Validators.email]],
       cpf: [''], // Adicionado
       telefone: [''], // Adicionado
-      role: ['USUARIO_COMUM', Validators.required],
+      role: ['USUARIO', Validators.required],
       active: [true, Validators.required],
       password: [''] // A lógica de validação da senha será tratada separadamente
     });
@@ -43,7 +43,7 @@ export class UsuarioModalComponent implements OnInit, OnChanges {
       this.usuarioForm.get('password')?.clearValidators();
     } else {
       this.isEditMode = false;
-      this.usuarioForm.reset({ role: 'USUARIO_COMUM', active: true });
+      this.usuarioForm.reset({ role: 'USUARIO', active: true });
       // Senha é obrigatória na criação
       this.usuarioForm.get('password')?.setValidators([Validators.required, Validators.minLength(8)]);
     }

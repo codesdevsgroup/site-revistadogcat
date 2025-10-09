@@ -131,7 +131,7 @@ export class UsuariosComponent implements OnInit, OnDestroy {
       'ADMIN': 'badge-admin',
       'EDITOR': 'badge-editor',
       'ASSINANTE': 'badge-assinante',
-      'USUARIO_COMUM': 'badge-leitor',
+      'USUARIO': 'badge-leitor',
       'DONO_PET_APROVADO': 'badge-dono-pet',
       'FUNCIONARIO': 'badge-funcionario'
     };
