@@ -1,139 +1,142 @@
 # Documentação da API de Artigos
 
-Esta documentação descreve os endpoints da API para o gerenciamento de artigos.
+Este documento descreve os endpoints públicos e administrativos relacionados a artigos.
 
-**Prefixo da Rota:** `/artigos`
+Base path: /artigos
 
-**Autenticação:** Endpoints marcados com 🔒 requerem autenticação via Bearer Token (JWT) e permissões de acesso específicas (ADMIN ou EDITOR).
-
----
-
-## Modelo de Dados: Artigo
-
-| Campo | Tipo | Descrição | Obrigatório |
-| --- | --- | --- | --- |
-| `artigoId` | `string` | Identificador único do artigo (UUID). | Sim (na resposta) |
-| `titulo` | `string` | Título do artigo. | Sim |
-| `conteudo` | `object` | Conteúdo do artigo em formato JSON (TipTap). | Sim |
-| `resumo` | `string` | Um breve resumo do artigo. | Não |
-| `autorId` | `string` | ID do usuário autor. | Sim |
-| `categoria` | `CategoriaArtigo` | Categoria do artigo. Valores possíveis: `NUTRICAO`, `CUIDADOS`, `SAUDE`, `COMPORTAMENTO`, `TREINAMENTO`, `RACAS`, `NOTICIAS`, `OUTROS`. | Sim |
-| `status` | `StatusArtigo` | Status do artigo (`PUBLICADO`, `RASCUNHO`, `REVISAO`). | Sim |
-| `dataPublicacao` | `string` | Data de publicação no formato ISO 8601. | Sim |
-| `imagemCapa` | `string` | URL da imagem de destaque. | Sim |
-| `visualizacoes` | `number` | Número de visualizações. | Sim (na resposta) |
-| `curtidas` | `number` | Número de curtidas. | Sim (na resposta) |
-| `destaque` | `boolean` | Indica se o artigo está em destaque. | Sim |
-| `tags` | `string[]` | Lista de tags associadas. | Não |
-| `createdAt` | `string` | Data de criação. | Sim (na resposta) |
-| `updatedAt` | `string` | Data da última atualização. | Sim (na resposta) |
+Autenticação: Endpoints marcados com 🔒 exigem Bearer Token (JWT) e roles ADMIN ou EDITOR.
 
 ---
 
-## Endpoints da API
+## Modelo de Resposta
 
-### 1. 🔒 Criar Novo Artigo
+ArtigoResponseDto
+- artigoId: string
+- titulo: string
+- conteudo: object (JSON TipTap)
+- resumo?: string
+- autor: { userId: string; name: string; avatarUrl?: string }
+- categoria: CategoriaArtigo
+- status: StatusArtigo
+- dataPublicacao: Date (ISO)
+- imagemCapa: string (URL)
+- visualizacoes: number
+- curtidas: number
+- comentarios: ComentarioResponseDto[]
+- destaque: boolean
+- tags: string[]
+- createdAt: Date
+- updatedAt: Date
 
-- **Endpoint:** `POST /artigos`
-- **Descrição:** Cria um novo artigo. Requer role de `ADMIN` ou `EDITOR`.
-- **Corpo da Requisição:** `CreateArtigoDto`
-  ```json
-  {
-    "titulo": "Novo Artigo sobre Gatos",
-    "conteudo": { "type": "doc", "content": [...] },
-    "resumo": "Um resumo opcional.",
-    "autorId": "user-uuid-123",
-    "categoria": "SAUDE",
-    "status": "RASCUNHO",
-    "imagemCapa": "https://example.com/imagem.jpg",
-    "destaque": false,
-    "tags": ["gatos", "cuidados"]
-  }
-  ```
-- **Resposta de Sucesso (201 Created):** Retorna o artigo recém-criado.
-- **Respostas de Erro:**
-    - `400 Bad Request`: Dados inválidos.
-    - `401 Unauthorized`: Token JWT inválido ou ausente.
-    - `403 Forbidden`: O usuário não tem a role necessária.
-
-### 2. 🔒 Listar Todos os Artigos (Admin)
-
-- **Endpoint:** `GET /artigos`
-- **Descrição:** Retorna uma lista paginada de todos os artigos para gerenciamento. Requer role de `ADMIN` ou `EDITOR`.
-- **Parâmetros de Query:** `ListArtigosDto` (page, limit, q, status, categoria, sort)
-- **Resposta de Sucesso (200 OK):** `ArtigosListResponseDto`
-
-### 3. Listar Artigos Publicados (Público)
-
-- **Endpoint:** `GET /artigos/publicados`
-- **Descrição:** Retorna uma lista paginada de artigos com status `PUBLICADO`.
-- **Parâmetros de Query:** `ListArtigosDto` (page, limit, q, categoria, sort)
-- **Resposta de Sucesso (200 OK):** `ArtigosListResponseDto`
-
-### 4. Listar Artigos em Destaque (Público)
-
-- **Endpoint:** `GET /artigos/destaques`
-- **Descrição:** Retorna uma lista dos artigos em destaque.
-- **Parâmetros de Query:**
-    - `limit` (opcional): Número máximo de artigos a serem retornados. Padrão: `5`.
-- **Resposta de Sucesso (200 OK):** `ArtigoResponseDto[]`
-
-### 5. Obter Artigo por ID
-
-- **Endpoint:** `GET /artigos/{id}`
-- **Descrição:** Retorna os detalhes de um artigo específico.
-- **Parâmetros de Query:**
-    - `incrementView` (opcional): Se `true`, incrementa o contador de visualizações.
-- **Resposta de Sucesso (200 OK):** `ArtigoResponseDto`
-- **Resposta de Erro (404 Not Found):** Se o artigo não for encontrado.
-
-### 6. 🔒 Atualizar Artigo
-
-- **Endpoint:** `PATCH /artigos/{id}`
-- **Descrição:** Atualiza parcialmente um artigo existente. Requer role de `ADMIN` ou `EDITOR`.
-- **Corpo da Requisição:** `UpdateArtigoDto` (todos os campos são opcionais)
-- **Resposta de Sucesso (200 OK):** Retorna o artigo atualizado.
-- **Respostas de Erro:** `400`, `401`, `403`, `404`.
-
-### 7. 🔒 Excluir Artigo
-
-- **Endpoint:** `DELETE /artigos/{id}`
-- **Descrição:** Exclui um artigo. Requer role de `ADMIN` ou `EDITOR`.
-- **Resposta de Sucesso (200 OK):**
-  ```json
-  {
-    "message": "Artigo excluído com sucesso"
-  }
-  ```
-- **Respostas de Erro:** `401`, `403`, `404`.
-
-### 8. Curtir Artigo
-
-- **Endpoint:** `POST /artigos/{id}/curtir`
-- **Descrição:** Incrementa o contador de curtidas de um artigo.
-- **Resposta de Sucesso (200 OK):** Retorna o artigo atualizado com o novo número de curtidas.
-- **Respostas de Erro:** `404`.
-
-### 9. Descurtir Artigo
-
-- **Endpoint:** `POST /artigos/{id}/descurtir`
-- **Descrição:** Decrementa o contador de curtidas de um artigo.
-- **Resposta de Sucesso (200 OK):** Retorna o artigo atualizado.
-- **Respostas de Erro:** `404`.
+ArtigosListResponseDto
+- data: ArtigoResponseDto[]
+- pagination: { page: number; limit: number; total: number; totalPages: number; hasNext: boolean; hasPrev: boolean }
 
 ---
 
-## Endpoint de Upload de Imagens
+## Parâmetros de Lista (ListArtigosDto)
 
-### 1. 🔒 Upload de Imagem para Artigo
+Usados nos endpoints de listagem:
+- page?: string (padrão: "1")
+- limit?: string (padrão: "10", máximo: 50)
+- search?: string (busca por título/conteúdo)
+- categoria?: string
+- status?: StatusArtigo
+- destaque?: boolean (enviar "true" para filtrar destaque)
+- tag?: string
+- sortBy?: string (padrão: "dataPublicacao"; opções: dataPublicacao, visualizacoes, curtidas, createdAt, titulo)
+- sortOrder?: "asc" | "desc" (padrão: "desc")
 
-- **Endpoint:** `POST /artigos/imagens/upload`
-- **Descrição:** Recebe um arquivo de imagem, salva-o e retorna a URL pública. Requer role de `ADMIN` ou `EDITOR`.
-- **Corpo da Requisição:** `multipart/form-data` com um campo `image`.
-- **Resposta de Sucesso (200 OK):**
-  ```json
-  {
-    "url": "https://example.com/uploads/artigos/nome_da_imagem_12345.jpg"
-  }
-  ```
-- **Respostas de Erro:** `400`, `401`, `403`.
+---
+
+## Endpoints
+
+### 1) 🔒 POST /artigos
+Cria um novo artigo.
+
+Body (CreateArtigoDto):
+- titulo: string
+- conteudo: object (JSON TipTap)
+- resumo?: string
+- autorId: string (UUID)
+- categoria: CategoriaArtigo
+- status?: StatusArtigo (default: RASCUNHO)
+- dataPublicacao: string (ISO)
+- imagemCapa: string (URL)
+- destaque?: boolean
+- tags?: string[]
+
+Respostas: 201 (ArtigoResponseDto), 400, 401, 403
+
+### 2) 🔒 GET /artigos
+Lista paginada de todos os artigos (admin/editor).
+
+Query: ListArtigosDto
+Resposta: 200 (ArtigosListResponseDto)
+
+### 3) GET /artigos/publicados
+Lista paginada de artigos com status PUBLICADO (público).
+
+Query: ListArtigosDto (page, limit, search, categoria, destaque, tag, sortBy, sortOrder)
+Resposta: 200 (ArtigosListResponseDto)
+
+Exemplo:
+GET /artigos/publicados?sortBy=dataPublicacao&sortOrder=desc&page=1&limit=10
+
+### 4) GET /artigos/destaques
+Lista artigos em destaque (público).
+
+Query:
+- limit?: string (padrão: "5")
+
+Resposta: 200 (ArtigoResponseDto[])
+
+### 5) GET /artigos/{id}
+Obtém um artigo por ID.
+
+Query:
+- incrementView?: string ("true" para incrementar visualizações)
+
+Respostas: 200 (ArtigoResponseDto), 404
+
+### 6) 🔒 PATCH /artigos/{id}
+Atualiza parcialmente um artigo.
+
+Body: UpdateArtigoDto (todos os campos opcionais)
+Respostas: 200 (ArtigoResponseDto), 400, 401, 403, 404
+
+### 7) 🔒 DELETE /artigos/{id}
+Remove (soft delete) um artigo.
+
+Resposta: 200 { message: "Artigo excluído com sucesso" }, 401, 403, 404
+
+### 8) POST /artigos/{id}/curtir
+Incrementa curtidas de um artigo publicado.
+
+Resposta: 200 (ArtigoResponseDto), 404
+
+### 9) POST /artigos/{id}/descurtir
+Decrementa curtidas de um artigo publicado.
+
+Resposta: 200 (ArtigoResponseDto), 404
+
+### 10) Comentários
+
+- GET /artigos/{id}/comentarios (público)
+- 🔒 POST /artigos/{id}/comentarios (JWT)
+  - Body: { conteudo: string }
+- 🔒 PATCH /artigos/comentarios/{comentarioId} (JWT)
+- 🔒 DELETE /artigos/comentarios/{comentarioId} (JWT)
+
+### 11) 🔒 POST /artigos/imagens/upload
+Upload de imagem (multipart/form-data, campo "image"). Retorna URL pública.
+
+Respostas: 200 { url: string }, 400, 401, 403
+
+---
+
+## Observações para Integração Frontend
+- Em páginas públicas, utilize GET /artigos/publicados com sortBy e sortOrder; leia response.data e response.pagination.
+- Em páginas de administração, utilize GET /artigos com Authorization: Bearer <token>.
+- CORS está habilitado para http://localhost:4200 e origens relacionadas no backend.
+ - Quando a lista estiver vazia (após aplicar filtros/paginação), a resposta terá `data: []` e a mensagem: "Nenhum artigo cadastrado".
