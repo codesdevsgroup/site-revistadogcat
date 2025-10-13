@@ -177,6 +177,38 @@ Este objeto é retornado **apenas** pelo endpoint `GET /users/me` e inclui todos
 - **Endpoint:** `PATCH /users/{id}`
 - **Autenticação:** 🔒 `ADMIN`
 - **Descrição:** Permite que um administrador atualize os dados de qualquer usuário.
+- **Corpo da Requisição:** Objeto parcial com os campos que deseja atualizar. Campos suportados:
+  - `name`: `string`
+  - `userName`: `string`
+  - `email`: `string`
+  - `cpf`: `string` (opcional)
+  - `telefone`: `string` (opcional)
+  - `active`: `boolean`
+  - `role`: `Role` — valores permitidos:
+    - `USUARIO`
+    - `DONO_PET_APROVADO`
+    - `ASSINANTE`
+    - `DONO_PET_APROVADO_ASSINANTE`
+    - `ADMIN`
+    - `EDITOR`
+    - `FUNCIONARIO`
+    - `JURADO`
+  
+  Observações:
+  - Apenas usuários com role `ADMIN` podem alterar o campo `role` de outros usuários.
+  - O valor enviado deve coincidir exatamente com o enum `Role` do backend (case-sensitive).
+  - Recomenda-se validar regras internas de segurança, como impedir que um admin remova o próprio acesso sem haver outro admin ativo.
+
+- **Exemplo de Requisição:**
+  ```json
+  {
+    "name": "Regular User",
+    "userName": "user01",
+    "email": "user@user.com",
+    "role": "EDITOR",
+    "active": true
+  }
+  ```
 - **Resposta (200 OK):** `Objeto User (Resposta Pública)` atualizado.
 
 ### 6. Upload de Avatar

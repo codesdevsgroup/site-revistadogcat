@@ -1,0 +1,50 @@
+<div class="edicao-detalhe-container">
+  <div class="header-row">
+    <h1>Nova Edição</h1>
+    <div class="actions">
+      <button type="button" class="btn btn-outline-secondary" (click)="onCancel()">
+        <i class="fas fa-times me-1"></i>
+        Cancelar
+      </button>
+      <button type="button" class="btn btn-primary" (click)="onSubmit()" [disabled]="form.invalid || saving">
+        <i class="fas fa-save me-1"></i>
+        Salvar
+      </button>
+    </div>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-grid">
+    <div class="form-group">
+      <label for="titulo" class="form-label">Título *</label>
+      <input id="titulo" type="text" class="form-control" formControlName="titulo" [class.is-invalid]="form.get('titulo')?.invalid && form.get('titulo')?.touched" placeholder="Ex.: Edição Jan/Fev 2025">
+      <div class="invalid-feedback" *ngIf="form.get('titulo')?.invalid && form.get('titulo')?.touched">
+        <div *ngIf="form.get('titulo')?.errors?.['required']">Título é obrigatório</div>
+        <div *ngIf="form.get('titulo')?.errors?.['minlength']">Mínimo de 3 caracteres</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="bimestre" class="form-label">Bimestre *</label>
+      <input id="bimestre" type="text" class="form-control" formControlName="bimestre" [class.is-invalid]="form.get('bimestre')?.invalid && form.get('bimestre')?.touched" placeholder="Ex.: Jan/Fev">
+      <div class="invalid-feedback" *ngIf="form.get('bimestre')?.invalid && form.get('bimestre')?.touched">
+        Bimestre é obrigatório
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="ano" class="form-label">Ano *</label>
+      <input id="ano" type="number" class="form-control" formControlName="ano" [class.is-invalid]="form.get('ano')?.invalid && form.get('ano')?.touched">
+      <div class="invalid-feedback" *ngIf="form.get('ano')?.invalid && form.get('ano')?.touched">
+        Informe um ano entre 1900 e 2100
+      </div>
+    </div>
+
+    <div class="form-group full">
+      <label for="pdfUrl" class="form-label">PDF (URL)</label>
+      <input id="pdfUrl" type="url" class="form-control" formControlName="pdfUrl" placeholder="https://...">
+      <div class="form-text">
+        Informe a URL do PDF da edição. No futuro, podemos adicionar upload direto do arquivo.
+      </div>
+    </div>
+  </form>
+</div>

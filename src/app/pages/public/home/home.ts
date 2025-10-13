@@ -16,6 +16,7 @@ import { AnuncieAquiComponent } from '../components/anuncie-aqui/anuncie-aqui';
   templateUrl: './home.html',
   styleUrl: './home.scss'
 })
+
 export class HomeComponent {
   socialMedia = {
     instagram: '@revistadogcat',

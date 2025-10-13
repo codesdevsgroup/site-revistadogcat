@@ -133,7 +133,9 @@ export class UsuariosComponent implements OnInit, OnDestroy {
       'ASSINANTE': 'badge-assinante',
       'USUARIO': 'badge-leitor',
       'DONO_PET_APROVADO': 'badge-dono-pet',
-      'FUNCIONARIO': 'badge-funcionario'
+      'FUNCIONARIO': 'badge-funcionario',
+      'DONO_PET_APROVADO_ASSINANTE': 'badge-dono-pet-assinante',
+      'JURADO': 'badge-jurado'
     };
     return roleMap[role] || 'badge-default';
   }

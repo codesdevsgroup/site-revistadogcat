@@ -34,4 +34,12 @@ export class EdicoesService {
   listarUltima(): Observable<Edicao> {
     return this.http.get<Edicao>(`${this.apiUrl}/ultima`);
   }
+
+  /**
+   * Cria uma nova edição
+   * Espera um payload com: titulo, bimestre, ano e (opcional) pdfUrl
+   */
+  criarEdicao(payload: Partial<Edicao>): Observable<Edicao> {
+    return this.http.post<Edicao>(this.apiUrl, payload);
+  }
 }

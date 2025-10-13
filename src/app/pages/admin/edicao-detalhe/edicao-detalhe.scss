@@ -1,0 +1,25 @@
+.edicao-detalhe-container {
+  padding: var(--space-6);
+}
+
+.header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-4);
+}
+
+.actions {
+  display: flex;
+  gap: .5rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-4);
+}
+
+.form-group.full {
+  grid-column: 1 / -1;
+}

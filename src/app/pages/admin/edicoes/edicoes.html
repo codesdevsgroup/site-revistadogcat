@@ -1,0 +1,55 @@
+<div class="admin-edicoes-container">
+  <div class="header-row">
+    <h1>Edições</h1>
+    <a class="btn btn-primary" routerLink="/admin/edicoes/novo">
+      <i class="fas fa-plus me-1"></i>
+      Nova Edição
+    </a>
+  </div>
+
+  <div class="content">
+    <div class="alert alert-info" *ngIf="loading">Carregando edições...</div>
+    <div class="alert alert-danger" *ngIf="!loading && error">{{ error }}</div>
+
+    <div class="empty-state" *ngIf="!loading && !error && edicoesList.length === 0">
+      <i class="fas fa-book"></i>
+      <p>Nenhuma edição cadastrada ainda.</p>
+      <a class="btn btn-secondary" routerLink="/admin/edicoes/novo">Cadastrar Edição</a>
+    </div>
+
+    <div class="table-responsive" *ngIf="edicoesList.length > 0">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Ano</th>
+            <th>Bimestre</th>
+            <th>Título</th>
+            <th>PDF</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let edicao of edicoesList; trackBy: trackByEdicaoId">
+            <td>{{ edicao.ano }}</td>
+            <td>{{ edicao.bimestre }}</td>
+            <td>{{ edicao.titulo }}</td>
+            <td>
+              <span class="badge" [class.bg-success]="edicao.pdfUrl" [class.bg-secondary]="!edicao.pdfUrl">
+                {{ edicao.pdfUrl ? 'Disponível' : 'Em breve' }}
+              </span>
+            </td>
+            <td class="actions">
+              <button class="btn btn-outline-primary btn-sm" [disabled]="!edicao.pdfUrl" (click)="abrirPdf(edicao)">
+                <i class="fas fa-file-pdf"></i> Abrir
+              </button>
+              <!-- Futuro: editar -->
+              <!-- <a class="btn btn-outline-secondary btn-sm" [routerLink]="['/admin/edicoes', edicao.id]">
+                <i class="fas fa-edit"></i> Editar
+              </a> -->
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
