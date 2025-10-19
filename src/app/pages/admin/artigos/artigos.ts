@@ -21,12 +21,22 @@ export class ArtigosComponent {
     // Busca artigos do backend (NestJS)
     this.artigosService.listarArtigos({ sort: 'dataPublicacao:desc' }).subscribe({
       next: (data) => {
-        this.artigos = Array.isArray(data) ? data : [];
+        // Garantir que sempre seja um array válido
+        if (Array.isArray(data)) {
+          this.artigos = data;
+        } else if (data && typeof data === 'object' && 'data' in data) {
+          // Se for um objeto com propriedade data (resposta paginada)
+          this.artigos = Array.isArray((data as any).data) ? (data as any).data : [];
+        } else {
+          this.artigos = [];
+        }
         this.loading = false;
+        console.log('Artigos carregados:', this.artigos);
       },
       error: (err) => {
         console.error('Erro ao carregar artigos', err);
         this.error = 'Não foi possível carregar os artigos. Tente novamente mais tarde.';
+        this.artigos = []; // Garantir que seja um array vazio em caso de erro
         this.loading = false;
       }
     });
