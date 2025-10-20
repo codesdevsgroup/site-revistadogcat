@@ -56,7 +56,7 @@ export interface ArtigoInput {
   categoria: string;
   status: string;
   dataPublicacao?: string;
-  imagemCapa: string;
+  imagemCapa?: string;
   destaque: boolean;
   tags?: string[];
 }
@@ -101,8 +101,6 @@ export class ArtigosService {
     
     // Verificação de segurança para o autor
     if (!apiArtigo.autor) {
-      console.error('❌ ERRO: apiArtigo.autor está undefined');
-      console.error('Dados completos do artigo:', JSON.stringify(apiArtigo, null, 2));
       throw new Error('Dados do autor não encontrados na resposta da API');
     }
     
@@ -328,20 +326,70 @@ export class ArtigosService {
   }
 
   /**
-   * Cria um novo artigo
+   * Cria um novo artigo com upload de imagem opcional
    */
-  criarArtigo(artigo: ArtigoInput): Observable<Artigo> {
-    return this.http.post<ArtigoResponseDto>(this.apiUrl, artigo).pipe(
-      map(artigo => this.mapArtigoFromApi(artigo))
+  criarArtigo(artigo: ArtigoInput, imagemCapa?: File): Observable<Artigo> {
+    const formData = new FormData();
+    
+    // Adiciona os dados do artigo
+    formData.append('titulo', artigo.titulo);
+    formData.append('conteudo', JSON.stringify(artigo.conteudo));
+    formData.append('resumo', artigo.resumo || '');
+    formData.append('autorId', artigo.autorId);
+    formData.append('categoria', artigo.categoria);
+    formData.append('status', artigo.status);
+    
+    if (artigo.dataPublicacao) {
+      formData.append('dataPublicacao', artigo.dataPublicacao);
+    }
+    
+    // Adiciona a imagem se fornecida
+    if (imagemCapa) {
+      formData.append('imagemCapa', imagemCapa);
+    }
+
+    return this.http.post<any>(this.apiUrl, formData).pipe(
+      map(response => {
+        const artigo = response?.data;
+        if (!artigo) {
+          throw new Error('Artigo não encontrado na resposta da API');
+        }
+        return this.mapArtigoFromApi(artigo);
+      })
     );
   }
 
   /**
-   * Atualiza um artigo existente
+   * Atualiza um artigo existente com upload de imagem opcional
    */
-  atualizarArtigo(id: string, artigo: ArtigoInput): Observable<Artigo> {
-    return this.http.patch<ArtigoResponseDto>(`${this.apiUrl}/${id}`, artigo).pipe(
-      map(artigo => this.mapArtigoFromApi(artigo))
+  atualizarArtigo(id: string, artigo: ArtigoInput, imagemCapa?: File): Observable<Artigo> {
+    const formData = new FormData();
+    
+    // Adiciona os dados do artigo
+    formData.append('titulo', artigo.titulo);
+    formData.append('conteudo', JSON.stringify(artigo.conteudo));
+    formData.append('resumo', artigo.resumo || '');
+    formData.append('autorId', artigo.autorId);
+    formData.append('categoria', artigo.categoria);
+    formData.append('status', artigo.status);
+    
+    if (artigo.dataPublicacao) {
+      formData.append('dataPublicacao', artigo.dataPublicacao);
+    }
+    
+    // Adiciona a imagem se fornecida
+    if (imagemCapa) {
+      formData.append('imagemCapa', imagemCapa);
+    }
+
+    return this.http.patch<any>(`${this.apiUrl}/${id}`, formData).pipe(
+      map(response => {
+        const artigo = response?.data;
+        if (!artigo) {
+          throw new Error('Artigo não encontrado na resposta da API');
+        }
+        return this.mapArtigoFromApi(artigo);
+      })
     );
   }
 
@@ -349,8 +397,14 @@ export class ArtigosService {
    * Atualiza parcialmente um artigo (ex: apenas destaque)
    */
   atualizarParcialArtigo(id: string, dados: Partial<ArtigoInput>): Observable<Artigo> {
-    return this.http.patch<ArtigoResponseDto>(`${this.apiUrl}/${id}`, dados).pipe(
-      map(artigo => this.mapArtigoFromApi(artigo))
+    return this.http.patch<any>(`${this.apiUrl}/${id}`, dados).pipe(
+      map(response => {
+        const artigo = response?.data;
+        if (!artigo) {
+          throw new Error('Artigo não encontrado na resposta da API');
+        }
+        return this.mapArtigoFromApi(artigo);
+      })
     );
   }
 
@@ -361,35 +415,5 @@ export class ArtigosService {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
-  /**
-   * Faz upload de uma imagem
-   */
-  uploadImagem(arquivo: File): Observable<{ url: string }> {
-    console.log('=== UPLOAD FRONTEND ===');
-    console.log('Arquivo para upload:', arquivo);
-    console.log('Nome do arquivo:', arquivo.name);
-    console.log('Tipo do arquivo:', arquivo.type);
-    console.log('Tamanho do arquivo:', arquivo.size);
-    
-    const formData = new FormData();
-    formData.append('image', arquivo);
-    
-    console.log('FormData criado, enviando para:', `${this.apiUrl}/imagens/upload`);
 
-    // Endpoint correto: POST /artigos/imagens/upload
-    return this.http.post<{ url: string }>(`${this.apiUrl}/imagens/upload`, formData).pipe(
-      tap((response: any) => {
-        console.log('=== RESPOSTA DO UPLOAD ===');
-        console.log('Resposta recebida:', response);
-      }),
-      catchError((error: any) => {
-        console.error('=== ERRO NO UPLOAD ===');
-        console.error('Erro completo:', error);
-        console.error('Status:', error.status);
-        console.error('Mensagem:', error.message);
-        console.error('Body:', error.error);
-        return throwError(() => error);
-      })
-    );
-  }
 }

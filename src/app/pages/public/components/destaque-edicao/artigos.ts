@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ArtigosService, Artigo } from '../../../../services/artigos.service';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-artigos',
@@ -13,6 +14,7 @@ export class ArtigosComponent implements OnInit {
   artigos: Artigo[] = [];
   loading = true;
   error?: string;
+  public apiUrl = environment.apiUrl;
 
   constructor(private artigosService: ArtigosService) {}
 

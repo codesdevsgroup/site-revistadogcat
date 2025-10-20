@@ -7,8 +7,7 @@ import { ArtigosService, Artigo, ArtigoInput } from '../../../services/artigos.s
 import { UsuarioService } from '../../../services/usuario.service';
 import { NotificationService } from '../../../services/notification.service';
 import type { Usuario } from '../../../interfaces/usuario.interface';
-import { of } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-artigo-detalhe',
@@ -265,51 +264,22 @@ export class ArtigoDetalheComponent implements OnInit {
       tags: undefined
     };
 
-    // Upload da imagem de capa antes de criar/atualizar o artigo
+    // Criar/atualizar artigo com upload de imagem em uma única requisição
     console.log('=== INÍCIO DO PROCESSO DE SALVAMENTO ===');
     console.log('Imagem selecionada para upload:', !!this.imagemSelecionada);
-    console.log('Foto destaque atual:', this.fotoDestaque);
+    console.log('Payload base:', payloadBase);
     
-    const upload$ = this.imagemSelecionada
-      ? this.artigosService.uploadImagem(this.imagemSelecionada)
-      : of({ url: this.fotoDestaque || '' });
-
-    upload$
-      .pipe(
-        switchMap(({ url }) => {
-          console.log('=== RESULTADO DO UPLOAD ===');
-          console.log('URL retornada do upload:', url);
-          console.log('Imagem foi selecionada?', !!this.imagemSelecionada);
-          
-          // Se há nova imagem selecionada, usar a URL do upload
-          // Se não há nova imagem, manter a URL original da imagem existente (não o preview)
-          let imagemFinal = '';
-          if (this.imagemSelecionada) {
-            // Nova imagem foi selecionada, usar URL do upload
-            imagemFinal = url;
-          } else if (this.isEditMode) {
-            // Modo edição sem nova imagem, manter a URL original da imagem existente
-            imagemFinal = this.imagemOriginalUrl || '';
-          }
-          
-          const payload: ArtigoInput = {
-            ...payloadBase,
-            imagemCapa: imagemFinal
-          };
-          
-          console.log('=== PAYLOAD FINAL ===');
-          console.log('Payload completo:', payload);
-          console.log('imagemCapa no payload:', payload.imagemCapa);
-          
-          if (this.isEditMode && this.artigoId) {
-            // Modo edição - atualizar artigo existente
-            return this.artigosService.atualizarArtigo(this.artigoId, payload);
-          } else {
-            // Modo criação - criar novo artigo
-            return this.artigosService.criarArtigo(payload);
-          }
-        })
-      )
+    let operacao$: Observable<Artigo>;
+    
+    if (this.isEditMode && this.artigoId) {
+       // Modo edição - atualizar artigo existente
+       operacao$ = this.artigosService.atualizarArtigo(this.artigoId, payloadBase, this.imagemSelecionada || undefined);
+     } else {
+       // Modo criação - criar novo artigo
+       operacao$ = this.artigosService.criarArtigo(payloadBase, this.imagemSelecionada || undefined);
+     }
+    
+    operacao$
       .subscribe({
         next: (artigo: Artigo) => {
           const mensagem = this.isEditMode ? 'Artigo atualizado com sucesso!' : 'Artigo criado com sucesso!';
@@ -325,7 +295,7 @@ export class ArtigoDetalheComponent implements OnInit {
   }
 
   onCancel(): void {
-    this.router.navigate(['/artigos']);
+    this.router.navigate(['/admin/artigos']);
   }
 
   private markFormGroupTouched(): void {
@@ -473,21 +443,22 @@ export class ArtigoDetalheComponent implements OnInit {
 
   // Método para remover a foto de destaque
   removerFotoDestaque(): void {
+    // Limpar a imagem selecionada
     this.imagemSelecionada = null;
     
-    if (this.isEditMode && this.imagemOriginalUrl) {
-      // Em modo de edição, restaurar a imagem original
-      this.fotoDestaque = this.imagemOriginalUrl;
-      this.artigoForm.patchValue({ fotoDestaque: this.imagemOriginalUrl });
-    } else {
-      // Em modo de criação ou sem imagem original, remover completamente
-      this.fotoDestaque = null;
-      this.artigoForm.patchValue({ fotoDestaque: '' });
-    }
+    // Remover a foto de destaque atual
+    this.fotoDestaque = null;
+    this.artigoForm.patchValue({ fotoDestaque: '' });
 
     // Limpar o input file usando a referência do ViewChild
     if (this.fotoDestaqueInput) {
       this.fotoDestaqueInput.nativeElement.value = '';
+    }
+
+    // Em modo de criação, reativar a validação obrigatória
+    if (!this.isEditMode) {
+      this.artigoForm.get('fotoDestaque')?.setValidators([Validators.required]);
+      this.artigoForm.get('fotoDestaque')?.updateValueAndValidity();
     }
   }
 

@@ -7,7 +7,7 @@
         <div class="highlight-card">
           <div class="highlight-image">
             <img
-              [src]="artigo.imagemCapa || './dog/default-article.svg'"
+              [src]="(apiUrl + artigo.imagemCapa) || './dog/default-article.svg'"
               [alt]="artigo.titulo"
               (error)="$event.target.src = './dog/default-article.svg'" />
           </div>
