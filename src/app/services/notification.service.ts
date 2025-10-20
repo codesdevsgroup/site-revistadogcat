@@ -32,6 +32,24 @@ export class NotificationService {
             tagName: 'i',
             color: 'white'
           }
+        },
+        {
+          type: 'warning',
+          backgroundColor: '#ffc107',
+          icon: {
+            className: 'fas fa-exclamation-triangle',
+            tagName: 'i',
+            color: 'white'
+          }
+        },
+        {
+          type: 'info',
+          backgroundColor: '#17a2b8',
+          icon: {
+            className: 'fas fa-info-circle',
+            tagName: 'i',
+            color: 'white'
+          }
         }
       ]
     });
@@ -51,5 +69,34 @@ export class NotificationService {
    */
   error(message: string): void {
     this.notyf.error(message);
+  }
+
+  /**
+   * Exibe uma notificação de aviso.
+   * @param message A mensagem a ser exibida.
+   */
+  warning(message: string): void {
+    this.notyf.open({
+      type: 'warning',
+      message: message
+    });
+  }
+
+  /**
+   * Exibe uma notificação informativa.
+   * @param message A mensagem a ser exibida.
+   */
+  info(message: string): void {
+    this.notyf.open({
+      type: 'info',
+      message: message
+    });
+  }
+
+  /**
+   * Limpa todas as notificações.
+   */
+  dismissAll(): void {
+    this.notyf.dismissAll();
   }
 }

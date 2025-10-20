@@ -43,6 +43,8 @@ export interface Artigo {
   comentarios: number;
   destaque: boolean;
   tags?: string[];
+  createdAt: string;
+  updatedAt: string;
 }
 
 // Interface para criação/atualização de artigo
@@ -107,7 +109,9 @@ export class ArtigosService {
       curtidas: apiArtigo.curtidas,
       comentarios: apiArtigo.comentarios.length,
       destaque: apiArtigo.destaque,
-      tags: apiArtigo.tags
+      tags: apiArtigo.tags,
+      createdAt: apiArtigo.createdAt,
+      updatedAt: apiArtigo.updatedAt
     };
   }
 
@@ -296,8 +300,15 @@ export class ArtigosService {
    * Obtém um artigo específico por ID
    */
   obterArtigo(id: string): Observable<Artigo> {
-    return this.http.get<ArtigoResponseDto>(`${this.apiUrl}/${id}`).pipe(
-      map(artigo => this.mapArtigoFromApi(artigo))
+    return this.http.get<any>(`${this.apiUrl}/${id}`).pipe(
+      map(response => {
+        // A API retorna: { statusCode, message, data: ArtigoResponseDto }
+        const artigo = response?.data;
+        if (!artigo) {
+          throw new Error('Artigo não encontrado na resposta da API');
+        }
+        return this.mapArtigoFromApi(artigo);
+      })
     );
   }
 
@@ -314,7 +325,7 @@ export class ArtigosService {
    * Atualiza um artigo existente
    */
   atualizarArtigo(id: string, artigo: ArtigoInput): Observable<Artigo> {
-    return this.http.put<ArtigoResponseDto>(`${this.apiUrl}/${id}`, artigo).pipe(
+    return this.http.patch<ArtigoResponseDto>(`${this.apiUrl}/${id}`, artigo).pipe(
       map(artigo => this.mapArtigoFromApi(artigo))
     );
   }
@@ -342,7 +353,7 @@ export class ArtigosService {
     const formData = new FormData();
     formData.append('image', arquivo);
 
-    // Endpoint conforme docs: POST /artigos/imagens/upload
+    // Endpoint correto: POST /artigos/imagens/upload
     return this.http.post<{ url: string }>(`${this.apiUrl}/imagens/upload`, formData);
   }
 }

@@ -3,16 +3,21 @@
 
   <ng-container *ngIf="!loading && !error; else estado">
     <div class="highlight-grid">
-      <div class="highlight-card" *ngFor="let artigo of artigos; trackBy: trackById">
-        <div class="highlight-image" *ngIf="artigo.imagemCapa">
-          <img [src]="artigo.imagemCapa" [alt]="artigo.titulo" />
+      @for (artigo of artigos; track trackById($index, artigo)) {
+        <div class="highlight-card">
+          <div class="highlight-image">
+            <img
+              [src]="artigo.imagemCapa || './dog/default-article.svg'"
+              [alt]="artigo.titulo"
+              (error)="$event.target.src = './dog/default-article.svg'" />
+          </div>
+          <div class="highlight-content">
+            <h3>{{ artigo.titulo }}</h3>
+            <p>{{ resumoCurto(artigo.resumo) }}</p>
+            <a href="#" class="highlight-link" title="Abrir artigo">Ler matéria completa →</a>
+          </div>
         </div>
-        <div class="highlight-content">
-          <h3>{{ artigo.titulo }}</h3>
-          <p>{{ resumoCurto(artigo.resumo) }}</p>
-          <a href="#" class="highlight-link" title="Abrir artigo">Ler matéria completa →</a>
-        </div>
-      </div>
+      }
     </div>
   </ng-container>
 

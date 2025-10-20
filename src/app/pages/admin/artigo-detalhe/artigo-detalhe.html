@@ -222,7 +222,7 @@
           </div>
 
           <!-- Terceira linha - Informações do Artigo -->
-          <div class="config-row" *ngIf="isEditMode">
+          <div class="config-row" *ngIf="isEditMode && artigoCarregado">
 
             <!-- Informações do Artigo -->
             <div class="info-section">
@@ -234,11 +234,11 @@
                 </div>
                 <div class="info-item">
                   <span class="info-label">Criado em:</span>
-                  <span class="info-value">15/01/2024</span>
+                  <span class="info-value">{{ dataCriacao | date:'dd/MM/yyyy' }}</span>
                 </div>
                 <div class="info-item">
                   <span class="info-label">Última edição:</span>
-                  <span class="info-value">20/01/2024</span>
+                  <span class="info-value">{{ dataUltimaEdicao | date:'dd/MM/yyyy' }}</span>
                 </div>
               </div>
             </div>
