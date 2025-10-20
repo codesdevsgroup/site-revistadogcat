@@ -6,6 +6,7 @@ import { ArtigosComponent } from './artigos/artigos';
 import { ArtigoDetalheComponent } from './artigo-detalhe/artigo-detalhe';
 import { AdminEdicoesComponent } from './edicoes/edicoes';
 import { EdicaoDetalheComponent } from './edicao-detalhe/edicao-detalhe';
+import { CaesComponent } from './caes/caes';
 import { AdminGuard } from '../../guards/admin.guard';
 import { AuthResolver } from '../../resolvers/auth.resolver';
 
@@ -22,7 +23,8 @@ export const adminRoutes: Routes = [
       { path: 'artigos', component: ArtigosComponent },
       { path: 'artigos/:id', component: ArtigoDetalheComponent },
       { path: 'edicoes', component: AdminEdicoesComponent },
-      { path: 'edicoes/:id', component: EdicaoDetalheComponent }
+      { path: 'edicoes/:id', component: EdicaoDetalheComponent },
+      { path: 'caes', component: CaesComponent }
     ]
   }
 ];

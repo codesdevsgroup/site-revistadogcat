@@ -1,0 +1,210 @@
+<div class="caes-container">
+  <div class="page-header">
+    <h1 class="page-title">
+      <i class="fas fa-dog"></i>
+      Cães Cadastrados
+    </h1>
+    <div class="page-actions">
+      <button class="btn btn-secondary" (click)="openBreedModal()" *ngIf="canManageBreeds()">
+        <i class="fas fa-cog"></i>
+        Gerenciar Raças
+      </button>
+      <button class="btn btn-primary" (click)="navigateToCadastro()">
+        <i class="fas fa-plus"></i>
+        Cadastrar Cão
+      </button>
+    </div>
+  </div>
+
+  <ng-container *ngIf="!isLoading; else loadingTemplate">
+    <div class="caes-table-container">
+      <div class="table-header">
+        <h2>Lista de Cães ({{ filteredCaes.length }})</h2>
+        <div class="table-filters">
+          <input
+            type="text"
+            placeholder="Buscar por nome, dono ou registro..."
+            class="search-input"
+            [(ngModel)]="searchTerm"
+            (input)="filterCaes()">
+
+          <select class="filter-select" [(ngModel)]="selectedBreedId" (change)="filterCaes()">
+            <option value="">Todas as raças</option>
+            <option *ngFor="let raca of racas" [value]="raca.id">{{ raca.nome }}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="table-responsive" *ngIf="filteredCaes.length > 0; else emptyState">
+        <table class="caes-table">
+          <thead>
+            <tr>
+              <th>Foto</th>
+              <th>Nome</th>
+              <th>Raça</th>
+              <th>Idade</th>
+              <th>Sexo</th>
+              <th>Dono</th>
+              <th>Data de Cadastro</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let cao of filteredCaes">
+              <td>
+                <div class="cao-photo">
+                  <img *ngIf="cao.fotos && cao.fotos.length > 0; else noPhoto" 
+                       [src]="cao.fotos[0]" 
+                       [alt]="cao.nome"
+                       class="photo-thumbnail">
+                  <ng-template #noPhoto>
+                    <div class="no-photo">
+                      <i class="fas fa-dog"></i>
+                    </div>
+                  </ng-template>
+                </div>
+              </td>
+              <td>
+                <div class="cao-name">
+                  <strong>{{ cao.nome }}</strong>
+                  <small *ngIf="cao.numeroRegistro">#{{ cao.numeroRegistro }}</small>
+                </div>
+              </td>
+              <td>{{ getRacaName(cao.racaId) }}</td>
+              <td>{{ formatAge(cao.dataNascimento) }}</td>
+              <td>
+                <span class="sexo-badge" [class]="cao.sexo.toLowerCase()">
+                  {{ cao.sexo === 'MACHO' ? 'Macho' : 'Fêmea' }}
+                </span>
+              </td>
+              <td>{{ cao.donoCao?.nome || 'N/A' }}</td>
+              <td>{{ formatDate(cao.createdAt) }}</td>
+              <td>
+                <div class="action-buttons">
+                  <button class="btn btn-sm btn-outline" (click)="viewCao(cao)" title="Visualizar">
+                    <i class="fas fa-eye"></i>
+                  </button>
+                  <button class="btn btn-sm btn-outline" (click)="editCao(cao)" title="Editar">
+                    <i class="fas fa-edit"></i>
+                  </button>
+                  <button class="btn btn-sm btn-danger" (click)="deleteCao(cao)" title="Excluir">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <ng-template #emptyState>
+        <div class="empty-state">
+          <i class="fas fa-dog"></i>
+          <h3>Nenhum cão encontrado</h3>
+          <p *ngIf="searchTerm || selectedBreedId">
+            Tente ajustar os filtros de busca ou 
+            <button class="btn-link" (click)="clearFilters()">limpar filtros</button>
+          </p>
+          <p *ngIf="!searchTerm && !selectedBreedId">
+            Ainda não há cães cadastrados no sistema.
+          </p>
+        </div>
+      </ng-template>
+    </div>
+  </ng-container>
+
+  <ng-template #loadingTemplate>
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Carregando cães...</p>
+    </div>
+  </ng-template>
+</div>
+
+<!-- Modal de Gerenciamento de Raças -->
+<div class="modal-overlay" *ngIf="showBreedModal" (click)="closeBreedModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>
+        <i class="fas fa-cog"></i>
+        Gerenciar Raças
+      </h3>
+      <button class="btn-close" (click)="closeBreedModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <!-- Formulário para adicionar/editar raça -->
+      <form class="breed-form" (ngSubmit)="saveBreed()" #breedForm="ngForm">
+        <div class="form-group">
+          <label for="breedName">Nome da Raça</label>
+          <input
+            type="text"
+            id="breedName"
+            name="breedName"
+            class="form-control"
+            [(ngModel)]="currentBreed.nome"
+            required
+            placeholder="Digite o nome da raça">
+        </div>
+
+        <div class="form-group">
+          <label for="breedDescription">Descrição</label>
+          <textarea
+            id="breedDescription"
+            name="breedDescription"
+            class="form-control"
+            [(ngModel)]="currentBreed.descricao"
+            rows="3"
+            placeholder="Descrição da raça (opcional)"></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" (click)="cancelBreedEdit()">
+            Cancelar
+          </button>
+          <button type="submit" class="btn btn-primary" [disabled]="!breedForm.valid || isSavingBreed">
+            <i class="fas fa-spinner fa-spin" *ngIf="isSavingBreed"></i>
+            {{ editingBreedId ? 'Atualizar' : 'Adicionar' }}
+          </button>
+        </div>
+      </form>
+
+      <!-- Lista de raças existentes -->
+      <div class="breeds-list" *ngIf="racas.length > 0">
+        <div class="breeds-header">
+          <h4>Raças Cadastradas</h4>
+          <div class="breeds-filter">
+            <input
+              type="text"
+              class="form-control form-control-sm"
+              [(ngModel)]="racaSearchTerm"
+              placeholder="Filtrar raças..."
+              (input)="onRacaFilterChange()">
+            <i class="fas fa-search"></i>
+          </div>
+        </div>
+        
+        <div class="breed-item" *ngFor="let raca of filteredRacas">
+          <div class="breed-info">
+            <strong>{{ raca.nome }}</strong>
+            <small *ngIf="raca.descricao">{{ raca.descricao }}</small>
+          </div>
+          <div class="breed-actions">
+            <button class="btn btn-sm btn-outline" (click)="editBreed(raca)" title="Editar">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="btn btn-sm btn-danger" (click)="deleteBreed(raca)" title="Excluir">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </div>
+        
+        <div class="no-results" *ngIf="filteredRacas.length === 0 && racaSearchTerm">
+          <p>Nenhuma raça encontrada para "{{ racaSearchTerm }}"</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
