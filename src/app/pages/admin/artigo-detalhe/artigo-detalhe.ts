@@ -24,6 +24,7 @@ export class ArtigoDetalheComponent implements OnInit {
   artigoId: string | null = null;
   isEditMode = false;
   fotoDestaque: string | null = null;
+  imagemOriginalUrl: string | null = null;
   imagemSelecionada: File | null = null;
   artigoCarregado = false;
   dataCriacao: Date | null = null;
@@ -133,6 +134,7 @@ export class ArtigoDetalheComponent implements OnInit {
           console.log('Conteúdo definido no formulário:', this.artigoForm.get('conteudo')?.value);
         }, 100);
         this.fotoDestaque = artigo.imagemCapa || null;
+        this.imagemOriginalUrl = artigo.imagemCapa || null; // Armazenar URL original
         
         // Para artigos existentes, a foto de destaque não é obrigatória
         // (pode manter a imagem atual ou trocar por uma nova)
@@ -280,12 +282,19 @@ export class ArtigoDetalheComponent implements OnInit {
           console.log('Imagem foi selecionada?', !!this.imagemSelecionada);
           
           // Se há nova imagem selecionada, usar a URL do upload
-          // Se não há nova imagem, manter a imagem existente
-          const imagemFinal = this.imagemSelecionada ? url : (this.fotoDestaque || '');
+          // Se não há nova imagem, manter a URL original da imagem existente (não o preview)
+          let imagemFinal = '';
+          if (this.imagemSelecionada) {
+            // Nova imagem foi selecionada, usar URL do upload
+            imagemFinal = url;
+          } else if (this.isEditMode) {
+            // Modo edição sem nova imagem, manter a URL original da imagem existente
+            imagemFinal = this.imagemOriginalUrl || '';
+          }
           
           const payload: ArtigoInput = {
             ...payloadBase,
-            imagemCapa: imagemFinal || ''
+            imagemCapa: imagemFinal
           };
           
           console.log('=== PAYLOAD FINAL ===');
@@ -464,9 +473,17 @@ export class ArtigoDetalheComponent implements OnInit {
 
   // Método para remover a foto de destaque
   removerFotoDestaque(): void {
-    this.fotoDestaque = null;
     this.imagemSelecionada = null;
-    this.artigoForm.patchValue({ fotoDestaque: '' });
+    
+    if (this.isEditMode && this.imagemOriginalUrl) {
+      // Em modo de edição, restaurar a imagem original
+      this.fotoDestaque = this.imagemOriginalUrl;
+      this.artigoForm.patchValue({ fotoDestaque: this.imagemOriginalUrl });
+    } else {
+      // Em modo de criação ou sem imagem original, remover completamente
+      this.fotoDestaque = null;
+      this.artigoForm.patchValue({ fotoDestaque: '' });
+    }
 
     // Limpar o input file usando a referência do ViewChild
     if (this.fotoDestaqueInput) {
