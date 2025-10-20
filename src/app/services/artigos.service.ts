@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable, forkJoin } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, forkJoin, throwError } from 'rxjs';
+import { map, tap, catchError } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 
 export interface ArtigoResponseDto {
@@ -94,7 +94,19 @@ export class ArtigosService {
    * Mapeia ArtigoResponseDto da API para interface Artigo do frontend
    */
   private mapArtigoFromApi(apiArtigo: ArtigoResponseDto): Artigo {
-    return {
+    console.log('=== MAPEAMENTO DO ARTIGO ===');
+    console.log('ArtigoResponseDto recebido:', apiArtigo);
+    console.log('Autor presente?', !!apiArtigo.autor);
+    console.log('Dados do autor:', apiArtigo.autor);
+    
+    // Verificação de segurança para o autor
+    if (!apiArtigo.autor) {
+      console.error('❌ ERRO: apiArtigo.autor está undefined');
+      console.error('Dados completos do artigo:', JSON.stringify(apiArtigo, null, 2));
+      throw new Error('Dados do autor não encontrados na resposta da API');
+    }
+    
+    const artigo = {
       id: apiArtigo.artigoId,
       titulo: apiArtigo.titulo,
       conteudo: apiArtigo.conteudo,
@@ -113,6 +125,9 @@ export class ArtigosService {
       createdAt: apiArtigo.createdAt,
       updatedAt: apiArtigo.updatedAt
     };
+    
+    console.log('✅ Artigo mapeado com sucesso:', artigo);
+    return artigo;
   }
 
   /**
@@ -350,10 +365,31 @@ export class ArtigosService {
    * Faz upload de uma imagem
    */
   uploadImagem(arquivo: File): Observable<{ url: string }> {
+    console.log('=== UPLOAD FRONTEND ===');
+    console.log('Arquivo para upload:', arquivo);
+    console.log('Nome do arquivo:', arquivo.name);
+    console.log('Tipo do arquivo:', arquivo.type);
+    console.log('Tamanho do arquivo:', arquivo.size);
+    
     const formData = new FormData();
     formData.append('image', arquivo);
+    
+    console.log('FormData criado, enviando para:', `${this.apiUrl}/imagens/upload`);
 
     // Endpoint correto: POST /artigos/imagens/upload
-    return this.http.post<{ url: string }>(`${this.apiUrl}/imagens/upload`, formData);
+    return this.http.post<{ url: string }>(`${this.apiUrl}/imagens/upload`, formData).pipe(
+      tap((response: any) => {
+        console.log('=== RESPOSTA DO UPLOAD ===');
+        console.log('Resposta recebida:', response);
+      }),
+      catchError((error: any) => {
+        console.error('=== ERRO NO UPLOAD ===');
+        console.error('Erro completo:', error);
+        console.error('Status:', error.status);
+        console.error('Mensagem:', error.message);
+        console.error('Body:', error.error);
+        return throwError(() => error);
+      })
+    );
   }
 }

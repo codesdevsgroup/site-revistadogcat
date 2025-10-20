@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ArtigosService, Artigo } from '../../../../services/artigos.service';
 
 @Component({
-  selector: 'app-destaque-edicao',
+  selector: 'app-artigos',
   standalone: true,
   imports: [CommonModule],
   templateUrl: './artigos.html',
