@@ -18,8 +18,8 @@ export class ArtigosComponent {
   constructor(private artigosService: ArtigosService) {}
 
   ngOnInit(): void {
-    // Busca artigos do backend (NestJS)
-    this.artigosService.listarArtigos({ sort: 'dataPublicacao:desc' }).subscribe({
+    // Busca todos os artigos do backend (admin) - inclui rascunhos, revisão e publicados
+    this.artigosService.listarTodosArtigos({ sort: 'dataPublicacao:desc' }).subscribe({
       next: (data) => {
         // Garantir que sempre seja um array válido
         if (Array.isArray(data)) {
@@ -31,7 +31,7 @@ export class ArtigosComponent {
           this.artigos = [];
         }
         this.loading = false;
-        console.log('Artigos carregados:', this.artigos);
+        console.log('Artigos carregados (admin):', this.artigos);
       },
       error: (err) => {
         console.error('Erro ao carregar artigos', err);
@@ -103,7 +103,7 @@ export class ArtigosComponent {
     });
   }
 
-  trackByArtigoId(index: number, artigo: Artigo): number {
+  trackByArtigoId(index: number, artigo: Artigo): string {
     return artigo.id;
   }
 

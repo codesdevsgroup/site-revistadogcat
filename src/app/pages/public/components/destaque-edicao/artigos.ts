@@ -6,10 +6,10 @@ import { ArtigosService, Artigo } from '../../../../services/artigos.service';
   selector: 'app-destaque-edicao',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './destaque-edicao.html',
-  styleUrl: './destaque-edicao.scss'
+  templateUrl: './artigos.html',
+  styleUrl: './artigos.scss'
 })
-export class DestaqueEdicaoComponent implements OnInit {
+export class ArtigosComponent implements OnInit {
   artigos: Artigo[] = [];
   loading = true;
   error?: string;
@@ -17,14 +17,14 @@ export class DestaqueEdicaoComponent implements OnInit {
   constructor(private artigosService: ArtigosService) {}
 
   ngOnInit(): void {
-    // Busca os artigos em destaque (público). Caso não haja destaques, pode-se trocar para publicados.
-    this.artigosService.listarDestaques(9).subscribe({
-      next: (data) => {
-        this.artigos = data || [];
+    this.loading = true;
+    this.artigosService.listarArtigosHomepage().subscribe({
+      next: (artigos) => {
+        this.artigos = artigos;
         this.loading = false;
       },
-      error: (err) => {
-        console.error('Erro ao carregar artigos em destaque', err);
+      error: (error) => {
+        console.error('Erro ao carregar artigos:', error);
         this.error = 'Não foi possível carregar os artigos. Tente novamente mais tarde.';
         this.loading = false;
       }

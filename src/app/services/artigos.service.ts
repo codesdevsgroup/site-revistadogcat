@@ -1,16 +1,40 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, forkJoin } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 
-// Interface para o modelo de artigo
-export interface Artigo {
-  id: number;
+export interface ArtigoResponseDto {
+  artigoId: string;
   titulo: string;
   conteudo: any; // Conteúdo JSON do TipTap
   resumo?: string; // Resumo opcional do artigo
-  autor: string;
+  autor: {
+    userId: string;
+    name: string;
+    avatarUrl?: string;
+  };
+  categoria: string;
+  status: string;
+  dataPublicacao: string;
+  imagemCapa?: string;
+  visualizacoes: number;
+  curtidas: number;
+  comentarios: any[];
+  destaque: boolean;
+  tags?: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Interface para o modelo de artigo (frontend)
+export interface Artigo {
+  id: string; // Mapeado de artigoId
+  titulo: string;
+  conteudo: any; // Conteúdo JSON do TipTap
+  resumo?: string; // Resumo opcional do artigo
+  autor: string; // Mapeado de autor.name
+  autorId: string; // Mapeado de autor.userId
   categoria: string;
   status: 'publicado' | 'rascunho' | 'revisao';
   dataPublicacao: string;
@@ -27,9 +51,9 @@ export interface ArtigoInput {
   titulo: string;
   conteudo: any;
   resumo?: string;
-  autorId: string; // UUID do autor conforme API de usuários
+  autorId: string;
   categoria: string;
-  status: string; // mapeado para o enum do backend (ex.: RASCUNHO, PUBLICADO)
+  status: string;
   dataPublicacao?: string;
   imagemCapa: string;
   destaque: boolean;
@@ -38,15 +62,15 @@ export interface ArtigoInput {
 
 // Interface para filtros de busca
 export interface ArtigoFiltros {
-  q?: string; // Busca por título ou autor
+  q?: string;
   categoria?: string;
   status?: string;
-  sort?: string; // ex: 'dataPublicacao:desc'
+  sort?: string;
 }
 
 // Resposta paginada conforme documentação
 export interface ArtigosListResponseDto {
-  data: Artigo[];
+  data: ArtigoResponseDto[];
   pagination: {
     page: number;
     limit: number;
@@ -66,21 +90,122 @@ export class ArtigosService {
   constructor(private http: HttpClient) {}
 
   /**
-   * Lista todos os artigos com filtros opcionais
+   * Mapeia ArtigoResponseDto da API para interface Artigo do frontend
+   */
+  private mapArtigoFromApi(apiArtigo: ArtigoResponseDto): Artigo {
+    return {
+      id: apiArtigo.artigoId,
+      titulo: apiArtigo.titulo,
+      conteudo: apiArtigo.conteudo,
+      resumo: apiArtigo.resumo,
+      autor: apiArtigo.autor.name,
+      autorId: apiArtigo.autor.userId,
+      categoria: apiArtigo.categoria,
+      status: this.mapStatusFromApi(apiArtigo.status),
+      dataPublicacao: apiArtigo.dataPublicacao,
+      imagemCapa: apiArtigo.imagemCapa || '',
+      visualizacoes: apiArtigo.visualizacoes,
+      curtidas: apiArtigo.curtidas,
+      comentarios: apiArtigo.comentarios.length,
+      destaque: apiArtigo.destaque,
+      tags: apiArtigo.tags
+    };
+  }
+
+  /**
+   * Mapeia status da API para o frontend
+   */
+  private mapStatusFromApi(status: string): 'publicado' | 'rascunho' | 'revisao' {
+    switch (status.toLowerCase()) {
+      case 'publicado':
+        return 'publicado';
+      case 'rascunho':
+        return 'rascunho';
+      case 'revisao':
+        return 'revisao';
+      default:
+        return 'rascunho';
+    }
+  }
+
+  /**
+   * Lista todos os artigos (admin) - inclui rascunhos, revisão e publicados
+   * Requer autenticação
+   */
+  listarTodosArtigos(filtros?: ArtigoFiltros): Observable<Artigo[]> {
+    let params = new HttpParams();
+
+    if (filtros) {
+      if (filtros.q) params = params.set('search', filtros.q); // API usa 'search' não 'q'
+      if (filtros.categoria) params = params.set('categoria', filtros.categoria);
+      if (filtros.status) params = params.set('status', filtros.status);
+      if (filtros.sort) {
+        const [sortBy, sortOrder] = filtros.sort.split(':');
+        params = params.set('sortBy', sortBy);
+        params = params.set('sortOrder', sortOrder || 'desc');
+      }
+    }
+
+    // Usar endpoint protegido para todos os artigos (admin)
+    return this.http.get<any>(`${this.apiUrl}`, { params }).pipe(
+      map((resp) => {
+        console.log('Resposta da API (admin):', resp);
+        
+        // A API retorna: { statusCode, message, data: { data: [], pagination: {} } }
+        const responseData = resp?.data;
+        
+        if (!responseData || !responseData.data) {
+          console.error('Resposta da API não contém dados válidos:', resp);
+          return [];
+        }
+        
+        if (!Array.isArray(responseData.data)) {
+          console.error('responseData.data não é um array:', responseData.data);
+          return [];
+        }
+        
+        return responseData.data.map((artigo: ArtigoResponseDto) => this.mapArtigoFromApi(artigo));
+      })
+    );
+  }
+
+  /**
+   * Lista todos os artigos publicados (público)
    */
   listarArtigos(filtros?: ArtigoFiltros): Observable<Artigo[]> {
     let params = new HttpParams();
 
     if (filtros) {
-      if (filtros.q) params = params.set('q', filtros.q);
+      if (filtros.q) params = params.set('search', filtros.q); // API usa 'search' não 'q'
       if (filtros.categoria) params = params.set('categoria', filtros.categoria);
       if (filtros.status) params = params.set('status', filtros.status);
-      if (filtros.sort) params = params.set('sort', filtros.sort);
+      if (filtros.sort) {
+        const [sortBy, sortOrder] = filtros.sort.split(':');
+        params = params.set('sortBy', sortBy);
+        params = params.set('sortOrder', sortOrder || 'desc');
+      }
     }
 
-    // Backend retorna objeto paginado (ArtigosListResponseDto) em /artigos
-    return this.http.get<ArtigosListResponseDto | Artigo[]>(this.apiUrl, { params }).pipe(
-      map((resp) => Array.isArray(resp) ? resp : resp.data)
+    // Usar endpoint público para artigos publicados
+    return this.http.get<any>(`${this.apiUrl}/publicados`, { params }).pipe(
+      map((resp) => {
+        console.log('Resposta da API:', resp);
+        
+        // A API retorna: { statusCode, message, data: { data: [], pagination: {} } }
+        const responseData = resp?.data;
+        
+        if (!responseData || !responseData.data) {
+          console.error('Resposta da API não contém dados válidos:', resp);
+          return [];
+        }
+        
+        if (!Array.isArray(responseData.data)) {
+          console.error('responseData.data não é um array:', responseData.data);
+          return [];
+        }
+        
+        return responseData.data.map((artigo: ArtigoResponseDto) => this.mapArtigoFromApi(artigo));
+      })
     );
   }
 
@@ -90,57 +215,107 @@ export class ArtigosService {
    */
   listarDestaques(limit = 9): Observable<Artigo[]> {
     let params = new HttpParams().set('limit', limit);
-    return this.http.get<Artigo[]>(`${this.apiUrl}/destaques`, { params });
+    return this.http.get<ArtigoResponseDto[]>(`${this.apiUrl}/destaques`, { params }).pipe(
+      map(artigos => artigos.map(artigo => this.mapArtigoFromApi(artigo)))
+    );
+  }
+
+  /**
+   * Lista artigos para a homepage: primeiro destaques por data mais recente, depois mais novos
+   * Máximo de 9 artigos total
+   */
+  listarArtigosHomepage(): Observable<Artigo[]> {
+    // Buscar destaques e artigos recentes em paralelo
+    return forkJoin({
+      destaques: this.listarDestaques(9),
+      recentes: this.listarArtigos({ sort: 'dataPublicacao:desc' })
+    }).pipe(
+      map(({ destaques, recentes }) => {
+        // Criar um Set com IDs dos destaques para evitar duplicatas
+        const destaquesIds = new Set(destaques.map(artigo => artigo.id));
+        
+        // Filtrar artigos recentes que não são destaques
+        const recentesNaoDestaques = recentes.filter(artigo => !destaquesIds.has(artigo.id));
+        
+        // Combinar: primeiro destaques ordenados por data, depois recentes
+        const artigosOrdenados = [
+          ...destaques.sort((a, b) => new Date(b.dataPublicacao).getTime() - new Date(a.dataPublicacao).getTime()),
+          ...recentesNaoDestaques
+        ];
+        
+        // Limitar a 9 artigos
+        return artigosOrdenados.slice(0, 9);
+      })
+    );
   }
 
   /**
    * Lista artigos publicados (público)
-   * API docs: GET /artigos/publicados -> ArtigosListResponseDto (paginação)
-   * Para simplificar o componente de destaque, retornamos apenas um array de artigos quando possível.
+   * API docs: GET /artigos/publicados -> ArtigosListResponseDto
    */
   listarPublicados(limit = 9, page = 1, sort = 'dataPublicacao:desc'): Observable<Artigo[]> {
     let params = new HttpParams()
-      .set('limit', limit)
-      .set('page', page)
-      .set('sort', sort);
-    // /artigos/publicados retorna lista paginada; mapeamos para data
-    return this.http.get<ArtigosListResponseDto | Artigo[]>(`${this.apiUrl}/publicados`, { params }).pipe(
-      map((resp) => Array.isArray(resp) ? resp : resp.data)
+      .set('limit', limit.toString())
+      .set('page', page.toString());
+
+    // Mapear sort para sortBy e sortOrder
+    if (sort) {
+      const [sortBy, sortOrder] = sort.split(':');
+      params = params.set('sortBy', sortBy);
+      params = params.set('sortOrder', sortOrder || 'desc');
+    }
+
+    return this.http.get<any>(`${this.apiUrl}/publicados`, { params }).pipe(
+      map(resp => {
+        const responseData = resp?.data;
+        if (!responseData || !Array.isArray(responseData.data)) {
+          return [];
+        }
+        return responseData.data.map((artigo: ArtigoResponseDto) => this.mapArtigoFromApi(artigo));
+      })
     );
   }
 
   /**
    * Obtém um artigo específico por ID
    */
-  obterArtigo(id: number): Observable<Artigo> {
-    return this.http.get<Artigo>(`${this.apiUrl}/${id}`);
+  obterArtigo(id: string): Observable<Artigo> {
+    return this.http.get<ArtigoResponseDto>(`${this.apiUrl}/${id}`).pipe(
+      map(artigo => this.mapArtigoFromApi(artigo))
+    );
   }
 
   /**
    * Cria um novo artigo
    */
   criarArtigo(artigo: ArtigoInput): Observable<Artigo> {
-    return this.http.post<Artigo>(this.apiUrl, artigo);
+    return this.http.post<ArtigoResponseDto>(this.apiUrl, artigo).pipe(
+      map(artigo => this.mapArtigoFromApi(artigo))
+    );
   }
 
   /**
    * Atualiza um artigo existente
    */
-  atualizarArtigo(id: number, artigo: ArtigoInput): Observable<Artigo> {
-    return this.http.put<Artigo>(`${this.apiUrl}/${id}`, artigo);
+  atualizarArtigo(id: string, artigo: ArtigoInput): Observable<Artigo> {
+    return this.http.put<ArtigoResponseDto>(`${this.apiUrl}/${id}`, artigo).pipe(
+      map(artigo => this.mapArtigoFromApi(artigo))
+    );
   }
 
   /**
    * Atualiza parcialmente um artigo (ex: apenas destaque)
    */
-  atualizarParcialArtigo(id: number, dados: Partial<ArtigoInput>): Observable<Artigo> {
-    return this.http.patch<Artigo>(`${this.apiUrl}/${id}`, dados);
+  atualizarParcialArtigo(id: string, dados: Partial<ArtigoInput>): Observable<Artigo> {
+    return this.http.patch<ArtigoResponseDto>(`${this.apiUrl}/${id}`, dados).pipe(
+      map(artigo => this.mapArtigoFromApi(artigo))
+    );
   }
 
   /**
    * Exclui um artigo
    */
-  excluirArtigo(id: number): Observable<void> {
+  excluirArtigo(id: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 

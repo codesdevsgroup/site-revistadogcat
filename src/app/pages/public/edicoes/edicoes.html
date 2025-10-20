@@ -2,23 +2,10 @@
   <div class="container">
     <header class="edicoes-header">
       <h1>Edições</h1>
-      <p class="subtitle">Lançamento a cada 2 meses. Clique em uma edição para visualizar o PDF.</p>
     </header>
 
     <div class="edicoes-grid">
-      <!-- Card de Demonstração para ilustrar o padrão de exibição -->
-      <div class="edicao-card demo-card">
-        <div class="card-header">
-          <span class="card-year">2025</span>
-          <span class="card-bimestre">Exemplo</span>
-        </div>
-        <div class="card-body">
-          <h2 class="card-title">Edição Demonstrativa</h2>
-          <button class="btn btn-open" (click)="abrirPdfUrl('/exemplo.pdf')">
-            Abrir PDF
-          </button>
-        </div>
-      </div>
+
 
       <div class="edicao-card" *ngFor="let edicao of edicoesList">
         <div class="card-header">
