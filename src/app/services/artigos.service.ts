@@ -7,8 +7,8 @@ import { environment } from '../../environments/environment';
 export interface ArtigoResponseDto {
   artigoId: string;
   titulo: string;
-  conteudo: any; // Conteúdo JSON do TipTap
-  resumo?: string; // Resumo opcional do artigo
+  conteudo: any;
+  resumo?: string;
   autor: {
     userId: string;
     name: string;
@@ -27,14 +27,13 @@ export interface ArtigoResponseDto {
   updatedAt: string;
 }
 
-// Interface para o modelo de artigo (frontend)
 export interface Artigo {
-  id: string; // Mapeado de artigoId
+  id: string;
   titulo: string;
-  conteudo: any; // Conteúdo JSON do TipTap
-  resumo?: string; // Resumo opcional do artigo
-  autor: string; // Mapeado de autor.name
-  autorId: string; // Mapeado de autor.userId
+  conteudo: any;
+  resumo?: string;
+  autor: string;
+  autorId: string;
   categoria: string;
   status: 'publicado' | 'rascunho' | 'revisao';
   dataPublicacao: string;
@@ -150,20 +149,20 @@ export class ArtigosService {
     return this.http.get<any>(`${this.apiUrl}`, { params }).pipe(
       map((resp) => {
         console.log('Resposta da API (admin):', resp);
-        
+
         // A API retorna: { statusCode, message, data: { data: [], pagination: {} } }
         const responseData = resp?.data;
-        
+
         if (!responseData || !responseData.data) {
           console.error('Resposta da API não contém dados válidos:', resp);
           return [];
         }
-        
+
         if (!Array.isArray(responseData.data)) {
           console.error('responseData.data não é um array:', responseData.data);
           return [];
         }
-        
+
         return responseData.data.map((artigo: ArtigoResponseDto) => this.mapArtigoFromApi(artigo));
       })
     );
@@ -190,33 +189,50 @@ export class ArtigosService {
     return this.http.get<any>(`${this.apiUrl}/publicados`, { params }).pipe(
       map((resp) => {
         console.log('Resposta da API:', resp);
-        
+
         // A API retorna: { statusCode, message, data: { data: [], pagination: {} } }
         const responseData = resp?.data;
-        
+
         if (!responseData || !responseData.data) {
           console.error('Resposta da API não contém dados válidos:', resp);
           return [];
         }
-        
+
         if (!Array.isArray(responseData.data)) {
           console.error('responseData.data não é um array:', responseData.data);
           return [];
         }
-        
+
         return responseData.data.map((artigo: ArtigoResponseDto) => this.mapArtigoFromApi(artigo));
       })
     );
   }
 
   /**
-   * Lista artigos em destaque (público)
-   * API docs: GET /artigos/destaques?limit=5 -> ArtigoResponseDto[]
+   * Lista artigos para homepage (público)
+   * API docs: GET /artigos/artigos-homepage?limit=9 -> ArtigoResponseDto[]
    */
-  listarDestaques(limit = 9): Observable<Artigo[]> {
+  listarArtigosParaHomepage(limit = 9): Observable<Artigo[]> {
     let params = new HttpParams().set('limit', limit);
-    return this.http.get<ArtigoResponseDto[]>(`${this.apiUrl}/destaques`, { params }).pipe(
-      map(artigos => artigos.map(artigo => this.mapArtigoFromApi(artigo)))
+    return this.http.get<any>(`${this.apiUrl}/artigos-homepage`, { params }).pipe(
+      map((resp) => {
+        console.log('Resposta da API (artigos homepage):', resp);
+
+        // A API retorna: { statusCode, message, data: [] }
+        const artigos = resp?.data;
+
+        if (!artigos) {
+          console.error('Resposta da API não contém dados válidos:', resp);
+          return [];
+        }
+
+        if (!Array.isArray(artigos)) {
+          console.error('resp.data não é um array:', artigos);
+          return [];
+        }
+
+        return artigos.map((artigo: ArtigoResponseDto) => this.mapArtigoFromApi(artigo));
+      })
     );
   }
 
@@ -225,24 +241,24 @@ export class ArtigosService {
    * Máximo de 9 artigos total
    */
   listarArtigosHomepage(): Observable<Artigo[]> {
-    // Buscar destaques e artigos recentes em paralelo
+    // Buscar artigos para homepage e artigos recentes em paralelo
     return forkJoin({
-      destaques: this.listarDestaques(9),
+      artigosHomepage: this.listarArtigosParaHomepage(9),
       recentes: this.listarArtigos({ sort: 'dataPublicacao:desc' })
     }).pipe(
-      map(({ destaques, recentes }) => {
-        // Criar um Set com IDs dos destaques para evitar duplicatas
-        const destaquesIds = new Set(destaques.map(artigo => artigo.id));
+      map(({ artigosHomepage, recentes }) => {
+        // Criar um Set com IDs dos artigos da homepage para evitar duplicatas
+        const artigosHomepageIds = new Set(artigosHomepage.map(artigo => artigo.id));
         
-        // Filtrar artigos recentes que não são destaques
-        const recentesNaoDestaques = recentes.filter(artigo => !destaquesIds.has(artigo.id));
+        // Filtrar artigos recentes que não estão na homepage
+        const recentesNaoHomepage = recentes.filter(artigo => !artigosHomepageIds.has(artigo.id));
         
-        // Combinar: primeiro destaques ordenados por data, depois recentes
+        // Combinar: primeiro artigos da homepage ordenados por data, depois recentes
         const artigosOrdenados = [
-          ...destaques.sort((a, b) => new Date(b.dataPublicacao).getTime() - new Date(a.dataPublicacao).getTime()),
-          ...recentesNaoDestaques
+          ...artigosHomepage.sort((a, b) => new Date(b.dataPublicacao).getTime() - new Date(a.dataPublicacao).getTime()),
+          ...recentesNaoHomepage
         ];
-        
+
         // Limitar a 9 artigos
         return artigosOrdenados.slice(0, 9);
       })
