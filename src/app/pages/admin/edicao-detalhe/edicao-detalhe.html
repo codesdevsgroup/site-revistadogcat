@@ -1,50 +1,64 @@
-<div class="edicao-detalhe-container">
-  <div class="header-row">
-    <h1>Nova Edição</h1>
-    <div class="actions">
-      <button type="button" class="btn btn-outline-secondary" (click)="onCancel()">
-        <i class="fas fa-times me-1"></i>
-        Cancelar
-      </button>
-      <button type="button" class="btn btn-primary" (click)="onSubmit()" [disabled]="form.invalid || saving">
-        <i class="fas fa-save me-1"></i>
-        Salvar
-      </button>
-    </div>
-  </div>
-
-  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-grid">
+<div class="container">
+  <h2>Nova Edição</h2>
+  
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
     <div class="form-group">
-      <label for="titulo" class="form-label">Título *</label>
-      <input id="titulo" type="text" class="form-control" formControlName="titulo" [class.is-invalid]="form.get('titulo')?.invalid && form.get('titulo')?.touched" placeholder="Ex.: Edição Jan/Fev 2025">
-      <div class="invalid-feedback" *ngIf="form.get('titulo')?.invalid && form.get('titulo')?.touched">
-        <div *ngIf="form.get('titulo')?.errors?.['required']">Título é obrigatório</div>
-        <div *ngIf="form.get('titulo')?.errors?.['minlength']">Mínimo de 3 caracteres</div>
+      <label for="titulo">Título *</label>
+      <input 
+        type="text" 
+        id="titulo" 
+        formControlName="titulo" 
+        class="form-control"
+        placeholder="Digite o título da edição"
+      >
+      <div *ngIf="form.get('titulo')?.invalid && form.get('titulo')?.touched" class="error-message">
+        <span *ngIf="form.get('titulo')?.errors?.['required']">Título é obrigatório</span>
+        <span *ngIf="form.get('titulo')?.errors?.['minlength']">Título deve ter pelo menos 3 caracteres</span>
       </div>
     </div>
 
     <div class="form-group">
-      <label for="bimestre" class="form-label">Bimestre *</label>
-      <input id="bimestre" type="text" class="form-control" formControlName="bimestre" [class.is-invalid]="form.get('bimestre')?.invalid && form.get('bimestre')?.touched" placeholder="Ex.: Jan/Fev">
-      <div class="invalid-feedback" *ngIf="form.get('bimestre')?.invalid && form.get('bimestre')?.touched">
-        Bimestre é obrigatório
+      <label for="descricao">Descrição</label>
+      <textarea 
+        id="descricao" 
+        formControlName="descricao" 
+        class="form-control"
+        placeholder="Digite uma descrição para a edição (opcional)"
+        rows="3"
+      ></textarea>
+      <div *ngIf="form.get('descricao')?.invalid && form.get('descricao')?.touched" class="error-message">
+        <span *ngIf="form.get('descricao')?.errors?.['minlength']">Descrição deve ter pelo menos 10 caracteres</span>
       </div>
     </div>
 
     <div class="form-group">
-      <label for="ano" class="form-label">Ano *</label>
-      <input id="ano" type="number" class="form-control" formControlName="ano" [class.is-invalid]="form.get('ano')?.invalid && form.get('ano')?.touched">
-      <div class="invalid-feedback" *ngIf="form.get('ano')?.invalid && form.get('ano')?.touched">
-        Informe um ano entre 1900 e 2100
+      <label for="data">Data da Edição *</label>
+      <input 
+        type="date" 
+        id="data" 
+        formControlName="data" 
+        class="form-control"
+      >
+      <div *ngIf="form.get('data')?.invalid && form.get('data')?.touched" class="error-message">
+        <span *ngIf="form.get('data')?.errors?.['required']">Data é obrigatória</span>
       </div>
     </div>
 
-    <div class="form-group full">
-      <label for="pdfUrl" class="form-label">PDF (URL)</label>
-      <input id="pdfUrl" type="url" class="form-control" formControlName="pdfUrl" placeholder="https://...">
-      <div class="form-text">
-        Informe a URL do PDF da edição. No futuro, podemos adicionar upload direto do arquivo.
+    <div class="form-group">
+      <label for="pdf">Arquivo PDF *</label>
+      <input 
+        type="file" 
+        id="pdf" 
+        accept=".pdf"
+        class="form-control"
+        (change)="onFileSelected($event)"
+      >
+      <div *ngIf="form.get('pdf')?.invalid && form.get('pdf')?.touched" class="error-message">
+        <span *ngIf="form.get('pdf')?.errors?.['required']">Arquivo PDF é obrigatório</span>
       </div>
+      <small class="form-text text-muted">
+        Selecione um arquivo PDF. A capa será gerada automaticamente a partir da primeira página.
+      </small>
     </div>
   </form>
 </div>

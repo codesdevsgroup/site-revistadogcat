@@ -58,4 +58,15 @@ export class EdicoesComponent implements OnInit {
   get edicoesList(): Edicao[] {
     return Array.isArray(this.edicoes) ? this.edicoes : [];
   }
+
+  formatarData(data: Date | string): string {
+    if (!data) return '-';
+    
+    const dataObj = typeof data === 'string' ? new Date(data) : data;
+    return dataObj.toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+  }
 }

@@ -5,15 +5,13 @@
     </header>
 
     <div class="edicoes-grid">
-
-
       <div class="edicao-card" *ngFor="let edicao of edicoesList">
         <div class="card-header">
-          <span class="card-year">{{ edicao.ano }}</span>
-          <span class="card-bimestre">{{ edicao.bimestre }}</span>
+          <span class="card-date">{{ formatarData(edicao.data) }}</span>
         </div>
         <div class="card-body">
           <h2 class="card-title">{{ edicao.titulo }}</h2>
+          <p class="card-description">{{ edicao.descricao }}</p>
           <button class="btn btn-open" [disabled]="!edicao.pdfUrl" (click)="abrirPdf(edicao)">
             {{ edicao.pdfUrl ? 'Abrir PDF' : 'Em breve' }}
           </button>

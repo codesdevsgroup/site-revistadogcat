@@ -37,9 +37,9 @@ export class EdicoesService {
 
   /**
    * Cria uma nova edição
-   * Espera um payload com: titulo, bimestre, ano e (opcional) pdfUrl
+   * Espera um FormData com: titulo, bimestre, ano e (opcional) arquivo PDF
    */
-  criarEdicao(payload: Partial<Edicao>): Observable<Edicao> {
-    return this.http.post<Edicao>(this.apiUrl, payload);
+  criarEdicao(formData: FormData): Observable<any> {
+    return this.http.post(`${this.apiUrl}`, formData);
   }
 }

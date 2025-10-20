@@ -21,18 +21,18 @@
       <table class="table table-striped">
         <thead>
           <tr>
-            <th>Ano</th>
-            <th>Bimestre</th>
+            <th>Data</th>
             <th>Título</th>
+            <th>Descrição</th>
             <th>PDF</th>
             <th>Ações</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let edicao of edicoesList; trackBy: trackByEdicaoId">
-            <td>{{ edicao.ano }}</td>
-            <td>{{ edicao.bimestre }}</td>
+            <td>{{ formatarData(edicao.data) }}</td>
             <td>{{ edicao.titulo }}</td>
+            <td>{{ edicao.descricao | slice:0:50 }}{{ edicao.descricao.length > 50 ? '...' : '' }}</td>
             <td>
               <span class="badge" [class.bg-success]="edicao.pdfUrl" [class.bg-secondary]="!edicao.pdfUrl">
                 {{ edicao.pdfUrl ? 'Disponível' : 'Em breve' }}

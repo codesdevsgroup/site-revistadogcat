@@ -14,15 +14,51 @@ import { EdicoesService } from '../../../services/edicoes.service';
 export class EdicaoDetalheComponent {
   form: FormGroup;
   saving = false;
+  selectedPdf: File | null = null;
 
   constructor(private fb: FormBuilder, private edicoesService: EdicoesService, private router: Router) {
-    const anoAtual = new Date().getFullYear();
     this.form = this.fb.group({
       titulo: ['', [Validators.required, Validators.minLength(3)]],
-      bimestre: ['', [Validators.required]],
-      ano: [anoAtual, [Validators.required, Validators.min(1900), Validators.max(2100)]],
-      pdfUrl: ['']
+      descricao: ['', [Validators.minLength(10)]],
+      data: ['', [Validators.required]],
+      pdf: ['', [Validators.required]]
     });
+  }
+
+  onFileSelected(event: any) {
+    const file = event.target.files[0];
+    if (file && file.type === 'application/pdf') {
+      this.selectedPdf = file;
+      this.form.patchValue({ pdf: file.name });
+      this.form.get('pdf')?.updateValueAndValidity();
+    } else {
+      alert('Por favor, selecione um arquivo PDF válido.');
+      event.target.value = '';
+    }
+  }
+
+  criarEdicao() {
+    if (this.form.valid && this.selectedPdf) {
+      this.saving = true;
+      
+      const formData = new FormData();
+      formData.append('titulo', this.form.get('titulo')?.value);
+      formData.append('descricao', this.form.get('descricao')?.value);
+      formData.append('data', this.form.get('data')?.value);
+      formData.append('pdf', this.selectedPdf);
+
+      this.edicoesService.criarEdicao(formData).subscribe({
+        next: () => {
+          this.router.navigate(['/admin/edicoes']);
+        },
+        error: (error) => {
+          console.error('Erro ao criar edição:', error);
+          this.saving = false;
+        }
+      });
+    } else {
+      alert('Por favor, preencha todos os campos obrigatórios e selecione um arquivo PDF.');
+    }
   }
 
   onSubmit(): void {
@@ -30,19 +66,7 @@ export class EdicaoDetalheComponent {
       this.markTouched();
       return;
     }
-    this.saving = true;
-    const payload = this.form.value;
-    this.edicoesService.criarEdicao(payload).subscribe({
-      next: () => {
-        alert('Edição cadastrada com sucesso!');
-        this.router.navigate(['/admin/edicoes']);
-      },
-      error: (err) => {
-        console.error('Erro ao cadastrar edição', err);
-        alert('Não foi possível cadastrar a edição. Tente novamente.');
-        this.saving = false;
-      }
-    });
+    this.criarEdicao();
   }
 
   onCancel(): void {

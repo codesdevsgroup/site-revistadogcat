@@ -1,7 +1,8 @@
 export interface Edicao {
   id: string;
   titulo: string;
-  bimestre: string;
-  ano: number;
+  descricao: string;
+  data: Date | string;
   pdfUrl?: string;
+  capaUrl?: string;
 }
