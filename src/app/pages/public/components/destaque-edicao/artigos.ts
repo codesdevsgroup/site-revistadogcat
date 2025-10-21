@@ -42,4 +42,12 @@ export class ArtigosComponent implements OnInit {
     const max = 160;
     return resumo.length > max ? resumo.slice(0, max) + '…' : resumo;
   }
+
+  getImagemUrl(imagemCapa: string): string {
+    if (!imagemCapa) {
+      return './dog/default-article.svg';
+    }
+    const filename = imagemCapa.split('/').pop();
+    return `${this.apiUrl}/artigos/imagem/${filename}`;
+  }
 }

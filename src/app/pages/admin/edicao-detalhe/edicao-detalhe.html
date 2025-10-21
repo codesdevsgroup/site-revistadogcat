@@ -32,33 +32,90 @@
     </div>
 
     <div class="form-group">
-      <label for="data">Data da Edição *</label>
-      <input 
-        type="date" 
-        id="data" 
-        formControlName="data" 
+      <label for="data" class="form-label">
+        <i class="fas fa-calendar-alt me-2"></i>
+        Data da Edição
+      </label>
+      <input
+        type="date"
+        id="data"
         class="form-control"
-      >
-      <div *ngIf="form.get('data')?.invalid && form.get('data')?.touched" class="error-message">
-        <span *ngIf="form.get('data')?.errors?.['required']">Data é obrigatória</span>
+        formControlName="data"
+        [class.is-invalid]="data?.invalid && data?.touched"
+      />
+      <div class="invalid-feedback" *ngIf="data?.invalid && data?.touched">
+        <div *ngIf="data?.errors?.['required']">Data é obrigatória</div>
       </div>
     </div>
 
+    <!-- Campo Imagem de Capa (Opcional) -->
     <div class="form-group">
-      <label for="pdf">Arquivo PDF *</label>
-      <input 
-        type="file" 
-        id="pdf" 
-        accept=".pdf"
+      <label for="capa" class="form-label">
+        <i class="fas fa-image me-2"></i>
+        Imagem de Capa (Opcional)
+      </label>
+      <input
+        type="file"
+        id="capa"
         class="form-control"
-        (change)="onFileSelected($event)"
-      >
-      <div *ngIf="form.get('pdf')?.invalid && form.get('pdf')?.touched" class="error-message">
-        <span *ngIf="form.get('pdf')?.errors?.['required']">Arquivo PDF é obrigatório</span>
+        accept="image/jpeg,image/jpg,image/png,image/webp"
+        (change)="onCapaSelected($event)"
+      />
+      <div class="file-info" *ngIf="selectedCapa">
+        <small class="text-success">
+          <i class="fas fa-check-circle me-1"></i>
+          Imagem selecionada: {{ selectedCapa.name }}
+        </small>
       </div>
       <small class="form-text text-muted">
-        Selecione um arquivo PDF. A capa será gerada automaticamente a partir da primeira página.
+        <i class="fas fa-info-circle me-1"></i>
+        Se não fornecida, a capa será gerada automaticamente da primeira página do PDF. 
+        Formatos aceitos: JPEG, PNG, WebP (máx. 5MB)
       </small>
+    </div>
+
+    <div class="form-group">
+      <label for="pdf" class="form-label">
+        <i class="fas fa-file-pdf me-2"></i>
+        Arquivo PDF *
+      </label>
+      <input
+        type="file"
+        id="pdf"
+        class="form-control"
+        accept=".pdf"
+        (change)="onPdfSelected($event)"
+        [class.is-invalid]="!selectedPdf && form.touched"
+      />
+      <div class="file-info" *ngIf="selectedPdf">
+        <small class="text-muted">
+          <i class="fas fa-check-circle text-success me-1"></i>
+          Arquivo selecionado: {{ selectedPdf.name }}
+        </small>
+      </div>
+      <div class="invalid-feedback" *ngIf="!selectedPdf && form.touched">
+        Arquivo PDF é obrigatório
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button 
+        type="button" 
+        class="btn btn-secondary" 
+        (click)="cancelar()"
+      >
+        <i class="fas fa-times"></i>
+        Cancelar
+      </button>
+      <button 
+        type="submit" 
+        class="btn btn-primary" 
+        [disabled]="form.invalid || isLoading"
+      >
+        <i class="fas fa-save" *ngIf="!isLoading"></i>
+        <i class="fas fa-spinner fa-spin" *ngIf="isLoading"></i>
+        {{ isLoading ? 'Salvando...' : 'Salvar Edição' }}
+      </button>
     </div>
   </form>
 </div>

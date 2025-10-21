@@ -8,6 +8,7 @@ import { UsuarioService } from '../../../services/usuario.service';
 import { NotificationService } from '../../../services/notification.service';
 import type { Usuario } from '../../../interfaces/usuario.interface';
 import { Observable } from 'rxjs';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-artigo-detalhe',
@@ -28,6 +29,7 @@ export class ArtigoDetalheComponent implements OnInit {
   artigoCarregado = false;
   dataCriacao: Date | null = null;
   dataUltimaEdicao: Date | null = null;
+  public apiUrl = environment.apiUrl;
 
   // Autores carregados da API de usuários
   autores: Usuario[] = [];
@@ -460,6 +462,18 @@ export class ArtigoDetalheComponent implements OnInit {
       this.artigoForm.get('fotoDestaque')?.setValidators([Validators.required]);
       this.artigoForm.get('fotoDestaque')?.updateValueAndValidity();
     }
+  }
+
+  getImagemUrl(imagePath: string | null): string {
+    if (!imagePath) {
+      return ''; // Ou uma imagem padrão
+    }
+    // Se for um data URL (preview), retorna diretamente
+    if (imagePath.startsWith('data:image')) {
+      return imagePath;
+    }
+    const filename = imagePath.split('/').pop();
+    return `${this.apiUrl}/artigos/imagem/${filename}`;
   }
 
   // Getters para facilitar acesso aos controles do formulário

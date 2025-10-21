@@ -14,18 +14,24 @@ import { EdicoesService } from '../../../services/edicoes.service';
 export class EdicaoDetalheComponent {
   form: FormGroup;
   saving = false;
+  isLoading = false;
   selectedPdf: File | null = null;
+  selectedCapa: File | null = null;
 
   constructor(private fb: FormBuilder, private edicoesService: EdicoesService, private router: Router) {
     this.form = this.fb.group({
       titulo: ['', [Validators.required, Validators.minLength(3)]],
-      descricao: ['', [Validators.minLength(10)]],
-      data: ['', [Validators.required]],
-      pdf: ['', [Validators.required]]
+      descricao: [''],
+      data: ['', Validators.required]
     });
   }
 
-  onFileSelected(event: any) {
+  // Getters para facilitar acesso aos campos do formulário no template
+  get titulo() { return this.form.get('titulo'); }
+  get descricao() { return this.form.get('descricao'); }
+  get data() { return this.form.get('data'); }
+
+  onPdfSelected(event: any) {
     const file = event.target.files[0];
     if (file && file.type === 'application/pdf') {
       this.selectedPdf = file;
@@ -37,8 +43,32 @@ export class EdicaoDetalheComponent {
     }
   }
 
+  onCapaSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      // Validar tipo de arquivo
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+      if (!allowedTypes.includes(file.type)) {
+        alert('Por favor, selecione uma imagem válida (JPEG, PNG ou WebP).');
+        event.target.value = '';
+        return;
+      }
+      
+      // Validar tamanho (5MB máximo)
+      const maxSize = 5 * 1024 * 1024; // 5MB em bytes
+      if (file.size > maxSize) {
+        alert('A imagem deve ter no máximo 5MB.');
+        event.target.value = '';
+        return;
+      }
+      
+      this.selectedCapa = file;
+    }
+  }
+
   criarEdicao() {
     if (this.form.valid && this.selectedPdf) {
+      this.isLoading = true;
       this.saving = true;
       
       const formData = new FormData();
@@ -46,6 +76,11 @@ export class EdicaoDetalheComponent {
       formData.append('descricao', this.form.get('descricao')?.value);
       formData.append('data', this.form.get('data')?.value);
       formData.append('pdf', this.selectedPdf);
+      
+      // Adicionar arquivo de capa se selecionado
+      if (this.selectedCapa) {
+        formData.append('capa', this.selectedCapa);
+      }
 
       this.edicoesService.criarEdicao(formData).subscribe({
         next: () => {
@@ -53,6 +88,7 @@ export class EdicaoDetalheComponent {
         },
         error: (error) => {
           console.error('Erro ao criar edição:', error);
+          this.isLoading = false;
           this.saving = false;
         }
       });
@@ -70,6 +106,10 @@ export class EdicaoDetalheComponent {
   }
 
   onCancel(): void {
+    this.router.navigate(['/admin/edicoes']);
+  }
+
+  cancelar(): void {
     this.router.navigate(['/admin/edicoes']);
   }
 

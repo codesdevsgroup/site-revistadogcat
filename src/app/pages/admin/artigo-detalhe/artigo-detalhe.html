@@ -188,7 +188,7 @@
                 <!-- Preview da imagem -->
                 <div class="foto-destaque-container" *ngIf="fotoDestaque">
                   <div class="foto-preview">
-                    <img [src]="fotoDestaque" alt="Preview da foto de destaque" class="preview-image">
+                    <img [src]="getImagemUrl(fotoDestaque)" alt="Preview da foto de destaque" class="preview-image">
                     <button type="button" class="btn-remove-foto" (click)="removerFotoDestaque()" title="Remover foto">
                       <i class="fas fa-times"></i>
                     </button>
