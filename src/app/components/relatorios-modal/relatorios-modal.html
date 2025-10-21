@@ -1,0 +1,264 @@
+<!-- Modal de Relatórios -->
+<div class="modal fade" #modalElement tabindex="-1" aria-labelledby="relatoriosModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="relatoriosModalLabel">
+          <i class="fas fa-chart-bar me-2"></i>
+          Relatórios e Exportações
+        </h5>
+        <button type="button" class="btn-close" (click)="fechar()" aria-label="Fechar"></button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Formulário de Filtros -->
+        <form [formGroup]="filtrosForm" class="mb-4">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="dataInicio" class="form-label">
+                <i class="fas fa-calendar-alt me-1"></i>
+                Data Início *
+              </label>
+              <input
+                type="date"
+                id="dataInicio"
+                class="form-control"
+                formControlName="dataInicio"
+                [class.is-invalid]="filtrosForm.get('dataInicio')?.invalid && filtrosForm.get('dataInicio')?.touched">
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label for="dataFim" class="form-label">
+                <i class="fas fa-calendar-alt me-1"></i>
+                Data Fim *
+              </label>
+              <input
+                type="date"
+                id="dataFim"
+                class="form-control"
+                formControlName="dataFim"
+                [class.is-invalid]="filtrosForm.get('dataFim')?.invalid && filtrosForm.get('dataFim')?.touched">
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="categoria" class="form-label">
+                <i class="fas fa-tags me-1"></i>
+                Categoria
+              </label>
+              <select id="categoria" class="form-select" formControlName="categoria">
+                <option value="">Todas as categorias</option>
+                <option value="filhote">Filhote</option>
+                <option value="adulto">Adulto</option>
+                <option value="senior">Senior</option>
+              </select>
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label for="tipoVoto" class="form-label">
+                <i class="fas fa-vote-yea me-1"></i>
+                Tipo de Voto
+              </label>
+              <select id="tipoVoto" class="form-select" formControlName="tipoVoto">
+                <option value="">Todos os tipos</option>
+                <option value="NORMAL">Voto Normal</option>
+                <option value="SUPER">Super Voto</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Opções para PDF -->
+          <div class="row">
+            <div class="col-12">
+              <h6 class="mb-3">
+                <i class="fas fa-cog me-1"></i>
+                Opções de Relatório
+              </h6>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-4 mb-3">
+              <div class="form-check form-switch">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  id="incluirHistorico"
+                  formControlName="incluirHistorico">
+                <label class="form-check-label" for="incluirHistorico">
+                  Incluir Histórico
+                </label>
+              </div>
+            </div>
+
+            <div class="col-md-4 mb-3">
+              <div class="form-check form-switch">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  id="incluirGraficos"
+                  formControlName="incluirGraficos">
+                <label class="form-check-label" for="incluirGraficos">
+                  Incluir Gráficos
+                </label>
+              </div>
+            </div>
+
+            <div class="col-md-4 mb-3">
+              <div class="form-check form-switch">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  id="incluirFotos"
+                  formControlName="incluirFotos">
+                <label class="form-check-label" for="incluirFotos">
+                  Incluir Fotos
+                </label>
+              </div>
+            </div>
+          </div>
+        </form>
+
+        <!-- Botões de Ação -->
+        <div class="export-actions">
+          <h6 class="mb-3">
+            <i class="fas fa-download me-1"></i>
+            Exportações Disponíveis
+          </h6>
+
+          <div class="row g-3">
+            <!-- Exportar CSV -->
+            <div class="col-md-6">
+              <button
+                type="button"
+                class="btn btn-success w-100"
+                (click)="exportarCSV()"
+                [disabled]="exportandoCSV || filtrosForm.invalid">
+                <i class="fas fa-file-csv me-2"></i>
+                <span *ngIf="!exportandoCSV">Exportar CSV</span>
+                <span *ngIf="exportandoCSV">
+                  <i class="fas fa-spinner fa-spin me-1"></i>
+                  Exportando...
+                </span>
+              </button>
+              <small class="text-muted d-block mt-1">
+                Dados de cães e votos em planilha
+              </small>
+            </div>
+
+            <!-- Exportar Histórico -->
+            <div class="col-md-6">
+              <button
+                type="button"
+                class="btn btn-info w-100"
+                (click)="exportarHistoricoCSV()"
+                [disabled]="exportandoHistorico || filtrosForm.invalid">
+                <i class="fas fa-history me-2"></i>
+                <span *ngIf="!exportandoHistorico">Histórico CSV</span>
+                <span *ngIf="exportandoHistorico">
+                  <i class="fas fa-spinner fa-spin me-1"></i>
+                  Exportando...
+                </span>
+              </button>
+              <small class="text-muted d-block mt-1">
+                Histórico completo de votações
+              </small>
+            </div>
+
+            <!-- Gerar PDF -->
+            <div class="col-12">
+              <button
+                type="button"
+                class="btn btn-danger w-100"
+                (click)="gerarRelatorioPDF()"
+                [disabled]="gerandoPDF || filtrosForm.invalid">
+                <i class="fas fa-file-pdf me-2"></i>
+                <span *ngIf="!gerandoPDF">Gerar Relatório PDF</span>
+                <span *ngIf="gerandoPDF">
+                  <i class="fas fa-spinner fa-spin me-1"></i>
+                  Iniciando geração...
+                </span>
+              </button>
+              <small class="text-muted d-block mt-1">
+                Relatório com Top 20 cães e Top 5 usuários mais ativos
+              </small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Status do Relatório PDF -->
+        <div class="pdf-status mt-4" *ngIf="statusRelatorio">
+          <div class="card">
+            <div class="card-header">
+              <h6 class="mb-0">
+                <i class="fas fa-file-pdf me-2"></i>
+                Status do Relatório PDF
+              </h6>
+            </div>
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <span [class]="getStatusClass()">
+                  <i class="fas fa-circle me-1"></i>
+                  {{ getStatusText() }}
+                </span>
+                <small class="text-muted" *ngIf="statusRelatorio.estimativaMinutos">
+                  Estimativa: {{ statusRelatorio.estimativaMinutos }} min
+                </small>
+              </div>
+
+              <!-- Barra de Progresso -->
+              <div class="progress mb-3" *ngIf="statusRelatorio.status === 'processando'">
+                <div
+                  class="progress-bar progress-bar-striped progress-bar-animated"
+                  role="progressbar"
+                  [style.width.%]="statusRelatorio.progresso || 0"
+                  [attr.aria-valuenow]="statusRelatorio.progresso || 0"
+                  aria-valuemin="0"
+                  aria-valuemax="100">
+                  {{ statusRelatorio.progresso || 0 }}%
+                </div>
+              </div>
+
+              <!-- Etapa Atual -->
+              <div class="mb-3" *ngIf="statusRelatorio.etapaAtual">
+                <small class="text-muted">
+                  <i class="fas fa-cog fa-spin me-1" *ngIf="statusRelatorio.status === 'processando'"></i>
+                  {{ statusRelatorio.etapaAtual }}
+                </small>
+              </div>
+
+              <!-- Botão de Download -->
+              <div class="d-flex justify-content-between align-items-center" *ngIf="statusRelatorio.status === 'concluido'">
+                <div>
+                  <button
+                    type="button"
+                    class="btn btn-success"
+                    (click)="downloadPDF()">
+                    <i class="fas fa-download me-2"></i>
+                    Download PDF
+                  </button>
+                </div>
+                <div class="text-end">
+                  <small class="text-muted d-block" *ngIf="statusRelatorio.tamanhoArquivo">
+                    Tamanho: {{ statusRelatorio.tamanhoArquivo }}
+                  </small>
+                  <small class="text-muted d-block" *ngIf="statusRelatorio.validoAte">
+                    Válido até: {{ statusRelatorio.validoAte | date:'dd/MM/yyyy HH:mm' }}
+                  </small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="fechar()">
+          <i class="fas fa-times me-2"></i>
+          Fechar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
