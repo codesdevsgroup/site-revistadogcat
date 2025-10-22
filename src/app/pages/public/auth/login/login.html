@@ -60,10 +60,10 @@
           [disabled]="isSubmitting || loginForm.invalid"
         >
           <span *ngIf="!isSubmitting">Entrar</span>
-          <span *ngIf="isSubmitting" class="loading-spinner">
-            <i class="fas fa-spinner"></i>
-            Entrando...
-          </span>
+          <span *ngIf="isSubmitting" class="loading-text">
+          <i class="fas fa-spinner loading-icon"></i>
+          Entrando...
+        </span>
         </button>
 
       <div class="auth-footer">

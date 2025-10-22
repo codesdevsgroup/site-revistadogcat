@@ -244,13 +244,13 @@
       }
     }
 
-    .loading-spinner {
+    .loading-text {
       display: flex;
       align-items: center;
       justify-content: center;
       gap: var(--space-2);
 
-      i {
+      .loading-icon {
         animation: spin 1s linear infinite;
       }
     }

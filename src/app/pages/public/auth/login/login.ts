@@ -29,7 +29,7 @@ export class LoginComponent implements OnInit {
     private validationService: ValidationService
   ) {
     this.loginForm = this.fb.group({
-      identifier: ['', [Validators.required, this.emailOrCpfValidator.bind(this)]],
+      identification: ['', [Validators.required, this.emailOrCpfValidator.bind(this)]],
       password: ['', [Validators.required]]
     });
   }
@@ -50,7 +50,7 @@ export class LoginComponent implements OnInit {
       return null;
     }
 
-    return { invalidIdentifier: true };
+    return { invalidIdentification: true };
   }
 
   ngOnInit(): void {
