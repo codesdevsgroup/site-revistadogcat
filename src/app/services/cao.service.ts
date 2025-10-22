@@ -26,8 +26,11 @@ export class CaoService {
   ) {}
 
   getRacas(): Observable<string[]> {
-    return this.http.get<string[]>(this.apiRacasUrl)
-      .pipe(catchError(this.handleError));
+    return this.http.get<{data: {nome: string}[]}>(this.apiRacasUrl)
+      .pipe(
+        map(response => response.data.map(raca => raca.nome)),
+        catchError(this.handleError)
+      );
   }
 
   cadastrarCao(payload: CadastroCaoPayload): Observable<CadastroCaoResponse> {
