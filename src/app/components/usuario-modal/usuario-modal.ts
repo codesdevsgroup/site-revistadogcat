@@ -2,6 +2,7 @@ import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChange
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Usuario } from '../../interfaces/usuario.interface';
+import { ValidationService } from '../../services/validation.service';
 
 @Component({
   selector: 'app-usuario-modal',
@@ -19,14 +20,17 @@ export class UsuarioModalComponent implements OnInit, OnChanges {
   usuarioForm: FormGroup;
   isEditMode = false;
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private validationService: ValidationService
+  ) {
     this.usuarioForm = this.fb.group({
       userId: [null],
       name: ['', Validators.required],
       userName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      cpf: [''], // Adicionado
-      telefone: [''], // Adicionado
+      cpf: ['', [this.validationService.cpfValidator()]], // Validação centralizada aplicada
+      telefone: [''],
       role: ['USUARIO', Validators.required],
       active: [true, Validators.required],
       password: [''] // A lógica de validação da senha será tratada separadamente

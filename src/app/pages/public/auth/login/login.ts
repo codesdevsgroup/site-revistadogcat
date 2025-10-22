@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
-import { Router, RouterModule, ActivatedRoute } from '@angular/router';
+import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors, ReactiveFormsModule } from '@angular/forms';
+import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../../services/auth.service';
-import { NotificationService } from '../../../../services/notification.service'; // Importado
+import { NotificationService } from '../../../../services/notification.service';
+import { ValidationService } from '../../../../services/validation.service'; // Importado
 
 @Component({
   selector: 'app-login',
@@ -20,25 +21,36 @@ export class LoginComponent implements OnInit {
   // A propriedade errorMessage não é mais necessária
 
   constructor(
-    private formBuilder: FormBuilder,
+    private fb: FormBuilder,
     private router: Router,
     private route: ActivatedRoute,
     private authService: AuthService,
-    private notificationService: NotificationService // Injetado
+    private notificationService: NotificationService,
+    private validationService: ValidationService
   ) {
-    this.loginForm = this.formBuilder.group({
-      identification: ['', [Validators.required, this.emailOrCpfValidator]],
+    this.loginForm = this.fb.group({
+      identifier: ['', [Validators.required, this.emailOrCpfValidator.bind(this)]],
       password: ['', [Validators.required]]
     });
   }
 
   emailOrCpfValidator(control: AbstractControl): ValidationErrors | null {
-    if (!control.value) return null;
-    const value = control.value.toString().replace(/\D/g, '');
-    if (value.length === 11) return null;
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (emailRegex.test(control.value)) return null;
-    return { invalidIdentification: true };
+    const value = control.value;
+    if (!value) return null;
+
+    // Verifica se é um email válido
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (emailPattern.test(value)) {
+      return null;
+    }
+
+    // Verifica se é um CPF válido usando a validação centralizada
+    const cpfValidationResult = this.validationService.cpfValidator()(control);
+    if (cpfValidationResult === null) {
+      return null;
+    }
+
+    return { invalidIdentifier: true };
   }
 
   ngOnInit(): void {

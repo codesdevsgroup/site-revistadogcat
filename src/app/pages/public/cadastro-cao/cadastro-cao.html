@@ -92,7 +92,13 @@
                     </div>
                     <div class="col-md-6 mb-3">
                       <label for="cpf" class="form-label">CPF *</label>
-                      <input type="text" id="cpf" class="form-control" formControlName="cpf" placeholder="000.000.000-00">
+                      <input type="text" id="cpf" class="form-control" 
+                             [class.is-invalid]="userForm.get('cpf')?.invalid && userForm.get('cpf')?.touched"
+                             formControlName="cpf" placeholder="000.000.000-00">
+                      <div class="invalid-feedback" *ngIf="userForm.get('cpf')?.invalid && userForm.get('cpf')?.touched">
+                        <span *ngIf="userForm.get('cpf')?.errors?.['required']">CPF é obrigatório</span>
+                        <span *ngIf="userForm.get('cpf')?.errors?.['cpfInvalido']">CPF inválido</span>
+                      </div>
                     </div>
                   </div>
                   <div class="row">

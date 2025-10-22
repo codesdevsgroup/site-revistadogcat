@@ -54,7 +54,7 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
     this.socialMedia = this.socialMediaService.getSocialMedia();
     this.userForm = this.fb.group({
       nomeCompleto: ['', [Validators.required, Validators.minLength(2)]],
-      cpf: ['', [Validators.required]],
+      cpf: ['', [Validators.required, this.validationService.cpfValidator()]],
       email: ['', [Validators.required, Validators.email]],
       telefone: ['', [Validators.required]],
       endereco: [''],
@@ -192,7 +192,7 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
 
   habilitarValidacoesProprietario() {
     this.userForm.get('nomeCompleto')?.setValidators([Validators.required, Validators.minLength(2)]);
-    this.userForm.get('cpf')?.setValidators([Validators.required]);
+    this.userForm.get('cpf')?.setValidators([Validators.required, this.validationService.cpfValidator()]);
     this.userForm.get('email')?.setValidators([Validators.required, Validators.email]);
     this.userForm.get('telefone')?.setValidators([Validators.required]);
     this.userForm.updateValueAndValidity();

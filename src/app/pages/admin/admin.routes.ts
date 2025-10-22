@@ -8,7 +8,9 @@ import { AdminEdicoesComponent } from './edicoes/edicoes';
 import { EdicaoDetalheComponent } from './edicao-detalhe/edicao-detalhe';
 import { CaesComponent } from './caes/caes';
 import { AdminGuard } from '../../guards/admin.guard';
+import { RoleBasedGuard } from '../../guards/role-based.guard';
 import { AuthResolver } from '../../resolvers/auth.resolver';
+import { Role } from '../../enums/role.enum';
 
 export const adminRoutes: Routes = [
   {
@@ -17,14 +19,53 @@ export const adminRoutes: Routes = [
     canActivate: [AdminGuard],
     resolve: { auth: AuthResolver },
     children: [
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-      { path: 'dashboard', component: DashboardComponent },
-      { path: 'usuarios', component: UsuariosComponent },
-      { path: 'artigos', component: ArtigosComponent },
-      { path: 'artigos/:id', component: ArtigoDetalheComponent },
-      { path: 'edicoes', component: AdminEdicoesComponent },
-      { path: 'edicoes/:id', component: EdicaoDetalheComponent },
-      { path: 'caes', component: CaesComponent }
+      { 
+        path: '', 
+        redirectTo: 'artigos', 
+        pathMatch: 'full' 
+      },
+      { 
+        path: 'dashboard', 
+        component: DashboardComponent,
+        canActivate: [RoleBasedGuard],
+        data: { roles: [Role.ADMIN, Role.FUNCIONARIO] }
+      },
+      { 
+        path: 'usuarios', 
+        component: UsuariosComponent,
+        canActivate: [RoleBasedGuard],
+        data: { roles: [Role.ADMIN, Role.FUNCIONARIO] }
+      },
+      { 
+        path: 'artigos', 
+        component: ArtigosComponent,
+        canActivate: [RoleBasedGuard],
+        data: { roles: [Role.ADMIN, Role.FUNCIONARIO, Role.EDITOR], allowedForEditor: true }
+      },
+      { 
+        path: 'artigos/:id', 
+        component: ArtigoDetalheComponent,
+        canActivate: [RoleBasedGuard],
+        data: { roles: [Role.ADMIN, Role.FUNCIONARIO, Role.EDITOR], allowedForEditor: true }
+      },
+      { 
+        path: 'edicoes', 
+        component: AdminEdicoesComponent,
+        canActivate: [RoleBasedGuard],
+        data: { roles: [Role.ADMIN, Role.FUNCIONARIO] }
+      },
+      { 
+        path: 'edicoes/:id', 
+        component: EdicaoDetalheComponent,
+        canActivate: [RoleBasedGuard],
+        data: { roles: [Role.ADMIN, Role.FUNCIONARIO] }
+      },
+      { 
+        path: 'caes', 
+        component: CaesComponent,
+        canActivate: [RoleBasedGuard],
+        data: { roles: [Role.ADMIN, Role.FUNCIONARIO] }
+      }
     ]
   }
 ];

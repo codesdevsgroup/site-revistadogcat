@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators, AbstractControl, ReactiveFormsModul
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../../services/auth.service';
+import { ValidationService } from '../../../../services/validation.service';
 
 @Component({
   selector: 'app-register',
@@ -22,12 +23,13 @@ export class RegisterComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private validationService: ValidationService
   ) {
     this.registerForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2)]],
       userName: ['', [Validators.required, Validators.minLength(3)]],
-      cpf: [''], // Adicionado de volta como campo opcional
+      cpf: ['', [this.validationService.cpfValidator()]], // Validação centralizada aplicada
       telefone: [''],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8)]],

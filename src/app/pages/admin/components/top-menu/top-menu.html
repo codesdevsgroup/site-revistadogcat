@@ -7,23 +7,32 @@
 
     <!-- Navigation Links -->
     <nav class="menu-nav">
-      <a routerLink="/admin/dashboard" routerLinkActive="active" class="nav-link">
+      <!-- Dashboard - Apenas ADMIN e FUNCIONARIO -->
+      <a *ngIf="canAccessDashboard()" routerLink="/admin/dashboard" routerLinkActive="active" class="nav-link">
         <i class="fas fa-chart-line"></i>
         <span>Dashboard</span>
       </a>
-      <a routerLink="/admin/usuarios" routerLinkActive="active" class="nav-link">
+      
+      <!-- Usuários - Apenas ADMIN e FUNCIONARIO -->
+      <a *ngIf="canAccessUsers()" routerLink="/admin/usuarios" routerLinkActive="active" class="nav-link">
         <i class="fas fa-users"></i>
         <span>Usuários</span>
       </a>
-      <a routerLink="/admin/caes" routerLinkActive="active" class="nav-link">
+      
+      <!-- Cães - Apenas ADMIN e FUNCIONARIO -->
+      <a *ngIf="canAccessDogs()" routerLink="/admin/caes" routerLinkActive="active" class="nav-link">
         <i class="fas fa-dog"></i>
         <span>Cães</span>
       </a>
-      <a routerLink="/admin/artigos" routerLinkActive="active" class="nav-link">
+      
+      <!-- Artigos - ADMIN, FUNCIONARIO e EDITOR -->
+      <a *ngIf="canAccessArticles()" routerLink="/admin/artigos" routerLinkActive="active" class="nav-link">
         <i class="fas fa-newspaper"></i>
         <span>Artigos</span>
       </a>
-      <a routerLink="/admin/edicoes" routerLinkActive="active" class="nav-link">
+      
+      <!-- Edições - Apenas ADMIN e FUNCIONARIO -->
+      <a *ngIf="canAccessEditions()" routerLink="/admin/edicoes" routerLinkActive="active" class="nav-link">
         <i class="fas fa-book"></i>
         <span>Edições</span>
       </a>

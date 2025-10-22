@@ -33,7 +33,11 @@
         <div class="form-row">
           <div class="form-group">
             <label for="cpf">CPF (Opcional)</label>
-            <input id="cpf" type="text" formControlName="cpf" class="form-control">
+            <input id="cpf" type="text" formControlName="cpf" class="form-control"
+                   [class.is-invalid]="usuarioForm.get('cpf')?.invalid && usuarioForm.get('cpf')?.touched">
+            <div class="invalid-feedback" *ngIf="usuarioForm.get('cpf')?.invalid && usuarioForm.get('cpf')?.touched">
+              <span *ngIf="usuarioForm.get('cpf')?.errors?.['cpfInvalido']">CPF inválido</span>
+            </div>
           </div>
           <div class="form-group">
             <label for="telefone">Telefone (Opcional)</label>

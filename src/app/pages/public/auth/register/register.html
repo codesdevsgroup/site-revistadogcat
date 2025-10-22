@@ -73,8 +73,12 @@
               <div class="input-row">
                 <div class="input-group">
                   <div class="floating-label">
-                    <input type="text" id="cpf" formControlName="cpf" placeholder=" "/>
+                    <input type="text" id="cpf" formControlName="cpf" placeholder=" "
+                           [class.error]="registerForm.get('cpf')?.invalid && registerForm.get('cpf')?.touched"/>
                     <label for="cpf">CPF (Opcional)</label>
+                  </div>
+                  <div class="error-message" *ngIf="registerForm.get('cpf')?.invalid && registerForm.get('cpf')?.touched">
+                    <span *ngIf="registerForm.get('cpf')?.errors?.['cpfInvalido']">CPF inválido</span>
                   </div>
                 </div>
                 <div class="input-group">

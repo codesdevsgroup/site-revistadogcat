@@ -2,6 +2,7 @@ import { Component, HostListener, ElementRef, OnInit, OnDestroy } from '@angular
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../../services/auth.service';
+import { Role } from '../../../../enums/role.enum';
 
 @Component({
   selector: 'app-top-menu',
@@ -86,5 +87,33 @@ export class TopMenuComponent implements OnInit, OnDestroy {
     this.userMenuOpen = false;
     // TODO: Implementar página de configurações
     console.log('Configurações - funcionalidade a ser implementada');
+  }
+
+  // Métodos de controle de acesso baseado em roles
+  canAccessDashboard(): boolean {
+    return this.hasRole([Role.ADMIN, Role.FUNCIONARIO]);
+  }
+
+  canAccessUsers(): boolean {
+    return this.hasRole([Role.ADMIN, Role.FUNCIONARIO]);
+  }
+
+  canAccessDogs(): boolean {
+    return this.hasRole([Role.ADMIN, Role.FUNCIONARIO]);
+  }
+
+  canAccessArticles(): boolean {
+    return this.hasRole([Role.ADMIN, Role.FUNCIONARIO, Role.EDITOR]);
+  }
+
+  canAccessEditions(): boolean {
+    return this.hasRole([Role.ADMIN, Role.FUNCIONARIO]);
+  }
+
+  private hasRole(allowedRoles: Role[]): boolean {
+    const user = this.authService.getCurrentUser();
+    if (!user) return false;
+    
+    return allowedRoles.includes(user.role as Role);
   }
 }
