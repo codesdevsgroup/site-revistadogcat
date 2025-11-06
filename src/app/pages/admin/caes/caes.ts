@@ -2,11 +2,11 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { CadastroCaoService } from '../../../services/cadastro-cao.service';
+import { CadastroCaoService, StatusCadastro } from '../../../services/cadastro-cao.service';
 import { RacaService } from '../../../services/raca.service';
 import { AuthService } from '../../../services/auth.service';
+import { firstValueFrom } from 'rxjs';
 
-// Usando a interface do serviço e estendendo com propriedades necessárias
 interface CaoListItem {
   cadastroCaoId: string;
   nomeCao: string;
@@ -19,7 +19,6 @@ interface CaoListItem {
     nome: string;
   };
   createdAt: string;
-  // Propriedades adicionais para compatibilidade com o template
   nome?: string;
   numeroRegistro?: string;
   racaId?: string;
@@ -27,11 +26,12 @@ interface CaoListItem {
     nome: string;
   };
   fotos?: string[];
+  status?: StatusCadastro;
 }
 
 interface Raca {
   racaId: string;
-  id?: string; // Alias para racaId
+  id?: string;
   nome: string;
   descricao?: string;
   ativo: boolean;
@@ -51,7 +51,8 @@ export class CaesComponent implements OnInit {
   loading = false;
   searchTerm = '';
   selectedRaca = '';
-  
+  pendentesOnly = false; // Filtro para cadastros pendentes de aprovação
+
   // Modal de raças
   showRacaModal = false;
   racaSearchTerm = '';
@@ -79,15 +80,25 @@ export class CaesComponent implements OnInit {
   async loadCaes() {
     try {
       this.loading = true;
-      const response = await this.cadastroCaoService.findAll();
-      // Mapear os dados para incluir propriedades necessárias
-      this.caes = (response.data || []).map(cao => ({
+      let data: any[] = [];
+      if (this.pendentesOnly) {
+        const result = await firstValueFrom(
+          this.cadastroCaoService.listar({ pendentesValidacao: 'true', status: 'PENDENTE' as StatusCadastro })
+        );
+        data = result || [];
+      } else {
+        const response = await this.cadastroCaoService.findAll();
+        data = response.data || response || [];
+      }
+
+      this.caes = (data || []).map((cao: any) => ({
         ...cao,
-        nome: cao.nomeCao, // Alias para compatibilidade
-        donoCao: cao.proprietario, // Alias para compatibilidade
-        fotos: [], // Placeholder para fotos
-        racaId: undefined, // Será preenchido se necessário
-        numeroRegistro: undefined // Será preenchido se necessário
+        nome: cao.nomeCao ?? cao.nome,
+        donoCao: cao.proprietario ?? cao.donoCao,
+        fotos: cao.fotos ?? [],
+        racaId: cao.racaId,
+        numeroRegistro: cao.numeroRegistro,
+        status: cao.status as StatusCadastro
       }));
     } catch (error) {
       console.error('Erro ao carregar cães:', error);
@@ -102,10 +113,10 @@ export class CaesComponent implements OnInit {
       this.racas = (response.data || [])
         .map(raca => ({
           ...raca,
-          id: raca.racaId // Alias para compatibilidade
+          id: raca.racaId
         }))
-        .sort((a, b) => a.nome.localeCompare(b.nome)); // Ordenação alfabética
-      
+        .sort((a, b) => a.nome.localeCompare(b.nome));
+
       this.updateFilteredRacas();
     } catch (error) {
       console.error('Erro ao carregar raças:', error);
@@ -113,7 +124,6 @@ export class CaesComponent implements OnInit {
   }
 
   filterCaes() {
-    // Implementar filtro se necessário
     console.log('Filtrar cães por raça:', this.selectedBreedId);
   }
 
@@ -146,12 +156,12 @@ export class CaesComponent implements OnInit {
 
   get filteredCaes() {
     return this.caes.filter(cao => {
-      const matchesSearch = !this.searchTerm || 
-        cao.nomeCao.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        cao.proprietario.nome.toLowerCase().includes(this.searchTerm.toLowerCase());
-      
+      const matchesSearch = !this.searchTerm ||
+        (cao.nomeCao || cao.nome || '').toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+        (cao.proprietario?.nome || cao.donoCao?.nome || '').toLowerCase().includes(this.searchTerm.toLowerCase());
+
       const matchesRaca = !this.selectedRaca || cao.raca.nome === this.selectedRaca;
-      
+
       return matchesSearch && matchesRaca;
     });
   }
@@ -163,9 +173,9 @@ export class CaesComponent implements OnInit {
   calculateAge(birthDate: string): string {
     const birth = new Date(birthDate);
     const today = new Date();
-    const ageInMonths = (today.getFullYear() - birth.getFullYear()) * 12 + 
+    const ageInMonths = (today.getFullYear() - birth.getFullYear()) * 12 +
                        (today.getMonth() - birth.getMonth());
-    
+
     if (ageInMonths < 12) {
       return `${ageInMonths} ${ageInMonths === 1 ? 'mês' : 'meses'}`;
     } else {
@@ -208,7 +218,7 @@ export class CaesComponent implements OnInit {
   }
 
   editRaca(raca: Raca) {
-    this.racaForm = { 
+    this.racaForm = {
       racaId: raca.racaId,
       nome: raca.nome,
       descricao: raca.descricao || '',
@@ -226,7 +236,7 @@ export class CaesComponent implements OnInit {
 
     try {
       this.racaModalLoading = true;
-      
+
       if (this.isEditingRaca) {
         await this.racaService.update(this.racaForm.racaId, {
           nome: this.racaForm.nome,
@@ -237,7 +247,7 @@ export class CaesComponent implements OnInit {
           nome: this.racaForm.nome
         });
       }
-      
+
       await this.loadRacas();
       this.closeRacaModal();
     } catch (error) {
@@ -349,5 +359,51 @@ export class CaesComponent implements OnInit {
       console.error('Erro ao excluir cão:', error);
       alert('Erro ao excluir cão');
     }
+  }
+
+  // Ações de aprovação/rejeição de cadastro pendente
+  async aprovarCao(cao: CaoListItem) {
+    try {
+      const result = await firstValueFrom(this.cadastroCaoService.aprovarCadastro(cao.cadastroCaoId));
+      alert(result?.mensagem || 'Cadastro aprovado com sucesso');
+      if (this.pendentesOnly) {
+        this.caes = this.caes.filter(c => c.cadastroCaoId !== cao.cadastroCaoId);
+      } else {
+        const item = this.caes.find(c => c.cadastroCaoId === cao.cadastroCaoId);
+        if (item) {
+          (item as any).status = 'APROVADO';
+        }
+      }
+    } catch (error: any) {
+      console.error('Erro ao aprovar cadastro:', error);
+      alert(error?.error?.message || error?.message || 'Erro ao aprovar cadastro');
+    }
+  }
+
+  async rejeitarCao(cao: CaoListItem) {
+    const motivo = prompt('Informe o motivo da rejeição:');
+    if (!motivo || !motivo.trim()) {
+      alert('Motivo da rejeição é obrigatório');
+      return;
+    }
+    try {
+      const result = await firstValueFrom(this.cadastroCaoService.rejeitarCadastro(cao.cadastroCaoId, motivo.trim()));
+      alert(result?.mensagem || 'Cadastro rejeitado com sucesso');
+      if (this.pendentesOnly) {
+        this.caes = this.caes.filter(c => c.cadastroCaoId !== cao.cadastroCaoId);
+      } else {
+        const item = this.caes.find(c => c.cadastroCaoId === cao.cadastroCaoId);
+        if (item) {
+          (item as any).status = 'REJEITADO';
+        }
+      }
+    } catch (error: any) {
+      console.error('Erro ao rejeitar cadastro:', error);
+      alert(error?.error?.message || error?.message || 'Erro ao rejeitar cadastro');
+    }
+  }
+
+  isCaoPendente(cao: CaoListItem): boolean {
+    return (cao.status as StatusCadastro) === 'PENDENTE';
   }
 }

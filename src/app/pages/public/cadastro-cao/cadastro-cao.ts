@@ -44,6 +44,13 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
   pedigreeVerso: File | null = null;
 
   private subscriptions = new Subscription();
+  // Controle de UI
+  showSuccessModal = false; // Exibe modal de agradecimento após cadastro bem-sucedido
+  validationErrors: string[] = []; // Lista os campos obrigatórios faltantes com mensagens claras
+  // Dados de sucesso para exibir no modal
+  successCaoId: string | null = null;
+  successProprietarioId: string | null = null;
+  successNomeCao: string | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -102,17 +109,23 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
   private carregarRacas(): void {
     this.racasLoading = true;
     this.racasError = false;
+    // Desabilita o controle de raça durante o carregamento para evitar interação e 'changed after checked'
+    this.dogForm.get('raca')?.disable({ emitEvent: false });
     this.subscriptions.add(
       this.caoService.getRacas().subscribe({
         next: (racas) => {
           const unique = Array.from(new Set(racas));
           this.racas = unique.sort((a, b) => a.localeCompare(b, 'pt-BR'));
           this.racasLoading = false;
+          // Habilita o controle após carregar com sucesso
+          this.dogForm.get('raca')?.enable({ emitEvent: false });
         },
         error: (err) => {
           console.error('Erro ao carregar raças:', err);
           this.racasError = true;
           this.racasLoading = false;
+          // Mantém desabilitado em caso de erro para evitar seleção sem dados
+          this.dogForm.get('raca')?.disable({ emitEvent: false });
         }
       })
     );
@@ -150,7 +163,7 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
     this.subscriptions.add(microchipSub);
   }
 
-  nextStep() { if (this.currentStep < 4) this.currentStep++; }
+  nextStep() { if (this.currentStep < 5) this.currentStep++; }
   prevStep() { if (this.currentStep > 1) this.currentStep--; }
 
   scrollToForm() {
@@ -372,6 +385,73 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
     return userValid && dogValid && fotosValid && videoValid;
   }
 
+  // Constrói uma lista de mensagens claras indicando quais campos obrigatórios faltam
+  private buildValidationErrors(): string[] {
+    const errors: string[] = [];
+
+    // Campos do proprietário (somente quando cadastro para terceiros ou sem usuário logado)
+    if (this.proprietarioDiferente || !this.usuarioLogado) {
+      const ownerControls: { key: string; label: string }[] = [
+        { key: 'nomeCompleto', label: 'Nome Completo do proprietário' },
+        { key: 'cpf', label: 'CPF do proprietário' },
+        { key: 'email', label: 'Email do proprietário' },
+        { key: 'telefone', label: 'Telefone/WhatsApp do proprietário' }
+      ];
+      ownerControls.forEach(({ key, label }) => {
+        const control = this.userForm.get(key);
+        if (control && control.invalid) errors.push(label);
+      });
+    }
+
+    // Campos do cão
+    const dogControls: { key: string; label: string }[] = [
+      { key: 'nome', label: 'Nome do cão' },
+      { key: 'raca', label: 'Raça do cão' },
+      { key: 'sexo', label: 'Sexo do cão' },
+      { key: 'dataNascimento', label: 'Data de nascimento do cão' }
+    ];
+    dogControls.forEach(({ key, label }) => {
+      const control = this.dogForm.get(key);
+      if (control && control.invalid) errors.push(label);
+    });
+
+    // Condicionais de pedigree
+    if (this.dogForm.get('temPedigree')?.value) {
+      if (this.dogForm.get('registroPedigree')?.invalid) {
+        errors.push('Nº de registro do pedigree');
+      }
+      if (!this.pedigreeFrente || !this.pedigreeVerso) {
+        errors.push('Imagens do pedigree (frente e verso)');
+      }
+    }
+
+    // Condicionais de microchip
+    if (this.dogForm.get('temMicrochip')?.value) {
+      if (this.dogForm.get('numeroMicrochip')?.invalid) {
+        errors.push('Nº do microchip (15 dígitos)');
+      }
+    }
+
+    // Fotos obrigatórias
+    if (!this.fotoPerfil) errors.push('Foto de perfil do cão');
+    if (!this.fotoLateral) errors.push('Foto lateral do cão');
+
+    // Validação de vídeo conforme opção
+    switch (this.videoOption) {
+      case 'upload':
+        if (!this.selectedFile) errors.push('Arquivo de vídeo do cão');
+        break;
+      case 'youtube':
+        if (!(this.videoForm.get('videoUrl')?.valid)) errors.push('URL válida do vídeo no YouTube');
+        break;
+      case 'whatsapp':
+        if (!this.videoForm.get('confirmaWhatsapp')?.value) errors.push('Confirmação de envio de vídeo via WhatsApp');
+        break;
+    }
+
+    return errors;
+  }
+
   async submitForm() {
     if (this.isFormValid()) {
       try {
@@ -449,7 +529,14 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
         const response = await this.caoService.cadastrarCao(payload).toPromise();
         if (response && response.success) {
           console.log('Cadastro realizado com sucesso:', response);
-          this.currentStep = 4;
+          // Após envio bem-sucedido, avançamos para o passo de sucesso (6), conforme novo fluxo de 5 passos + confirmação
+          this.currentStep = 6;
+          // Captura IDs e dados para exibir no modal
+          this.successCaoId = response.data?.caoId || null;
+          this.successProprietarioId = response.data?.proprietarioId || null;
+          this.successNomeCao = response.data?.nome || this.dogForm.value.nome;
+          // Abre modal de agradecimento após sucesso
+          this.showSuccessModal = true;
         } else {
           alert('Erro ao cadastrar o cão. Tente novamente.');
         }
@@ -458,18 +545,23 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
         alert('Erro ao cadastrar o cão. Verifique os dados e tente novamente.');
       }
     } else {
-      let message = 'Por favor, preencha todos os campos obrigatórios';
-      if (!this.fotoPerfil || !this.fotoLateral) {
-        message += ' e selecione as fotos obrigatórias do cão.';
-      } else if (this.videoOption === 'upload' && !this.selectedFile) {
-        message += ' e envie um vídeo.';
-      } else if (this.videoOption === 'youtube' && !this.videoForm.get('videoUrl')?.valid) {
-        message += ' e forneça um link válido do YouTube.';
-      } else if (this.videoOption === 'whatsapp' && !this.videoForm.get('confirmaWhatsapp')?.value) {
-        message += ' e confirme o envio por WhatsApp.';
-      }
-      alert(message);
+      // Marcar todos como tocados para exibir validação inline e construir um resumo objetivo
+      this.userForm.markAllAsTouched();
+      this.dogForm.markAllAsTouched();
+      this.videoForm.markAllAsTouched();
+      this.validationErrors = this.buildValidationErrors();
     }
+  }
+
+  // Fecha o modal de sucesso
+  closeSuccessModal() {
+    this.showSuccessModal = false;
+  }
+
+  // Ação auxiliar: direciona para uma página pós-cadastro (ex.: página inicial)
+  goToHome() {
+    this.showSuccessModal = false;
+    this.router.navigateByUrl('/');
   }
 
   // --- Métodos de CEP ---

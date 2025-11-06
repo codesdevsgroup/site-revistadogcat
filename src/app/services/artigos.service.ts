@@ -1,8 +1,9 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Observable, forkJoin, throwError } from "rxjs";
 import { map, tap, catchError } from "rxjs/operators";
 import { environment } from "../../environments/environment";
+import { FingerprintService } from "./fingerprint.service";
 import type {
   ArtigoResponseDto,
   Artigo,
@@ -16,6 +17,8 @@ import type {
 })
 export class ArtigosService {
   private readonly apiUrl = `${environment.apiUrl}/artigos`;
+  private fingerprintService = inject(FingerprintService);
+
   constructor(private http: HttpClient) {}
   private mapArtigoFromApi(apiArtigo: ArtigoResponseDto): Artigo {
     console.log("=== MAPEAMENTO DO ARTIGO (público) ===");
@@ -360,5 +363,101 @@ export class ArtigosService {
    */
   excluirArtigo(id: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  /**
+   * Registra uma visualização de artigo
+   */
+  registrarVisualizacao(
+    artigoId: string,
+    userId?: string,
+  ): Observable<{ totalViews: number; contabilizada: boolean }> {
+    const fingerprint = this.fingerprintService.getFingerprint();
+    return this.http
+      .post<any>(`${this.apiUrl}/${artigoId}/view`, {
+        fingerprint,
+        userId,
+      })
+      .pipe(map((response) => response?.data || response));
+  }
+
+  /**
+   * Verifica se já visualizou o artigo
+   */
+  verificarVisualizacao(artigoId: string): Observable<boolean> {
+    const fingerprint = this.fingerprintService.getFingerprint();
+    let params = new HttpParams().set("fingerprint", fingerprint);
+    return this.http
+      .get<any>(`${this.apiUrl}/${artigoId}/view/check`, { params })
+      .pipe(
+        map(
+          (response) =>
+            response?.data?.visualizado || response?.visualizado || false,
+        ),
+      );
+  }
+
+  /**
+   * Toggle curtida em um artigo (adiciona ou remove)
+   */
+  toggleCurtida(
+    artigoId: string,
+    userId?: string,
+  ): Observable<{ curtido: boolean; totalCurtidas: number }> {
+    const fingerprint = this.fingerprintService.getFingerprint();
+    return this.http
+      .post<any>(`${this.apiUrl}/${artigoId}/curtida/toggle`, {
+        fingerprint,
+        userId,
+      })
+      .pipe(map((response) => response?.data || response));
+  }
+
+  /**
+   * Verifica se já curtiu o artigo
+   */
+  verificarCurtida(artigoId: string): Observable<boolean> {
+    const fingerprint = this.fingerprintService.getFingerprint();
+    let params = new HttpParams().set("fingerprint", fingerprint);
+    return this.http
+      .get<any>(`${this.apiUrl}/${artigoId}/curtida/check`, { params })
+      .pipe(
+        map(
+          (response) => response?.data?.curtido || response?.curtido || false,
+        ),
+      );
+  }
+
+  /**
+   * Obtém estatísticas de curtidas de um artigo
+   */
+  obterEstatisticasCurtidas(
+    artigoId: string,
+    days: number = 30,
+  ): Observable<{
+    total: number;
+    daily: Array<{ date: string; count: number }>;
+  }> {
+    let params = new HttpParams().set("days", days.toString());
+    return this.http
+      .get<any>(`${this.apiUrl}/${artigoId}/stats/curtidas`, { params })
+      .pipe(map((response) => response?.data || response));
+  }
+
+  /**
+   * Obtém estatísticas de visualizações de um artigo
+   */
+  obterEstatisticasVisualizacoes(
+    artigoId: string,
+    days: number = 30,
+  ): Observable<{
+    total: number;
+    unique: number;
+    daily: Array<{ date: string; count: number }>;
+  }> {
+    let params = new HttpParams().set("days", days.toString());
+    return this.http
+      .get<any>(`${this.apiUrl}/${artigoId}/stats/views`, { params })
+      .pipe(map((response) => response?.data || response));
   }
 }

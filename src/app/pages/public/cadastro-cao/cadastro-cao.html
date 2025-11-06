@@ -53,6 +53,16 @@
             <div class="step-line" [class.active]="currentStep > 2"></div>
             <div class="step" [class.active]="currentStep >= 3" [class.completed]="currentStep > 3">
               <div class="step-number">3</div>
+              <div class="step-label">Pedigree e Microchip</div>
+            </div>
+            <div class="step-line" [class.active]="currentStep > 3"></div>
+            <div class="step" [class.active]="currentStep >= 4" [class.completed]="currentStep > 4">
+              <div class="step-number">4</div>
+              <div class="step-label">Fotos do Cão</div>
+            </div>
+            <div class="step-line" [class.active]="currentStep > 4"></div>
+            <div class="step" [class.active]="currentStep >= 5" [class.completed]="currentStep > 5">
+              <div class="step-number">5</div>
               <div class="step-label">Vídeo de Apresentação</div>
             </div>
           </div>
@@ -75,12 +85,15 @@
               </div>
 
               <form [formGroup]="userForm" class="step-form">
-                <!-- Opção de Proprietário -->
-                <div class="form-check mb-4">
-                  <input class="form-check-input" type="checkbox" id="proprietarioDiferente" (change)="toggleProprietarioDiferente()">
-                  <label class="form-check-label" for="proprietarioDiferente">
-                    O proprietário do cão é outra pessoa?
-                  </label>
+                <!-- Opção de Proprietário (destaque para cadastro de terceiros) -->
+                <div class="third-party-owner-block mb-4 p-3 rounded">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="proprietarioDiferente" (change)="toggleProprietarioDiferente()" aria-describedby="thirdPartyHelp">
+                    <label class="form-check-label fw-semibold" for="proprietarioDiferente">
+                      O proprietário do cão é outra pessoa?
+                    </label>
+                  </div>
+                  <small id="thirdPartyHelp" class="text-danger d-block mt-1">(marque para cadastro para terceiros)</small>
                 </div>
 
                 <!-- Campos do Formulário (condicionais) -->
@@ -172,7 +185,7 @@
                   </div>
                   <div class="col-md-6 mb-3">
                       <label for="raca" class="form-label">Raça *</label>
-                      <select id="raca" class="form-select" formControlName="raca" [disabled]="racasLoading">
+                      <select id="raca" class="form-select" formControlName="raca">
                           <option value="" disabled selected>
                             {{ racasLoading ? 'Carregando raças...' : 'Selecione a raça' }}
                           </option>
@@ -216,69 +229,147 @@
                     <textarea id="caracteristicas" class="form-control" formControlName="caracteristicas" rows="3" placeholder="Descreva brevemente o temperamento, características físicas notáveis, etc."></textarea>
                 </div>
 
-                <!-- Seção Pedigree (Refatorada com Toggle Switch) -->
-                <div class="pedigree-section mb-4">
-                  <div class="section-card">
-                    <div class="d-flex justify-content-between align-items-center">
-                      <h4><i class="fas fa-certificate"></i> O cão possui pedigree?</h4>
-                      <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" role="switch" id="temPedigree" formControlName="temPedigree">
-                        <label class="form-check-label" for="temPedigree">{{ dogForm.get('temPedigree')?.value ? 'SIM' : 'NÃO' }}</label>
-                      </div>
-                    </div>
-                    <div class="pedigree-details mt-3" *ngIf="dogForm.get('temPedigree')?.value">
-                      <div class="row">
-                          <div class="col-md-6 mb-3">
-                              <label for="registroPedigree" class="form-label">Nº de Registro do Pedigree *</label>
-                              <input type="text" id="registroPedigree" class="form-control" formControlName="registroPedigree" placeholder="Número de registro">
-                          </div>
-                      </div>
-                      <div class="mb-3">
-                          <label for="nomePai" class="form-label">Nome do Pai (no pedigree)</label>
-                          <input type="text" id="nomePai" class="form-control" formControlName="nomePai" placeholder="Nome do pai conforme pedigree">
-                      </div>
-                      <div class="mb-3">
-                          <label for="nomeMae" class="form-label">Nome da Mãe (no pedigree)</label>
-                          <input type="text" id="nomeMae" class="form-control" formControlName="nomeMae" placeholder="Nome da mãe conforme pedigree">
-                      </div>
-                      <div class="mb-3">
-                          <label for="titulos" class="form-label">Títulos e Prêmios</label>
-                          <textarea id="titulos" class="form-control" formControlName="titulos" rows="2" placeholder="Campeão Brasileiro, Grande Campeão, etc."></textarea>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Seção Microchip (Refatorada com Toggle Switch) -->
-                <div class="microchip-section mb-4">
-                  <div class="section-card">
-                    <div class="d-flex justify-content-between align-items-center">
-                      <h4><i class="fas fa-microchip"></i> O cão possui microchip?</h4>
-                      <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" role="switch" id="temMicrochip" formControlName="temMicrochip">
-                        <label class="form-check-label" for="temMicrochip">{{ dogForm.get('temMicrochip')?.value ? 'SIM' : 'NÃO' }}</label>
-                      </div>
-                    </div>
-                    <div class="microchip-details mt-3" *ngIf="dogForm.get('temMicrochip')?.value">
-                      <div class="row">
-                          <div class="col-md-6 mb-3">
-                              <label for="numeroMicrochip" class="form-label">Nº do Microchip *</label>
-                              <input type="text" id="numeroMicrochip" class="form-control" formControlName="numeroMicrochip" placeholder="Número de 15 dígitos">
-                          </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
                 <div class="form-actions">
                   <button type="button" class="btn btn-secondary" (click)="prevStep()">Voltar</button>
-                  <button type="button" class="btn btn-primary" (click)="nextStep()" [disabled]="!dogForm.valid">Próximo: Vídeo</button>
+                  <button type="button" class="btn btn-primary" (click)="nextStep()" [disabled]="!dogForm.valid">Próximo: Pedigree e Microchip</button>
                 </div>
               </form>
             </div>
 
-            <!-- Step 3: Vídeo -->
+            <!-- Step 3: Pedigree e Microchip -->
             <div class="form-step" [class.active]="currentStep === 3">
+              <div class="step-header">
+                <h2>📜 Pedigree e Microchip</h2>
+                <p>Informe se o cão possui pedigree e/ou microchip e complemente os dados</p>
+              </div>
+
+              <!-- Importante: envolver controles com formGroup para funcionar com formControlName -->
+              <form [formGroup]="dogForm" class="step-form">
+              <div class="pedigree-section mb-4">
+                <div class="section-card">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <h4><i class="fas fa-certificate"></i> O cão possui pedigree?</h4>
+                    <div class="form-check form-switch">
+                      <input class="form-check-input" type="checkbox" role="switch" id="temPedigree" formControlName="temPedigree">
+                      <label class="form-check-label" for="temPedigree">{{ dogForm.get('temPedigree')?.value ? 'SIM' : 'NÃO' }}</label>
+                    </div>
+                  </div>
+                  <div class="pedigree-details mt-3" *ngIf="dogForm.get('temPedigree')?.value">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="registroPedigree" class="form-label">Nº de Registro do Pedigree *</label>
+                            <input type="text" id="registroPedigree" class="form-control" formControlName="registroPedigree" placeholder="Número de registro">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="nomePai" class="form-label">Nome do Pai (no pedigree)</label>
+                        <input type="text" id="nomePai" class="form-control" formControlName="nomePai" placeholder="Nome do pai conforme pedigree">
+                    </div>
+                    <div class="mb-3">
+                        <label for="nomeMae" class="form-label">Nome da Mãe (no pedigree)</label>
+                        <input type="text" id="nomeMae" class="form-control" formControlName="nomeMae" placeholder="Nome da mãe conforme pedigree">
+                    </div>
+                    <div class="mb-3">
+                        <label for="titulos" class="form-label">Títulos e Prêmios</label>
+                        <textarea id="titulos" class="form-control" formControlName="titulos" rows="2" placeholder="Campeão Brasileiro, Grande Campeão, etc."></textarea>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-6 mb-3">
+                        <label for="pedigreeFrente" class="form-label">Imagem do Pedigree (frente) *</label>
+                        <input id="pedigreeFrente" type="file" class="form-control" accept="image/*" (change)="onPedigreeFrenteSelected($event)">
+                        <div class="form-text">Envie a imagem nítida da frente do documento.</div>
+                        <div class="mt-2" *ngIf="pedigreeFrente">
+                          <strong>Arquivo selecionado:</strong> {{ pedigreeFrente.name }}
+                        </div>
+                      </div>
+                      <div class="col-md-6 mb-3">
+                        <label for="pedigreeVerso" class="form-label">Imagem do Pedigree (verso) *</label>
+                        <input id="pedigreeVerso" type="file" class="form-control" accept="image/*" (change)="onPedigreeVersoSelected($event)">
+                        <div class="form-text">Envie a imagem nítida do verso do documento.</div>
+                        <div class="mt-2" *ngIf="pedigreeVerso">
+                          <strong>Arquivo selecionado:</strong> {{ pedigreeVerso.name }}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="microchip-section mb-4">
+                <div class="section-card">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <h4><i class="fas fa-microchip"></i> O cão possui microchip?</h4>
+                    <div class="form-check form-switch">
+                      <input class="form-check-input" type="checkbox" role="switch" id="temMicrochip" formControlName="temMicrochip">
+                      <label class="form-check-label" for="temMicrochip">{{ dogForm.get('temMicrochip')?.value ? 'SIM' : 'NÃO' }}</label>
+                    </div>
+                  </div>
+                  <div class="microchip-details mt-3" *ngIf="dogForm.get('temMicrochip')?.value">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="numeroMicrochip" class="form-label">Nº do Microchip *</label>
+                            <input type="text" id="numeroMicrochip" class="form-control" formControlName="numeroMicrochip" placeholder="Número de 15 dígitos">
+                        </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-actions">
+                <button type="button" class="btn btn-secondary" (click)="prevStep()">Voltar</button>
+                <button type="button" class="btn btn-primary" (click)="nextStep()">Próximo: Fotos</button>
+              </div>
+              </form>
+            </div>
+
+            <!-- Step 4: Fotos obrigatórias do cão -->
+            <div class="form-step" [class.active]="currentStep === 4">
+              <div class="step-header">
+                <h2>📸 Fotos do Cão</h2>
+                <p>Envie as duas fotos obrigatórias: perfil (frente) e lateral</p>
+              </div>
+
+              <div class="row g-4">
+                <div class="col-md-6">
+                  <div class="card h-100">
+                    <div class="card-body">
+                      <label for="fotoPerfil" class="form-label">Foto de perfil do cão *</label>
+                      <input id="fotoPerfil" type="file" class="form-control" accept="image/*" (change)="onFotoPerfilSelected($event)">
+                      <div class="mt-2" *ngIf="fotoPerfilPreview">
+                        <img [src]="fotoPerfilPreview" alt="Prévia foto de perfil" class="img-fluid rounded border">
+                      </div>
+                      <div class="d-flex gap-2 mt-2">
+                        <button type="button" class="btn btn-outline-danger" (click)="removeFotoPerfil($event)" [disabled]="!fotoPerfil">Remover</button>
+                      </div>
+                      <div class="form-text mt-2">Imagem nítida, boa iluminação, mostrando o rosto do cão de frente.</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="card h-100">
+                    <div class="card-body">
+                      <label for="fotoLateral" class="form-label">Foto lateral do cão *</label>
+                      <input id="fotoLateral" type="file" class="form-control" accept="image/*" (change)="onFotoLateralSelected($event)">
+                      <div class="mt-2" *ngIf="fotoLateralPreview">
+                        <img [src]="fotoLateralPreview" alt="Prévia foto lateral" class="img-fluid rounded border">
+                      </div>
+                      <div class="d-flex gap-2 mt-2">
+                        <button type="button" class="btn btn-outline-danger" (click)="removeFotoLateral($event)" [disabled]="!fotoLateral">Remover</button>
+                      </div>
+                      <div class="form-text mt-2">Imagem de corpo inteiro, perfil lateral do cão.</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-actions mt-4">
+                <button type="button" class="btn btn-secondary" (click)="prevStep()">Voltar</button>
+                <button type="button" class="btn btn-primary" (click)="nextStep()" [disabled]="!fotoPerfil || !fotoLateral">Próximo: Vídeo</button>
+              </div>
+            </div>
+
+            <!-- Step 5: Vídeo -->
+            <div class="form-step" [class.active]="currentStep === 5">
               <div class="step-header">
                 <h2>🎬 Vídeo de Apresentação</h2>
                 <p>Escolha como deseja enviar o vídeo de apresentação do seu cão</p>
@@ -339,6 +430,14 @@
                 </div>
               </div>
 
+              <!-- Resumo de validação com campos faltantes -->
+              <div *ngIf="validationErrors && validationErrors.length" class="alert alert-danger" role="alert">
+                <strong>Existem campos obrigatórios pendentes:</strong>
+                <ul class="mb-0">
+                  <li *ngFor="let err of validationErrors">{{ err }}</li>
+                </ul>
+              </div>
+
               <div class="form-actions">
                 <button type="button" class="btn btn-secondary" (click)="prevStep()">Voltar</button>
                 <button type="button" class="btn btn-success" (click)="submitForm()" [disabled]="!isVideoStepValid()">Enviar Cadastro</button>
@@ -346,7 +445,7 @@
             </div>
 
             <!-- Success Message -->
-            <div class="form-step" [class.active]="currentStep === 4">
+            <div class="form-step" [class.active]="currentStep === 6">
               <!-- ... (código do passo 4 inalterado) ... -->
             </div>
           </div>
@@ -354,6 +453,36 @@
       </div>
     </div>
   </section>
+
+  <!-- Modal de sucesso (agradecimento) -->
+  <div class="modal-backdrop fade show" *ngIf="showSuccessModal"></div>
+  <div class="modal d-block" tabindex="-1" role="dialog" *ngIf="showSuccessModal" aria-modal="true" aria-labelledby="cadastroSucessoTitle">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="cadastroSucessoTitle">Cadastro enviado!</h5>
+          <button type="button" class="btn-close" aria-label="Fechar" (click)="closeSuccessModal()"></button>
+        </div>
+        <div class="modal-body">
+          <p>Obrigado por cadastrar seu cão na Expo Dog BR. Em breve entraremos em contato com mais informações.</p>
+          <div class="alert alert-success" *ngIf="successCaoId" role="alert">
+            <strong>ID do cadastro:</strong> {{ successCaoId }}
+            <div *ngIf="successNomeCao">Cão: {{ successNomeCao }}</div>
+            <div *ngIf="successProprietarioId">Proprietário (ID): {{ successProprietarioId }}</div>
+          </div>
+          <ng-container [ngSwitch]="videoOption">
+            <p *ngSwitchCase="'upload'">Seu vídeo foi anexado ao cadastro.</p>
+            <p *ngSwitchCase="'youtube'">Recebemos a URL do seu vídeo no YouTube.</p>
+            <p *ngSwitchCase="'whatsapp'">Lembrete: envie o vídeo para nosso WhatsApp conforme combinado.</p>
+          </ng-container>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" (click)="closeSuccessModal()">Ok</button>
+          <button type="button" class="btn btn-secondary" (click)="goToHome()">Voltar à página inicial</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <app-footer />
