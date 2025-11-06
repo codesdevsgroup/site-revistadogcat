@@ -1,0 +1,21 @@
+<section class="article-detail container py-4" *ngIf="!loading && !error">
+  <article *ngIf="artigo as a" class="article">
+    <header class="article-header">
+      <h1 class="title">{{ a.titulo }}</h1>
+      <div class="meta">
+        <span class="author">✍️ {{ a.autor }}</span>
+        <span class="date" [attr.datetime]="a.dataPublicacao">{{ a.dataPublicacao | date:'dd/MM/yyyy' }}</span>
+        <span class="category" *ngIf="a.categoria">{{ a.categoria }}</span>
+      </div>
+      <img *ngIf="a.imagemCapa" class="cover" [src]="('/api' + '/artigos/imagem/' + a.imagemCapa)" [alt]="a.titulo"/>
+    </header>
+    <section class="content" [innerHTML]="conteudoSeguro"></section>
+  </article>
+  <nav class="article-actions mt-4">
+    <a class="btn btn-secondary btn-ripple" routerLink="/artigos" title="Voltar para lista">← Voltar para artigos</a>
+  </nav>
+  
+</section>
+
+<div *ngIf="loading" class="loading">Carregando artigo...</div>
+<div *ngIf="error" class="error" role="alert">{{ error }}</div>

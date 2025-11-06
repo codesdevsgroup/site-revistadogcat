@@ -77,7 +77,7 @@
               >{{ artigo.dataPublicacao | date:'dd MMM yyyy':'':'pt-BR' }}</span
             >
           </div>
-          <a href="#" class="highlight-link" title="Abrir artigo"
+          <a [routerLink]="['/artigos', artigo.id]" class="highlight-link" title="Abrir artigo"
             >Ler matéria completa →</a
           >
         </div>

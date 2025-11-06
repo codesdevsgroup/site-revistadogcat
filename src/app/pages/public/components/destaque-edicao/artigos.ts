@@ -1,12 +1,13 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { ArtigosService, Artigo } from '../../../../services/artigos.service';
 import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-artigos',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './artigos.html',
   styleUrl: './artigos.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
