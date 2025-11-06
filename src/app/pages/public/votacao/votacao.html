@@ -15,8 +15,8 @@
       <div class="card h-100 shadow-sm">
         <div class="card-body d-flex flex-column">
           <h5 class="card-title">{{ cao.nomeCao }}</h5>
-          <p class="card-subtitle mb-2 text-muted">Raça: {{ cao.raca?.nome || '—' }}</p>
-          <p class="mb-2">Proprietário: {{ cao.proprietario?.nome || '—' }}</p>
+          <p class="card-subtitle mb-2 text-muted">Raça: {{ cao.raca.nome }}</p>
+          <p class="mb-2">Proprietário: {{ cao.proprietario.nome }}</p>
           <div class="mt-auto d-flex gap-2">
             <button class="btn btn-outline-primary" (click)="onVotar(cao.cadastroCaoId, 'COMUM')">
               Votar (Comum)

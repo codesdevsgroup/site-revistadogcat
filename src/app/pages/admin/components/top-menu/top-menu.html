@@ -36,6 +36,16 @@
         <i class="fas fa-book"></i>
         <span>Edições</span>
       </a>
+
+      <!-- Votação - Kardex & Auditoria -->
+      <a *ngIf="canAccessVotacao()" routerLink="/admin/votacao/kardex" routerLinkActive="active" class="nav-link">
+        <i class="fas fa-clipboard-list"></i>
+        <span>Kardex</span>
+      </a>
+      <a *ngIf="canAccessVotacao()" routerLink="/admin/votacao/auditoria" routerLinkActive="active" class="nav-link">
+        <i class="fas fa-search"></i>
+        <span>Auditoria</span>
+      </a>
     </nav>
 
     <!-- User Menu -->

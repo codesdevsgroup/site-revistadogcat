@@ -1,0 +1,107 @@
+<div class="container py-4 admin-auditoria">
+  <h1 class="mb-3">
+    <i class="fas fa-search me-2"></i>
+    Auditoria de Votos
+  </h1>
+
+  <!-- Filtros -->
+  <form [formGroup]="filtrosForm" class="card p-3 mb-3">
+    <div class="row g-3 align-items-end">
+      <div class="col-md-3">
+        <label class="form-label" for="userId">Usuário (ID)</label>
+        <input id="userId" type="text" class="form-control" formControlName="userId" placeholder="ID do usuário">
+      </div>
+      <div class="col-md-3">
+        <label class="form-label" for="cadastroId">Cadastro (ID)</label>
+        <input id="cadastroId" type="text" class="form-control" formControlName="cadastroId" placeholder="ID do cadastro do cão">
+      </div>
+      <div class="col-md-2">
+        <label class="form-label" for="tipo">Tipo</label>
+        <select id="tipo" class="form-select" formControlName="tipo">
+          <option *ngFor="let t of tipos" [value]="t.value">{{ t.label }}</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <label class="form-label" for="dataInicial">Data Inicial</label>
+        <input id="dataInicial" type="date" class="form-control" formControlName="dataInicial">
+      </div>
+      <div class="col-md-2">
+        <label class="form-label" for="dataFinal">Data Final</label>
+        <input id="dataFinal" type="date" class="form-control" formControlName="dataFinal">
+      </div>
+    </div>
+    <div class="d-flex gap-2 mt-3">
+      <button type="button" class="btn btn-primary" (click)="aplicarFiltros()" [disabled]="carregando()">
+        <i class="fas" [class.fa-filter]="!carregando()" [class.fa-spinner]="carregando()" [class.fa-spin]="carregando()"></i>
+        <span class="ms-2">Aplicar Filtros</span>
+      </button>
+      <button type="button" class="btn btn-outline-secondary" (click)="limparFiltros()" [disabled]="carregando()">Limpar</button>
+    </div>
+  </form>
+
+  <!-- Tabela -->
+  <div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <div>
+        <i class="fas fa-list me-2"></i>
+        Registros de Votos
+      </div>
+      <div class="text-muted">
+        Página {{ page() }} de {{ totalPages() }}
+      </div>
+    </div>
+
+    <div class="table-responsive" *ngIf="data() as d; else loadingTpl">
+      <table class="table table-striped mb-0">
+        <thead>
+          <tr>
+            <th style="width: 180px">Data</th>
+            <th style="width: 140px">Tipo</th>
+            <th>Usuário</th>
+            <th>Cão</th>
+            <th style="width: 120px" class="text-muted">IP</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let v of d.votos; trackBy: trackByVoto">
+            <td>{{ v.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td>
+              <span class="badge" [ngClass]="{ 'bg-secondary': v.tipo === 'COMUM', 'bg-warning text-dark': v.tipo === 'SUPER' }">
+                {{ v.tipo === 'COMUM' ? 'Comum' : 'Super' }}
+              </span>
+            </td>
+            <td>
+              <div class="small text-muted">UserID:</div>
+              <div class="fw-semibold">{{ v.userId }}</div>
+            </td>
+            <td>
+              <div class="small text-muted">Cadastro:</div>
+              <div class="fw-semibold">{{ v.cadastroId }}</div>
+            </td>
+            <td class="text-muted">{{ v.ip || '-' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <ng-template #loadingTpl>
+      <div class="text-center py-4">
+        <i class="fas fa-spinner fa-spin fa-2x"></i>
+        <p class="mt-2">Carregando registros...</p>
+      </div>
+    </ng-template>
+
+    <!-- Paginação -->
+    <div class="card-footer d-flex justify-content-between align-items-center">
+      <button class="btn btn-outline-secondary" (click)="anterior()" [disabled]="carregando() || page() <= 1">
+        <i class="fas fa-chevron-left"></i>
+        <span class="ms-2">Anterior</span>
+      </button>
+      <div class="text-muted">Total: {{ data()?.total || 0 }}</div>
+      <button class="btn btn-outline-secondary" (click)="proximo()" [disabled]="carregando() || page() >= totalPages()">
+        <span class="me-2">Próximo</span>
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
+  </div>
+</div>

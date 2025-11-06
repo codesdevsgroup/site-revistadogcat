@@ -1,0 +1,96 @@
+<div class="container py-4 admin-kardex">
+  <h1 class="mb-3">
+    <i class="fas fa-clipboard-list me-2"></i>
+    Kardex de Votação
+  </h1>
+
+  <!-- Filtros -->
+  <form [formGroup]="filtrosForm" class="card p-3 mb-4">
+    <div class="row g-3 align-items-end">
+      <div class="col-md-4">
+        <label for="dataInicio" class="form-label">Data Início</label>
+        <input id="dataInicio" type="date" class="form-control" formControlName="dataInicio">
+      </div>
+      <div class="col-md-4">
+        <label for="dataFim" class="form-label">Data Fim</label>
+        <input id="dataFim" type="date" class="form-control" formControlName="dataFim">
+      </div>
+      <div class="col-md-4">
+        <button type="button" class="btn btn-primary w-100" (click)="consultar()" [disabled]="carregando || filtrosForm.invalid">
+          <i class="fas" [class.fa-search]="!carregando" [class.fa-spinner]="carregando" [class.fa-spin]="carregando"></i>
+          <span class="ms-2">Consultar</span>
+        </button>
+      </div>
+    </div>
+  </form>
+
+  <!-- Loading -->
+  <div class="text-center my-4" *ngIf="carregando">
+    <i class="fas fa-spinner fa-spin fa-2x"></i>
+    <p class="mt-2">Carregando relatório...</p>
+  </div>
+
+  <!-- Conteúdo -->
+  <div *ngIf="!carregando && relatorio as r">
+    <!-- Resumo -->
+    <div class="row g-3 mb-4">
+      <div class="col-lg-2 col-md-4 col-sm-6" *ngFor="let card of [
+        { title: 'Total de Votos', value: r.resumo.totalVotos, icon: 'fas fa-vote-yea', color: 'primary' },
+        { title: 'Votos Comuns', value: r.resumo.votosNormais, icon: 'fas fa-check-circle', color: 'success' },
+        { title: 'Super Votos', value: r.resumo.superVotos, icon: 'fas fa-star', color: 'warning' },
+        { title: 'Total de Pontos', value: r.resumo.totalPontos, icon: 'fas fa-chart-line', color: 'info' },
+        { title: 'Usuários Ativos', value: r.resumo.usuariosAtivos, icon: 'fas fa-users', color: 'secondary' },
+        { title: 'Cães Votados', value: r.resumo.caesVotados, icon: 'fas fa-dog', color: 'dark' }
+      ]">
+        <div class="card stat-card p-3 stat-{{card.color}}">
+          <div class="d-flex align-items-center">
+            <i class="me-3" [class]="card.icon"></i>
+            <div>
+              <h5 class="mb-0">{{ card.value }}</h5>
+              <small class="text-muted">{{ card.title }}</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ranking -->
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">
+          <i class="fas fa-trophy me-2"></i>
+          Ranking de Cães por Pontos
+        </h5>
+        <small class="text-muted">Período: {{ r.periodo.inicio }} a {{ r.periodo.fim }}</small>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th style="width: 80px">Posição</th>
+              <th>Cão</th>
+              <th class="text-end" style="width: 160px">Pontos</th>
+              <th class="text-end" style="width: 160px">Votos</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of r.ranking; trackBy: trackByRanking">
+              <td><span class="badge bg-primary">#{{ item.posicao }}</span></td>
+              <td>
+                <div class="d-flex align-items-center gap-2">
+                  <img *ngIf="item.cao.foto" [src]="item.cao.foto" alt="Foto" class="rounded" style="width: 40px; height: 40px; object-fit: cover;">
+                  <div>
+                    <div class="fw-semibold">{{ item.cao.nome }}</div>
+                    <small class="text-muted">ID: {{ item.cao.id }}</small>
+                  </div>
+                </div>
+              </td>
+              <td class="text-end">{{ item.totalPontos }}</td>
+              <td class="text-end">{{ item.totalVotos }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,15 @@
+.admin-kardex {
+  .stat-card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+    transition: transform .2s ease;
+    &:hover { transform: translateY(-2px); }
+  }
+  .stat-primary i { color: #0d6efd; }
+  .stat-success i { color: #198754; }
+  .stat-warning i { color: #ffc107; }
+  .stat-info i { color: #0dcaf0; }
+  .stat-secondary i { color: #6c757d; }
+  .stat-dark i { color: #343a40; }
+}
