@@ -2,12 +2,13 @@
 
 Análise completa das seções da home page com sugestões de melhorias para tornar o site mais atrativo e profissional.
 
+Nota: Documento revisado para (1) remover itens que já foram implementados (Depoimentos, Parceiros e FAQ) e (2) alinhar todas as recomendações de cores às variáveis definidas em `src/styles/_variables.scss` (priorizar `--primaryColor`, `--secondaryColor`, `--goldenColor` e escala de `--gray-*`).
+
 ---
 
 ## 📊 Status Atual das Seções
 
 ### ✅ Seções Existentes:
-1. **Hero Section** - Banner principal com revista
 2. **Expo Dog BR** - Exposição online de cães
 3. **Últimos Artigos** - Grid de artigos recentes
 4. **Anuncie Aqui** - CTA para anunciantes
@@ -16,11 +17,6 @@ Análise completa das seções da home page com sugestões de melhorias para tor
 ---
 
 ## 🎯 Melhorias Prioritárias
-
-### 1️⃣ Hero Section (Banner Principal)
-
-**Status Atual:** ✅ BOM
-**Prioridade:** 🟡 Média
 
 **Melhorias Sugeridas:**
 
@@ -193,187 +189,17 @@ stats = [
 
 ---
 
-### 4️⃣ Nova Seção: Testemunhos/Depoimentos
+### 5️⃣ Newsletter na Home
 
-**Status Atual:** ❌ NÃO EXISTE
-**Prioridade:** 🔴 Alta
-
-**Por que adicionar:**
-- ✅ Aumenta credibilidade
-- ✅ Mostra prova social
-- ✅ Humaniza a marca
-- ✅ Aumenta conversão em 25%+
-
-**Implementação Sugerida:**
-
-```html
-<section class="testimonials-section">
-  <div class="container">
-    <div class="section-header">
-      <h2>❤️ O que nossos leitores dizem</h2>
-      <p>Milhares de pessoas confiam na Revista Dog & Cat</p>
-    </div>
-
-    <div class="testimonials-grid">
-      <div class="testimonial-card">
-        <div class="stars">⭐⭐⭐⭐⭐</div>
-        <p class="testimonial-text">
-          "A melhor revista sobre pets que já li! Conteúdo de qualidade e sempre atualizado."
-        </p>
-        <div class="testimonial-author">
-          <img src="user1.jpg" alt="Maria Silva">
-          <div>
-            <strong>Maria Silva</strong>
-            <span>Criadora de Golden Retrievers</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Mais 5-6 depoimentos -->
-    </div>
-
-    <div class="trust-badges">
-      <div class="badge">
-        <i class="fas fa-shield-alt"></i>
-        <span>Conteúdo Verificado</span>
-      </div>
-      <div class="badge">
-        <i class="fas fa-award"></i>
-        <span>15+ Anos no Mercado</span>
-      </div>
-      <div class="badge">
-        <i class="fas fa-users"></i>
-        <span>50k+ Leitores</span>
-      </div>
-    </div>
-  </div>
-</section>
-```
-
-**Impacto:** 📈 +25% de conversão em assinaturas
-
----
-
-### 5️⃣ Nova Seção: Newsletter
-
-**Status Atual:** ❌ NÃO EXISTE
+**Status Atual:** ✅ Integrado na Home ("Fique por Dentro")
 **Prioridade:** 🟡 Média
 
-**Por que adicionar:**
-- ✅ Captura leads
-- ✅ Aumenta engajamento
-- ✅ Permite remarketing
-- ✅ Cria relacionamento
-
-**Implementação Sugerida:**
-
-```html
-<section class="newsletter-section">
-  <div class="container">
-    <div class="newsletter-card">
-      <div class="newsletter-content">
-        <div class="newsletter-icon">📬</div>
-        <h2>Receba as melhores dicas para seu pet</h2>
-        <p>Cadastre-se e receba conteúdos exclusivos toda semana</p>
-        
-        <form class="newsletter-form">
-          <input 
-            type="email" 
-            placeholder="Seu melhor e-mail"
-            required
-          >
-          <button type="submit">
-            <i class="fas fa-paper-plane"></i>
-            Quero Receber
-          </button>
-        </form>
-
-        <div class="newsletter-features">
-          <span>✅ Sem spam</span>
-          <span>✅ Cancele quando quiser</span>
-          <span>✅ Conteúdo exclusivo</span>
-        </div>
-      </div>
-
-      <div class="newsletter-image">
-        <img src="./newsletter-pets.png" alt="Pets">
-      </div>
-    </div>
-  </div>
-</section>
-```
+**Pendências:**
+- Integrar envio real via serviço de Newsletter (REST) — substituir simulação por chamada ao backend.
+- Garantir mensagens de sucesso/erro com variáveis do tema: `var(--success)`, `var(--error)`, `var(--success-bg)`, `var(--danger-bg)`.
+- Telemetria básica: capturar cliques/inscrições para métricas (Google Analytics/Tag Manager) sem degradar performance.
 
 **Impacto:** 📈 +500 emails/mês
-
----
-
-### 6️⃣ Nova Seção: Parceiros/Logos
-
-**Status Atual:** ❌ NÃO EXISTE
-**Prioridade:** 🟢 Baixa
-
-**Por que adicionar:**
-- ✅ Aumenta credibilidade
-- ✅ Mostra autoridade
-- ✅ Valida o negócio
-
-**Implementação Sugerida:**
-
-```html
-<section class="partners-section">
-  <div class="container">
-    <h3>Parceiros e Apoiadores</h3>
-    <div class="partners-logos">
-      <img src="logo1.png" alt="Parceiro 1">
-      <img src="logo2.png" alt="Parceiro 2">
-      <img src="logo3.png" alt="Parceiro 3">
-      <img src="logo4.png" alt="Parceiro 4">
-      <img src="logo5.png" alt="Parceiro 5">
-    </div>
-  </div>
-</section>
-```
-
-**Impacto:** 📈 +10% de credibilidade
-
----
-
-### 7️⃣ Nova Seção: FAQ
-
-**Status Atual:** ❌ NÃO EXISTE
-**Prioridade:** 🟡 Média
-
-**Por que adicionar:**
-- ✅ Reduz dúvidas
-- ✅ Melhora SEO
-- ✅ Reduz contatos de suporte
-- ✅ Aumenta conversão
-
-**Implementação Sugerida:**
-
-```html
-<section class="faq-section">
-  <div class="container">
-    <h2>❓ Perguntas Frequentes</h2>
-    
-    <div class="faq-accordion">
-      <div class="faq-item">
-        <button class="faq-question">
-          <span>Como faço para assinar a revista?</span>
-          <i class="fas fa-chevron-down"></i>
-        </button>
-        <div class="faq-answer">
-          <p>Você pode assinar clicando no botão "Seja um Assinante"...</p>
-        </div>
-      </div>
-
-      <!-- Mais 8-10 perguntas -->
-    </div>
-  </div>
-</section>
-```
-
-**Impacto:** 📈 -30% de dúvidas no suporte
 
 ---
 
@@ -502,11 +328,12 @@ ngOnInit() {
 ```scss
 .skeleton-image,
 .skeleton-text {
+  /* Usar escala de cinzas do tema */
   background: linear-gradient(
     90deg,
-    #f0f0f0 25%,
-    #e0e0e0 50%,
-    #f0f0f0 75%
+    var(--gray-100) 25%,
+    var(--gray-200) 50%,
+    var(--gray-100) 75%
   );
   background-size: 200% 100%;
   animation: loading 1.5s infinite;
@@ -558,19 +385,16 @@ ngOnInit() {
 ## 🚀 Roadmap de Implementação
 
 ### Sprint 1 (Semana 1-2) - Prioridade Alta 🔴
-- [ ] Adicionar seção de Testemunhos
 - [ ] Melhorar Expo Dog BR (estatísticas + visual)
 - [ ] Adicionar animações de scroll
 - [ ] Melhorar cards de artigos
 
 ### Sprint 2 (Semana 3-4) - Prioridade Média 🟡
 - [ ] Adicionar Newsletter
-- [ ] Adicionar FAQ
 - [ ] Adicionar contador animado nas estatísticas
 - [ ] Implementar filtros de categoria nos artigos
 
 ### Sprint 3 (Semana 5-6) - Prioridade Baixa 🟢
-- [ ] Adicionar seção de Parceiros
 - [ ] Adicionar micro-interações
 - [ ] Implementar loading skeletons
 - [ ] Melhorar responsividade mobile
@@ -595,10 +419,9 @@ ngOnInit() {
 ## 🎯 Priorização por Impacto x Esforço
 
 ### Alto Impacto, Baixo Esforço (Fazer AGORA!) 🟢
-1. ✅ Adicionar Testemunhos
-2. ✅ Adicionar Newsletter
-3. ✅ Melhorar CTAs
-4. ✅ Adicionar scroll animations
+1. ✅ Adicionar Newsletter
+2. ✅ Melhorar CTAs
+3. ✅ Adicionar scroll animations
 
 ### Alto Impacto, Alto Esforço (Planejar bem) 🟡
 1. ⚠️ Melhorar Expo Dog BR completa
@@ -607,10 +430,9 @@ ngOnInit() {
 4. ⚠️ Sistema de FAQ interativo
 
 ### Baixo Impacto, Baixo Esforço (Quick Wins) 🔵
-1. 💡 Adicionar logos de parceiros
-2. 💡 Melhorar hover effects
-3. 💡 Adicionar scroll indicator
-4. 💡 Loading skeletons
+1. 💡 Melhorar hover effects
+2. 💡 Adicionar scroll indicator
+3. 💡 Loading skeletons
 
 ---
 
@@ -621,11 +443,12 @@ ngOnInit() {
 - ✅ Seja específico: "500+ criadores" ao invés de "muitos criadores"
 - ✅ Use urgência: "Últimas vagas", "Oferta limitada"
 
-### 2. Psicologia das Cores
-- 🟢 Verde: Confiança, natureza, saúde
-- 🔵 Azul: Profissionalismo, calma
-- 🟡 Dourado: Premium, exclusividade
-- 🔴 Vermelho: Urgência, ação
+### 2. Paleta de Cores do Tema (usar variáveis)
+- Primária: `var(--primaryColor)` — confiança, natureza, saúde; usar em CTAs principais, headings e destaques.
+- Secundária: `var(--secondaryColor)` — vitalidade; usar em estados de hover, realces suaves e elementos complementares.
+- Dourado: `var(--goldenColor)` — premium e exclusividade; usar em badges, selos e destaques especiais.
+- Neutros: `var(--gray-50 .. --gray-900)` — fundos, bordas e textos; manter bom contraste com `var(--text-primary)` e `var(--text-secondary)`.
+- Semânticas: `var(--success)`, `var(--warning)`, `var(--error)` — mensagens de feedback. Evitar `var(--info)` (azul) em elementos de destaque para preservar a temática verde/dourado.
 
 ### 3. Hierarquia Visual
 - Grande → Pequeno

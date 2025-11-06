@@ -172,10 +172,19 @@
                   </div>
                   <div class="col-md-6 mb-3">
                       <label for="raca" class="form-label">Raça *</label>
-                      <select id="raca" class="form-select" formControlName="raca">
-                          <option value="" disabled>Selecione a raça</option>
-                          <option *ngFor="let raca of racas" [value]="raca">{{ raca }}</option>
+                      <select id="raca" class="form-select" formControlName="raca" [disabled]="racasLoading">
+                          <option value="" disabled selected>
+                            {{ racasLoading ? 'Carregando raças...' : 'Selecione a raça' }}
+                          </option>
+                          <ng-container *ngIf="!racasLoading && racas.length > 0; else racasFallback">
+                            <option *ngFor="let raca of racas; trackBy: trackByRaca" [value]="raca">{{ raca }}</option>
+                          </ng-container>
                       </select>
+                      <ng-template #racasFallback>
+                        <div class="form-text" aria-live="polite">
+                          {{ racasError ? 'Não foi possível carregar as raças. Tente novamente mais tarde.' : 'Nenhuma raça encontrada.' }}
+                        </div>
+                      </ng-template>
                   </div>
                 </div>
                 <div class="row">
