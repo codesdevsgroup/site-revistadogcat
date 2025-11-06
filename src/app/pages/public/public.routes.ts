@@ -10,6 +10,7 @@ import { ArtigosListaComponent } from './artigos/lista/artigos-lista';
 import { ArtigoLeituraComponent } from './artigos/detalhe/artigo-leitura';
 import { AuthGuard } from '../../guards/auth.guard';
 import { AuthResolver } from '../../resolvers/auth.resolver';
+import { VotacaoComponent } from './votacao/votacao';
 
 export const publicRoutes: Routes = [
   {
@@ -19,6 +20,7 @@ export const publicRoutes: Routes = [
       { path: '', component: HomeComponent },
       { path: 'assinaturas', component: AssinaturasComponent },
       { path: 'expo-dog', component: ExpoDogComponent },
+      { path: 'votacao', component: VotacaoComponent },
       { path: 'edicoes', component: EdicoesComponent },
       { path: 'artigos', component: ArtigosListaComponent },
       { path: 'artigos/:id', component: ArtigoLeituraComponent },
