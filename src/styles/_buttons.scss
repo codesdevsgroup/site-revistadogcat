@@ -354,3 +354,28 @@
     @include button-size('sm');
   }
 }
+
+// Micro-interação: efeito Ripple (toque) para botões
+// Simples, performático e sem JS — recomendado em MELHORIAS_HOME.md
+.btn-ripple {
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+  }
+
+  &:active::after {
+    width: 300px;
+    height: 300px;
+  }
+}

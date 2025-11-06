@@ -1,6 +1,12 @@
-<section class="container-fluid highlights" aria-labelledby="ultimos-artigos-title" aria-describedby="ultimos-artigos-subtitle">
+<section
+  class="container-fluid highlights"
+  aria-labelledby="ultimos-artigos-title"
+  aria-describedby="ultimos-artigos-subtitle"
+>
   <h2 id="ultimos-artigos-title">{{ tituloSecao }}</h2>
-  <p id="ultimos-artigos-subtitle" class="section-subtitle">{{ subtituloSecao }}</p>
+  <p id="ultimos-artigos-subtitle" class="section-subtitle">
+    {{ subtituloSecao }}
+  </p>
 
   <div class="article-filters" *ngIf="categories.length > 1">
     <button
@@ -8,7 +14,9 @@
       [class.active]="activeCategory === 'Todos'"
       (click)="selecionarCategoria('Todos')"
       [attr.aria-pressed]="activeCategory === 'Todos' ? 'true' : 'false'"
-    >Todos</button>
+    >
+      Todos
+    </button>
     <button
       class="filter"
       *ngFor="let cat of categories"
@@ -16,13 +24,19 @@
       (click)="selecionarCategoria(cat)"
       [attr.aria-pressed]="activeCategory === cat ? 'true' : 'false'"
       [attr.data-category]="cat"
-    >{{ cat }}</button>
+    >
+      {{ cat }}
+    </button>
   </div>
 
   <ng-container *ngIf="!loading && !error; else estado">
     <div class="featured-article" *ngIf="featuredArtigo as fa">
       <div class="featured-image">
-        <img [src]="getImagemUrl(fa.imagemCapa)" [alt]="fa.titulo" (error)="onImageError($event)">
+        <img
+          [src]="getImagemUrl(fa.imagemCapa)"
+          [alt]="fa.titulo"
+          (error)="onImageError($event)"
+        />
         <span class="featured-badge">📌 Artigo em Destaque</span>
       </div>
       <div class="featured-content">
@@ -32,35 +46,42 @@
         <div class="article-meta">
           <span class="author">✍️ {{ fa.autor }}</span>
           <span class="dot">•</span>
-          <span class="date" [attr.datetime]="fa.dataPublicacao">{{ fa.dataPublicacao | date:'dd MMM yyyy':'':'pt-BR' }}</span>
+          <span class="date" [attr.datetime]="fa.dataPublicacao"
+            >{{ fa.dataPublicacao | date:'dd MMM yyyy':'':'pt-BR' }}</span
+          >
         </div>
       </div>
     </div>
 
     <div class="highlight-grid">
       @for (artigo of artigosFiltrados; track trackById($index, artigo)) {
-        <div class="highlight-card">
-          <div class="highlight-image">
-            <img
-              [src]="getImagemUrl(artigo.imagemCapa)"
-              [alt]="artigo.titulo"
-              (error)="onImageError($event)" />
-          </div>
-          <div class="highlight-content">
-            <h3>{{ artigo.titulo }}</h3>
-            <p>{{ resumoCurto(artigo.resumo) }}</p>
-            <div class="article-tags" *ngIf="artigo.tags?.length">
-              <span class="tag" *ngFor="let tag of artigo.tags">{{ tag }}</span>
-            </div>
-            <div class="article-footer">
-              <div class="author-info">
-                <span class="author">✍️ {{ artigo.autor }}</span>
-              </div>
-              <span class="date" [attr.datetime]="artigo.dataPublicacao">{{ artigo.dataPublicacao | date:'dd MMM yyyy':'':'pt-BR' }}</span>
-            </div>
-            <a href="#" class="highlight-link" title="Abrir artigo">Ler matéria completa →</a>
-          </div>
+      <div class="highlight-card">
+        <div class="highlight-image">
+          <img
+            [src]="getImagemUrl(artigo.imagemCapa)"
+            [alt]="artigo.titulo"
+            (error)="onImageError($event)"
+          />
         </div>
+        <div class="highlight-content">
+          <h3>{{ artigo.titulo }}</h3>
+          <p>{{ resumoCurto(artigo.resumo) }}</p>
+          <div class="article-tags" *ngIf="artigo.tags?.length">
+            <span class="tag" *ngFor="let tag of artigo.tags">{{ tag }}</span>
+          </div>
+          <div class="article-footer">
+            <div class="author-info">
+              <span class="author">✍️ {{ artigo.autor }}</span>
+            </div>
+            <span class="date" [attr.datetime]="artigo.dataPublicacao"
+              >{{ artigo.dataPublicacao | date:'dd MMM yyyy':'':'pt-BR' }}</span
+            >
+          </div>
+          <a href="#" class="highlight-link" title="Abrir artigo"
+            >Ler matéria completa →</a
+          >
+        </div>
+      </div>
       }
     </div>
   </ng-container>
@@ -83,8 +104,4 @@
       </div>
     </div>
   </ng-template>
-
-  <div class="all-highlights">
-    <a href="#" class="btn-all">Informações da revista</a>
-  </div>
 </section>

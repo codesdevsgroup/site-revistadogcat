@@ -2,7 +2,8 @@
   background: linear-gradient(135deg, var(--primaryColor) 0%, #2a5d34 100%);
   color: white;
   padding: 4rem 0;
-  margin: 4rem 0;
+  /* Removemos a margem externa para evitar faixa branca entre seções */
+  margin: 0;
   position: relative;
   overflow: hidden;
 }
