@@ -110,6 +110,10 @@ export class TopMenuComponent implements OnInit, OnDestroy {
     return this.hasRole([Role.ADMIN, Role.FUNCIONARIO]);
   }
 
+  canAccessVotacao(): boolean {
+    return this.hasRole([Role.ADMIN, Role.FUNCIONARIO]);
+  }
+
   private hasRole(allowedRoles: Role[]): boolean {
     const user = this.authService.getCurrentUser();
     if (!user) return false;

@@ -28,6 +28,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   readonly navigationItems: NavItem[] = [
     { label: 'Home', route: '/' },
     { label: 'Expo Dog', route: '/expo-dog' },
+    { label: 'Votação', route: '/votacao' },
     { label: 'Edições', route: '/edicoes' },
     { label: 'Artigos', route: '/artigos' },
   ];

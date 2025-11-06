@@ -327,6 +327,20 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
 
   // --- Métodos de Validação e Submissão ---
 
+  // Libera o botão "Enviar Cadastro" quando uma das três opções de vídeo estiver válida
+  isVideoStepValid(): boolean {
+    switch (this.videoOption) {
+      case 'upload':
+        return this.selectedFile !== null;
+      case 'youtube':
+        return this.videoForm.get('videoUrl')?.valid || false;
+      case 'whatsapp':
+        return this.videoForm.get('confirmaWhatsapp')?.value === true;
+      default:
+        return false;
+    }
+  }
+
   isFormValid(): boolean {
     const userValid = this.proprietarioDiferente ? this.userForm.valid : true;
     const dogValid = this.dogForm.valid;

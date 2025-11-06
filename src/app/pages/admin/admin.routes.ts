@@ -7,6 +7,8 @@ import { ArtigoDetalheComponent } from './artigo-detalhe/artigo-detalhe';
 import { AdminEdicoesComponent } from './edicoes/edicoes';
 import { EdicaoDetalheComponent } from './edicao-detalhe/edicao-detalhe';
 import { CaesComponent } from './caes/caes';
+import { AdminVotacaoKardexComponent } from './votacao/kardex/kardex';
+import { AdminVotacaoAuditoriaComponent } from './votacao/auditoria/auditoria';
 import { AdminGuard } from '../../guards/admin.guard';
 import { RoleBasedGuard } from '../../guards/role-based.guard';
 import { AuthResolver } from '../../resolvers/auth.resolver';
@@ -63,6 +65,19 @@ export const adminRoutes: Routes = [
       { 
         path: 'caes', 
         component: CaesComponent,
+        canActivate: [RoleBasedGuard],
+        data: { roles: [Role.ADMIN, Role.FUNCIONARIO] }
+      }
+      ,
+      {
+        path: 'votacao/kardex',
+        component: AdminVotacaoKardexComponent,
+        canActivate: [RoleBasedGuard],
+        data: { roles: [Role.ADMIN, Role.FUNCIONARIO] }
+      },
+      {
+        path: 'votacao/auditoria',
+        component: AdminVotacaoAuditoriaComponent,
         canActivate: [RoleBasedGuard],
         data: { roles: [Role.ADMIN, Role.FUNCIONARIO] }
       }
