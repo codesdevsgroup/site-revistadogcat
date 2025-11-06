@@ -3,7 +3,7 @@
     <div class="container">
       <div class="row align-items-center min-vh-100">
         <div class="col-lg-6 col-md-12">
-          <div class="hero-content">
+          <div class="hero-content" data-aos="fade-right">
             <div class="welcome-badge">
               <span>🐾</span>
               Seja bem-vindo
@@ -21,25 +21,25 @@
 
             <div class="hero-stats">
               <div class="stat-item">
-                <span class="stat-number">132M</span>
+                <span class="stat-number" appCountUp [end]="132" suffix="M" [duration]="2000">0</span>
                 <span class="stat-label">Pets no Brasil</span>
               </div>
               <div class="stat-item">
-                <span class="stat-number">40%</span>
+                <span class="stat-number" appCountUp [end]="40" suffix="%" [duration]="2000">0</span>
                 <span class="stat-label">Lares com pets</span>
               </div>
               <div class="stat-item">
-                <span class="stat-number">15+</span>
+                <span class="stat-number" appCountUp [end]="15" suffix="+" [duration]="2000">0</span>
                 <span class="stat-label">Anos de experiência</span>
               </div>
             </div>
 
-            <div class="hero-actions">
-              <a class="btn btn-primary-hero" href="#assinaturas">
+            <div class="hero-actions" data-aos="zoom-in">
+              <a class="btn btn-hero btn-primary-hero btn-ripple" href="#assinaturas">
                 <span class="btn-icon">📖</span>
                 Seja um Assinante
               </a>
-              <a class="btn btn-secondary-hero" routerLink="/edicoes">
+              <a class="btn btn-hero btn-secondary-hero btn-ripple" routerLink="/edicoes">
                 <span class="btn-icon">👁️</span>
                 Ver Edições
               </a>
@@ -47,7 +47,7 @@
           </div>
         </div>
 
-        <div class="col-lg-6 col-md-12">
+        <div class="col-lg-6 col-md-12" data-aos="fade-left">
           <div class="hero-visual">
             <div class="magazine-showcase">
               <div class="magazine-cover">
@@ -83,9 +83,141 @@
   </header>
 </div>
 
-<app-expo-dog />
+<app-expo-dog data-aos="fade-up" />
 
-<app-artigos />
+<app-artigos data-aos="fade-up" />
+
+<!-- Depoimentos - seção nova -->
+<section class="testimonials-section py-5" aria-labelledby="depoimentos-title">
+  <div class="container">
+    <div class="row mb-4">
+      <div class="col-12 text-center">
+        <h2 id="depoimentos-title" class="section-title">O que dizem nossos leitores</h2>
+        <p class="section-subtitle">Feedbacks reais de quem acompanha a Revista Dog & Cat BR</p>
+      </div>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-4" data-aos="fade-up">
+        <div class="testimonial-card">
+          <div class="testimonial-content">“Conteúdos de qualidade e dicas práticas que fizeram diferença no cuidado com meu Golden.”</div>
+          <div class="testimonial-author">
+            <img src="/dog/perfil.jpg" alt="Foto da leitora Ana" class="author-avatar" loading="lazy" />
+            <div>
+              <strong class="author-name">Ana L.</strong>
+              <span class="author-role">Tutora do Thor (Golden Retriever)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+        <div class="testimonial-card">
+          <div class="testimonial-content">“Acompanho as edições há anos. A curadoria e os especialistas fazem toda a diferença.”</div>
+          <div class="testimonial-author">
+            <img src="/dog/lateral.jpg" alt="Foto do leitor Bruno" class="author-avatar" loading="lazy" />
+            <div>
+              <strong class="author-name">Bruno M.</strong>
+              <span class="author-role">Tutor da Mel (Shih-tzu)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+        <div class="testimonial-card">
+          <div class="testimonial-content">“O Expo Dog BR é sensacional para quem quer registrar e mostrar o melhor do seu cão.”</div>
+          <div class="testimonial-author">
+            <img src="/dog/perfil.jpg" alt="Foto da leitora Camila" class="author-avatar" loading="lazy" />
+            <div>
+              <strong class="author-name">Camila S.</strong>
+              <span class="author-role">Criadora amadora</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+ </section>
+
+<!-- Parceiros - seção nova -->
+<section class="partners-section py-5" aria-labelledby="parceiros-title">
+  <div class="container">
+    <div class="row mb-4">
+      <div class="col-12 text-center">
+        <h2 id="parceiros-title" class="section-title">Parceiros</h2>
+        <p class="section-subtitle">Marcas e instituições que confiam na nossa curadoria</p>
+      </div>
+    </div>
+    <div class="row g-3 align-items-center justify-content-center">
+      <div class="col-6 col-md-3" data-aos="zoom-in">
+        <div class="partner-item" aria-label="Parceiro 1">
+          <img src="./assets/img/partners/logo-1.svg" alt="Logo Parceiro 1" />
+        </div>
+      </div>
+      <div class="col-6 col-md-3" data-aos="zoom-in" data-aos-delay="50">
+        <div class="partner-item" aria-label="Parceiro 2">
+          <img src="./assets/img/partners/logo-2.svg" alt="Logo Parceiro 2" />
+        </div>
+      </div>
+      <div class="col-6 col-md-3" data-aos="zoom-in" data-aos-delay="100">
+        <div class="partner-item" aria-label="Parceiro 3">
+          <img src="./assets/img/partners/logo-3.svg" alt="Logo Parceiro 3" />
+        </div>
+      </div>
+      <div class="col-6 col-md-3" data-aos="zoom-in" data-aos-delay="150">
+        <div class="partner-item" aria-label="Parceiro 4">
+          <img src="./assets/img/partners/logo-4.svg" alt="Logo Parceiro 4" />
+        </div>
+      </div>
+    </div>
+  </div>
+ </section>
+
+<!-- FAQ - seção nova -->
+<section class="faq-section py-5" aria-labelledby="faq-title">
+  <div class="container">
+    <div class="row mb-4">
+      <div class="col-12 text-center">
+        <h2 id="faq-title" class="section-title">Perguntas frequentes</h2>
+        <p class="section-subtitle">Entenda como funcionam as assinaturas, o Expo Dog BR e as edições digitais</p>
+      </div>
+    </div>
+    <div class="row justify-content-center">
+      <div class="col-lg-8" data-aos="fade-up">
+        <div class="accordion accordion-flush" id="faqAccordion">
+          <div class="accordion-item glass-card">
+            <h3 class="accordion-header" id="faq1">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse1" aria-expanded="false" aria-controls="faqCollapse1">
+                Como funcionam as assinaturas?
+              </button>
+            </h3>
+            <div id="faqCollapse1" class="accordion-collapse collapse" aria-labelledby="faq1" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">Você pode assinar o plano mensal ou anual, com acesso às edições digitais e conteúdos exclusivos. Cancelamento a qualquer momento.</div>
+            </div>
+          </div>
+          <div class="accordion-item glass-card">
+            <h3 class="accordion-header" id="faq2">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse2" aria-expanded="false" aria-controls="faqCollapse2">
+                O que é o Expo Dog BR?
+              </button>
+            </h3>
+            <div id="faqCollapse2" class="accordion-collapse collapse" aria-labelledby="faq2" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">É um espaço para cadastro e exposição do seu cão, com recursos de mídia e informações de pedigree. Ideal para quem quer dar destaque ao pet.</div>
+            </div>
+          </div>
+          <div class="accordion-item glass-card">
+            <h3 class="accordion-header" id="faq3">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse3" aria-expanded="false" aria-controls="faqCollapse3">
+                Como acesso as edições?
+              </button>
+            </h3>
+            <div id="faqCollapse3" class="accordion-collapse collapse" aria-labelledby="faq3" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">As edições ficam disponíveis na área de Edições, com leitura via navegador. Assinantes têm acesso completo ao acervo.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
 <app-anuncie-aqui />
 

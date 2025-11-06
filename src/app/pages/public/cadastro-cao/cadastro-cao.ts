@@ -32,6 +32,8 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
   isCepLoading = false;
   cepStatus: 'none' | 'loading' | 'success' | 'error' = 'none';
   racas: string[] = [];
+  racasLoading = false;
+  racasError = false;
 
   usuarioLogado: any = null;
   fotoPerfil: File | null = null;
@@ -98,17 +100,26 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
   }
 
   private carregarRacas(): void {
+    this.racasLoading = true;
+    this.racasError = false;
     this.subscriptions.add(
       this.caoService.getRacas().subscribe({
         next: (racas) => {
-          this.racas = racas;
+          const unique = Array.from(new Set(racas));
+          this.racas = unique.sort((a, b) => a.localeCompare(b, 'pt-BR'));
+          this.racasLoading = false;
         },
         error: (err) => {
           console.error('Erro ao carregar raças:', err);
-          alert('Não foi possível carregar a lista de raças. Tente novamente mais tarde.');
+          this.racasError = true;
+          this.racasLoading = false;
         }
       })
     );
+  }
+
+  trackByRaca(index: number, raca: string): string {
+    return raca;
   }
 
   private setupConditionalValidators(): void {
@@ -139,8 +150,6 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
     this.subscriptions.add(microchipSub);
   }
 
-  // --- Métodos de Controle do Formulário ---
-
   nextStep() { if (this.currentStep < 4) this.currentStep++; }
   prevStep() { if (this.currentStep > 1) this.currentStep--; }
 
@@ -150,11 +159,11 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
 
   openWhatsAppRegistration() {
     const message = encodeURIComponent(
-      '🏆 Olá! Gostaria de fazer o cadastro para a Expo Dog BR via WhatsApp.\n\n' +
+      'Olá! Gostaria de fazer o cadastro para a Expo Dog BR via WhatsApp.\n\n' +
       'Informações que preciso fornecer:\n' +
-      '👤 Dados pessoais (nome, CPF, email, telefone)\n' +
-      '🐕 Dados do cão (nome, raça, idade, etc.)\n' +
-      '🎥 Vídeo de apresentação\n\n' +
+      'Dados pessoais (nome, CPF, email, telefone)\n' +
+      'Dados do cão (nome, raça, idade, etc.)\n' +
+      'Vídeo de apresentação\n\n' +
       'Aguardo o atendimento!'
     );
     window.open(`https://wa.me/5515998350750?text=${message}`, '_blank');
