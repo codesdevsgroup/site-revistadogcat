@@ -1,11 +1,14 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-import { CadastroCaoService, StatusCadastro } from '../../../services/cadastro-cao.service';
-import { RacaService } from '../../../services/raca.service';
-import { AuthService } from '../../../services/auth.service';
-import { firstValueFrom } from 'rxjs';
+import { Component, OnInit, ViewChild } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { FormsModule } from "@angular/forms";
+import { Router } from "@angular/router";
+import {
+  CadastroCaoService,
+  StatusCadastro,
+} from "../../../services/cadastro-cao.service";
+import { RacaService } from "../../../services/raca.service";
+import { AuthService } from "../../../services/auth.service";
+import { firstValueFrom } from "rxjs";
 
 interface CaoListItem {
   cadastroCaoId: string;
@@ -27,6 +30,7 @@ interface CaoListItem {
   };
   fotos?: string[];
   status?: StatusCadastro;
+  racaSugerida?: string;
 }
 
 interface Raca {
@@ -38,38 +42,40 @@ interface Raca {
 }
 
 @Component({
-  selector: 'app-caes',
+  selector: "app-caes",
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './caes.html',
-  styleUrls: ['./caes.scss']
+  templateUrl: "./caes.html",
+  styleUrls: ["./caes.scss"],
 })
 export class CaesComponent implements OnInit {
   caes: CaoListItem[] = [];
   racas: Raca[] = [];
   filteredRacas: Raca[] = [];
   loading = false;
-  searchTerm = '';
-  selectedRaca = '';
+  searchTerm = "";
+  selectedRaca = "";
   pendentesOnly = false; // Filtro para cadastros pendentes de aprovação
+  pendentesRacaOnly = false; // Filtro para cadastros com raças pendentes
 
   // Modal de raças
   showRacaModal = false;
-  racaSearchTerm = '';
+  racaSearchTerm = "";
   racaForm = {
-    racaId: '',
-    nome: '',
-    descricao: '',
-    ativo: true
+    racaId: "",
+    nome: "",
+    descricao: "",
+    ativo: true,
   };
   isEditingRaca = false;
   racaModalLoading = false;
+  private caoEmAprovacao: CaoListItem | null = null;
 
   constructor(
     private cadastroCaoService: CadastroCaoService,
     private racaService: RacaService,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
   ) {}
 
   ngOnInit() {
@@ -80,10 +86,16 @@ export class CaesComponent implements OnInit {
   async loadCaes() {
     try {
       this.loading = true;
-      let data: any[] = [];
-      if (this.pendentesOnly) {
+      let data: any[];
+
+      if (this.pendentesRacaOnly) {
+        data = await firstValueFrom(this.cadastroCaoService.getPendentesRaca());
+      } else if (this.pendentesOnly) {
         const result = await firstValueFrom(
-          this.cadastroCaoService.listar({ pendentesValidacao: 'true', status: 'PENDENTE' as StatusCadastro })
+          this.cadastroCaoService.listar({
+            pendentesValidacao: "true",
+            status: "PENDENTE" as StatusCadastro,
+          }),
         );
         data = result || [];
       } else {
@@ -98,10 +110,10 @@ export class CaesComponent implements OnInit {
         fotos: cao.fotos ?? [],
         racaId: cao.racaId,
         numeroRegistro: cao.numeroRegistro,
-        status: cao.status as StatusCadastro
+        status: cao.status as StatusCadastro,
       }));
     } catch (error) {
-      console.error('Erro ao carregar cães:', error);
+      console.error("Erro ao carregar cães:", error);
     } finally {
       this.loading = false;
     }
@@ -111,20 +123,20 @@ export class CaesComponent implements OnInit {
     try {
       const response = await this.racaService.findAll();
       this.racas = (response.data || [])
-        .map(raca => ({
+        .map((raca) => ({
           ...raca,
-          id: raca.racaId
+          id: raca.racaId,
         }))
         .sort((a, b) => a.nome.localeCompare(b.nome));
 
       this.updateFilteredRacas();
     } catch (error) {
-      console.error('Erro ao carregar raças:', error);
+      console.error("Erro ao carregar raças:", error);
     }
   }
 
   filterCaes() {
-    console.log('Filtrar cães por raça:', this.selectedBreedId);
+    console.log("Filtrar cães por raça:", this.selectedBreedId);
   }
 
   updateFilteredRacas() {
@@ -132,8 +144,8 @@ export class CaesComponent implements OnInit {
       this.filteredRacas = [...this.racas];
     } else {
       const searchTerm = this.racaSearchTerm.toLowerCase().trim();
-      this.filteredRacas = this.racas.filter(raca =>
-        raca.nome.toLowerCase().includes(searchTerm)
+      this.filteredRacas = this.racas.filter((raca) =>
+        raca.nome.toLowerCase().includes(searchTerm),
       );
     }
   }
@@ -155,32 +167,39 @@ export class CaesComponent implements OnInit {
   }
 
   get filteredCaes() {
-    return this.caes.filter(cao => {
-      const matchesSearch = !this.searchTerm ||
-        (cao.nomeCao || cao.nome || '').toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        (cao.proprietario?.nome || cao.donoCao?.nome || '').toLowerCase().includes(this.searchTerm.toLowerCase());
+    return this.caes.filter((cao) => {
+      const matchesSearch =
+        !this.searchTerm ||
+        (cao.nomeCao || cao.nome || "")
+          .toLowerCase()
+          .includes(this.searchTerm.toLowerCase()) ||
+        (cao.proprietario?.nome || cao.donoCao?.nome || "")
+          .toLowerCase()
+          .includes(this.searchTerm.toLowerCase());
 
-      const matchesRaca = !this.selectedRaca || cao.raca.nome === this.selectedRaca;
+      const matchesRaca =
+        !this.selectedRaca || cao.raca.nome === this.selectedRaca;
 
       return matchesSearch && matchesRaca;
     });
   }
 
   formatDate(dateString: string): string {
-    return new Date(dateString).toLocaleDateString('pt-BR');
+    return new Date(dateString).toLocaleDateString("pt-BR");
   }
 
   calculateAge(birthDate: string): string {
     const birth = new Date(birthDate);
     const today = new Date();
-    const ageInMonths = (today.getFullYear() - birth.getFullYear()) * 12 +
-                       (today.getMonth() - birth.getMonth());
+    const ageInMonths =
+      (today.getFullYear() - birth.getFullYear()) * 12 +
+      (today.getMonth() - birth.getMonth());
 
     if (ageInMonths < 12) {
-      return `${ageInMonths} ${ageInMonths === 1 ? 'mês' : 'meses'}`;
+      return `${ageInMonths} ${ageInMonths === 1 ? "mês" : "meses"}`;
     } else {
       const years = Math.floor(ageInMonths / 12);
-      return `${years} ${years === 1 ? 'ano' : 'anos'}`;
+      return `${years} ${years === 1 ? "ano" : "anos"}`;
     }
   }
 
@@ -189,15 +208,15 @@ export class CaesComponent implements OnInit {
   }
 
   getRacaName(racaId?: string): string {
-    if (!racaId) return 'N/A';
-    const raca = this.racas.find(r => r.racaId === racaId);
-    return raca ? raca.nome : 'N/A';
+    if (!racaId) return "N/A";
+    const raca = this.racas.find((r) => r.racaId === racaId);
+    return raca ? raca.nome : "N/A";
   }
 
   // Métodos do modal de raças
   openRacaModal() {
     this.showRacaModal = true;
-    this.racaSearchTerm = ''; // Limpa o filtro ao abrir o modal
+    this.racaSearchTerm = ""; // Limpa o filtro ao abrir o modal
     this.resetRacaForm();
     this.updateFilteredRacas(); // Atualiza a lista filtrada
   }
@@ -209,10 +228,10 @@ export class CaesComponent implements OnInit {
 
   resetRacaForm() {
     this.racaForm = {
-      racaId: '',
-      nome: '',
-      descricao: '',
-      ativo: true
+      racaId: "",
+      nome: "",
+      descricao: "",
+      ativo: true,
     };
     this.isEditingRaca = false;
   }
@@ -221,8 +240,8 @@ export class CaesComponent implements OnInit {
     this.racaForm = {
       racaId: raca.racaId,
       nome: raca.nome,
-      descricao: raca.descricao || '',
-      ativo: raca.ativo
+      descricao: raca.descricao || "",
+      ativo: raca.ativo,
     };
     this.isEditingRaca = true;
     this.showRacaModal = true;
@@ -230,32 +249,59 @@ export class CaesComponent implements OnInit {
 
   async saveRaca() {
     if (!this.racaForm.nome.trim()) {
-      alert('Nome da raça é obrigatório');
+      alert("Nome da raça é obrigatório");
       return;
     }
 
     try {
       this.racaModalLoading = true;
+      let newRaca: Raca | undefined;
 
       if (this.isEditingRaca) {
-        await this.racaService.update(this.racaForm.racaId, {
+        const response = await this.racaService.update(this.racaForm.racaId, {
           nome: this.racaForm.nome,
-          ativo: this.racaForm.ativo
+          ativo: this.racaForm.ativo,
         });
+        newRaca = response.data;
       } else {
-        await this.racaService.create({
-          nome: this.racaForm.nome
+        const response = await this.racaService.create({
+          nome: this.racaForm.nome,
         });
+        newRaca = response.data;
+      }
+
+      if (this.caoEmAprovacao && newRaca && newRaca.racaId) {
+        await firstValueFrom(
+          this.cadastroCaoService.update(this.caoEmAprovacao.cadastroCaoId, {
+            racaId: newRaca.racaId,
+            racaSugerida: null,
+          } as any),
+        );
+        this.caoEmAprovacao = null;
+        this.pendentesRacaOnly = true; // Manter o filtro
+        await this.loadCaes();
       }
 
       await this.loadRacas();
       this.closeRacaModal();
     } catch (error) {
-      console.error('Erro ao salvar raça:', error);
-      alert('Erro ao salvar raça');
+      console.error("Erro ao salvar raça:", error);
+      alert("Erro ao salvar raça");
     } finally {
       this.racaModalLoading = false;
     }
+  }
+
+  aprovarRaca(cao: CaoListItem) {
+    if (!cao.racaSugerida) {
+      alert("Este cão não tem uma raça sugerida para aprovação.");
+      return;
+    }
+    this.caoEmAprovacao = cao;
+    this.resetRacaForm();
+    this.racaForm.nome = cao.racaSugerida;
+    this.isEditingRaca = false;
+    this.openRacaModal();
   }
 
   async deleteRaca(raca: Raca) {
@@ -267,13 +313,13 @@ export class CaesComponent implements OnInit {
       await this.racaService.delete(raca.racaId);
       await this.loadRacas();
     } catch (error) {
-      console.error('Erro ao excluir raça:', error);
-      alert('Erro ao excluir raça');
+      console.error("Erro ao excluir raça:", error);
+      alert("Erro ao excluir raça");
     }
   }
 
   navigateToCadastro() {
-    this.router.navigate(['/cadastro-cao']);
+    this.router.navigate(["/cadastro-cao"]);
   }
 
   get isAuthenticated() {
@@ -282,7 +328,7 @@ export class CaesComponent implements OnInit {
 
   get isAdmin() {
     const user = this.authService.getCurrentUser();
-    return user ? (user.role === 'ADMIN' || user.role === 'EDITOR') : false;
+    return user ? user.role === "ADMIN" || user.role === "EDITOR" : false;
   }
 
   // Aliases para compatibilidade com o template
@@ -300,7 +346,7 @@ export class CaesComponent implements OnInit {
 
   get breedForm() {
     return {
-      valid: this.racaForm.nome.trim().length > 0
+      valid: this.racaForm.nome.trim().length > 0,
     };
   }
 
@@ -325,8 +371,8 @@ export class CaesComponent implements OnInit {
   }
 
   clearFilters() {
-    this.searchTerm = '';
-    this.selectedRaca = '';
+    this.searchTerm = "";
+    this.selectedRaca = "";
   }
 
   editBreed(raca: Raca) {
@@ -339,12 +385,14 @@ export class CaesComponent implements OnInit {
 
   viewCao(cao: CaoListItem) {
     // Implementar visualização do cão
-    console.log('Visualizar cão:', cao);
+    console.log("Visualizar cão:", cao);
   }
 
   editCao(cao: CaoListItem) {
     // Navegar para edição do cão
-    this.router.navigate(['/cadastro-cao'], { queryParams: { id: cao.cadastroCaoId } });
+    this.router.navigate(["/cadastro-cao"], {
+      queryParams: { id: cao.cadastroCaoId },
+    });
   }
 
   async deleteCao(cao: CaoListItem) {
@@ -356,54 +404,73 @@ export class CaesComponent implements OnInit {
       await this.cadastroCaoService.delete(cao.cadastroCaoId);
       await this.loadCaes();
     } catch (error) {
-      console.error('Erro ao excluir cão:', error);
-      alert('Erro ao excluir cão');
+      console.error("Erro ao excluir cão:", error);
+      alert("Erro ao excluir cão");
     }
   }
 
   // Ações de aprovação/rejeição de cadastro pendente
   async aprovarCao(cao: CaoListItem) {
     try {
-      const result = await firstValueFrom(this.cadastroCaoService.aprovarCadastro(cao.cadastroCaoId));
-      alert(result?.mensagem || 'Cadastro aprovado com sucesso');
+      const result = await firstValueFrom(
+        this.cadastroCaoService.aprovarCadastro(cao.cadastroCaoId),
+      );
+      alert(result?.mensagem || "Cadastro aprovado com sucesso");
       if (this.pendentesOnly) {
-        this.caes = this.caes.filter(c => c.cadastroCaoId !== cao.cadastroCaoId);
+        this.caes = this.caes.filter(
+          (c) => c.cadastroCaoId !== cao.cadastroCaoId,
+        );
       } else {
-        const item = this.caes.find(c => c.cadastroCaoId === cao.cadastroCaoId);
+        const item = this.caes.find(
+          (c) => c.cadastroCaoId === cao.cadastroCaoId,
+        );
         if (item) {
-          (item as any).status = 'APROVADO';
+          (item as any).status = "APROVADO";
         }
       }
     } catch (error: any) {
-      console.error('Erro ao aprovar cadastro:', error);
-      alert(error?.error?.message || error?.message || 'Erro ao aprovar cadastro');
+      console.error("Erro ao aprovar cadastro:", error);
+      alert(
+        error?.error?.message || error?.message || "Erro ao aprovar cadastro",
+      );
     }
   }
 
   async rejeitarCao(cao: CaoListItem) {
-    const motivo = prompt('Informe o motivo da rejeição:');
+    const motivo = prompt("Informe o motivo da rejeição:");
     if (!motivo || !motivo.trim()) {
-      alert('Motivo da rejeição é obrigatório');
+      alert("Motivo da rejeição é obrigatório");
       return;
     }
     try {
-      const result = await firstValueFrom(this.cadastroCaoService.rejeitarCadastro(cao.cadastroCaoId, motivo.trim()));
-      alert(result?.mensagem || 'Cadastro rejeitado com sucesso');
+      const result = await firstValueFrom(
+        this.cadastroCaoService.rejeitarCadastro(
+          cao.cadastroCaoId,
+          motivo.trim(),
+        ),
+      );
+      alert(result?.mensagem || "Cadastro rejeitado com sucesso");
       if (this.pendentesOnly) {
-        this.caes = this.caes.filter(c => c.cadastroCaoId !== cao.cadastroCaoId);
+        this.caes = this.caes.filter(
+          (c) => c.cadastroCaoId !== cao.cadastroCaoId,
+        );
       } else {
-        const item = this.caes.find(c => c.cadastroCaoId === cao.cadastroCaoId);
+        const item = this.caes.find(
+          (c) => c.cadastroCaoId === cao.cadastroCaoId,
+        );
         if (item) {
-          (item as any).status = 'REJEITADO';
+          (item as any).status = "REJEITADO";
         }
       }
     } catch (error: any) {
-      console.error('Erro ao rejeitar cadastro:', error);
-      alert(error?.error?.message || error?.message || 'Erro ao rejeitar cadastro');
+      console.error("Erro ao rejeitar cadastro:", error);
+      alert(
+        error?.error?.message || error?.message || "Erro ao rejeitar cadastro",
+      );
     }
   }
 
   isCaoPendente(cao: CaoListItem): boolean {
-    return (cao.status as StatusCadastro) === 'PENDENTE';
+    return (cao.status as StatusCadastro) === "PENDENTE";
   }
 }
