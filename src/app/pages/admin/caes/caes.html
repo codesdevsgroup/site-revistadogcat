@@ -58,8 +58,8 @@
             <tr *ngFor="let cao of filteredCaes">
               <td>
                 <div class="cao-photo">
-                  <img *ngIf="cao.fotos && cao.fotos.length > 0; else noPhoto" 
-                       [src]="cao.fotos[0]" 
+                  <img *ngIf="cao.fotos && cao.fotos.length > 0; else noPhoto"
+                       [src]="cao.fotos[0]"
                        [alt]="cao.nome"
                        class="photo-thumbnail">
                   <ng-template #noPhoto>
@@ -114,7 +114,7 @@
           <i class="fas fa-dog"></i>
           <h3>Nenhum cão encontrado</h3>
           <p *ngIf="searchTerm || selectedBreedId">
-            Tente ajustar os filtros de busca ou 
+            Tente ajustar os filtros de busca ou
             <button class="btn-link" (click)="clearFilters()">limpar filtros</button>
           </p>
           <p *ngIf="!searchTerm && !selectedBreedId">
@@ -133,7 +133,6 @@
   </ng-template>
 </div>
 
-<!-- Modal de Gerenciamento de Raças -->
 <div class="modal-overlay" *ngIf="showBreedModal" (click)="closeBreedModal()">
   <div class="modal-content" (click)="$event.stopPropagation()">
     <div class="modal-header">
@@ -147,7 +146,6 @@
     </div>
 
     <div class="modal-body">
-      <!-- Formulário para adicionar/editar raça -->
       <form class="breed-form" (ngSubmit)="saveBreed()" #breedForm="ngForm">
         <div class="form-group">
           <label for="breedName">Nome da Raça</label>
@@ -197,7 +195,7 @@
             <i class="fas fa-search"></i>
           </div>
         </div>
-        
+
         <div class="breed-item" *ngFor="let raca of filteredRacas">
           <div class="breed-info">
             <strong>{{ raca.nome }}</strong>
@@ -212,7 +210,7 @@
             </button>
           </div>
         </div>
-        
+
         <div class="no-results" *ngIf="filteredRacas.length === 0 && racaSearchTerm">
           <p>Nenhuma raça encontrada para "{{ racaSearchTerm }}"</p>
         </div>

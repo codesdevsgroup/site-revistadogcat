@@ -7,7 +7,6 @@ import { RacaService } from '../../../services/raca.service';
 import { AuthService } from '../../../services/auth.service';
 import { firstValueFrom } from 'rxjs';
 
-// Usando a interface do serviço e estendendo com propriedades necessárias
 interface CaoListItem {
   cadastroCaoId: string;
   nomeCao: string;
@@ -20,7 +19,6 @@ interface CaoListItem {
     nome: string;
   };
   createdAt: string;
-  // Propriedades adicionais para compatibilidade com o template
   nome?: string;
   numeroRegistro?: string;
   racaId?: string;
@@ -33,7 +31,7 @@ interface CaoListItem {
 
 interface Raca {
   racaId: string;
-  id?: string; // Alias para racaId
+  id?: string;
   nome: string;
   descricao?: string;
   ativo: boolean;
@@ -54,7 +52,7 @@ export class CaesComponent implements OnInit {
   searchTerm = '';
   selectedRaca = '';
   pendentesOnly = false; // Filtro para cadastros pendentes de aprovação
-  
+
   // Modal de raças
   showRacaModal = false;
   racaSearchTerm = '';
@@ -93,7 +91,6 @@ export class CaesComponent implements OnInit {
         data = response.data || response || [];
       }
 
-      // Mapear os dados para incluir propriedades necessárias
       this.caes = (data || []).map((cao: any) => ({
         ...cao,
         nome: cao.nomeCao ?? cao.nome,
@@ -116,10 +113,10 @@ export class CaesComponent implements OnInit {
       this.racas = (response.data || [])
         .map(raca => ({
           ...raca,
-          id: raca.racaId // Alias para compatibilidade
+          id: raca.racaId
         }))
-        .sort((a, b) => a.nome.localeCompare(b.nome)); // Ordenação alfabética
-      
+        .sort((a, b) => a.nome.localeCompare(b.nome));
+
       this.updateFilteredRacas();
     } catch (error) {
       console.error('Erro ao carregar raças:', error);
@@ -127,7 +124,6 @@ export class CaesComponent implements OnInit {
   }
 
   filterCaes() {
-    // Implementar filtro se necessário
     console.log('Filtrar cães por raça:', this.selectedBreedId);
   }
 
@@ -160,12 +156,12 @@ export class CaesComponent implements OnInit {
 
   get filteredCaes() {
     return this.caes.filter(cao => {
-      const matchesSearch = !this.searchTerm || 
+      const matchesSearch = !this.searchTerm ||
         (cao.nomeCao || cao.nome || '').toLowerCase().includes(this.searchTerm.toLowerCase()) ||
         (cao.proprietario?.nome || cao.donoCao?.nome || '').toLowerCase().includes(this.searchTerm.toLowerCase());
-      
+
       const matchesRaca = !this.selectedRaca || cao.raca.nome === this.selectedRaca;
-      
+
       return matchesSearch && matchesRaca;
     });
   }
@@ -177,9 +173,9 @@ export class CaesComponent implements OnInit {
   calculateAge(birthDate: string): string {
     const birth = new Date(birthDate);
     const today = new Date();
-    const ageInMonths = (today.getFullYear() - birth.getFullYear()) * 12 + 
+    const ageInMonths = (today.getFullYear() - birth.getFullYear()) * 12 +
                        (today.getMonth() - birth.getMonth());
-    
+
     if (ageInMonths < 12) {
       return `${ageInMonths} ${ageInMonths === 1 ? 'mês' : 'meses'}`;
     } else {
@@ -222,7 +218,7 @@ export class CaesComponent implements OnInit {
   }
 
   editRaca(raca: Raca) {
-    this.racaForm = { 
+    this.racaForm = {
       racaId: raca.racaId,
       nome: raca.nome,
       descricao: raca.descricao || '',
@@ -240,7 +236,7 @@ export class CaesComponent implements OnInit {
 
     try {
       this.racaModalLoading = true;
-      
+
       if (this.isEditingRaca) {
         await this.racaService.update(this.racaForm.racaId, {
           nome: this.racaForm.nome,
@@ -251,7 +247,7 @@ export class CaesComponent implements OnInit {
           nome: this.racaForm.nome
         });
       }
-      
+
       await this.loadRacas();
       this.closeRacaModal();
     } catch (error) {

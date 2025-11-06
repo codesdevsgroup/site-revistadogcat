@@ -175,7 +175,7 @@
                   </div>
                   <div class="col-md-6 mb-3">
                       <label for="raca" class="form-label">Raça *</label>
-                      <select id="raca" class="form-select" formControlName="raca" [disabled]="racasLoading">
+                      <select id="raca" class="form-select" formControlName="raca">
                           <option value="" disabled selected>
                             {{ racasLoading ? 'Carregando raças...' : 'Selecione a raça' }}
                           </option>
@@ -342,6 +342,14 @@
                 </div>
               </div>
 
+              <!-- Resumo de validação com campos faltantes -->
+              <div *ngIf="validationErrors && validationErrors.length" class="alert alert-danger" role="alert">
+                <strong>Existem campos obrigatórios pendentes:</strong>
+                <ul class="mb-0">
+                  <li *ngFor="let err of validationErrors">{{ err }}</li>
+                </ul>
+              </div>
+
               <div class="form-actions">
                 <button type="button" class="btn btn-secondary" (click)="prevStep()">Voltar</button>
                 <button type="button" class="btn btn-success" (click)="submitForm()" [disabled]="!isVideoStepValid()">Enviar Cadastro</button>
@@ -357,6 +365,36 @@
       </div>
     </div>
   </section>
+
+  <!-- Modal de sucesso (agradecimento) -->
+  <div class="modal-backdrop fade show" *ngIf="showSuccessModal"></div>
+  <div class="modal d-block" tabindex="-1" role="dialog" *ngIf="showSuccessModal" aria-modal="true" aria-labelledby="cadastroSucessoTitle">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="cadastroSucessoTitle">Cadastro enviado!</h5>
+          <button type="button" class="btn-close" aria-label="Fechar" (click)="closeSuccessModal()"></button>
+        </div>
+        <div class="modal-body">
+          <p>Obrigado por cadastrar seu cão na Expo Dog BR. Em breve entraremos em contato com mais informações.</p>
+          <div class="alert alert-success" *ngIf="successCaoId" role="alert">
+            <strong>ID do cadastro:</strong> {{ successCaoId }}
+            <div *ngIf="successNomeCao">Cão: {{ successNomeCao }}</div>
+            <div *ngIf="successProprietarioId">Proprietário (ID): {{ successProprietarioId }}</div>
+          </div>
+          <ng-container [ngSwitch]="videoOption">
+            <p *ngSwitchCase="'upload'">Seu vídeo foi anexado ao cadastro.</p>
+            <p *ngSwitchCase="'youtube'">Recebemos a URL do seu vídeo no YouTube.</p>
+            <p *ngSwitchCase="'whatsapp'">Lembrete: envie o vídeo para nosso WhatsApp conforme combinado.</p>
+          </ng-container>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" (click)="closeSuccessModal()">Ok</button>
+          <button type="button" class="btn btn-secondary" (click)="goToHome()">Voltar à página inicial</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <app-footer />
