@@ -72,4 +72,15 @@ export class ArtigosComponent implements OnInit {
   selecionarCategoria(cat: string): void {
     this.activeCategory = cat;
   }
+
+  /**
+   * Trata erro de carregamento de imagem definindo um placeholder padrão.
+   * Usamos caminho absoluto para garantir resolução estável no dev server.
+   */
+  onImageError(event: Event): void {
+    const img = event.target as HTMLImageElement | null;
+    if (img) {
+      img.src = '/dog/default-article.svg';
+    }
+  }
 }

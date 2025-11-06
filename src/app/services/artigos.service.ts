@@ -259,20 +259,34 @@ export class ArtigosService {
    */
   listarArtigosHomepage(): Observable<Artigo[]> {
     // Buscar artigos para homepage e artigos recentes em paralelo
+    // Torna cada chamada resiliente: se uma falhar, continua com a outra
     return forkJoin({
-      artigosHomepage: this.listarArtigosParaHomepage(9),
-      recentes: this.listarArtigos({ sort: 'dataPublicacao:desc' })
+      artigosHomepage: this.listarArtigosParaHomepage(9).pipe(
+        catchError(err => {
+          console.error('Falha ao carregar artigos da homepage:', err);
+          return [] as unknown as Observable<Artigo[]>; // será tratado abaixo
+        })
+      ),
+      recentes: this.listarArtigos({ sort: 'dataPublicacao:desc' }).pipe(
+        catchError(err => {
+          console.error('Falha ao carregar artigos recentes:', err);
+          return [] as unknown as Observable<Artigo[]>; // será tratado abaixo
+        })
+      )
     }).pipe(
       map(({ artigosHomepage, recentes }) => {
+        // Normaliza em caso de erro tratado acima
+        const homepage = Array.isArray(artigosHomepage) ? artigosHomepage : [];
+        const recents = Array.isArray(recentes) ? recentes : [];
         // Criar um Set com IDs dos artigos da homepage para evitar duplicatas
-        const artigosHomepageIds = new Set(artigosHomepage.map(artigo => artigo.id));
+        const artigosHomepageIds = new Set(homepage.map(artigo => artigo.id));
         
         // Filtrar artigos recentes que não estão na homepage
-        const recentesNaoHomepage = recentes.filter(artigo => !artigosHomepageIds.has(artigo.id));
+        const recentesNaoHomepage = recents.filter(artigo => !artigosHomepageIds.has(artigo.id));
         
         // Combinar: primeiro artigos da homepage ordenados por data, depois recentes
         const artigosOrdenados = [
-          ...artigosHomepage.sort((a, b) => new Date(b.dataPublicacao).getTime() - new Date(a.dataPublicacao).getTime()),
+          ...homepage.sort((a, b) => new Date(b.dataPublicacao).getTime() - new Date(a.dataPublicacao).getTime()),
           ...recentesNaoHomepage
         ];
 

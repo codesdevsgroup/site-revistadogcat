@@ -21,7 +21,7 @@
   <ng-container *ngIf="!loading && !error; else estado">
     <div class="featured-article" *ngIf="featuredArtigo as fa">
       <div class="featured-image">
-        <img [src]="getImagemUrl(fa.imagemCapa)" [alt]="fa.titulo" (error)="$event.target.src = './dog/default-article.svg'">
+        <img [src]="getImagemUrl(fa.imagemCapa)" [alt]="fa.titulo" (error)="onImageError($event)">
         <span class="featured-badge">📌 Artigo em Destaque</span>
       </div>
       <div class="featured-content">
@@ -43,7 +43,7 @@
             <img
               [src]="getImagemUrl(artigo.imagemCapa)"
               [alt]="artigo.titulo"
-              (error)="$event.target.src = './dog/default-article.svg'" />
+              (error)="onImageError($event)" />
           </div>
           <div class="highlight-content">
             <h3>{{ artigo.titulo }}</h3>

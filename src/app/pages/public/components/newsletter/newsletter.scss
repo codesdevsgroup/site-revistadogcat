@@ -286,11 +286,13 @@
             }
 
             &.success {
-              border-color: var(--successColor);
+              /* usar variável semântica do tema */
+              border-color: var(--success);
             }
 
             &.error {
-              border-color: var(--errorColor);
+              /* usar variável semântica do tema */
+              border-color: var(--error);
             }
           }
 
@@ -359,7 +361,8 @@
       }
 
       .error-message {
-        color: var(--errorColor);
+        /* usar variável semântica do tema */
+        color: var(--error);
         font-size: 14px;
         margin-top: 8px;
         display: flex;
@@ -466,15 +469,17 @@
   animation: slideIn 0.3s ease;
 
   &.success {
-    background: rgba(34, 197, 94, 0.1);
-    border: 1px solid rgba(34, 197, 94, 0.3);
-    color: var(--successColor);
+    /* usar variáveis do tema para estados de sucesso */
+    background: var(--success-bg);
+    border: 1px solid var(--success);
+    color: var(--success);
   }
 
   &.error {
-    background: rgba(239, 68, 68, 0.1);
-    border: 1px solid rgba(239, 68, 68, 0.3);
-    color: var(--errorColor);
+    /* usar variáveis do tema para estados de erro */
+    background: var(--danger-bg);
+    border: 1px solid var(--error);
+    color: var(--error);
   }
 
   .message-icon {

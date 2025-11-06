@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 
@@ -7,7 +7,8 @@ import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } 
   standalone: true,
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './newsletter.html',
-  styleUrl: './newsletter.scss'
+  styleUrl: './newsletter.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class NewsletterComponent implements OnInit {
   newsletterForm: FormGroup;
