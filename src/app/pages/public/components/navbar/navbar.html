@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg shadow-sm fixed-top">
+<nav class="navbar navbar-expand-lg shadow-sm fixed-top" [class.scrolled]="isScrolled">
   <div class="container">
     <!-- Brand -->
     <a
@@ -50,6 +50,14 @@
           </a>
         </li>
 
+        <!-- CTA de Assinatura sempre visível -->
+        <li class="nav-item d-none d-lg-block">
+          <a class="btn btn-cta" routerLink="/assinaturas" (click)="closeMenu()" title="Assine agora">
+            <i class="fas fa-crown" aria-hidden="true"></i>
+            Assine agora
+          </a>
+        </li>
+
         <!-- Bloco de Autenticação Dinâmico -->
         <ng-container *ngIf="isAuthenticated$ | async; else loginButton">
           <!-- Mostrado quando o usuário ESTÁ logado -->
@@ -95,6 +103,13 @@
           </li>
         </ng-template>
 
+        <!-- CTA visível em mobile (dentro do collapse) -->
+        <li class="nav-item d-lg-none mt-2">
+          <a class="btn btn-cta w-100" routerLink="/assinaturas" (click)="closeMenu()" title="Assine agora">
+            <i class="fas fa-crown" aria-hidden="true"></i>
+            Assine agora
+          </a>
+        </li>
       </ul>
     </div>
   </div>

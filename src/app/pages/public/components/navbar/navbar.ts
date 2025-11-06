@@ -34,6 +34,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   isMenuOpen = false;
   userMenuOpen = false;
+  isScrolled = false;
   username = '';
   userRole = '';
 
@@ -61,10 +62,24 @@ export class NavbarComponent implements OnInit, OnDestroy {
         this.userRole = '';
       }
     });
+
+    // Atualiza estado inicialmente conforme posição da página
+    this.updateScrollState();
   }
 
   ngOnDestroy() {
     // No specific cleanup needed for now, similar to top-menu.ts
+  }
+
+  // Controla estado visual (shrink) ao rolar a página
+  @HostListener('window:scroll')
+  onWindowScroll() {
+    this.updateScrollState();
+  }
+
+  private updateScrollState() {
+    // Ajuste simples: considera scroll > 10px como estado "scrolled"
+    this.isScrolled = (window.scrollY || document.documentElement.scrollTop || document.body.scrollTop || 0) > 10;
   }
 
   private loadUserData() {
