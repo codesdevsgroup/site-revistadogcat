@@ -1,12 +1,14 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ArtigosService, Artigo } from '../../../../services/artigos.service';
+import { RouterModule } from '@angular/router';
+import { ArtigosService } from '../../../../services/artigos.service';
+import type { Artigo } from '../../../../interfaces/artigo.interface';
 import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-artigos',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './artigos.html',
   styleUrl: './artigos.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -19,7 +21,6 @@ export class ArtigosComponent implements OnInit {
   featuredArtigo?: Artigo;
   categories: string[] = [];
   activeCategory: string = 'Todos';
-  // Título e subtítulo da seção, configuráveis para facilitar ajustes editoriais
   tituloSecao: string = 'Novidades da Revista';
   subtituloSecao: string = 'Leituras recentes e recomendações sobre cães e gatos.';
 
@@ -30,14 +31,10 @@ export class ArtigosComponent implements OnInit {
     this.artigosService.listarArtigosHomepage().subscribe({
       next: (artigos) => {
         this.artigos = artigos;
-        // Seleciona artigo em destaque se existir
         this.featuredArtigo = artigos.find(a => a.destaque);
-        // Monta categorias únicas
         const uniqueCats = Array.from(new Set(artigos.map(a => a.categoria).filter(Boolean)));
-        // Mantém apenas categorias reais; o botão "Todos" é tratado no template
         this.categories = uniqueCats.sort((a, b) => a.localeCompare(b, 'pt-BR'));
         this.loading = false;
-        // Em OnPush, garantimos atualização após mudanças assíncronas
         this.cdr.markForCheck();
       },
       error: (error) => {
@@ -76,10 +73,6 @@ export class ArtigosComponent implements OnInit {
     this.activeCategory = cat;
   }
 
-  /**
-   * Trata erro de carregamento de imagem definindo um placeholder padrão.
-   * Usamos caminho absoluto para garantir resolução estável no dev server.
-   */
   onImageError(event: Event): void {
     const img = event.target as HTMLImageElement | null;
     if (img) {

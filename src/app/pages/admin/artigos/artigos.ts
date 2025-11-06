@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { ArtigosService, Artigo } from '../../../services/artigos.service';
+import { ArtigosService } from '../../../services/artigos.service';
+import type { Artigo } from '../../../interfaces/artigo.interface';
 
 @Component({
   selector: 'app-artigos',

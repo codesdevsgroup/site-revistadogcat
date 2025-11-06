@@ -6,6 +6,8 @@ import { ExpoDogComponent } from './expo-dog/expo-dog';
 import { CadastroCaoComponent } from './cadastro-cao/cadastro-cao';
 import { ProfileComponent } from './profile/profile';
 import { EdicoesComponent } from './edicoes/edicoes';
+import { ArtigosListaComponent } from './artigos/lista/artigos-lista';
+import { ArtigoLeituraComponent } from './artigos/detalhe/artigo-leitura';
 import { AuthGuard } from '../../guards/auth.guard';
 import { AuthResolver } from '../../resolvers/auth.resolver';
 
@@ -18,6 +20,8 @@ export const publicRoutes: Routes = [
       { path: 'assinaturas', component: AssinaturasComponent },
       { path: 'expo-dog', component: ExpoDogComponent },
       { path: 'edicoes', component: EdicoesComponent },
+      { path: 'artigos', component: ArtigosListaComponent },
+      { path: 'artigos/:id', component: ArtigoLeituraComponent },
       { path: 'cadastro-cao', component: CadastroCaoComponent },
       { path: 'perfil', component: ProfileComponent, canActivate: [AuthGuard], resolve: { auth: AuthResolver } },
       { path: 'area-leitor', redirectTo: '/auth/login', pathMatch: 'full' },

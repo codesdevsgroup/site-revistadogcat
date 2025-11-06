@@ -75,6 +75,11 @@
   font-weight: 800;
   color: var(--anuncie-text-color);
   line-height: 1.2;
+  /* Melhorias de quebra para títulos longos em telas pequenas */
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  hyphens: auto;
+  text-wrap: balance;
 }
 
 .anuncie-subtitle {
@@ -230,7 +235,7 @@
 
 .anunciante-stats {
   display: grid;
-  grid-template-columns: repeat(3, minmax(140px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: 1.5rem;
   margin-bottom: 2rem;
 
@@ -267,7 +272,9 @@
 
 @media (max-width: 992px) {
   .anuncie-card {
-    grid-template-columns: 1fr;
+    /* Em telas médias/pequenas, abandona grid e usa flex para permitir reordenação */
+    display: flex;
+    flex-direction: column;
     padding: 2.5rem;
     gap: 2.5rem;
   }
@@ -275,7 +282,11 @@
     font-size: 2rem;
   }
   .anuncie-image-content {
+    /* Com flex, order funciona para trazer a imagem acima do texto */
     order: -1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 }
 
@@ -290,8 +301,20 @@
     margin: 0 1rem;
   }
 
+  .anuncie-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .anuncie-badge {
+    font-size: 0.8125rem;
+    padding: 0.4rem 0.9rem;
+  }
+
   .anuncie-title {
     font-size: 1.875rem;
+    line-height: 1.25;
   }
 
   .anuncie-subtitle {

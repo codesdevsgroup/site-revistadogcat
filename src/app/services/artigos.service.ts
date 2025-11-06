@@ -3,128 +3,42 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, forkJoin, throwError } from 'rxjs';
 import { map, tap, catchError } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
-
-export interface ArtigoResponseDto {
-  artigoId: string;
-  titulo: string;
-  conteudo: any;
-  resumo?: string;
-  autor: {
-    userId: string;
-    name: string;
-    avatarUrl?: string;
-  };
-  categoria: string;
-  status: string;
-  dataPublicacao: string;
-  imagemCapa?: string;
-  visualizacoes: number;
-  curtidas: number;
-  comentarios: any[];
-  destaque: boolean;
-  tags?: string[];
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface Artigo {
-  id: string;
-  titulo: string;
-  conteudo: any;
-  resumo?: string;
-  autor: string;
-  autorId: string;
-  categoria: string;
-  status: 'publicado' | 'rascunho' | 'revisao';
-  dataPublicacao: string;
-  imagemCapa: string;
-  visualizacoes: number;
-  curtidas: number;
-  comentarios: number;
-  destaque: boolean;
-  tags?: string[];
-  createdAt: string;
-  updatedAt: string;
-}
-
-// Interface para criação/atualização de artigo
-export interface ArtigoInput {
-  titulo: string;
-  conteudo: any;
-  resumo?: string;
-  autorId: string;
-  categoria: string;
-  status: string;
-  dataPublicacao?: string;
-  imagemCapa?: string;
-  destaque: boolean;
-  tags?: string[];
-}
-
-// Interface para filtros de busca
-export interface ArtigoFiltros {
-  q?: string;
-  categoria?: string;
-  status?: string;
-  sort?: string;
-}
-
-// Resposta paginada conforme documentação
-export interface ArtigosListResponseDto {
-  data: ArtigoResponseDto[];
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-    hasNext: boolean;
-    hasPrev: boolean;
-  };
-}
+import type { ArtigoResponseDto, Artigo, ArtigoInput, ArtigoFiltros, ArtigosListResponseDto } from '../interfaces/artigo.interface';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ArtigosService {
   private readonly apiUrl = `${environment.apiUrl}/artigos`;
-
   constructor(private http: HttpClient) {}
-
-  /**
-   * Mapeia ArtigoResponseDto da API para interface Artigo do frontend
-   */
   private mapArtigoFromApi(apiArtigo: ArtigoResponseDto): Artigo {
-    console.log('=== MAPEAMENTO DO ARTIGO ===');
+    console.log('=== MAPEAMENTO DO ARTIGO (público) ===');
     console.log('ArtigoResponseDto recebido:', apiArtigo);
-    console.log('Autor presente?', !!apiArtigo.autor);
-    console.log('Dados do autor:', apiArtigo.autor);
-    
-    // Verificação de segurança para o autor
-    if (!apiArtigo.autor) {
-      throw new Error('Dados do autor não encontrados na resposta da API');
-    }
-    
-    const artigo = {
-      id: apiArtigo.artigoId,
+    console.log('Autor presente?', !!(apiArtigo as any)?.autor);
+
+    const autorObj: any = (apiArtigo as any)?.autor || null;
+
+    const artigo: Artigo = {
+      id: (apiArtigo as any).artigoId || (apiArtigo as any).id || '',
       titulo: apiArtigo.titulo,
       conteudo: apiArtigo.conteudo,
       resumo: apiArtigo.resumo,
-      autor: apiArtigo.autor.name,
-      autorId: apiArtigo.autor.userId,
+      autor: autorObj?.name ?? 'Autor desconhecido',
+      autorId: autorObj?.userId ?? '',
       categoria: apiArtigo.categoria,
       status: this.mapStatusFromApi(apiArtigo.status),
       dataPublicacao: apiArtigo.dataPublicacao,
       imagemCapa: apiArtigo.imagemCapa || '',
-      visualizacoes: apiArtigo.visualizacoes,
-      curtidas: apiArtigo.curtidas,
-      comentarios: apiArtigo.comentarios.length,
-      destaque: apiArtigo.destaque,
+      visualizacoes: Number(apiArtigo.visualizacoes ?? 0),
+      curtidas: Number(apiArtigo.curtidas ?? 0),
+      comentarios: Array.isArray(apiArtigo.comentarios) ? apiArtigo.comentarios.length : 0,
+      destaque: Boolean(apiArtigo.destaque),
       tags: apiArtigo.tags,
       createdAt: apiArtigo.createdAt,
       updatedAt: apiArtigo.updatedAt
     };
-    
-    console.log('✅ Artigo mapeado com sucesso:', artigo);
+
+    console.log('✅ Artigo mapeado com sucesso (resiliente):', artigo);
     return artigo;
   }
 
@@ -280,10 +194,10 @@ export class ArtigosService {
         const recents = Array.isArray(recentes) ? recentes : [];
         // Criar um Set com IDs dos artigos da homepage para evitar duplicatas
         const artigosHomepageIds = new Set(homepage.map(artigo => artigo.id));
-        
+
         // Filtrar artigos recentes que não estão na homepage
         const recentesNaoHomepage = recents.filter(artigo => !artigosHomepageIds.has(artigo.id));
-        
+
         // Combinar: primeiro artigos da homepage ordenados por data, depois recentes
         const artigosOrdenados = [
           ...homepage.sort((a, b) => new Date(b.dataPublicacao).getTime() - new Date(a.dataPublicacao).getTime()),
@@ -344,7 +258,7 @@ export class ArtigosService {
    */
   criarArtigo(artigo: ArtigoInput, imagemCapa?: File): Observable<Artigo> {
     const formData = new FormData();
-    
+
     // Adiciona os dados do artigo
     formData.append('titulo', artigo.titulo);
     formData.append('conteudo', JSON.stringify(artigo.conteudo));
@@ -352,11 +266,11 @@ export class ArtigosService {
     formData.append('autorId', artigo.autorId);
     formData.append('categoria', artigo.categoria);
     formData.append('status', artigo.status);
-    
+
     if (artigo.dataPublicacao) {
       formData.append('dataPublicacao', artigo.dataPublicacao);
     }
-    
+
     // Adiciona a imagem se fornecida
     if (imagemCapa) {
       formData.append('imagemCapa', imagemCapa);
@@ -378,7 +292,7 @@ export class ArtigosService {
    */
   atualizarArtigo(id: string, artigo: ArtigoInput, imagemCapa?: File): Observable<Artigo> {
     const formData = new FormData();
-    
+
     // Adiciona os dados do artigo
     formData.append('titulo', artigo.titulo);
     formData.append('conteudo', JSON.stringify(artigo.conteudo));
@@ -386,11 +300,11 @@ export class ArtigosService {
     formData.append('autorId', artigo.autorId);
     formData.append('categoria', artigo.categoria);
     formData.append('status', artigo.status);
-    
+
     if (artigo.dataPublicacao) {
       formData.append('dataPublicacao', artigo.dataPublicacao);
     }
-    
+
     // Adiciona a imagem se fornecida
     if (imagemCapa) {
       formData.append('imagemCapa', imagemCapa);
