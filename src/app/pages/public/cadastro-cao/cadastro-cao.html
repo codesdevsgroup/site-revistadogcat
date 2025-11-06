@@ -1,5 +1,4 @@
 <div class="cadastro-container">
-  <!-- Hero Header -->
   <section class="hero-header">
     <div class="container">
       <div class="row justify-content-center text-center">
@@ -72,7 +71,7 @@
   </section>
 
   <!-- Form Content -->
-  <section class="form-section">
+  <div class="form-section">
     <div class="container">
       <div class="row justify-content-center">
         <div class="col-lg-8">
@@ -105,7 +104,7 @@
                     </div>
                     <div class="col-md-6 mb-3">
                       <label for="cpf" class="form-label">CPF *</label>
-                      <input type="text" id="cpf" class="form-control" 
+                      <input type="text" id="cpf" class="form-control"
                              [class.is-invalid]="userForm.get('cpf')?.invalid && userForm.get('cpf')?.touched"
                              formControlName="cpf" placeholder="000.000.000-00">
                       <div class="invalid-feedback" *ngIf="userForm.get('cpf')?.invalid && userForm.get('cpf')?.touched">
@@ -176,7 +175,7 @@
                 <p>Informações completas do seu cão</p>
               </div>
 
-              <form [formGroup]="dogForm" class="step-form">
+              <div [formGroup]="dogForm" class="step-form">
 
                 <div class="row">
                   <div class="col-md-6 mb-3">
@@ -189,17 +188,19 @@
                           <option value="" disabled selected>
                             {{ racasLoading ? 'Carregando raças...' : 'Selecione a raça' }}
                           </option>
-                          <ng-container *ngIf="!racasLoading && racas.length > 0; else racasFallback">
-                            <option *ngFor="let raca of racas; trackBy: trackByRaca" [value]="raca">{{ raca }}</option>
+                          <ng-container *ngIf="!racasLoading && racas.length > 0">
+                            <option *ngFor="let raca of racas; trackBy: trackByRaca" [value]="raca.id">{{ raca.nome }}</option>
                           </ng-container>
+                          <option value="Outra">Outra raça (especificar)</option>
                       </select>
-                      <ng-template #racasFallback>
-                        <div class="form-text" aria-live="polite">
-                          {{ racasError ? 'Não foi possível carregar as raças. Tente novamente mais tarde.' : 'Nenhuma raça encontrada.' }}
-                        </div>
-                      </ng-template>
                   </div>
                 </div>
+                <div class="row" *ngIf="dogForm.get('raca')?.value === 'Outra'">
+                  <div class="col-md-12 mb-3">
+                    <label for="racaSugerida" class="form-label">Qual raça você sugere? *</label>
+                    <input type="text" id="racaSugerida" class="form-control" formControlName="racaSugerida" placeholder="Digite o nome da raça">
+                  </div>
+                </div><!-- Fecha a linha condicional da opção 'Outra' para não englobar os campos seguintes -->
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label for="sexo" class="form-label">Sexo *</label>
@@ -212,6 +213,10 @@
                     <div class="col-md-6 mb-3">
                         <label for="dataNascimento" class="form-label">Data de Nascimento *</label>
                         <input type="date" id="dataNascimento" class="form-control" formControlName="dataNascimento">
+                        <!-- Exibe idade calculada com base na data de nascimento -->
+                        <div class="form-text" *ngIf="dogForm.get('dataNascimento')?.value">
+                          Idade: {{ calcularIdade(dogForm.get('dataNascimento')?.value) }}
+                        </div>
                     </div>
                 </div>
                 <div class="row">
@@ -233,7 +238,7 @@
                   <button type="button" class="btn btn-secondary" (click)="prevStep()">Voltar</button>
                   <button type="button" class="btn btn-primary" (click)="nextStep()" [disabled]="!dogForm.valid">Próximo: Pedigree e Microchip</button>
                 </div>
-              </form>
+                </div>
             </div>
 
             <!-- Step 3: Pedigree e Microchip -->
@@ -244,7 +249,7 @@
               </div>
 
               <!-- Importante: envolver controles com formGroup para funcionar com formControlName -->
-              <form [formGroup]="dogForm" class="step-form">
+              <div [formGroup]="dogForm" class="step-form">
               <div class="pedigree-section mb-4">
                 <div class="section-card">
                   <div class="d-flex justify-content-between align-items-center">
@@ -318,7 +323,7 @@
                 <button type="button" class="btn btn-secondary" (click)="prevStep()">Voltar</button>
                 <button type="button" class="btn btn-primary" (click)="nextStep()">Próximo: Fotos</button>
               </div>
-              </form>
+                </div>
             </div>
 
             <!-- Step 4: Fotos obrigatórias do cão -->
@@ -452,7 +457,7 @@
         </div>
       </div>
     </div>
-  </section>
+  </div>
 
   <!-- Modal de sucesso (agradecimento) -->
   <div class="modal-backdrop fade show" *ngIf="showSuccessModal"></div>

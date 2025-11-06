@@ -135,8 +135,19 @@ export class CadastroCaoService {
       .pipe(map((response) => response?.data || response));
   }
 
+  /**
+   * Remove um cadastro pelo ID (Admin)
+   */
   delete(id: string): Promise<any> {
     return this.http.delete(`${this.apiUrl}/${id}`).toPromise();
+  }
+
+  update(id: string, data: Partial<CadastroCao>): Observable<CadastroCao> {
+    return this.http.patch<any>(`${this.apiUrl}/${id}`, data).pipe(map(response => response?.data || response));
+  }
+
+  getPendentesRaca(limit: number = 50): Observable<CadastroCao[]> {
+    return this.http.get<any>(`${this.apiUrl}/pendentes-raca?limit=${limit}`).pipe(map(response => response?.data || response));
   }
 
   /**
