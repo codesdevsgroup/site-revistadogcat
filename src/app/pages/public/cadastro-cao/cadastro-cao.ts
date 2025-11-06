@@ -163,7 +163,7 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
     this.subscriptions.add(microchipSub);
   }
 
-  nextStep() { if (this.currentStep < 4) this.currentStep++; }
+  nextStep() { if (this.currentStep < 5) this.currentStep++; }
   prevStep() { if (this.currentStep > 1) this.currentStep--; }
 
   scrollToForm() {
@@ -529,7 +529,8 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
         const response = await this.caoService.cadastrarCao(payload).toPromise();
         if (response && response.success) {
           console.log('Cadastro realizado com sucesso:', response);
-          this.currentStep = 4;
+          // Após envio bem-sucedido, avançamos para o passo de sucesso (6), conforme novo fluxo de 5 passos + confirmação
+          this.currentStep = 6;
           // Captura IDs e dados para exibir no modal
           this.successCaoId = response.data?.caoId || null;
           this.successProprietarioId = response.data?.proprietarioId || null;
