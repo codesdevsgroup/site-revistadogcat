@@ -24,7 +24,7 @@ export const publicRoutes: Routes = [
       { path: 'edicoes', component: EdicoesComponent },
       { path: 'artigos', component: ArtigosListaComponent },
       { path: 'artigos/:id', component: ArtigoLeituraComponent },
-      { path: 'cadastro-cao', component: CadastroCaoComponent },
+      { path: 'cadastro-cao', component: CadastroCaoComponent, canActivate: [AuthGuard], resolve: { auth: AuthResolver } },
       { path: 'perfil', component: ProfileComponent, canActivate: [AuthGuard], resolve: { auth: AuthResolver } },
       { path: 'area-leitor', redirectTo: '/auth/login', pathMatch: 'full' },
       { path: 'auth', loadChildren: () => import('./auth/auth.routes').then(m => m.authRoutes) }

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
@@ -12,6 +12,7 @@ declare var bootstrap: any;
   styleUrl: './login-required-modal.component.scss'
 })
 export class LoginRequiredModalComponent {
+  @Input() returnUrl: string = '/';
   
   constructor(private router: Router) {}
   
@@ -45,7 +46,7 @@ export class LoginRequiredModalComponent {
   redirectToLogin(): void {
     this.hide();
     this.router.navigate(['/auth/login'], {
-      queryParams: { returnUrl: '/cadastro-cao' }
+      queryParams: { returnUrl: this.returnUrl }
     });
   }
 }
