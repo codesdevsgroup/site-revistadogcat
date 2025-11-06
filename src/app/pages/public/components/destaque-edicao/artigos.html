@@ -1,5 +1,6 @@
-<section class="container-fluid highlights" aria-labelledby="ultimos-artigos-title">
-  <h2 id="ultimos-artigos-title">Últimos Artigos</h2>
+<section class="container-fluid highlights" aria-labelledby="ultimos-artigos-title" aria-describedby="ultimos-artigos-subtitle">
+  <h2 id="ultimos-artigos-title">{{ tituloSecao }}</h2>
+  <p id="ultimos-artigos-subtitle" class="section-subtitle">{{ subtituloSecao }}</p>
 
   <div class="article-filters" *ngIf="categories.length > 1">
     <button
@@ -66,12 +67,14 @@
 
   <ng-template #estado>
     <div class="highlight-grid">
-      <div class="highlight-card" *ngIf="loading">
-        <div class="highlight-content">
-          <h3>Carregando artigos…</h3>
-          <p>Aguarde enquanto buscamos os últimos conteúdos.</p>
+      <!-- Skeletons enquanto carrega -->
+      <ng-container *ngIf="loading">
+        <div class="skeleton-card" aria-hidden="true" *ngFor="let i of [1,2,3]">
+          <div class="skeleton-image"></div>
+          <div class="skeleton-text"></div>
+          <div class="skeleton-text short"></div>
         </div>
-      </div>
+      </ng-container>
       <div class="highlight-card" *ngIf="error">
         <div class="highlight-content">
           <h3>Ops!</h3>
