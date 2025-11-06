@@ -3,6 +3,7 @@ import { ArtigosComponent } from '../components/destaque-edicao/artigos';
 import { FooterComponent } from '../components/footer/footer';
 import { ExpoDogComponent } from '../components/expo-dog/expo-dog';
 import { AnuncieAquiComponent } from '../components/anuncie-aqui/anuncie-aqui';
+import { CountUpDirective } from '../../../components/directives/count-up.directive';
 
 @Component({
   selector: 'app-home',
@@ -11,7 +12,8 @@ import { AnuncieAquiComponent } from '../components/anuncie-aqui/anuncie-aqui';
     ArtigosComponent,
     FooterComponent,
     ExpoDogComponent,
-    AnuncieAquiComponent // Corrigido para o novo componente
+    AnuncieAquiComponent,
+    CountUpDirective
   ],
   templateUrl: './home.html',
   styleUrl: './home.scss'
