@@ -2,7 +2,9 @@
   <div class="modal-container" (click)="$event.stopPropagation()">
     <!-- Cabeçalho do Modal -->
     <div class="modal-header">
-      <h2 class="modal-title">{{ isEditMode ? 'Editar Usuário' : 'Adicionar Novo Usuário' }}</h2>
+      <h2 class="modal-title">
+        {{ isEditMode ? 'Editar Usuário' : 'Adicionar Novo Usuário' }}
+      </h2>
       <button class="close-button" (click)="onClose()" title="Fechar">
         <i class="fas fa-times"></i>
       </button>
@@ -10,46 +12,98 @@
 
     <!-- Corpo do Modal com o Formulário -->
     <div class="modal-body">
+      <!-- Alerta de Bloqueio -->
+      <div class="alert alert-warning" *ngIf="isUserBlocked()">
+        <i class="fas fa-lock"></i>
+        <strong>Usuário Bloqueado!</strong>
+        <p>
+          Este usuário está bloqueado por exceder o limite de tentativas de
+          login.
+        </p>
+        <p *ngIf="getLoginAttemptsMessage()">{{ getLoginAttemptsMessage() }}</p>
+        <p *ngIf="usuario?.blockedUntil">
+          Bloqueado até: {{ usuario?.blockedUntil | date:'dd/MM/yyyy HH:mm' }}
+        </p>
+      </div>
+
       <form [formGroup]="usuarioForm" (ngSubmit)="onSave()">
         <!-- Linha 1: Nome Completo e Nome de Usuário -->
         <div class="form-row">
           <div class="form-group">
             <label for="name">Nome Completo</label>
-            <input id="name" type="text" formControlName="name" class="form-control">
+            <input
+              id="name"
+              type="text"
+              formControlName="name"
+              class="form-control"
+            />
           </div>
           <div class="form-group">
             <label for="userName">Nome de Usuário</label>
-            <input id="userName" type="text" formControlName="userName" class="form-control">
+            <input
+              id="userName"
+              type="text"
+              formControlName="userName"
+              class="form-control"
+            />
           </div>
         </div>
 
         <!-- Linha 2: Email -->
         <div class="form-group">
           <label for="email">Email</label>
-          <input id="email" type="email" formControlName="email" class="form-control">
+          <input
+            id="email"
+            type="email"
+            formControlName="email"
+            class="form-control"
+          />
         </div>
 
         <!-- Linha 3: CPF e Telefone -->
         <div class="form-row">
           <div class="form-group">
             <label for="cpf">CPF (Opcional)</label>
-            <input id="cpf" type="text" formControlName="cpf" class="form-control"
-                   [class.is-invalid]="usuarioForm.get('cpf')?.invalid && usuarioForm.get('cpf')?.touched">
-            <div class="invalid-feedback" *ngIf="usuarioForm.get('cpf')?.invalid && usuarioForm.get('cpf')?.touched">
-              <span *ngIf="usuarioForm.get('cpf')?.errors?.['cpfInvalido']">CPF inválido</span>
+            <input
+              id="cpf"
+              type="text"
+              formControlName="cpf"
+              class="form-control"
+              [class.is-invalid]="usuarioForm.get('cpf')?.invalid && usuarioForm.get('cpf')?.touched"
+            />
+            <div
+              class="invalid-feedback"
+              *ngIf="usuarioForm.get('cpf')?.invalid && usuarioForm.get('cpf')?.touched"
+            >
+              <span *ngIf="usuarioForm.get('cpf')?.errors?.['cpfInvalido']"
+                >CPF inválido</span
+              >
             </div>
           </div>
           <div class="form-group">
             <label for="telefone">Telefone (Opcional)</label>
-            <input id="telefone" type="tel" formControlName="telefone" class="form-control">
+            <input
+              id="telefone"
+              type="tel"
+              formControlName="telefone"
+              class="form-control"
+            />
           </div>
         </div>
 
         <!-- Linha 4: Senha (apenas para novos usuários) -->
         <div class="form-group" *ngIf="!isEditMode">
           <label for="password">Senha</label>
-          <input id="password" type="password" formControlName="password" class="form-control">
-          <small class="form-text">Mínimo de 8 caracteres. Deixe em branco na edição para não alterar.</small>
+          <input
+            id="password"
+            type="password"
+            formControlName="password"
+            class="form-control"
+          />
+          <small class="form-text"
+            >Mínimo de 8 caracteres. Deixe em branco na edição para não
+            alterar.</small
+          >
         </div>
 
         <!-- Linha 5: Role e Status -->
@@ -60,7 +114,9 @@
               <option value="USUARIO">Usuário</option>
               <option value="DONO_PET_APROVADO">Dono de Pet Aprovado</option>
               <option value="ASSINANTE">Assinante</option>
-              <option value="DONO_PET_APROVADO_ASSINANTE">Dono de Pet Aprovado + Assinante</option>
+              <option value="DONO_PET_APROVADO_ASSINANTE">
+                Dono de Pet Aprovado + Assinante
+              </option>
               <option value="EDITOR">Editor</option>
               <option value="ADMIN">Admin</option>
               <option value="FUNCIONARIO">Funcionário</option>
@@ -69,7 +125,11 @@
           </div>
           <div class="form-group form-check-group">
             <label class="form-check-label">
-              <input type="checkbox" formControlName="active" class="form-check-input">
+              <input
+                type="checkbox"
+                formControlName="active"
+                class="form-check-input"
+              />
               Usuário Ativo
             </label>
           </div>
@@ -79,10 +139,32 @@
 
     <!-- Rodapé do Modal -->
     <div class="modal-footer">
-      <button type="button" class="btn btn-secondary" (click)="onClose()">Cancelar</button>
-      <button type="submit" class="btn btn-primary" (click)="onSave()" [disabled]="usuarioForm.invalid">
-        {{ isEditMode ? 'Salvar Alterações' : 'Criar Usuário' }}
-      </button>
+      <div class="footer-left">
+        <button
+          type="button"
+          class="btn btn-warning"
+          *ngIf="isEditMode && isUserBlocked()"
+          (click)="onUnblockUser()"
+          [disabled]="isUnblocking"
+          title="Desbloquear usuário"
+        >
+          <i class="fas fa-unlock"></i>
+          {{ isUnblocking ? 'Desbloqueando...' : 'Desbloquear Login' }}
+        </button>
+      </div>
+      <div class="footer-right">
+        <button type="button" class="btn btn-secondary" (click)="onClose()">
+          Cancelar
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          (click)="onSave()"
+          [disabled]="usuarioForm.invalid"
+        >
+          {{ isEditMode ? 'Salvar Alterações' : 'Criar Usuário' }}
+        </button>
+      </div>
     </div>
   </div>
 </div>

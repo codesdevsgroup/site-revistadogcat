@@ -8,5 +8,8 @@ export interface Usuario {
   avatarUrl?: string;
   role: string;
   active: boolean;
+  blocked?: boolean;
+  loginAttempts?: number;
+  blockedUntil?: string;
   createdAt: string;
 }

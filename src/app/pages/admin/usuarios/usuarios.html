@@ -24,7 +24,8 @@
             type="text"
             placeholder="Buscar por nome, email ou CPF..."
             class="search-input"
-            [formControl]="searchControl">
+            [formControl]="searchControl"
+          />
 
           <!-- Seletor de role conectado ao FormControl -->
           <select class="filter-select" [formControl]="roleControl">
@@ -33,7 +34,9 @@
             <option value="EDITOR">Editor</option>
             <option value="FUNCIONARIO">Funcionário</option>
             <option value="ASSINANTE">Assinante</option>
-            <option value="DONO_PET_APROVADO_ASSINANTE">Dono de Pet (Assinante)</option>
+            <option value="DONO_PET_APROVADO_ASSINANTE">
+              Dono de Pet (Assinante)
+            </option>
             <option value="DONO_PET_APROVADO">Dono de Pet</option>
             <option value="USUARIO">Usuário Comum</option>
           </select>
@@ -54,12 +57,20 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let usuario of usuarios; trackBy: trackByUserId" class="table-row">
+            <tr
+              *ngFor="let usuario of usuarios; trackBy: trackByUserId"
+              class="table-row"
+            >
               <td class="user-id">#{{ usuario.userId.substring(0, 8) }}...</td>
               <td class="user-name">
                 <div class="user-info">
                   <div class="user-avatar">
-                    <img *ngIf="usuario.avatarUrl; else defaultAvatar" [src]="usuario.avatarUrl" alt="Avatar de {{usuario.name}}" class="avatar-image">
+                    <img
+                      *ngIf="usuario.avatarUrl; else defaultAvatar"
+                      [src]="usuario.avatarUrl"
+                      alt="Avatar de {{usuario.name}}"
+                      class="avatar-image"
+                    />
                     <ng-template #defaultAvatar>
                       <i class="fas fa-user"></i>
                     </ng-template>
@@ -74,19 +85,35 @@
                 </span>
               </td>
               <td class="user-status">
-                <span class="status-indicator" [ngClass]="getStatusClass(usuario.active)">
-                  <i class="fas" [ngClass]="usuario.active ? 'fa-check-circle' : 'fa-times-circle'"></i>
+                <span
+                  class="status-indicator"
+                  [ngClass]="getStatusClass(usuario.active)"
+                >
+                  <i
+                    class="fas"
+                    [ngClass]="usuario.active ? 'fa-check-circle' : 'fa-times-circle'"
+                  ></i>
                   {{ usuario.active ? 'Ativo' : 'Inativo' }}
                 </span>
               </td>
-              <td class="user-date">{{ usuario.createdAt | date:'dd/MM/yyyy' }}</td>
+              <td class="user-date">
+                {{ usuario.createdAt | date:'dd/MM/yyyy' }}
+              </td>
               <td class="user-actions">
                 <div class="action-buttons">
                   <!-- Botão para abrir o modal em modo de edição -->
-                  <button class="btn-action btn-edit" (click)="openModal(usuario)" title="Editar">
+                  <button
+                    class="btn-action btn-edit"
+                    (click)="openModal(usuario)"
+                    title="Editar"
+                  >
                     <i class="fas fa-edit"></i>
                   </button>
-                  <button class="btn-action btn-delete" (click)="excluirUsuario(usuario)" title="Excluir">
+                  <button
+                    class="btn-action btn-delete"
+                    (click)="excluirUsuario(usuario)"
+                    title="Excluir"
+                  >
                     <i class="fas fa-trash"></i>
                   </button>
                 </div>
@@ -109,7 +136,6 @@
       <p>Carregando usuários...</p>
     </div>
   </ng-template>
-
 </div>
 
 <!-- Componente do Modal -->
@@ -117,5 +143,7 @@
   [isVisible]="isModalVisible"
   [usuario]="selectedUsuario"
   (close)="closeModal()"
-  (save)="handleSave($event)">
+  (save)="handleSave($event)"
+  (userUnblocked)="handleUserUnblocked()"
+>
 </app-usuario-modal>
