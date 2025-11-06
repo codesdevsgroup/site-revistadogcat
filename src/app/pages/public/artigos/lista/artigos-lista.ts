@@ -1,19 +1,27 @@
-import { Component, ChangeDetectionStrategy, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
-import { ArtigosService, Artigo } from '../../../../services/artigos.service';
-import { environment } from '../../../../../environments/environment';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  OnInit,
+  inject,
+  ChangeDetectorRef,
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { RouterModule } from "@angular/router";
+import { ArtigosService } from "../../../../services/artigos.service";
+import type { Artigo } from "../../../../interfaces/artigo.interface";
+import { environment } from "../../../../../environments/environment";
 
 @Component({
-  selector: 'app-artigos-lista',
+  selector: "app-artigos-lista",
   standalone: true,
   imports: [CommonModule, RouterModule],
-  templateUrl: './artigos-lista.html',
-  styleUrl: './artigos-lista.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  templateUrl: "./artigos-lista.html",
+  styleUrl: "./artigos-lista.scss",
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ArtigosListaComponent implements OnInit {
   private artigosService = inject(ArtigosService);
+  private cdr = inject(ChangeDetectorRef);
 
   artigos: Artigo[] = [];
   loading = false;
@@ -28,17 +36,22 @@ export class ArtigosListaComponent implements OnInit {
     this.loading = true;
     this.error = null;
     // Lista artigos publicados com ordenação por data de publicação desc
-    this.artigosService.listarPublicados(12, 1, 'dataPublicacao:desc').subscribe({
-      next: (data) => {
-        this.artigos = Array.isArray(data) ? data : [];
-        this.loading = false;
-      },
-      error: (err) => {
-        console.error('Erro ao carregar artigos publicados:', err);
-        this.error = 'Não foi possível carregar os artigos. Tente novamente mais tarde.';
-        this.loading = false;
-      }
-    });
+    this.artigosService
+      .listarPublicados(12, 1, "dataPublicacao:desc")
+      .subscribe({
+        next: (data) => {
+          this.artigos = Array.isArray(data) ? data : [];
+          this.loading = false;
+          this.cdr.markForCheck();
+        },
+        error: (err) => {
+          console.error("Erro ao carregar artigos publicados:", err);
+          this.error =
+            "Não foi possível carregar os artigos. Tente novamente mais tarde.";
+          this.loading = false;
+          this.cdr.markForCheck();
+        },
+      });
   }
 
   trackById(index: number, item: Artigo): string {
@@ -47,7 +60,8 @@ export class ArtigosListaComponent implements OnInit {
 
   // Constrói a URL da imagem a partir do filename retornado pela API
   getImagemUrl(filename?: string): string {
-    if (!filename) return './public/dog/default-article.svg';
+    // Usa mesma imagem padrão do componente de destaque da homepage para consistência visual
+    if (!filename) return "./dog/default-article.svg";
     return `${this.apiUrl}/artigos/imagem/${filename}`;
   }
 }
