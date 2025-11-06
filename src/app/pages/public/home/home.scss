@@ -1,12 +1,17 @@
 .hero-section {
-  background: linear-gradient(135deg, var(--gray-50) 0%, var(--tertiaryColor) 50%, var(--gray-100) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--gray-50) 0%,
+    var(--tertiaryColor) 50%,
+    var(--gray-100) 100%
+  );
   overflow: hidden;
   min-height: 100vh;
   display: flex;
   align-items: center;
-  
+
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
@@ -32,7 +37,11 @@
 .bg-shape {
   position: absolute;
   border-radius: var(--radius-full);
-  background: linear-gradient(135deg, rgba(26, 61, 30, 0.08), rgba(186, 235, 108, 0.12));
+  background: linear-gradient(
+    135deg,
+    rgba(26, 61, 30, 0.08),
+    rgba(186, 235, 108, 0.12)
+  );
   animation: float 8s ease-in-out infinite;
   backdrop-filter: blur(1px);
 }
@@ -43,7 +52,11 @@
   top: 10%;
   right: 8%;
   animation-delay: -2s;
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(251, 191, 36, 0.08));
+  background: linear-gradient(
+    135deg,
+    rgba(245, 158, 11, 0.1),
+    rgba(251, 191, 36, 0.08)
+  );
 }
 
 .shape-2 {
@@ -52,7 +65,11 @@
   bottom: 15%;
   left: 5%;
   animation-delay: -4s;
-  background: linear-gradient(135deg, rgba(186, 235, 108, 0.1), rgba(157, 214, 73, 0.08));
+  background: linear-gradient(
+    135deg,
+    rgba(186, 235, 108, 0.1),
+    rgba(157, 214, 73, 0.08)
+  );
 }
 
 .shape-3 {
@@ -61,20 +78,25 @@
   top: 55%;
   right: 25%;
   animation-delay: -1s;
-  background: linear-gradient(135deg, rgba(26, 61, 30, 0.06), rgba(42, 93, 52, 0.08));
+  background: linear-gradient(
+    135deg,
+    rgba(26, 61, 30, 0.06),
+    rgba(42, 93, 52, 0.08)
+  );
 }
 
 @keyframes float {
-  0%, 100% { 
-    transform: translateY(0px) rotate(0deg) scale(1); 
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg) scale(1);
     opacity: 0.8;
   }
-  33% { 
-    transform: translateY(-15px) rotate(2deg) scale(1.05); 
+  33% {
+    transform: translateY(-15px) rotate(2deg) scale(1.05);
     opacity: 0.6;
   }
-  66% { 
-    transform: translateY(-25px) rotate(-2deg) scale(0.95); 
+  66% {
+    transform: translateY(-25px) rotate(-2deg) scale(0.95);
     opacity: 0.9;
   }
 }
@@ -98,13 +120,13 @@
   border: 2px solid var(--goldenColor);
   backdrop-filter: blur(10px);
   transition: var(--transition-normal);
-  
+
   &:hover {
     transform: translateY(-2px) scale(1.02);
     box-shadow: var(--shadow-xl);
     border-color: var(--goldenColorLight);
   }
-  
+
   span {
     font-size: 1.0125rem;
     filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
@@ -121,20 +143,29 @@
 }
 
 .highlight-text {
-  background: linear-gradient(135deg, var(--goldenColor) 0%, var(--goldenColorLight) 50%, var(--goldenColorDark) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--goldenColor) 0%,
+    var(--goldenColorLight) 50%,
+    var(--goldenColorDark) 100%
+  );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   position: relative;
-  
+
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     bottom: -4px;
     left: 0;
     right: 0;
     height: 4px;
-    background: linear-gradient(90deg, var(--goldenColor), var(--goldenColorLight));
+    background: linear-gradient(
+      90deg,
+      var(--goldenColor),
+      var(--goldenColorLight)
+    );
     border-radius: var(--radius-full);
     opacity: 0.3;
   }
@@ -164,7 +195,7 @@
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.2);
   transition: var(--transition-normal);
-  
+
   &:hover {
     transform: translateY(-4px) scale(1.05);
     box-shadow: var(--shadow-xl);
@@ -196,7 +227,11 @@
 }
 
 .btn-primary-hero {
-  background: linear-gradient(135deg, var(--primaryColor) 0%, var(--primaryColorDark) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--primaryColor) 0%,
+    var(--primaryColorDark) 100%
+  );
   color: var(--white);
   padding: var(--space-3) var(--space-6);
   border-radius: var(--radius-full);
@@ -211,25 +246,34 @@
   border: none;
   position: relative;
   overflow: hidden;
-  
+
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.2),
+      transparent
+    );
     transition: var(--transition-normal);
   }
-  
+
   &:hover {
-    background: linear-gradient(135deg, var(--primaryColorDark) 0%, var(--primaryColor) 100%);
+    background: linear-gradient(
+      135deg,
+      var(--primaryColorDark) 0%,
+      var(--primaryColor) 100%
+    );
     transform: translateY(-3px) scale(1.02);
     box-shadow: var(--shadow-xl);
     color: var(--white);
     text-decoration: none;
-    
+
     &::before {
       left: 100%;
     }
@@ -250,7 +294,7 @@
   gap: var(--space-2);
   transition: var(--transition-normal);
   backdrop-filter: blur(10px);
-  
+
   &:hover {
     background: var(--primaryColor);
     color: var(--white);
@@ -263,7 +307,7 @@
 .btn-icon {
   font-size: 1.125rem;
   transition: var(--transition-fast);
-  
+
   .btn-primary-hero:hover &,
   .btn-secondary-hero:hover & {
     transform: translateX(2px);
@@ -289,7 +333,7 @@
   position: relative;
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   transform: perspective(1000px) rotateY(-5deg) rotateX(5deg);
   transition: all 0.3s ease;
 }
@@ -306,8 +350,8 @@
 
 .magazine-badge {
   position: absolute;
-  top: 20px;
-  right: 20px;
+  top: 0;
+  right: 10px;
   background: var(--goldenColor);
   color: var(--primaryColor);
   padding: 0.5rem 1rem;
@@ -333,7 +377,7 @@
   background: white;
   padding: 1rem 1.5rem;
   border-radius: 15px;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
   display: flex;
   align-items: center;
   gap: 0.8rem;
@@ -344,26 +388,31 @@
 }
 
 .card-1 {
-  top: 10%;
-  left: -20%;
+  top: -5%;
+  left: -30%;
   animation-delay: -1s;
 }
 
 .card-2 {
-  top: 50%;
-  right: -30%;
+  top: 40%;
+  right: -35%;
   animation-delay: -2s;
 }
 
 .card-3 {
-  bottom: 20%;
-  left: -25%;
+  bottom: -5%;
+  left: -30%;
   animation-delay: -3s;
 }
 
 @keyframes floatCard {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-15px); }
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
 }
 
 .card-icon {
