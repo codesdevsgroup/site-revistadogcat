@@ -661,14 +661,32 @@
   }
 }
 
-@keyframes shake {
-  0%, 100% {
-    transform: translateX(0);
+  @keyframes shake {
+    0%, 100% {
+      transform: translateX(0);
+    }
+    25%, 75% {
+      transform: translateX(-5px);
+    }
+    50% {
+      transform: translateX(5px);
+    }
   }
-  25%, 75% {
-    transform: translateX(-5px);
+
+  /* Destaque para a opção de cadastro de terceiros */
+  .third-party-owner-block {
+    border: 2px solid var(--primaryColor);
+    background: var(--primaryColor-light);
+    border-radius: var(--radius-lg);
+    display: block;
+
+    .form-check-label {
+      color: var(--primaryColor);
+      font-weight: var(--fontWeight-semibold);
+    }
+
+    .form-check-input:focus {
+      border-color: var(--primaryColor);
+      box-shadow: 0 0 0 0.2rem rgba(26, 61, 30, 0.25);
+    }
   }
-  50% {
-    transform: translateX(5px);
-  }
-}

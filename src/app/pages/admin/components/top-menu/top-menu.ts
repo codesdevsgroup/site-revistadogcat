@@ -17,7 +17,11 @@ export class TopMenuComponent implements OnInit, OnDestroy {
   userRole = '';
   isScrolled = false;
 
-  constructor(private router: Router, private elementRef: ElementRef, private authService: AuthService) {}
+  constructor(
+    private router: Router,
+    private elementRef: ElementRef,
+    private authService: AuthService,
+  ) {}
 
   ngOnInit() {
     this.loadUserData();
@@ -73,6 +77,7 @@ export class TopMenuComponent implements OnInit, OnDestroy {
   private checkScrollPosition() {
     this.isScrolled = window.scrollY > 20;
   }
+
 
   logout() {
     this.authService.logout();

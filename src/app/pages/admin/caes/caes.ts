@@ -2,9 +2,10 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { CadastroCaoService } from '../../../services/cadastro-cao.service';
+import { CadastroCaoService, StatusCadastro } from '../../../services/cadastro-cao.service';
 import { RacaService } from '../../../services/raca.service';
 import { AuthService } from '../../../services/auth.service';
+import { firstValueFrom } from 'rxjs';
 
 // Usando a interface do serviço e estendendo com propriedades necessárias
 interface CaoListItem {
@@ -27,6 +28,7 @@ interface CaoListItem {
     nome: string;
   };
   fotos?: string[];
+  status?: StatusCadastro;
 }
 
 interface Raca {
@@ -51,6 +53,7 @@ export class CaesComponent implements OnInit {
   loading = false;
   searchTerm = '';
   selectedRaca = '';
+  pendentesOnly = false; // Filtro para cadastros pendentes de aprovação
   
   // Modal de raças
   showRacaModal = false;
@@ -79,15 +82,26 @@ export class CaesComponent implements OnInit {
   async loadCaes() {
     try {
       this.loading = true;
-      const response = await this.cadastroCaoService.findAll();
+      let data: any[] = [];
+      if (this.pendentesOnly) {
+        const result = await firstValueFrom(
+          this.cadastroCaoService.listar({ pendentesValidacao: 'true', status: 'PENDENTE' as StatusCadastro })
+        );
+        data = result || [];
+      } else {
+        const response = await this.cadastroCaoService.findAll();
+        data = response.data || response || [];
+      }
+
       // Mapear os dados para incluir propriedades necessárias
-      this.caes = (response.data || []).map(cao => ({
+      this.caes = (data || []).map((cao: any) => ({
         ...cao,
-        nome: cao.nomeCao, // Alias para compatibilidade
-        donoCao: cao.proprietario, // Alias para compatibilidade
-        fotos: [], // Placeholder para fotos
-        racaId: undefined, // Será preenchido se necessário
-        numeroRegistro: undefined // Será preenchido se necessário
+        nome: cao.nomeCao ?? cao.nome,
+        donoCao: cao.proprietario ?? cao.donoCao,
+        fotos: cao.fotos ?? [],
+        racaId: cao.racaId,
+        numeroRegistro: cao.numeroRegistro,
+        status: cao.status as StatusCadastro
       }));
     } catch (error) {
       console.error('Erro ao carregar cães:', error);
@@ -147,8 +161,8 @@ export class CaesComponent implements OnInit {
   get filteredCaes() {
     return this.caes.filter(cao => {
       const matchesSearch = !this.searchTerm || 
-        cao.nomeCao.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        cao.proprietario.nome.toLowerCase().includes(this.searchTerm.toLowerCase());
+        (cao.nomeCao || cao.nome || '').toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+        (cao.proprietario?.nome || cao.donoCao?.nome || '').toLowerCase().includes(this.searchTerm.toLowerCase());
       
       const matchesRaca = !this.selectedRaca || cao.raca.nome === this.selectedRaca;
       
@@ -349,5 +363,51 @@ export class CaesComponent implements OnInit {
       console.error('Erro ao excluir cão:', error);
       alert('Erro ao excluir cão');
     }
+  }
+
+  // Ações de aprovação/rejeição de cadastro pendente
+  async aprovarCao(cao: CaoListItem) {
+    try {
+      const result = await firstValueFrom(this.cadastroCaoService.aprovarCadastro(cao.cadastroCaoId));
+      alert(result?.mensagem || 'Cadastro aprovado com sucesso');
+      if (this.pendentesOnly) {
+        this.caes = this.caes.filter(c => c.cadastroCaoId !== cao.cadastroCaoId);
+      } else {
+        const item = this.caes.find(c => c.cadastroCaoId === cao.cadastroCaoId);
+        if (item) {
+          (item as any).status = 'APROVADO';
+        }
+      }
+    } catch (error: any) {
+      console.error('Erro ao aprovar cadastro:', error);
+      alert(error?.error?.message || error?.message || 'Erro ao aprovar cadastro');
+    }
+  }
+
+  async rejeitarCao(cao: CaoListItem) {
+    const motivo = prompt('Informe o motivo da rejeição:');
+    if (!motivo || !motivo.trim()) {
+      alert('Motivo da rejeição é obrigatório');
+      return;
+    }
+    try {
+      const result = await firstValueFrom(this.cadastroCaoService.rejeitarCadastro(cao.cadastroCaoId, motivo.trim()));
+      alert(result?.mensagem || 'Cadastro rejeitado com sucesso');
+      if (this.pendentesOnly) {
+        this.caes = this.caes.filter(c => c.cadastroCaoId !== cao.cadastroCaoId);
+      } else {
+        const item = this.caes.find(c => c.cadastroCaoId === cao.cadastroCaoId);
+        if (item) {
+          (item as any).status = 'REJEITADO';
+        }
+      }
+    } catch (error: any) {
+      console.error('Erro ao rejeitar cadastro:', error);
+      alert(error?.error?.message || error?.message || 'Erro ao rejeitar cadastro');
+    }
+  }
+
+  isCaoPendente(cao: CaoListItem): boolean {
+    return (cao.status as StatusCadastro) === 'PENDENTE';
   }
 }

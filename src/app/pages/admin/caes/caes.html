@@ -32,6 +32,11 @@
             <option value="">Todas as raças</option>
             <option *ngFor="let raca of racas" [value]="raca.id">{{ raca.nome }}</option>
           </select>
+
+          <label class="form-check ms-2">
+            <input type="checkbox" class="form-check-input" [(ngModel)]="pendentesOnly" (change)="loadCaes()">
+            <span class="form-check-label">Somente pendentes de aprovação</span>
+          </label>
         </div>
       </div>
 
@@ -67,6 +72,7 @@
               <td>
                 <div class="cao-name">
                   <strong>{{ cao.nome }}</strong>
+                  <span *ngIf="isCaoPendente(cao)" class="badge bg-warning ms-1">Pendente</span>
                   <small *ngIf="cao.numeroRegistro">#{{ cao.numeroRegistro }}</small>
                 </div>
               </td>
@@ -89,6 +95,12 @@
                   </button>
                   <button class="btn btn-sm btn-danger" (click)="deleteCao(cao)" title="Excluir">
                     <i class="fas fa-trash"></i>
+                  </button>
+                  <button *ngIf="isCaoPendente(cao)" class="btn btn-sm btn-success ms-1" (click)="aprovarCao(cao)" title="Aprovar">
+                    <i class="fas fa-check"></i>
+                  </button>
+                  <button *ngIf="isCaoPendente(cao)" class="btn btn-sm btn-warning ms-1" (click)="rejeitarCao(cao)" title="Rejeitar">
+                    <i class="fas fa-times"></i>
                   </button>
                 </div>
               </td>
