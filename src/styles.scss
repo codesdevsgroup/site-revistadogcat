@@ -1,12 +1,8 @@
-// Import AOS (Animate On Scroll)
 @use "aos/dist/aos.css";
-
-// Import CSS variables
 @use "styles/variables";
 @use "styles/mixins" as *;
 @use "styles/buttons";
 
-// Modern CSS Reset
 *,
 *::before,
 *::after {
@@ -37,7 +33,6 @@ body {
     color var(--transition-normal);
 }
 
-// Typography improvements
 h1,
 h2,
 h3,
