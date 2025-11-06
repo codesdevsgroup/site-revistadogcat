@@ -226,6 +226,29 @@
   align-items: center;
 }
 
+.btn-hero {
+  --btn-height: 48px;
+  --btn-min-width: 220px;
+
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--radius-full);
+  font-size: 0.95rem;
+  font-weight: var(--fontWeight-semibold);
+  letter-spacing: 0.01em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: var(--btn-height);
+  min-width: var(--btn-min-width);
+  text-decoration: none;
+  border: none;
+  position: relative;
+  overflow: hidden;
+  transition: var(--transition-normal);
+  box-shadow: var(--shadow-lg);
+}
+
 .btn-primary-hero {
   background: linear-gradient(
     135deg,
@@ -233,19 +256,7 @@
     var(--primaryColorDark) 100%
   );
   color: var(--white);
-  padding: var(--space-3) var(--space-6);
-  border-radius: var(--radius-full);
-  text-decoration: none;
   font-weight: var(--fontWeight-bold);
-  font-size: 0.95rem;
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  transition: var(--transition-normal);
-  box-shadow: var(--shadow-lg);
-  border: none;
-  position: relative;
-  overflow: hidden;
 
   &::before {
     content: "";
@@ -283,17 +294,19 @@
 .btn-secondary-hero {
   background: var(--white);
   color: var(--primaryColor);
-  padding: var(--space-3) var(--space-6);
   border: 2px solid var(--primaryColor);
-  border-radius: var(--radius-full);
-  text-decoration: none;
-  font-weight: var(--fontWeight-semibold);
-  font-size: 0.95rem;
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  transition: var(--transition-normal);
   backdrop-filter: blur(10px);
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0,0,0,0.06), transparent);
+    transition: var(--transition-normal);
+  }
 
   &:hover {
     background: var(--primaryColor);
@@ -301,6 +314,10 @@
     transform: translateY(-3px) scale(1.02);
     text-decoration: none;
     box-shadow: var(--shadow-lg);
+
+    &::before {
+      left: 100%;
+    }
   }
 }
 
@@ -475,6 +492,12 @@
   backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.6);
   transition: var(--transition-normal);
+  /* Evita que conteúdo ou textos excedam os limites do card */
+  overflow: hidden;
+  /* Garante altura uniforme dos cards dentro da grid Bootstrap */
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 
   &:hover {
     transform: translateY(-3px);
@@ -486,12 +509,18 @@
   font-size: 1rem;
   color: var(--gray-700);
   margin-bottom: var(--space-5);
+  line-height: 1.6;
+  /* Quebra palavras muito longas e evita vazamento de texto */
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  hyphens: auto;
 }
 
 .testimonial-author {
   display: flex;
   align-items: center;
   gap: var(--space-3);
+  margin-top: auto; /* fixa autor no final do card quando o texto é maior */
 }
 
 .author-avatar {
@@ -500,6 +529,7 @@
   border-radius: var(--radius-full);
   object-fit: cover;
   box-shadow: var(--shadow-sm);
+  flex: 0 0 40px; /* mantém caixa fixa mesmo se a imagem falhar */
 }
 
 .author-name {
