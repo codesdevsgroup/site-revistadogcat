@@ -103,35 +103,45 @@ $navbar-transition: var(--transition-fast);
   // Navigation links
   .nav-link {
     @include navbar-item-base;
-    @include hover-effect;
-    @include active-indicator;
-
     margin-left: $navbar-padding-x;
-    padding: var(--space-2) var(--space-4);
-    border-radius: var(--radius-md);
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.95);
-    transition: all var(--transition-normal);
+    padding: var(--space-2) var(--space-2);
+    color: rgba(255, 255, 255, 0.92);
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    transition: color var(--transition-fast), transform var(--transition-fast);
+
+    // Underline moderno (cresce da esquerda para a direita)
+    &::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -4px;
+      height: 2px;
+      width: 0;
+      background: linear-gradient(90deg, var(--goldenColor), var(--goldenColorLight));
+      transition: width var(--transition-fast);
+      border-radius: var(--radius-md);
+    }
 
     &:hover {
-      background: rgba(255, 255, 255, 0.15);
-      border-color: rgba(255, 255, 255, 0.3);
       color: rgba(255, 255, 255, 1);
       transform: translateY(-1px);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+
+      &::after { width: 100%; }
     }
 
     &.active {
       color: rgba(255, 255, 255, 1);
-      font-weight: var(--fontWeight-semibold);
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+      &::after { width: 100%; }
     }
 
     &:focus,
     &:focus-visible {
       outline: none !important;
       box-shadow: none !important;
+      &::after { width: 100%; }
     }
   }
 
@@ -180,6 +190,48 @@ $navbar-transition: var(--transition-fast);
       outline: none;
       box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.3);
     }
+  }
+
+  // CTA de Assinatura
+  .btn-cta {
+    background: linear-gradient(135deg, var(--goldenColor) 0%, var(--goldenColorLight) 100%);
+    color: var(--primaryColor) !important;
+    font-weight: var(--fontWeight-bold);
+    padding: var(--space-2) var(--space-4);
+    border: none;
+    border-radius: var(--radius-full);
+    margin-left: $navbar-padding-x;
+    transition: var(--transition-normal);
+    box-shadow: var(--shadow-md);
+    position: relative;
+    overflow: hidden;
+    text-decoration: none;
+
+    i { margin-right: var(--space-2); }
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: var(--transition-slow);
+    }
+
+    &:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: var(--shadow-xl);
+      background: linear-gradient(135deg, var(--goldenColorLight) 0%, var(--goldenColor) 100%);
+      color: var(--primaryColor) !important;
+
+      &::before { left: 100%; }
+    }
+
+    &:active { transform: translateY(0) scale(0.98); }
+
+    &:focus { outline: none; box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.3); }
   }
 
   // Admin panel button styling
@@ -254,6 +306,13 @@ $navbar-transition: var(--transition-fast);
       background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.8%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='m4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
       width: 1.5em;
       height: 1.5em;
+      transition: transform var(--transition-fast);
+    }
+
+    /* Morph para ícone de fechar quando aberto */
+    &[aria-expanded='true'] .navbar-toggler-icon {
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.85%29' stroke-linecap='round' stroke-width='2' d='M7 7l16 16M23 7L7 23'/%3e%3c/svg%3e");
+      transform: rotate(90deg);
     }
   }
 
@@ -274,17 +333,17 @@ $navbar-transition: var(--transition-fast);
 
     .nav-link {
       margin-left: 0;
-      padding: var(--space-3) var(--space-4);
+      padding: var(--space-3) var(--space-2);
       border-radius: var(--radius-md);
+      background: transparent;
 
-      &::before {
-        display: none;
-      }
+      &::after { display: none; }
 
       &:hover,
       &.active {
-        background: rgba(255, 255, 255, 0.15);
+        color: rgba(255, 255, 255, 1);
         transform: translateX(var(--space-2));
+        background: rgba(255, 255, 255, 0.06);
       }
     }
 
@@ -316,6 +375,21 @@ $navbar-transition: var(--transition-fast);
 // Body padding to compensate for fixed navbar
 body {
   padding-top: $navbar-height;
+}
+
+/* Estado reduzido ao rolar (shrink) */
+.navbar.scrolled {
+  min-height: 60px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  background: linear-gradient(135deg, #163518 0%, #224a2a 50%, #163518 100%);
+
+  .navbar-brand img {
+    height: 40px;
+  }
+
+  .nav-link {
+    background: rgba(255, 255, 255, 0.04);
+  }
 }
 
 /* Styles from top-menu.scss for user menu */
