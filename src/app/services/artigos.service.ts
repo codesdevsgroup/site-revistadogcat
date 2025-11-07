@@ -31,7 +31,7 @@ export class ArtigosService {
       id: (apiArtigo as any).artigoId || (apiArtigo as any).id || "",
       titulo: apiArtigo.titulo,
       conteudo: apiArtigo.conteudo,
-      resumo: apiArtigo.resumo,
+      resumo: this.truncateResumo(apiArtigo.resumo),
       autor: autorObj?.name ?? "Autor desconhecido",
       autorId: autorObj?.userId ?? "",
       categoria: apiArtigo.categoria,
@@ -51,6 +51,16 @@ export class ArtigosService {
 
     console.log("✅ Artigo mapeado com sucesso (resiliente):", artigo);
     return artigo;
+  }
+
+  private truncateResumo(resumo?: string, maxLength = 150): string {
+    if (!resumo) {
+      return "";
+    }
+    if (resumo.length <= maxLength) {
+      return resumo;
+    }
+    return resumo.substring(0, maxLength) + "...";
   }
 
   private mapStatusFromApi(
@@ -100,7 +110,7 @@ export class ArtigosService {
         }
 
         return responseData.data.map((artigo: ArtigoResponseDto) =>
-          this.mapArtigoFromApi(artigo),
+          this.mapArtigoFromApi(artigo)
         );
       }),
     );
@@ -138,7 +148,7 @@ export class ArtigosService {
         }
 
         return responseData.data.map((artigo: ArtigoResponseDto) =>
-          this.mapArtigoFromApi(artigo),
+          this.mapArtigoFromApi(artigo)
         );
       }),
     );
@@ -228,6 +238,7 @@ export class ArtigosService {
     limit = 9,
     page = 1,
     sort = "dataPublicacao:desc",
+    categoria?: string,
   ): Observable<Artigo[]> {
     let params = new HttpParams()
       .set("limit", limit.toString())
@@ -240,15 +251,17 @@ export class ArtigosService {
       params = params.set("sortOrder", sortOrder || "desc");
     }
 
+    if (categoria) {
+      params = params.set("categoria", categoria);
+    }
+
     return this.http.get<any>(`${this.apiUrl}/publicados`, { params }).pipe(
       map((resp) => {
         const responseData = resp?.data;
         if (!responseData || !Array.isArray(responseData.data)) {
           return [];
         }
-        return responseData.data.map((artigo: ArtigoResponseDto) =>
-          this.mapArtigoFromApi(artigo),
-        );
+        return responseData.data.map((artigo: ArtigoResponseDto) => this.mapArtigoFromApi(artigo));
       }),
     );
   }
@@ -459,5 +472,14 @@ export class ArtigosService {
     return this.http
       .get<any>(`${this.apiUrl}/${artigoId}/stats/views`, { params })
       .pipe(map((response) => response?.data || response));
+  }
+
+  /**
+   * Lista todas as categorias de artigos existentes
+   */
+  listarCategorias(): Observable<string[]> {
+    return this.http.get<any>(`${this.apiUrl}/publicados/categorias`).pipe(
+      map(response => response?.data || [])
+    );
   }
 }

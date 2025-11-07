@@ -6,11 +6,24 @@
     </div>
   </header>
 
+  <div class="filters mb-4 d-flex gap-3 align-items-center">
+    <div class="form-group">
+      <label for="category-filter" class="form-label">Filtrar por Categoria</label>
+      <select id="category-filter" class="form-select" (change)="onCategoryFilterChange($event)">
+        <option selected value="">Todas</option>
+        <option *ngFor="let categoria of categorias" [value]="categoria">{{ categoria }}</option>
+      </select>
+    </div>
+    <button class="btn btn-light" (click)="limparFiltro()" *ngIf="categoriaSelecionada">
+      Limpar Filtro
+    </button>
+  </div>
+
   <div *ngIf="loading" class="loading">Carregando artigos...</div>
   <div *ngIf="error" class="error" role="alert">{{ error }}</div>
 
-  <div class="articles-grid" *ngIf="!loading && !error">
-    <div class="article-card" *ngFor="let artigo of artigos; trackBy: trackById">
+  <div class="articles-grid masonry-grid" *ngIf="!loading && !error">
+    <div class="article-card masonry-item" *ngFor="let artigo of artigos; trackBy: trackById">
       <a [routerLink]="['/artigos', artigo.id]" class="card-link" title="Ler artigo">
         <img
           class="cover"
