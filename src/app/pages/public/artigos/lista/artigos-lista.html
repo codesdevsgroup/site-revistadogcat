@@ -24,7 +24,9 @@
           <div class="meta">
             <span class="author">✍️ {{ artigo.autor }}</span>
             <span class="date">{{ artigo.dataPublicacao | date:'dd/MM/yyyy' }}</span>
-            <span class="category" *ngIf="artigo.categoria">{{ artigo.categoria }}</span>
+            @if (artigo.categoria) {
+              <span class="category">{{ artigo.categoria }}</span>
+            }
           </div>
         </div>
       </a>
