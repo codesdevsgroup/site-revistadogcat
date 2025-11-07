@@ -24,20 +24,28 @@ export class ArtigosListaComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
 
   artigos: Artigo[] = [];
+  categorias: string[] = [];
+  categoriaSelecionada: string | null = null;
   loading = false;
   error: string | null = null;
   public apiUrl = environment.apiUrl;
 
   ngOnInit(): void {
     this.carregarArtigos();
+    this.carregarCategorias();
   }
 
   carregarArtigos(): void {
     this.loading = true;
     this.error = null;
-    // Lista artigos publicados com ordenação por data de publicação desc
+
+    const filtros = {
+      sort: "dataPublicacao:desc",
+      categoria: this.categoriaSelecionada || undefined,
+    };
+
     this.artigosService
-      .listarPublicados(12, 1, "dataPublicacao:desc")
+      .listarPublicados(12, 1, filtros.sort, filtros.categoria)
       .subscribe({
         next: (data) => {
           this.artigos = Array.isArray(data) ? data : [];
@@ -45,13 +53,39 @@ export class ArtigosListaComponent implements OnInit {
           this.cdr.markForCheck();
         },
         error: (err) => {
-          console.error("Erro ao carregar artigos publicados:", err);
-          this.error =
-            "Não foi possível carregar os artigos. Tente novamente mais tarde.";
+          console.error("Erro ao carregar artigos:", err);
+          this.error = "Não foi possível carregar os artigos. Tente novamente mais tarde.";
           this.loading = false;
           this.cdr.markForCheck();
         },
       });
+  }
+
+  carregarCategorias(): void {
+    this.artigosService.listarCategorias().subscribe({
+      next: (categorias) => {
+        this.categorias = categorias;
+        this.cdr.markForCheck();
+      },
+      error: (err) => {
+        console.error("Erro ao carregar categorias:", err);
+      }
+    });
+  }
+
+  onCategoryFilterChange(event: Event): void {
+    const selectElement = event.target as HTMLSelectElement;
+    this.categoriaSelecionada = selectElement.value || null;
+    this.carregarArtigos();
+  }
+
+  limparFiltro(): void {
+    this.categoriaSelecionada = null;
+    const selectElement = document.getElementById('category-filter') as HTMLSelectElement;
+    if (selectElement) {
+      selectElement.value = "";
+    }
+    this.carregarArtigos();
   }
 
   trackById(index: number, item: Artigo): string {
