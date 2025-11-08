@@ -13,7 +13,6 @@
     var(--gray-50) 0%,
     var(--tertiaryColor) 100%
   );
-  min-height: 100vh;
 
   .hero-header {
     background: linear-gradient(
@@ -40,27 +39,31 @@
       z-index: 2;
     }
 
+    /* Linha com ícone e título lado a lado */
+    .hero-title {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      justify-content: center; /* mantém centralizado dentro do bloco */
+      margin-bottom: var(--space-2);
+    }
+
     .hero-icon {
       font-size: 1.5rem;
-      margin-bottom: var(--space-2);
+      /* quando usado na .hero-title, não precisamos de margem inferior */
+      margin-bottom: 0;
       animation: bounce 2s infinite;
     }
 
     h1 {
       font-size: 1.875rem;
       font-weight: var(--fontWeight-extrabold);
-      margin-bottom: var(--space-2);
+      /* margem inferior tratada pela .hero-title */
+      margin-bottom: 0;
       background: linear-gradient(45deg, var(--white), var(--goldenColor));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-    }
-
-    .hero-subtitle {
-      font-size: var(--space-4);
-      font-weight: var(--fontWeight-semibold);
-      margin-bottom: var(--space-3);
-      color: var(--secondaryColor);
     }
 
     .hero-description {

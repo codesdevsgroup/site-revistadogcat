@@ -558,14 +558,26 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
       });
     }
 
-    formData.append("videoOption", this.videoOption);
+    const mapVideoOptionToBackend = (opt: VideoOption): string => {
+      switch (opt) {
+        case "upload":
+          return "UPLOAD";
+        case "youtube":
+          return "URL";
+        case "whatsapp":
+          return "WHATSAPP";
+        default:
+          return "NONE";
+      }
+    };
+
+    const backendVideoOption = mapVideoOptionToBackend(this.videoOption);
+    formData.append("videoOption", backendVideoOption);
     if (this.videoOption === "youtube") {
       formData.append("videoUrl", this.videoForm.get("videoUrl")?.value);
     } else if (this.videoOption === "whatsapp") {
-      formData.append(
-        "confirmaWhatsapp",
-        String(this.videoForm.get("confirmaWhatsapp")?.value),
-      );
+      const telefoneContato = this.userForm.get("telefone")?.value || "";
+      formData.append("whatsappContato", telefoneContato);
     }
 
     if (this.fotoPerfil) formData.append("fotoPerfil", this.fotoPerfil);
@@ -574,7 +586,25 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
       formData.append("pedigreeFrente", this.pedigreeFrente);
     if (this.pedigreeVerso)
       formData.append("pedigreeVerso", this.pedigreeVerso);
-    if (this.selectedFile) formData.append("video", this.selectedFile);
+    if (this.selectedFile && this.videoOption === "upload") {
+      formData.append("video", this.selectedFile);
+    }
+
+    // Log de diagnóstico: inspecionar o payload do FormData antes do envio
+    try {
+      const debugPayload: string[] = [];
+      // Atenção: FormData.forEach não existe em todos navegadores antigos; no Angular atual funciona
+      (formData as any).forEach((value: any, key: string) => {
+        if (value instanceof File) {
+          debugPayload.push(`${key}=[File:${value.name}|${value.type}|${value.size}]`);
+        } else {
+          debugPayload.push(`${key}=${String(value)}`);
+        }
+      });
+      console.log("FormData (diagnóstico)", debugPayload.join(", "));
+    } catch (e) {
+      console.warn("Não foi possível imprimir o FormData para diagnóstico:", e);
+    }
 
     this.subscriptions.add(
       this.caoService.cadastrarCaoUnificado(formData).subscribe({
@@ -658,13 +688,23 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
     confirmaWhatsappControl?.clearValidators();
     if (option === "youtube") {
       videoUrlControl?.setValidators([Validators.required]);
+      // Garantir limpeza de estado de WhatsApp ao trocar para YouTube
+      confirmaWhatsappControl?.reset(false);
     } else if (option === "whatsapp") {
       confirmaWhatsappControl?.setValidators([Validators.requiredTrue]);
+      // Garantir limpeza de URL ao trocar para WhatsApp
+      videoUrlControl?.reset("");
     }
     videoUrlControl?.updateValueAndValidity();
     confirmaWhatsappControl?.updateValueAndValidity();
     if (option !== "upload") {
       this.removeFile();
+    }
+
+    // Quando voltar para UPLOAD, limpar campos auxiliares para evitar envio indevido
+    if (option === "upload") {
+      videoUrlControl?.reset("");
+      confirmaWhatsappControl?.reset(false);
     }
   }
 }
