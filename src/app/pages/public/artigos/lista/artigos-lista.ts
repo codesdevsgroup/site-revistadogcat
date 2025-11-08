@@ -24,20 +24,30 @@ export class ArtigosListaComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
 
   artigos: Artigo[] = [];
+  categorias: string[] = [];
+  categoriaSelecionada: string | null = null;
   loading = false;
   error: string | null = null;
   public apiUrl = environment.apiUrl;
+  searchTerm: string = '';
 
   ngOnInit(): void {
     this.carregarArtigos();
+    this.carregarCategorias();
   }
 
   carregarArtigos(): void {
     this.loading = true;
     this.error = null;
-    // Lista artigos publicados com ordenação por data de publicação desc
+
+    const filtros = {
+      sort: "dataPublicacao:desc",
+      categoria: this.categoriaSelecionada || undefined,
+      termo: this.searchTerm || undefined,
+    };
+
     this.artigosService
-      .listarPublicados(12, 1, "dataPublicacao:desc")
+      .listarPublicados(12, 1, filtros.sort, filtros.categoria, filtros.termo)
       .subscribe({
         next: (data) => {
           this.artigos = Array.isArray(data) ? data : [];
@@ -45,22 +55,42 @@ export class ArtigosListaComponent implements OnInit {
           this.cdr.markForCheck();
         },
         error: (err) => {
-          console.error("Erro ao carregar artigos publicados:", err);
-          this.error =
-            "Não foi possível carregar os artigos. Tente novamente mais tarde.";
+          console.error("Erro ao carregar artigos:", err);
+          this.error = "Não foi possível carregar os artigos. Tente novamente mais tarde.";
           this.loading = false;
           this.cdr.markForCheck();
         },
       });
   }
 
+  carregarCategorias(): void {
+    this.artigosService.listarCategorias().subscribe({
+      next: (categorias) => {
+        this.categorias = categorias;
+        this.cdr.markForCheck();
+      },
+      error: (err) => {
+        console.error("Erro ao carregar categorias:", err);
+      }
+    });
+  }
+
+  onSearchChange(event: Event): void {
+    const inputElement = event.target as HTMLInputElement;
+    this.searchTerm = inputElement.value;
+    this.carregarArtigos();
+  }
+
+  selectCategory(categoria: string): void {
+    this.categoriaSelecionada = categoria || null;
+    this.carregarArtigos();
+  }
+
   trackById(index: number, item: Artigo): string {
     return item.id;
   }
 
-  // Constrói a URL da imagem a partir do filename retornado pela API
   getImagemUrl(filename?: string): string {
-    // Usa mesma imagem padrão do componente de destaque da homepage para consistência visual
     if (!filename) return "./dog/default-article.svg";
     return `${this.apiUrl}/artigos/imagem/${filename}`;
   }

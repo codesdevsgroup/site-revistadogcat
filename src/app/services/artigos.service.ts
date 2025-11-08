@@ -228,6 +228,8 @@ export class ArtigosService {
     limit = 9,
     page = 1,
     sort = "dataPublicacao:desc",
+    categoria?: string,
+    termo?: string,
   ): Observable<Artigo[]> {
     let params = new HttpParams()
       .set("limit", limit.toString())
@@ -238,6 +240,14 @@ export class ArtigosService {
       const [sortBy, sortOrder] = sort.split(":");
       params = params.set("sortBy", sortBy);
       params = params.set("sortOrder", sortOrder || "desc");
+    }
+
+    if (categoria) {
+      params = params.set("categoria", categoria);
+    }
+
+    if (termo) {
+      params = params.set("q", termo);
     }
 
     return this.http.get<any>(`${this.apiUrl}/publicados`, { params }).pipe(
@@ -459,5 +469,14 @@ export class ArtigosService {
     return this.http
       .get<any>(`${this.apiUrl}/${artigoId}/stats/views`, { params })
       .pipe(map((response) => response?.data || response));
+  }
+
+  /**
+   * Lista todas as categorias de artigos existentes
+   */
+  listarCategorias(): Observable<string[]> {
+    return this.http.get<any>(`${this.apiUrl}/publicados/categorias`).pipe(
+      map(response => response?.data || [])
+    );
   }
 }
