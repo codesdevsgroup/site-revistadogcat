@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpEvent } from "@angular/common/http";
 import { Observable, throwError } from "rxjs";
 import { catchError, map } from "rxjs/operators";
 import { environment } from "../../environments/environment";
@@ -36,9 +36,14 @@ export class CaoService {
       );
   }
 
-  cadastrarCaoUnificado(formData: FormData): Observable<CadastroCaoResponse> {
+  cadastrarCaoUnificado(
+    formData: FormData,
+  ): Observable<HttpEvent<CadastroCaoResponse>> {
     return this.http
-      .post<CadastroCaoResponse>(this.apiUrl, formData)
+      .post<CadastroCaoResponse>(this.apiUrl, formData, {
+        reportProgress: true,
+        observe: "events",
+      })
       .pipe(catchError(this.handleError));
   }
 

@@ -1,46 +1,48 @@
 <section class="articles-list container py-4" aria-labelledby="articles-list-title">
-  <header class="section-header d-flex justify-content-between align-items-center mb-4">
-    <div>
-      <h2 id="articles-list-title">Artigos</h2>
-      <p class="section-subtitle">Explore os conteúdos mais recentes da Revista DogCat</p>
-    </div>
+  <header class="section-header text-center mb-5">
+    <h2 id="articles-list-title" class="display-4 font-weight-bold">Nossos Artigos</h2>
+    <p class="lead text-muted">Fique por dentro das últimas novidades e dicas sobre o mundo pet.</p>
   </header>
 
-  <div class="filters mb-4 d-flex gap-3 align-items-center">
-    <div class="form-group">
-      <label for="category-filter" class="form-label">Filtrar por Categoria</label>
-      <select id="category-filter" class="form-select" (change)="onCategoryFilterChange($event)">
-        <option selected value="">Todas</option>
-        <option *ngFor="let categoria of categorias" [value]="categoria">{{ categoria }}</option>
-      </select>
+  <div class="filters-container mb-4">
+    <div class="search-filter mb-3">
+        <input type="text" class="form-control" placeholder="Pesquisar artigos..." (input)="onSearchChange($event)">
     </div>
-    <button class="btn btn-light" (click)="limparFiltro()" *ngIf="categoriaSelecionada">
-      Limpar Filtro
-    </button>
-  </div>
+    <div class="category-filters">
+        <h3 class="filters-title h6 text-uppercase text-muted">Filtre por Categoria</h3>
+        <div class="btn-group flex-wrap" role="group" aria-label="Filtros de categoria">
+            <button type="button" class="btn" [class.btn-primary]="!categoriaSelecionada" (click)="selectCategory('')">Todas</button>
+            <button *ngFor="let categoria of categorias" type="button" class="btn" [class.btn-primary]="categoria === categoriaSelecionada" (click)="selectCategory(categoria)">
+                {{ categoria }}
+            </button>
+        </div>
+    </div>
+</div>
 
-  <div *ngIf="loading" class="loading">Carregando artigos...</div>
-  <div *ngIf="error" class="error" role="alert">{{ error }}</div>
+  <div *ngIf="loading" class="text-center p-5"><span class="spinner-border text-primary"></span> Carregando...</div>
+  <div *ngIf="error" class="alert alert-danger" role="alert">{{ error }}</div>
 
-  <div class="articles-grid masonry-grid" *ngIf="!loading && !error">
-    <div class="article-card masonry-item" *ngFor="let artigo of artigos; trackBy: trackById">
-      <a [routerLink]="['/artigos', artigo.id]" class="card-link" title="Ler artigo">
-        <img
-          class="cover"
-          [src]="getImagemUrl(artigo.imagemCapa)"
-          [alt]="artigo.titulo"
-          loading="lazy"
-        />
+  <div class="articles-grid" *ngIf="!loading && !error">
+    <div class="article-card" *ngFor="let artigo of artigos; trackBy: trackById">
+      <a [routerLink]="['/artigos', artigo.id]" class="card-link">
+        <div class="card-image-container">
+            <img class="cover" [src]="getImagemUrl(artigo.imagemCapa)" [alt]="artigo.titulo" loading="lazy">
+        </div>
         <div class="card-content">
-          <h3 class="title">{{ artigo.titulo }}</h3>
-          <p class="excerpt" *ngIf="artigo.resumo">{{ artigo.resumo }}</p>
-          <div class="meta">
-            <span class="author">✍️ {{ artigo.autor }}</span>
-            <span class="date">{{ artigo.dataPublicacao | date:'dd/MM/yyyy' }}</span>
-            <span class="category" *ngIf="artigo.categoria">{{ artigo.categoria }}</span>
-          </div>
+            <span class="category-tag">{{ artigo.categoria }}</span>
+            <h3 class="title mt-2">{{ artigo.titulo }}</h3>
+            <p class="excerpt">{{ artigo.resumo }}</p>
+        </div>
+        <div class="card-footer">
+            <span class="author">Por {{ artigo.autor }}</span>
+            <span class="date">{{ artigo.dataPublicacao | date:'longDate' }}</span>
         </div>
       </a>
     </div>
+  </div>
+
+  <div *ngIf="!loading && artigos.length === 0" class="text-center p-5">
+    <p class="h5">Nenhum artigo encontrado.</p>
+    <p class="text-muted">Tente ajustar seus filtros ou volte mais tarde.</p>
   </div>
 </section>
