@@ -13,6 +13,7 @@ import {
 } from "@angular/forms";
 import { RouterModule, Router } from "@angular/router";
 import { CommonModule } from "@angular/common";
+import { HttpEvent, HttpEventType } from "@angular/common/http";
 import { Subscription } from "rxjs";
 import { FooterComponent } from "../components/footer/footer";
 import { SocialMediaService } from "../../../services/social-media.service";
@@ -24,6 +25,7 @@ import {
   CadastroCaoPayload,
   VideoOption,
   SexoCao,
+  CadastroCaoResponse,
 } from "../../../interfaces/cao.interface";
 
 @Component({
@@ -45,6 +47,7 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
   videoForm: FormGroup;
   selectedFile: File | null = null;
   uploadProgress = 0;
+  isSubmitting = false;
   isCepLoading = false;
   cepStatus: "none" | "loading" | "success" | "error" = "none";
   racas: { id: string; nome: string }[] = [];
@@ -60,10 +63,8 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
   pedigreeVerso: File | null = null;
 
   private subscriptions = new Subscription();
-  // Controle de UI
-  showSuccessModal = false; // Exibe modal de agradecimento após cadastro bem-sucedido
-  validationErrors: string[] = []; // Lista os campos obrigatórios faltantes com mensagens claras
-  // Dados de sucesso para exibir no modal
+  showSuccessModal = false;
+  validationErrors: string[] = [];
   successCaoId: string | null = null;
   successProprietarioId: string | null = null;
   successNomeCao: string | null = null;
@@ -140,7 +141,6 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
           console.error("Erro ao carregar raças:", err);
           this.racasError = true;
           this.racasLoading = false;
-          // Mantém desabilitado em caso de erro para evitar seleção sem dados
           this.dogForm.get("raca")?.disable({ emitEvent: false });
         },
       }),
@@ -227,8 +227,6 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
     window.open(`https://wa.me/5515998350750?text=${message}`, "_blank");
   }
 
-  // --- Métodos de Dados do Proprietário ---
-
   toggleProprietarioDiferente() {
     this.proprietarioDiferente = !this.proprietarioDiferente;
     if (this.proprietarioDiferente) {
@@ -281,8 +279,6 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
     this.userForm.get("telefone")?.clearValidators();
     this.userForm.updateValueAndValidity();
   }
-
-  // --- Métodos de Upload e Arquivos ---
 
   onFotoPerfilSelected(event: any) {
     const file = event.target.files[0];
@@ -368,35 +364,26 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
         return;
       }
       this.selectedFile = file;
-      this.simulateUpload();
+      this.uploadProgress = 0;
     }
   }
 
   removeFile() {
     this.selectedFile = null;
     this.uploadProgress = 0;
-    this.fileInput.nativeElement.value = "";
+    if (this.fileInput) {
+      this.fileInput.nativeElement.value = "";
+    }
   }
 
   triggerFileInput() {
     this.fileInput.nativeElement.click();
   }
 
-  simulateUpload() {
-    this.uploadProgress = 0;
-    const interval = setInterval(() => {
-      this.uploadProgress += 10;
-      if (this.uploadProgress >= 100) clearInterval(interval);
-    }, 200);
-  }
-
   formatFileSize(bytes: number): string {
     return this.validationService.formatFileSize(bytes);
   }
 
-  // --- Métodos de Validação e Submissão ---
-
-  // Libera o botão "Enviar Cadastro" quando uma das três opções de vídeo estiver válida
   isVideoStepValid(): boolean {
     switch (this.videoOption) {
       case "upload":
@@ -428,18 +415,18 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
         !this.pedigreeFrente &&
         !this.pedigreeVerso
       ) {
-        return false; // Se tem pedigree, deve ter ou o registro ou uma das fotos
+        return false;
       }
     }
 
     return userValid && dogValid && fotosValid && this.isVideoStepValid();
   }
 
-  // Calcula idade aproximada com base na data de nascimento
   calcularIdade(data: string | Date | null): string {
     if (!data) return "-";
     const nascimento = typeof data === "string" ? new Date(data) : data;
-    if (!(nascimento instanceof Date) || isNaN(nascimento.getTime())) return "-";
+    if (!(nascimento instanceof Date) || isNaN(nascimento.getTime()))
+      return "-";
 
     const hoje = new Date();
     let anos = hoje.getFullYear() - nascimento.getFullYear();
@@ -454,7 +441,6 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
       meses += 12;
     }
 
-    // Ajuste para evitar negativos
     if (anos < 0) anos = 0;
     if (meses < 0) meses = 0;
 
@@ -470,11 +456,9 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
     return `${anos} ano(s) e ${meses} mês(es)`;
   }
 
-  // Constrói uma lista de mensagens claras indicando quais campos obrigatórios faltam
   private buildValidationErrors(): string[] {
     const errors: string[] = [];
 
-    // Campos do proprietário (somente quando cadastro para terceiros ou sem usuário logado)
     if (this.proprietarioDiferente || !this.usuarioLogado) {
       const ownerControls: { key: string; label: string }[] = [
         { key: "nomeCompleto", label: "Nome Completo do proprietário" },
@@ -488,7 +472,6 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
       });
     }
 
-    // Campos do cão
     const dogControls: { key: string; label: string }[] = [
       { key: "nome", label: "Nome do cão" },
       { key: "raca", label: "Raça do cão" },
@@ -500,7 +483,6 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
       if (control && control.invalid) errors.push(label);
     });
 
-    // Condicionais de pedigree
     if (this.dogForm.get("temPedigree")?.value) {
       if (this.dogForm.get("registroPedigree")?.invalid) {
         errors.push("Nº de registro do pedigree");
@@ -510,18 +492,15 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
       }
     }
 
-    // Condicionais de microchip
     if (this.dogForm.get("temMicrochip")?.value) {
       if (this.dogForm.get("numeroMicrochip")?.invalid) {
         errors.push("Nº do microchip (15 dígitos)");
       }
     }
 
-    // Fotos obrigatórias
     if (!this.fotoPerfil) errors.push("Foto de perfil do cão");
     if (!this.fotoLateral) errors.push("Foto lateral do cão");
 
-    // Validação de vídeo conforme opção
     switch (this.videoOption) {
       case "upload":
         if (!this.selectedFile) errors.push("Arquivo de vídeo do cão");
@@ -539,106 +518,118 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
     return errors;
   }
 
-  async submitForm() {
+  submitForm() {
     this.validationErrors = this.buildValidationErrors();
-    if (!this.isFormValid()) {
+    if (!this.isFormValid() || this.isSubmitting) {
       this.userForm.markAllAsTouched();
       this.dogForm.markAllAsTouched();
       this.videoForm.markAllAsTouched();
-      console.log("Formulário inválido. Erros:", this.validationErrors);
-      alert(
-        "Existem campos obrigatórios pendentes. Por favor, verifique os erros listados no final do formulário.",
-      );
+      if (this.validationErrors.length > 0) {
+        alert(
+          "Existem campos obrigatórios pendentes: " +
+            this.validationErrors.join(", "),
+        );
+      }
       return;
     }
 
+    this.isSubmitting = true;
+    this.uploadProgress = 0;
+
     const formData = new FormData();
 
-    // 1. Adicionar dados do cão
     Object.keys(this.dogForm.controls).forEach((key) => {
       const value = this.dogForm.get(key)?.value;
       if (key === "raca" && value === "Outra") {
-        // Não adiciona a racaId, o backend usará a racaSugerida
+        // racaSugerida é tratada abaixo
       } else if (key === "raca") {
-        formData.append("racaId", value); // Assumindo que o valor é o ID da raça
+        formData.append("racaId", value);
       } else if (value !== null && value !== "") {
-        formData.append(key, value);
+        formData.append(key, String(value));
       }
     });
 
-    // 2. Adicionar dados do proprietário (se for terceiro)
     if (this.proprietarioDiferente) {
       Object.keys(this.userForm.controls).forEach((key) => {
         const value = this.userForm.get(key)?.value;
         if (value !== null && value !== "") {
-          formData.append(`proprietario[${key}]`, value);
+          formData.append(`proprietario[${key}]`, String(value));
         }
       });
     }
 
-    // 3. Adicionar dados de vídeo
     formData.append("videoOption", this.videoOption);
     if (this.videoOption === "youtube") {
       formData.append("videoUrl", this.videoForm.get("videoUrl")?.value);
     } else if (this.videoOption === "whatsapp") {
       formData.append(
         "confirmaWhatsapp",
-        this.videoForm.get("confirmaWhatsapp")?.value,
+        String(this.videoForm.get("confirmaWhatsapp")?.value),
       );
     }
 
-    // 4. Adicionar arquivos
     if (this.fotoPerfil) formData.append("fotoPerfil", this.fotoPerfil);
     if (this.fotoLateral) formData.append("fotoLateral", this.fotoLateral);
     if (this.pedigreeFrente)
       formData.append("pedigreeFrente", this.pedigreeFrente);
     if (this.pedigreeVerso)
       formData.append("pedigreeVerso", this.pedigreeVerso);
-    if (this.selectedFile) formData.append("video", this.selectedFile); // Assumindo que o campo no backend é 'video'
+    if (this.selectedFile) formData.append("video", this.selectedFile);
 
-    try {
-      const response = await this.caoService
-        .cadastrarCaoUnificado(formData)
-        .toPromise();
-      if (response) {
-        // A resposta de sucesso não tem mais a propriedade 'success'
-        console.log("Cadastro realizado com sucesso:", response);
-        this.currentStep = 6; // Avança para a tela de sucesso
-        // Ajuste: a resposta segue a interface CadastroCaoResponse, com dados em response.data
-        this.successCaoId = (response as any)?.data?.caoId ?? null;
-        this.successNomeCao = this.dogForm.value.nome;
-        this.showSuccessModal = true;
-      } else {
-        alert("Erro ao cadastrar o cão. A resposta do servidor foi vazia.");
-      }
-    } catch (error) {
-      console.error("Erro no cadastro:", error);
-      alert(
-        `Erro ao cadastrar o cão: ${error instanceof Error ? error.message : "Erro desconhecido"}`,
-      );
-    }
+    this.subscriptions.add(
+      this.caoService.cadastrarCaoUnificado(formData).subscribe({
+        next: (event: HttpEvent<CadastroCaoResponse>) => {
+          switch (event.type) {
+            case HttpEventType.UploadProgress:
+              if (event.total) {
+                this.uploadProgress = Math.round(
+                  (event.loaded / event.total) * 100,
+                );
+              }
+              break;
+            case HttpEventType.Response:
+              const response = event.body;
+              if (response) {
+                console.log("Cadastro realizado com sucesso:", response);
+                this.currentStep = 6;
+                this.successCaoId = response.data?.caoId ?? null;
+                this.successNomeCao = this.dogForm.value.nome;
+                this.showSuccessModal = true;
+              } else {
+                alert(
+                  "Erro ao cadastrar o cão. A resposta do servidor foi vazia.",
+                );
+              }
+              this.isSubmitting = false;
+              break;
+          }
+        },
+        error: (error) => {
+          console.error("Erro no cadastro:", error);
+          alert(
+            `Erro ao cadastrar o cão: ${error.message || "Erro desconhecido"}`,
+          );
+          this.isSubmitting = false;
+          this.uploadProgress = 0;
+        },
+      }),
+    );
   }
 
-  // Fecha o modal de sucesso
   closeSuccessModal() {
     this.showSuccessModal = false;
   }
 
-  // Ação auxiliar: direciona para uma página pós-cadastro (ex.: página inicial)
   goToHome() {
     this.showSuccessModal = false;
     this.router.navigateByUrl("/");
   }
 
-  // --- Métodos de CEP ---
   onCepChange(event: any) {
     const cep = event.target.value.replace(/\D/g, "");
     if (cep.length === 8) {
       this.isCepLoading = true;
       this.cepStatus = "loading";
-      // A chamada ao EnderecoService.buscarEnderecoPorCep foi removida.
-      // Se a funcionalidade de busca de CEP ainda for necessária, ela deve ser reimplementada aqui.
-      // Por enquanto, apenas desativa o loading.
       this.isCepLoading = false;
       this.cepStatus = "none";
     } else if (cep.length === 0) {
@@ -658,8 +649,6 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
   formatCep(event: any) {
     event.target.value = this.validationService.formatCep(event.target.value);
   }
-
-  // --- Outros ---
 
   selectVideoOption(option: "upload" | "youtube" | "whatsapp") {
     this.videoOption = option;
