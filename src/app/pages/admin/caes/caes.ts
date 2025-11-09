@@ -327,7 +327,9 @@ export class CaesComponent implements OnInit {
 
   aprovarRaca(cao: CaoListItem) {
     if (!cao.racaSugerida) {
-      alert("Este cão não tem uma raça sugerida para aprovação.");
+      this.notificationService.warning(
+        "Este cão não possui uma raça sugerida para aprovação."
+      );
       return;
     }
     this.caoEmAprovacao = cao;

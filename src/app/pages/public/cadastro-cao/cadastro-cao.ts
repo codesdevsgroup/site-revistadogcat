@@ -20,6 +20,7 @@ import { SocialMediaService } from "../../../services/social-media.service";
 import { CaoService } from "../../../services/cao.service";
 import { AuthService } from "../../../services/auth.service";
 import { ValidationService } from "../../../services/validation.service";
+import { NotificationService } from "../../../services/notification.service";
 import {
   Cao,
   CadastroCaoPayload,
@@ -76,6 +77,7 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private validationService: ValidationService,
     private router: Router,
+    private notificationService: NotificationService,
   ) {
     this.socialMedia = this.socialMediaService.getSocialMedia();
     this.userForm = this.fb.group({
@@ -286,7 +288,7 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
     if (file) {
       const validation = this.validationService.validateImageFile(file);
       if (!validation.valid) {
-        alert(validation.error);
+        this.notificationService.error(validation.error);
         return;
       }
       this.fotoPerfil = file;
@@ -301,7 +303,7 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
     if (file) {
       const validation = this.validationService.validateImageFile(file);
       if (!validation.valid) {
-        alert(validation.error);
+        this.notificationService.error(validation.error);
         return;
       }
       this.fotoLateral = file;
@@ -334,7 +336,7 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
     if (file) {
       const validation = this.validationService.validateImageFile(file);
       if (!validation.valid) {
-        alert(validation.error);
+        this.notificationService.error(validation.error);
         return;
       }
       this.pedigreeFrente = file;
@@ -346,7 +348,7 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
     if (file) {
       const validation = this.validationService.validateImageFile(file);
       if (!validation.valid) {
-        alert(validation.error);
+        this.notificationService.error(validation.error);
         return;
       }
       this.pedigreeVerso = file;
@@ -358,7 +360,7 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
     if (file) {
       const validation = this.validationService.validateVideoFile(file);
       if (!validation.valid) {
-        alert(validation.error);
+        this.notificationService.error(validation.error);
         return;
       }
       if (validation.warning && !window.confirm(validation.warning)) {
@@ -503,7 +505,7 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
       this.dogForm.markAllAsTouched();
       // videoForm não é mais necessário neste fluxo
       if (this.validationErrors.length > 0) {
-        alert(
+        this.notificationService.error(
           "Existem campos obrigatórios pendentes: " +
             this.validationErrors.join(", "),
         );
@@ -582,7 +584,7 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
                 this.successNomeCao = this.dogForm.value.nome;
                 this.showSuccessModal = true;
               } else {
-                alert(
+                this.notificationService.error(
                   "Erro ao cadastrar o cão. A resposta do servidor foi vazia.",
                 );
               }
@@ -592,7 +594,7 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           console.error("Erro no cadastro:", error);
-          alert(
+          this.notificationService.error(
             `Erro ao cadastrar o cão: ${error.message || "Erro desconhecido"}`,
           );
           this.isSubmitting = false;
@@ -612,7 +614,6 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
   }
 
   goToPerfil() {
-    // Fecha modal e navega para a tela de Perfil
     this.showSuccessModal = false;
     this.router.navigateByUrl("/perfil");
   }
@@ -650,11 +651,9 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
     confirmaWhatsappControl?.clearValidators();
     if (option === "youtube") {
       videoUrlControl?.setValidators([Validators.required]);
-      // Garantir limpeza de estado de WhatsApp ao trocar para YouTube
       confirmaWhatsappControl?.reset(false);
     } else if (option === "whatsapp") {
       confirmaWhatsappControl?.setValidators([Validators.requiredTrue]);
-      // Garantir limpeza de URL ao trocar para WhatsApp
       videoUrlControl?.reset("");
     }
     videoUrlControl?.updateValueAndValidity();
@@ -663,7 +662,6 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
       this.removeFile();
     }
 
-    // Quando voltar para UPLOAD, limpar campos auxiliares para evitar envio indevido
     if (option === "upload") {
       videoUrlControl?.reset("");
       confirmaWhatsappControl?.reset(false);

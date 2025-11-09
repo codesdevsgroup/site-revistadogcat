@@ -9,6 +9,7 @@ import { Endereco } from '../../../interfaces/endereco.interface';
 import { ProfileEditModalComponent } from '../../../components/profile-edit-modal/profile-edit-modal';
 import { AddressModalComponent } from '../../../components/address-modal/address-modal';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { NotificationService } from '../../../services/notification.service';
 
 @Component({
   selector: "app-profile",
@@ -22,7 +23,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
   loading = true;
   error = "";
 
-  // Lista de cães do usuário
   dogs: CadastroCao[] = [];
   loadingDogs = true;
   dogsError = "";
@@ -38,6 +38,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     private profileService: ProfileService,
     private router: Router,
     private cadastroCaoService: CadastroCaoService,
+    private notificationService: NotificationService,
   ) {}
 
   ngOnInit(): void {
@@ -123,7 +124,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
     return roleMap[role] || role;
   }
 
-  // ----- Meus Cães -----
   private loadDogs(): void {
     this.loadingDogs = true;
     this.dogsError = "";
@@ -141,7 +141,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.subscriptions.add(sub);
   }
 
-  // ----- Modal Enviar Vídeo -----
   isVideoModalOpen = false;
   selectedCadastro: CadastroCao | null = null;
   videoOption: "UPLOAD" | "URL" | "WHATSAPP" | "NONE" = "NONE";
@@ -153,9 +152,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   openVideoModal(cadastro: CadastroCao): void {
     this.selectedCadastro = cadastro;
-    // Pre-popula com opção atual, se existir
     const currentOption = (cadastro.videoOption as any) || "NONE";
-    // Normaliza para enum do backend
     const validOptions = ["UPLOAD", "URL", "WHATSAPP", "NONE"];
     this.videoOption = validOptions.includes(currentOption)
       ? (currentOption as any)
@@ -181,7 +178,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
     const input = event.target as HTMLInputElement;
     if (input?.files && input.files.length > 0) {
       const file = input.files[0];
-      // Validação simples de tipo
       if (!file.type.startsWith("video/")) {
         this.videoError = "Selecione um arquivo de vídeo válido.";
         this.selectedVideoFile = null;
@@ -211,7 +207,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
             this.updateLocalDog(updated);
             this.isSubmittingVideo = false;
             this.closeVideoModal();
-            alert("Vídeo enviado com sucesso!");
+            this.notificationService.success("Vídeo enviado com sucesso!");
           },
           error: (err) => {
             console.error("❌ Erro no upload de vídeo:", err);
@@ -239,7 +235,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
             this.updateLocalDog(updated);
             this.isSubmittingVideo = false;
             this.closeVideoModal();
-            alert("Link de vídeo atualizado com sucesso!");
+            this.notificationService.success("Link de vídeo atualizado com sucesso!");
           },
           error: (err) => {
             console.error("❌ Erro ao atualizar URL de vídeo:", err);
@@ -264,7 +260,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
             this.updateLocalDog(updated);
             this.isSubmittingVideo = false;
             this.closeVideoModal();
-            alert("Opção de envio via WhatsApp registrada!");
+            this.notificationService.info("Opção de envio via WhatsApp registrada!");
           },
           error: (err) => {
             console.error("❌ Erro ao definir WhatsApp:", err);
@@ -277,7 +273,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // NONE: remover vídeo
     const sub = this.cadastroCaoService
       .updateVideoOption(cadastroId, { videoOption: "NONE" })
       .subscribe({
@@ -285,7 +280,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
           this.updateLocalDog(updated);
           this.isSubmittingVideo = false;
           this.closeVideoModal();
-          alert("Informações de vídeo removidas.");
+          this.notificationService.info("Informações de vídeo removidas.");
         },
         error: (err) => {
           console.error("❌ Erro ao limpar vídeo:", err);

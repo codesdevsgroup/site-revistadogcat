@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
+import { NotificationService } from '../../../../services/notification.service';
 
 @Component({
   selector: 'app-modal-cadastro-anunciante',
@@ -17,7 +18,7 @@ export class ModalCadastroAnuncianteComponent {
   cadastroForm: FormGroup;
   isSubmitting = false;
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private notificationService: NotificationService) {
     this.cadastroForm = this.fb.group({
       nome: ['', [Validators.required, Validators.minLength(2)]],
       email: ['', [Validators.email]],
@@ -48,12 +49,11 @@ export class ModalCadastroAnuncianteComponent {
       this.isSubmitting = true;
       const formData = this.cadastroForm.value;
       
-      // Simular envio (aqui você pode integrar com um serviço real)
       setTimeout(() => {
         this.submitForm.emit(formData);
         this.isSubmitting = false;
         this.onClose();
-        alert('Cadastro realizado com sucesso! Entraremos em contato em breve.');
+        this.notificationService.success('Cadastro realizado com sucesso! Entraremos em contato em breve.');
       }, 1000);
     } else {
       this.markFormGroupTouched();
