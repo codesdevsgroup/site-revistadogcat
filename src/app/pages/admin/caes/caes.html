@@ -35,7 +35,7 @@
 
           <label class="form-check ms-2">
             <input type="checkbox" class="form-check-input" [(ngModel)]="pendentesOnly" (change)="loadCaes()">
-            <span class="form-check-label">Somente pendentes de aprovação</span>
+            <span class="form-check-label">Somente cadastros incompletos</span>
           </label>
         </div>
       </div>
@@ -72,7 +72,7 @@
               <td>
                 <div class="cao-name">
                   <strong>{{ cao.nome }}</strong>
-                  <span *ngIf="isCaoPendente(cao)" class="badge bg-warning ms-1">Pendente</span>
+                  <span *ngIf="isCaoPendente(cao)" class="badge bg-warning ms-1">Cadastro incompleto</span>
                   <small *ngIf="cao.numeroRegistro">#{{ cao.numeroRegistro }}</small>
                 </div>
               </td>

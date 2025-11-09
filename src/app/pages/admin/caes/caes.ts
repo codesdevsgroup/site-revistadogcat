@@ -88,19 +88,28 @@ export class CaesComponent implements OnInit {
       this.loading = true;
       let data: any[];
 
+      // Normaliza diferentes formatos de resposta (array puro ou envelope { data, total })
+      const normalizeList = (resp: any): any[] => {
+        if (Array.isArray(resp)) return resp;
+        if (resp && Array.isArray(resp.data)) return resp.data;
+        return [];
+      };
+
       if (this.pendentesRacaOnly) {
-        data = await firstValueFrom(this.cadastroCaoService.getPendentesRaca());
+        const resp = await firstValueFrom(this.cadastroCaoService.getPendentesRaca());
+        data = normalizeList(resp);
       } else if (this.pendentesOnly) {
         const result = await firstValueFrom(
           this.cadastroCaoService.listar({
             pendentesValidacao: "true",
-            status: "PENDENTE" as StatusCadastro,
+            // Filtra cadastros incompletos para validação
+            status: "CADASTRO_INCOMPLETO" as StatusCadastro,
           }),
         );
-        data = result || [];
+        data = normalizeList(result);
       } else {
         const response = await this.cadastroCaoService.findAll();
-        data = response.data || response || [];
+        data = normalizeList(response);
       }
 
       this.caes = (data || []).map((cao: any) => ({
@@ -471,6 +480,7 @@ export class CaesComponent implements OnInit {
   }
 
   isCaoPendente(cao: CaoListItem): boolean {
-    return (cao.status as StatusCadastro) === "PENDENTE";
+    // "Cadastro incompleto" substitui o antigo "PENDENTE"
+    return (cao.status as StatusCadastro) === "CADASTRO_INCOMPLETO";
   }
 }

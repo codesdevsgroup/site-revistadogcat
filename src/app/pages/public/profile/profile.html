@@ -117,11 +117,11 @@
                 <p class="mb-2"><span class="fw-bold">Status:</span>
                   <span class="badge"
                         [ngClass]="{
-                          'bg-warning': dog.status === 'PENDENTE',
+                          'bg-warning': dog.status === 'CADASTRO_INCOMPLETO',
                           'bg-success': dog.status === 'APROVADO',
                           'bg-danger': dog.status === 'REJEITADO'
                         }">
-                    {{ dog.status || '—' }}
+                    {{ dog.status === 'CADASTRO_INCOMPLETO' ? 'Cadastro incompleto' : (dog.status || '—') }}
                   </span>
                 </p>
 
