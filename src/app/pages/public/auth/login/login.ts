@@ -99,15 +99,17 @@ export class LoginComponent implements OnInit {
   }
 
   private getDefaultRedirectUrl(): string {
-    return '/admin';
+    // Redireciona para a tela de perfil após login por padrão
+    return '/perfil';
   }
 
   private getRedirectUrlByRole(): string {
     const user = this.authService.getCurrentUser();
+    // Admins continuam indo para /admin; demais perfis vão para /perfil
     if (this.authService.hasAdminAccess()) {
       return '/admin';
     }
-    return '/';
+    return '/perfil';
   }
 
   navigateToCreatePassword(): void {

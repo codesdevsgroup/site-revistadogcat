@@ -611,6 +611,12 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
     this.router.navigateByUrl("/");
   }
 
+  goToPerfil() {
+    // Fecha modal e navega para a tela de Perfil
+    this.showSuccessModal = false;
+    this.router.navigateByUrl("/perfil");
+  }
+
   onCepChange(event: any) {
     const cep = event.target.value.replace(/\D/g, "");
     if (cep.length === 8) {
