@@ -21,13 +21,15 @@
   </div>
 
   <!-- Quick Actions -->
-  <p-card header="Ações Rápidas" styleClass="quick-actions-card">
-    <div class="actions-grid">
-      <button pButton type="button" icon="pi pi-plus" label="Novo Artigo" (click)="novoArtigo()" pTooltip="Criar novo artigo" tooltipPosition="top"></button>
-      <button pButton type="button" icon="pi pi-user-plus" label="Adicionar Usuário" (click)="adicionarUsuario()" pTooltip="Adicionar novo usuário" tooltipPosition="top"></button>
-      <button pButton type="button" icon="pi pi-chart-bar" label="Relatórios" (click)="abrirRelatorios()" pTooltip="Gerar relatórios e exportações" tooltipPosition="top"></button>
-    </div>
-  </p-card>
+  <div class="quick-actions">
+    <p-card header="Ações Rápidas" styleClass="quick-actions-card">
+      <div class="actions-grid">
+        <button pButton type="button" icon="pi pi-plus" label="Novo Artigo" (click)="novoArtigo()" pTooltip="Criar novo artigo" tooltipPosition="top"></button>
+        <button pButton type="button" icon="pi pi-user-plus" label="Adicionar Usuário" (click)="adicionarUsuario()" pTooltip="Adicionar novo usuário" tooltipPosition="top"></button>
+        <button pButton type="button" icon="pi pi-chart-bar" label="Relatórios" (click)="abrirRelatorios()" pTooltip="Gerar relatórios e exportações" tooltipPosition="top"></button>
+      </div>
+    </p-card>
+  </div>
 
   <!-- Recent Activity -->
   <p-card header="Atividade Recente" styleClass="recent-activity-card">
@@ -43,13 +45,15 @@
   </p-card>
 
   <!-- Analytics Section -->
-  <div class="analytics-grid">
-    <p-card header="Crescimento Mensal" styleClass="analytics-card">
-      <p-chart type="line" [data]="lineChartData"></p-chart>
-    </p-card>
-    <p-card header="Distribuição de Usuários" styleClass="analytics-card">
-      <p-chart type="pie" [data]="pieChartData"></p-chart>
-    </p-card>
+  <div class="analytics-section">
+    <div class="analytics-grid">
+      <p-card header="Crescimento Mensal" styleClass="analytics-card">
+        <p-chart type="line" [data]="lineChartData"></p-chart>
+      </p-card>
+      <p-card header="Distribuição de Usuários" styleClass="analytics-card">
+        <p-chart type="pie" [data]="pieChartData"></p-chart>
+      </p-card>
+    </div>
   </div>
 </div>
 

@@ -31,28 +31,29 @@ export class DashboardComponent implements OnInit {
     {
       title: 'Total de Usuários',
       value: '1,234',
-      icon: 'fas fa-users',
+      // Ícones PrimeIcons para visual mais moderno
+      icon: 'pi pi-users',
       color: 'primary',
       change: '+12%'
     },
     {
       title: 'Artigos Publicados',
       value: '89',
-      icon: 'fas fa-newspaper',
+      icon: 'pi pi-book',
       color: 'success',
       change: '+5%'
     },
     {
       title: 'Assinantes Ativos',
       value: '567',
-      icon: 'fas fa-crown',
+      icon: 'pi pi-crown',
       color: 'golden',
       change: '+8%'
     },
     {
       title: 'Visualizações',
       value: '12.5K',
-      icon: 'fas fa-eye',
+      icon: 'pi pi-eye',
       color: 'info',
       change: '+15%'
     }

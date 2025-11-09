@@ -33,6 +33,7 @@
             ],
             "styles": [
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "node_modules/primeicons/primeicons.css",
               "node_modules/notyf/notyf.min.css",
               "src/styles.scss"
             ],
