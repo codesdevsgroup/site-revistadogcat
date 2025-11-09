@@ -266,12 +266,12 @@
           <div class="tiptap-placeholder">
             <div class="placeholder-content">
 
-              <!-- Tiptap Editor -->
-              <app-tiptap-editor
+              <!-- PrimeNG Editor -->
+              <p-editor
                 formControlName="conteudo"
-                placeholder="Digite o conteúdo do artigo aqui..."
+                [style]="{ height: '420px' }"
                 [class.is-invalid]="conteudo?.invalid && conteudo?.touched"
-              ></app-tiptap-editor>
+              ></p-editor>
 
               <div class="invalid-feedback" *ngIf="conteudo?.invalid && conteudo?.touched">
                 Conteúdo é obrigatório

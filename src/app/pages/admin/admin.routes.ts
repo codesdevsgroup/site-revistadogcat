@@ -22,55 +22,55 @@ export const adminRoutes: Routes = [
     canActivate: [AdminGuard],
     resolve: { auth: AuthResolver },
     children: [
-      { 
-        path: '', 
-        redirectTo: 'artigos', 
-        pathMatch: 'full' 
+      {
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full'
       },
-      { 
-        path: 'dashboard', 
+      {
+        path: 'dashboard',
         component: DashboardComponent,
         canActivate: [RoleBasedGuard],
         data: { roles: [Role.ADMIN, Role.FUNCIONARIO] }
       },
-      { 
-        path: 'usuarios', 
+      {
+        path: 'usuarios',
         component: UsuariosComponent,
         canActivate: [RoleBasedGuard],
         data: { roles: [Role.ADMIN, Role.FUNCIONARIO] }
       },
-      { 
-        path: 'artigos', 
+      {
+        path: 'artigos',
         component: ArtigosComponent,
         canActivate: [RoleBasedGuard],
         data: { roles: [Role.ADMIN, Role.FUNCIONARIO, Role.EDITOR], allowedForEditor: true }
       },
-      { 
-        path: 'artigos/:id', 
+      {
+        path: 'artigos/:id',
         component: ArtigoDetalheComponent,
         canActivate: [RoleBasedGuard],
         data: { roles: [Role.ADMIN, Role.FUNCIONARIO, Role.EDITOR], allowedForEditor: true }
       },
-      { 
-        path: 'edicoes', 
+      {
+        path: 'edicoes',
         component: AdminEdicoesComponent,
         canActivate: [RoleBasedGuard],
         data: { roles: [Role.ADMIN, Role.FUNCIONARIO] }
       },
-      { 
-        path: 'edicoes/:id', 
+      {
+        path: 'edicoes/:id',
         component: EdicaoDetalheComponent,
         canActivate: [RoleBasedGuard],
         data: { roles: [Role.ADMIN, Role.FUNCIONARIO] }
       },
-      { 
-        path: 'caes', 
+      {
+        path: 'caes',
         component: CaesComponent,
         canActivate: [RoleBasedGuard],
         data: { roles: [Role.ADMIN, Role.FUNCIONARIO] }
       }
       ,
-      
+
       {
         path: 'votacao',
         component: VotacaoComponent,

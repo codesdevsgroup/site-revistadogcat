@@ -1,33 +1,30 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { RelatoriosService, FiltrosRelatorio, StatusRelatorio } from '../../services/relatorios.service';
 import { NotificationService } from '../../services/notification.service';
 import { Subject, interval } from 'rxjs';
 import { takeUntil, switchMap, takeWhile } from 'rxjs/operators';
+import { DialogModule } from 'primeng/dialog';
 
-declare var bootstrap: any;
 
 @Component({
   selector: 'app-relatorios-modal',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, DialogModule],
   templateUrl: './relatorios-modal.html',
   styleUrls: ['./relatorios-modal.scss']
 })
 export class RelatoriosModalComponent implements OnInit, OnDestroy {
-  @ViewChild('modalElement', { static: true }) modalElement!: ElementRef;
-  
+  visible = false;
+
   filtrosForm: FormGroup;
   private destroy$ = new Subject<void>();
-  private modal: any;
-  
-  // Estados de carregamento
+
   exportandoCSV = false;
   exportandoHistorico = false;
   gerandoPDF = false;
-  
-  // Status do relatório PDF
+
   statusRelatorio: StatusRelatorio | null = null;
   verificandoStatus = false;
 
@@ -40,16 +37,12 @@ export class RelatoriosModalComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.modal = new bootstrap.Modal(this.modalElement.nativeElement);
     this.setDefaultDates();
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
-    if (this.modal) {
-      this.modal.dispose();
-    }
   }
 
   private createForm(): FormGroup {
@@ -75,24 +68,15 @@ export class RelatoriosModalComponent implements OnInit, OnDestroy {
     });
   }
 
-  /**
-   * Abre o modal
-   */
   abrir(): void {
-    this.modal.show();
+    this.visible = true;
   }
 
-  /**
-   * Fecha o modal
-   */
   fechar(): void {
-    this.modal.hide();
+    this.visible = false;
     this.resetarStatus();
   }
 
-  /**
-   * Reseta status dos relatórios
-   */
   private resetarStatus(): void {
     this.statusRelatorio = null;
     this.verificandoStatus = false;
@@ -101,9 +85,6 @@ export class RelatoriosModalComponent implements OnInit, OnDestroy {
     this.gerandoPDF = false;
   }
 
-  /**
-   * Obtém filtros do formulário
-   */
   private obterFiltros(): FiltrosRelatorio {
     const formValue = this.filtrosForm.value;
     return {
@@ -122,7 +103,7 @@ export class RelatoriosModalComponent implements OnInit, OnDestroy {
    */
   private validarPeriodo(): boolean {
     const { dataInicio, dataFim } = this.filtrosForm.value;
-    
+
     if (!dataInicio || !dataFim) {
       this.notificationService.error('Por favor, selecione o período para o relatório.');
       return false;
@@ -145,7 +126,7 @@ export class RelatoriosModalComponent implements OnInit, OnDestroy {
     // Limite de 1 ano
     const umAnoAtras = new Date();
     umAnoAtras.setFullYear(hoje.getFullYear() - 1);
-    
+
     if (inicio < umAnoAtras) {
       this.notificationService.error('O período máximo para relatórios é de 1 ano.');
       return false;
@@ -282,7 +263,7 @@ export class RelatoriosModalComponent implements OnInit, OnDestroy {
     if (!this.statusRelatorio?.urlDownload) return;
 
     const filename = this.statusRelatorio.urlDownload.split('/').pop() || 'relatorio.pdf';
-    
+
     this.relatoriosService.downloadRelatorio(filename)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -302,7 +283,7 @@ export class RelatoriosModalComponent implements OnInit, OnDestroy {
    */
   getStatusClass(): string {
     if (!this.statusRelatorio) return '';
-    
+
     switch (this.statusRelatorio.status) {
       case 'concluido':
         return 'text-success';
@@ -320,7 +301,7 @@ export class RelatoriosModalComponent implements OnInit, OnDestroy {
    */
   getStatusText(): string {
     if (!this.statusRelatorio) return '';
-    
+
     switch (this.statusRelatorio.status) {
       case 'pendente':
         return 'Aguardando processamento...';

@@ -2,14 +2,11 @@
   <!-- Cabeçalho da Página -->
   <div class="page-header">
     <h1 class="page-title">
-      <i class="fas fa-newspaper"></i>
+      <i class="pi pi-newspaper"></i>
       Gerenciar Artigos
     </h1>
     <div class="page-actions">
-      <button class="btn btn-primary" routerLink="novo">
-        <i class="fas fa-plus"></i>
-        Novo Artigo
-      </button>
+      <button pButton type="button" icon="pi pi-plus" label="Novo Artigo" routerLink="novo"></button>
     </div>
   </div>
 
@@ -17,7 +14,7 @@
   <div class="artigos-stats">
     <div class="stat-card">
       <div class="stat-icon">
-        <i class="fas fa-newspaper"></i>
+        <i class="pi pi-newspaper"></i>
       </div>
       <div class="stat-content">
         <h3>{{ artigos.length }}</h3>
@@ -27,7 +24,7 @@
 
     <div class="stat-card">
       <div class="stat-icon published">
-        <i class="fas fa-check-circle"></i>
+        <i class="pi pi-check-circle"></i>
       </div>
       <div class="stat-content">
         <h3>{{ getPublishedCount() }}</h3>
@@ -37,7 +34,7 @@
 
     <div class="stat-card">
       <div class="stat-icon featured">
-        <i class="fas fa-star"></i>
+        <i class="pi pi-star"></i>
       </div>
       <div class="stat-content">
         <h3>{{ getFeaturedCount() }}</h3>
@@ -47,7 +44,7 @@
 
     <div class="stat-card">
       <div class="stat-icon views">
-        <i class="fas fa-eye"></i>
+        <i class="pi pi-eye"></i>
       </div>
       <div class="stat-content">
         <h3>{{ getTotalViews() | number }}</h3>
@@ -62,123 +59,75 @@
     <div class="table-header">
       <h2>Lista de Artigos</h2>
       <div class="table-filters">
-        <input 
-          type="text" 
-          class="search-input" 
-          placeholder="Buscar por título ou autor..."
-        >
-        <select class="filter-select">
-          <option value="">Todas as categorias</option>
-          <option value="cuidados">Cuidados</option>
-          <option value="nutricao">Nutrição</option>
-          <option value="saude">Saúde</option>
-          <option value="comportamento">Comportamento</option>
-          <option value="seguranca">Segurança</option>
-        </select>
-        <select class="filter-select">
-          <option value="">Todos os status</option>
-          <option value="publicado">Publicado</option>
-          <option value="rascunho">Rascunho</option>
-          <option value="revisao">Em Revisão</option>
-        </select>
+        <input pInputText type="text" class="search-input" placeholder="Buscar por título ou autor..." (input)="dt.filterGlobal($any($event.target).value, 'contains')">
+
+          <p-select [options]="['Cuidados','Nutrição','Saúde','Comportamento','Segurança']" placeholder="Todas as categorias" (onChange)="dt.filter($event.value, 'categoria', 'equals')"></p-select>
+
+          <p-select [options]="['publicado','rascunho','revisao']" placeholder="Todos os status" (onChange)="dt.filter($event.value, 'status', 'equals')"></p-select>
       </div>
     </div>
 
-    <!-- Tabela Responsiva -->
-    <div class="table-responsive">
-      <table class="artigos-table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Título</th>
-            <th>Autor</th>
-            <th>Categoria</th>
-            <th>Status</th>
-            <th>Data Publicação</th>
-            <th>Visualizações</th>
-            <th>Engajamento</th>
-            <th>Destaque</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let artigo of artigos; trackBy: trackByArtigoId">
-            <td class="artigo-id">#{{ artigo.id }}</td>
-            
-            <td class="artigo-titulo">
-              <div class="titulo-info">
-                <span class="titulo-text">{{ artigo.titulo }}</span>
-              </div>
-            </td>
-            
-            <td class="artigo-autor">{{ artigo.autor }}</td>
-            
-            <td>
-              <span class="badge" [ngClass]="getCategoriaClass(artigo.categoria)">
-                {{ artigo.categoria }}
+    <p-table #dt [value]="artigos" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10,20,50]" sortMode="multiple" [tableStyle]="{'min-width':'70rem'}" [globalFilterFields]="['titulo','autor','categoria','status']" dataKey="id">
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="id">ID <p-sortIcon field="id"></p-sortIcon></th>
+          <th pSortableColumn="titulo">Título <p-sortIcon field="titulo"></p-sortIcon></th>
+          <th pSortableColumn="autor">Autor <p-sortIcon field="autor"></p-sortIcon></th>
+          <th pSortableColumn="categoria">Categoria <p-sortIcon field="categoria"></p-sortIcon></th>
+          <th pSortableColumn="status">Status <p-sortIcon field="status"></p-sortIcon></th>
+          <th pSortableColumn="dataPublicacao">Data Publicação <p-sortIcon field="dataPublicacao"></p-sortIcon></th>
+          <th pSortableColumn="visualizacoes">Visualizações <p-sortIcon field="visualizacoes"></p-sortIcon></th>
+          <th>Engajamento</th>
+          <th>Destaque</th>
+          <th>Ações</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-artigo>
+        <tr>
+          <td class="artigo-id">#{{ artigo.id }}</td>
+          <td class="artigo-titulo">
+            <div class="titulo-info">
+              <span class="titulo-text">{{ artigo.titulo }}</span>
+            </div>
+          </td>
+          <td class="artigo-autor">{{ artigo.autor }}</td>
+          <td>
+            <span class="badge" [ngClass]="getCategoriaClass(artigo.categoria)">{{ artigo.categoria }}</span>
+          </td>
+          <td>
+            <span class="status-indicator" [ngClass]="getStatusClass(artigo.status)">
+              <i class="pi pi-circle-fill"></i>
+              {{ artigo.status | titlecase }}
+            </span>
+          </td>
+          <td class="artigo-date">{{ artigo.dataPublicacao | date:'dd/MM/yyyy' }}</td>
+          <td class="artigo-views">
+            <i class="pi pi-eye"></i>
+            {{ artigo.visualizacoes | number }}
+          </td>
+          <td class="artigo-engagement">
+            <div class="engagement-stats">
+              <span class="likes">
+                <i class="pi pi-heart"></i>
+                {{ artigo.curtidas }}
               </span>
-            </td>
-            
-            <td>
-              <span class="status-indicator" [ngClass]="getStatusClass(artigo.status)">
-                <i class="fas fa-circle"></i>
-                {{ artigo.status | titlecase }}
+              <span class="comments">
+                <i class="pi pi-comments"></i>
+                {{ artigo.comentarios }}
               </span>
-            </td>
-            
-            <td class="artigo-date">{{ artigo.dataPublicacao | date:'dd/MM/yyyy' }}</td>
-            
-            <td class="artigo-views">
-              <i class="fas fa-eye"></i>
-              {{ artigo.visualizacoes | number }}
-            </td>
-            
-            <td class="artigo-engagement">
-              <div class="engagement-stats">
-                <span class="likes">
-                  <i class="fas fa-heart"></i>
-                  {{ artigo.curtidas }}
-                </span>
-                <span class="comments">
-                  <i class="fas fa-comment"></i>
-                  {{ artigo.comentarios }}
-                </span>
-              </div>
-            </td>
-            
-            <td class="artigo-destaque">
-              <button 
-                class="btn-destaque" 
-                [class.active]="artigo.destaque"
-                (click)="alterarDestaque(artigo)"
-                [title]="artigo.destaque ? 'Remover destaque' : 'Adicionar destaque'"
-              >
-                <i class="fas fa-star"></i>
-              </button>
-            </td>
-            
-            <td>
-              <div class="action-buttons">
-                <button 
-                  class="btn-action btn-edit" 
-                  [routerLink]="[artigo.id]"
-                  (click)="editarArtigo(artigo)"
-                  title="Editar artigo"
-                >
-                  <i class="fas fa-edit"></i>
-                </button>
-                <button 
-                  class="btn-action btn-delete" 
-                  (click)="excluirArtigo(artigo)"
-                  title="Excluir artigo"
-                >
-                  <i class="fas fa-trash"></i>
-                </button>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+            </div>
+          </td>
+          <td class="artigo-destaque">
+            <button pButton type="button" icon="pi pi-star" [class.active]="artigo.destaque" (click)="alterarDestaque(artigo)" [title]="artigo.destaque ? 'Remover destaque' : 'Adicionar destaque'" class="p-button-rounded p-button-text"></button>
+          </td>
+          <td>
+            <div class="action-buttons">
+              <button pButton type="button" icon="pi pi-pencil" class="p-button-rounded p-button-text" [routerLink]="[artigo.id]" (click)="editarArtigo(artigo)" title="Editar artigo"></button>
+              <button pButton type="button" icon="pi pi-trash" class="p-button-rounded p-button-text" (click)="excluirArtigo(artigo)" title="Excluir artigo"></button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
   </div>
 </div>

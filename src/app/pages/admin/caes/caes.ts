@@ -1,6 +1,11 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
+import { DialogModule } from "primeng/dialog";
+import { TableModule } from "primeng/table";
+import { InputTextModule } from "primeng/inputtext";
+import { SelectModule } from "primeng/select";
+import { ButtonModule } from "primeng/button";
 import { Router } from "@angular/router";
 import {
   CadastroCaoService,
@@ -8,7 +13,11 @@ import {
 } from "../../../services/cadastro-cao.service";
 import { RacaService } from "../../../services/raca.service";
 import { AuthService } from "../../../services/auth.service";
+import { NotificationService } from "../../../services/notification.service";
 import { firstValueFrom } from "rxjs";
+import { CaoDetailsDialogComponent } from "src/app/pages/admin/components/cao-details-dialog/cao-details-dialog.component";
+import { AdminCao as Cao } from "src/app/interfaces";
+import { RacaManageDialogComponent } from "src/app/pages/admin/components/raca-manage-dialog/raca-manage-dialog.component";
 
 interface CaoListItem {
   cadastroId: string;
@@ -16,27 +25,21 @@ interface CaoListItem {
   raca: {
     nome: string;
   };
-  dataNascimento: string;
+  dataNascimento: Date;
   sexo: string;
   proprietario: {
     nome: string;
   };
-  createdAt: string;
+  createdAt: Date;
   nome?: string;
+  registroPedigree?: string;
   numeroRegistro?: string;
   racaId?: string;
   donoCao?: {
     nome: string;
   };
-  fotos?: string[];
   status?: StatusCadastro;
   racaSugerida?: string;
-  videoOption?: string;
-  videoUrl?: string;
-  temPedigree?: boolean;
-  registroPedigree?: string;
-  pedigreeFrente?: string;
-  pedigreeVerso?: string;
 }
 
 interface Raca {
@@ -50,7 +53,7 @@ interface Raca {
 @Component({
   selector: "app-caes",
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, DialogModule, TableModule, InputTextModule, SelectModule, ButtonModule, CaoDetailsDialogComponent, RacaManageDialogComponent],
   templateUrl: "./caes.html",
   styleUrls: ["./caes.scss"],
 })
@@ -69,9 +72,15 @@ export class CaesComponent implements OnInit {
     { value: "REJEITADO", label: "Rejeitados" },
   ];
 
-  pendentesRacaOnly = false; // Filtro para cadastros com raças pendentes
+  // Opções para uso por linha (sem a opção vazia)
+  get statusOptions(): { value: StatusCadastro; label: string }[] {
+    return this.statuses
+      .filter((s) => s.value !== "")
+      .map((s) => ({ value: s.value as StatusCadastro, label: s.label }));
+  }
 
-  // Modal de raças
+  pendentesRacaOnly = false;
+
   showRacaModal = false;
   racaSearchTerm = "";
   racaForm = {
@@ -84,32 +93,16 @@ export class CaesComponent implements OnInit {
   racaModalLoading = false;
   private caoEmAprovacao: CaoListItem | null = null;
 
-  // Modal de cães
   showCaoModal = false;
-  selectedCao: CaoListItem | null = null;
-  isEditingCao = false;
-  selectedFile: File | null = null;
-
-  videoOptions = [
-    { value: "NONE", label: "Nenhum" },
-    { value: "URL", label: "Link (URL)" },
-    { value: "WHATSAPP", label: "WhatsApp" },
-    { value: "UPLOAD", label: "Enviar Arquivo" },
-  ];
+  selectedCao: Cao | null = null;
 
   constructor(
     private cadastroCaoService: CadastroCaoService,
     private racaService: RacaService,
     private authService: AuthService,
     private router: Router,
+    private notificationService: NotificationService,
   ) {}
-
-  onFileSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      this.selectedFile = input.files[0];
-    }
-  }
 
   ngOnInit() {
     this.loadCaes();
@@ -144,20 +137,15 @@ export class CaesComponent implements OnInit {
 
         return {
           ...cao,
-          nome: cao.nomeCao ?? cao.nome,
-          donoCao: cao.proprietario ?? cao.donoCao,
-          fotos: [cao.fotoPerfil, cao.fotoLateral].filter((f) => f),
+          dataNascimento: new Date(cao.dataNascimento),
+          createdAt: new Date(cao.createdAt),
           racaId: racaEncontrada ? racaEncontrada.id : undefined,
-          numeroRegistro: cao.numeroRegistro,
           status: cao.status as StatusCadastro,
-          temPedigree: cao.temPedigree,
-          registroPedigree: cao.registroPedigree,
-          pedigreeFrente: cao.pedigreeFrente,
-          pedigreeVerso: cao.pedigreeVerso,
         };
       });
     } catch (error) {
       console.error("Erro ao carregar cães:", error);
+      this.notificationService.error("Erro ao carregar lista de cães. Tente novamente.");
     } finally {
       this.loading = false;
     }
@@ -176,11 +164,12 @@ export class CaesComponent implements OnInit {
       this.updateFilteredRacas();
     } catch (error) {
       console.error("Erro ao carregar raças:", error);
+      this.notificationService.error("Erro ao carregar raças. Tente novamente.");
     }
   }
 
   filterCaes() {
-    console.log("Filtrar cães por raça:", this.selectedBreedId);
+    console.log("Filtrar cães por raça:", this.selectedRaca);
   }
 
   updateFilteredRacas() {
@@ -228,12 +217,12 @@ export class CaesComponent implements OnInit {
     });
   }
 
-  formatDate(dateString: string): string {
-    return new Date(dateString).toLocaleDateString("pt-BR");
+  formatDate(date: Date): string {
+    return date.toLocaleDateString("pt-BR");
   }
 
-  calculateAge(birthDate: string): string {
-    const birth = new Date(birthDate);
+  calculateAge(birthDate: Date): string {
+    const birth = birthDate;
     const today = new Date();
     const ageInMonths =
       (today.getFullYear() - birth.getFullYear()) * 12 +
@@ -247,7 +236,7 @@ export class CaesComponent implements OnInit {
     }
   }
 
-  formatAge(birthDate: string): string {
+  formatAge(birthDate: Date): string {
     return this.calculateAge(birthDate);
   }
 
@@ -257,12 +246,11 @@ export class CaesComponent implements OnInit {
     return raca ? raca.nome : "N/A";
   }
 
-  // Métodos do modal de raças
   openRacaModal() {
     this.showRacaModal = true;
-    this.racaSearchTerm = ""; // Limpa o filtro ao abrir o modal
+    this.racaSearchTerm = "";
     this.resetRacaForm();
-    this.updateFilteredRacas(); // Atualiza a lista filtrada
+    this.updateFilteredRacas();
   }
 
   closeRacaModal() {
@@ -293,7 +281,7 @@ export class CaesComponent implements OnInit {
 
   async saveRaca() {
     if (!this.racaForm.nome.trim()) {
-      alert("Nome da raça é obrigatório");
+      this.notificationService.warning("Nome da raça é obrigatório.");
       return;
     }
 
@@ -322,15 +310,16 @@ export class CaesComponent implements OnInit {
           } as any),
         );
         this.caoEmAprovacao = null;
-        this.pendentesRacaOnly = true; // Manter o filtro
+        this.pendentesRacaOnly = true;
         await this.loadCaes();
       }
 
       await this.loadRacas();
       this.closeRacaModal();
+      this.notificationService.success(this.isEditingRaca ? "Raça atualizada com sucesso!" : "Raça criada com sucesso!");
     } catch (error) {
       console.error("Erro ao salvar raça:", error);
-      alert("Erro ao salvar raça");
+      this.notificationService.error("Erro ao salvar raça. Tente novamente.");
     } finally {
       this.racaModalLoading = false;
     }
@@ -356,9 +345,10 @@ export class CaesComponent implements OnInit {
     try {
       await this.racaService.delete(raca.racaId);
       await this.loadRacas();
+      this.notificationService.success("Raça excluída com sucesso!");
     } catch (error) {
       console.error("Erro ao excluir raça:", error);
-      alert("Erro ao excluir raça");
+      this.notificationService.error("Erro ao excluir raça. Tente novamente.");
     }
   }
 
@@ -375,7 +365,6 @@ export class CaesComponent implements OnInit {
     return user ? user.role === "ADMIN" || user.role === "EDITOR" : false;
   }
 
-  // Aliases para compatibilidade com o template
   get isSavingBreed() {
     return this.racaModalLoading;
   }
@@ -430,7 +419,6 @@ export class CaesComponent implements OnInit {
   }
 
   viewCao(cao: CaoListItem) {
-    // Implementar visualização do cão
     console.log("Visualizar cão:", cao);
   }
 
@@ -438,10 +426,46 @@ export class CaesComponent implements OnInit {
     this.openCaoModal(cao);
   }
 
-  openCaoModal(cao: CaoListItem) {
-    this.selectedCao = { ...cao };
+  openCaoModal(caoListItem: CaoListItem) {
+    const cao: Cao = {
+      cadastroId: caoListItem.cadastroId,
+      userId: '',
+      nome: caoListItem.nomeCao || caoListItem.nome || '',
+      raca: caoListItem.raca?.nome,
+      racaId: caoListItem.racaId,
+      sexo: caoListItem.sexo,
+      dataNascimento: caoListItem.dataNascimento,
+      fotoPerfil: (caoListItem as any).fotoPerfil || '',
+      fotoLateral: (caoListItem as any).fotoLateral || '',
+      peso: undefined,
+      altura: undefined,
+      temPedigree: false,
+      registroPedigree: caoListItem.registroPedigree,
+      pedigreeFrente: (caoListItem as any).pedigreeFrente || undefined,
+      pedigreeVerso: (caoListItem as any).pedigreeVerso || undefined,
+      temMicrochip: false,
+      numeroMicrochip: undefined,
+      titulos: undefined,
+      caracteristicas: undefined,
+      videoOption: 'NONE',
+      videoUrl: undefined,
+      whatsappContato: undefined,
+      observacoes: undefined,
+      createdAt: caoListItem.createdAt,
+      updatedAt: new Date(),
+      status: caoListItem.status || 'CADASTRO_INCOMPLETO',
+      motivoRejeicao: undefined,
+      aprovadoPor: undefined,
+      aprovadoEm: undefined,
+      ativo: true,
+      totalVotos: 0,
+      nomeCao: caoListItem.nomeCao,
+      donoCao: caoListItem.proprietario || caoListItem.donoCao,
+      racaSugerida: caoListItem.racaSugerida,
+      numeroRegistro: caoListItem.numeroRegistro,
+    };
+    this.selectedCao = cao;
     this.showCaoModal = true;
-    this.isEditingCao = false; // Começa em modo de visualização
   }
 
   closeCaoModal() {
@@ -449,75 +473,102 @@ export class CaesComponent implements OnInit {
     this.selectedCao = null;
   }
 
-  async saveCao() {
-    if (!this.selectedCao) return;
+  async saveCao(updatedCao: Cao) {
+    if (!updatedCao) return;
 
     try {
-      // 1. Update text fields and other data
+      // Evitar enviar imagens em base64 via JSON (causa PayloadTooLargeError)
+      const payload: any = { ...updatedCao };
+      const imageFields = [
+        'fotoPerfil',
+        'fotoLateral',
+        'pedigreeFrente',
+        'pedigreeVerso',
+      ] as const;
+      imageFields.forEach((field) => {
+        const value = payload[field];
+        // Remove data URLs (ex.: "data:image/png;base64,...") do payload de atualização
+        if (typeof value === 'string' && /^data:image\//.test(value)) {
+          delete payload[field];
+        }
+      });
+
       await firstValueFrom(
-        this.cadastroCaoService.update(
-          this.selectedCao.cadastroId,
-          this.selectedCao as any,
-        ),
+        this.cadastroCaoService.update(updatedCao.cadastroId, payload),
       );
-
-      // 2. Upload video if selected
-      if (this.selectedFile && this.selectedCao.videoOption === "UPLOAD") {
-        await firstValueFrom(
-          this.cadastroCaoService.uploadVideo(
-            this.selectedCao.cadastroId,
-            this.selectedFile,
-          ),
-        );
-      }
-
-      alert("Cão atualizado com sucesso!");
+      this.notificationService.success("Cão atualizado com sucesso!");
       this.closeCaoModal();
       await this.loadCaes();
     } catch (error) {
       console.error("Erro ao atualizar cão:", error);
-      alert("Erro ao atualizar cão.");
+      this.notificationService.error("Erro ao atualizar cão. Tente novamente.");
     }
   }
 
-  // Ações de aprovação/rejeição de cadastro pendente
   async aprovarCao(cao: CaoListItem) {
     try {
       const result = await firstValueFrom(
         this.cadastroCaoService.aprovarCadastro(cao.cadastroId),
       );
-      alert(result?.mensagem || "Cadastro aprovado com sucesso");
+      this.notificationService.success(result?.mensagem || "Cadastro aprovado com sucesso!");
       await this.loadCaes();
     } catch (error: any) {
       console.error("Erro ao aprovar cadastro:", error);
-      alert(
-        error?.error?.message || error?.message || "Erro ao aprovar cadastro",
-      );
+      this.notificationService.error(error?.error?.message || error?.message || "Erro ao aprovar cadastro. Tente novamente.");
     }
   }
 
   async rejeitarCao(cao: CaoListItem) {
     const motivo = prompt("Informe o motivo da rejeição:");
     if (!motivo || !motivo.trim()) {
-      alert("Motivo da rejeição é obrigatório");
+      this.notificationService.warning("Motivo da rejeição é obrigatório.");
       return;
     }
     try {
       const result = await firstValueFrom(
         this.cadastroCaoService.rejeitarCadastro(cao.cadastroId, motivo.trim()),
       );
-      alert(result?.mensagem || "Cadastro rejeitado com sucesso");
+      this.notificationService.success(result?.mensagem || "Cadastro rejeitado com sucesso!");
       await this.loadCaes();
     } catch (error: any) {
       console.error("Erro ao rejeitar cadastro:", error);
-      alert(
-        error?.error?.message || error?.message || "Erro ao rejeitar cadastro",
-      );
+      this.notificationService.error(error?.error?.message || error?.message || "Erro ao rejeitar cadastro. Tente novamente.");
     }
   }
 
   isCaoPendente(cao: CaoListItem): boolean {
-    // "Cadastro incompleto" substitui o antigo "PENDENTE"
     return (cao.status as StatusCadastro) === "CADASTRO_INCOMPLETO";
+  }
+
+  async setCadastroIncompleto(cao: CaoListItem) {
+    try {
+      await firstValueFrom(
+        this.cadastroCaoService.update(cao.cadastroId, {
+          status: "CADASTRO_INCOMPLETO",
+          motivoRejeicao: null,
+        } as any),
+      );
+      this.notificationService.success("Status atualizado para incompleto!");
+      await this.loadCaes();
+    } catch (error: any) {
+      console.error("Erro ao definir cadastro incompleto:", error);
+      this.notificationService.error(error?.error?.message || error?.message || "Erro ao atualizar status. Tente novamente.");
+    }
+  }
+
+  async onRowStatusChange(cao: CaoListItem, novoStatus: StatusCadastro) {
+    // Mantém a UX consistente com as ações especializadas
+    if (novoStatus === "APROVADO") {
+      await this.aprovarCao(cao);
+      return;
+    }
+    if (novoStatus === "REJEITADO") {
+      await this.rejeitarCao(cao);
+      return;
+    }
+    if (novoStatus === "CADASTRO_INCOMPLETO") {
+      await this.setCadastroIncompleto(cao);
+      return;
+    }
   }
 }
