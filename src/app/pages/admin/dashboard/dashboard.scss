@@ -401,7 +401,7 @@
     }
   }
 
-  .analytics-card {
+.analytics-card {
     background: white;
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -418,6 +418,16 @@
       font-size: 18px;
       font-weight: 600;
       color: #1f2937;
+    }
+
+    p-chart {
+      display: block;
+      height: 280px; // Altura fixa para consistência
+    }
+
+    // Específico para gráfico de pizza, se precisar de ajuste fino
+    p-chart[type="pie"] {
+      height: 260px;
     }
 
     .chart-placeholder {

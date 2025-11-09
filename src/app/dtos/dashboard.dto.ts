@@ -31,6 +31,9 @@ export interface UserDistributionItem {
 export interface DogsStatsResponse {
   monthlyGrowth: MonthlyGrowthItem[];
   incompleteCount: number;
+  totalCount: number;
+  approvedCount: number;
+  rejectedCount: number;
 }
 
 export interface DashboardResponse {

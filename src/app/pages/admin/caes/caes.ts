@@ -104,22 +104,26 @@ export class CaesComponent implements OnInit {
     private notificationService: NotificationService,
   ) {}
 
-  ngOnInit() {
-    this.loadCaes();
-    this.loadRacas();
+  async ngOnInit() {
+    await this.loadRacas();
+    await this.loadCaes();
   }
 
   async loadCaes() {
     try {
       this.loading = true;
 
-      const normalizeList = (resp: { data?: { data?: CaoListItem[] } } | CaoListItem[]): CaoListItem[] => {
+      const normalizeList = (resp: any): CaoListItem[] => {
         if (Array.isArray(resp)) return resp;
-        if (resp?.data && Array.isArray(resp.data.data)) return resp.data.data;
+        if (resp?.data && Array.isArray(resp.data)) return resp.data;
+        if (resp?.data?.data && Array.isArray(resp.data.data)) return resp.data.data;
         return [];
       };
 
-      const params: { status?: StatusCadastro } = {};
+      const params: { status?: StatusCadastro; page: string; limit: string } = {
+        page: '1',
+        limit: '100',
+      };
       if (this.selectedStatus) {
         params.status = this.selectedStatus;
       }
@@ -128,15 +132,20 @@ export class CaesComponent implements OnInit {
       const data = normalizeList(result);
 
       this.caes = (data || []).map((cao) => {
+        const racaNome = ((cao as any).raca || (cao as any)?.raca?.nome || '').toString();
         const racaEncontrada = this.racas.find(
-          (r) => r.nome.toLowerCase() === cao.raca?.nome.toLowerCase(),
+          (r) => r.nome.toLowerCase() === racaNome.toLowerCase(),
         );
 
         return {
           ...cao,
           dataNascimento: new Date(cao.dataNascimento),
           createdAt: new Date(cao.createdAt),
+          // Normaliza raca para objeto com nome, garantindo compatibilidade no filtro
+          raca: { nome: racaNome },
           racaId: racaEncontrada ? racaEncontrada.id : undefined,
+          // Normaliza dono para compatibilidade com template e filtros globais
+          donoCao: cao.proprietario ? { nome: cao.proprietario.nome } : (cao as any).donoCao,
           status: cao.status as StatusCadastro,
         };
       });

@@ -334,7 +334,7 @@
   flex-direction: column;
   gap: var(--space-1);
   
-  .likes, .comments {
+  .likes {
     display: flex;
     align-items: center;
     gap: var(--space-1);
@@ -348,10 +348,6 @@
   
   .likes i {
     color: #ef4444;
-  }
-  
-  .comments i {
-    color: #3b82f6;
   }
 }
 

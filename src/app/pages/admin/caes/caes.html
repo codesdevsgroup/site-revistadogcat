@@ -48,7 +48,7 @@
                 <small *ngIf="cao.numeroRegistro">#{{ cao.numeroRegistro }}</small>
               </div>
             </td>
-            <td>{{ getRacaName(cao.racaId) }}</td>
+            <td>{{ getRacaName(cao.racaId) || cao.raca?.nome || 'N/A' }}</td>
             <td>{{ formatAge(cao.dataNascimento) }}</td>
             <td>
               <span class="sexo-badge" [class]="cao.sexo.toLowerCase()">{{ cao.sexo === 'MACHO' ? 'Macho' : 'Fêmea' }}</span>

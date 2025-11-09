@@ -124,6 +124,22 @@ export class DashboardComponent implements OnInit {
         changePositive: cards.visualizacoes.percentage >= 0
       }
     ];
+
+    // Card adicional: Cães cadastrados (total), com variação mensal
+    const dogsMonthly = Array.isArray(data?.dogsStats?.monthlyGrowth) ? data!.dogsStats!.monthlyGrowth : [];
+    const last = dogsMonthly.length >= 1 ? dogsMonthly[dogsMonthly.length - 1].count : 0;
+    const prev = dogsMonthly.length >= 2 ? dogsMonthly[dogsMonthly.length - 2].count : 0;
+    const diff = last - prev;
+    const perc = prev > 0 ? Math.round((diff / prev) * 100) : 0;
+    const dogsTotal = data?.dogsStats?.totalCount ?? 0;
+    this.stats.push({
+      title: 'Cães Cadastrados',
+      value: formatNumber(dogsTotal),
+      icon: 'pets',
+      color: 'success',
+      change: `${perc > 0 ? '+' : ''}${perc}%`,
+      changePositive: perc >= 0,
+    });
   }
 
   /**
