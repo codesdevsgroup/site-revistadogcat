@@ -2,7 +2,8 @@ import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TiptapEditorComponent } from '../components/tiptap-editor/tiptap-editor';
+// Substitui o editor TipTap pelo Editor mais completo do PrimeNG
+import { EditorModule } from 'primeng/editor';
 import { ArtigosService } from '../../../services/artigos.service';
 import type { Artigo, ArtigoInput } from '../../../interfaces/artigo.interface';
 import { UsuarioService } from '../../../services/usuario.service';
@@ -14,7 +15,7 @@ import { environment } from '../../../../environments/environment';
 @Component({
   selector: 'app-artigo-detalhe',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TiptapEditorComponent],
+  imports: [CommonModule, ReactiveFormsModule, EditorModule],
   templateUrl: './artigo-detalhe.html',
   styleUrl: './artigo-detalhe.scss'
 })

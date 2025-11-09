@@ -7,7 +7,6 @@ import { Subject, interval } from 'rxjs';
 import { takeUntil, switchMap, takeWhile } from 'rxjs/operators';
 import { DialogModule } from 'primeng/dialog';
 
-// Removido Bootstrap; agora usando PrimeNG Dialog
 
 @Component({
   selector: 'app-relatorios-modal',
@@ -17,18 +16,15 @@ import { DialogModule } from 'primeng/dialog';
   styleUrls: ['./relatorios-modal.scss']
 })
 export class RelatoriosModalComponent implements OnInit, OnDestroy {
-  // Controla visibilidade do Dialog PrimeNG
   visible = false;
-  
+
   filtrosForm: FormGroup;
   private destroy$ = new Subject<void>();
-  
-  // Estados de carregamento
+
   exportandoCSV = false;
   exportandoHistorico = false;
   gerandoPDF = false;
-  
-  // Status do relatório PDF
+
   statusRelatorio: StatusRelatorio | null = null;
   verificandoStatus = false;
 
@@ -72,24 +68,15 @@ export class RelatoriosModalComponent implements OnInit, OnDestroy {
     });
   }
 
-  /**
-   * Abre o modal
-   */
   abrir(): void {
     this.visible = true;
   }
 
-  /**
-   * Fecha o modal
-   */
   fechar(): void {
     this.visible = false;
     this.resetarStatus();
   }
 
-  /**
-   * Reseta status dos relatórios
-   */
   private resetarStatus(): void {
     this.statusRelatorio = null;
     this.verificandoStatus = false;
@@ -98,9 +85,6 @@ export class RelatoriosModalComponent implements OnInit, OnDestroy {
     this.gerandoPDF = false;
   }
 
-  /**
-   * Obtém filtros do formulário
-   */
   private obterFiltros(): FiltrosRelatorio {
     const formValue = this.filtrosForm.value;
     return {
@@ -119,7 +103,7 @@ export class RelatoriosModalComponent implements OnInit, OnDestroy {
    */
   private validarPeriodo(): boolean {
     const { dataInicio, dataFim } = this.filtrosForm.value;
-    
+
     if (!dataInicio || !dataFim) {
       this.notificationService.error('Por favor, selecione o período para o relatório.');
       return false;
@@ -142,7 +126,7 @@ export class RelatoriosModalComponent implements OnInit, OnDestroy {
     // Limite de 1 ano
     const umAnoAtras = new Date();
     umAnoAtras.setFullYear(hoje.getFullYear() - 1);
-    
+
     if (inicio < umAnoAtras) {
       this.notificationService.error('O período máximo para relatórios é de 1 ano.');
       return false;
@@ -279,7 +263,7 @@ export class RelatoriosModalComponent implements OnInit, OnDestroy {
     if (!this.statusRelatorio?.urlDownload) return;
 
     const filename = this.statusRelatorio.urlDownload.split('/').pop() || 'relatorio.pdf';
-    
+
     this.relatoriosService.downloadRelatorio(filename)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -299,7 +283,7 @@ export class RelatoriosModalComponent implements OnInit, OnDestroy {
    */
   getStatusClass(): string {
     if (!this.statusRelatorio) return '';
-    
+
     switch (this.statusRelatorio.status) {
       case 'concluido':
         return 'text-success';
@@ -317,7 +301,7 @@ export class RelatoriosModalComponent implements OnInit, OnDestroy {
    */
   getStatusText(): string {
     if (!this.statusRelatorio) return '';
-    
+
     switch (this.statusRelatorio.status) {
       case 'pendente':
         return 'Aguardando processamento...';

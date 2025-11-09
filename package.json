@@ -48,6 +48,7 @@
     "notyf": "^3.10.0",
     "primeicons": "^7.0.0",
     "primeng": "^20.3.0",
+    "quill": "^2.0.3",
     "rxjs": "~7.8.0",
     "tiptap-extension-font-size": "^1.2.0",
     "tslib": "^2.3.0",

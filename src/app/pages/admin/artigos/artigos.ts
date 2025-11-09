@@ -1,13 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { TableModule } from 'primeng/table';
+import { InputTextModule } from 'primeng/inputtext';
+import { SelectModule } from 'primeng/select';
+import { ButtonModule } from 'primeng/button';
 import { ArtigosService } from '../../../services/artigos.service';
 import type { Artigo } from '../../../interfaces/artigo.interface';
 
 @Component({
   selector: 'app-artigos',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, TableModule, InputTextModule, SelectModule, ButtonModule],
   templateUrl: './artigos.html',
   styleUrls: ['./artigos.scss']
 })

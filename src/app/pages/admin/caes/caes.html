@@ -1,22 +1,15 @@
 <div class="caes-container">
   <div class="page-header">
     <h1 class="page-title">
-      <i class="fas fa-dog"></i>
+      <i class="pi pi-paw"></i>
       Cães Cadastrados
     </h1>
     <div class="page-actions">
-      <button
-        class="btn btn-secondary"
+      <button pButton type="button" icon="pi pi-cog" label="Gerenciar Raças"
         (click)="openBreedModal()"
         *ngIf="canManageBreeds()"
-      >
-        <i class="fas fa-cog"></i>
-        Gerenciar Raças
-      </button>
-      <button class="btn btn-primary" (click)="navigateToCadastro()">
-        <i class="fas fa-plus"></i>
-        Cadastrar Cão
-      </button>
+      ></button>
+      <button pButton type="button" icon="pi pi-plus" label="Cadastrar Cão" (click)="navigateToCadastro()"></button>
     </div>
   </div>
 
@@ -25,115 +18,63 @@
       <div class="table-header">
         <h2>Lista de Cães ({{ filteredCaes.length }})</h2>
         <div class="table-filters">
-          <input
-            type="text"
-            placeholder="Buscar por nome, dono ou registro..."
-            class="search-input"
-            [(ngModel)]="searchTerm"
-          />
+          <input pInputText type="text" placeholder="Buscar por nome, dono ou registro..." class="search-input" (input)="dt.filterGlobal($any($event.target).value, 'contains')" />
 
-          <select class="filter-select" [(ngModel)]="selectedRaca">
-            <option value="">Todas as raças</option>
-            <option *ngFor="let raca of racas" [value]="raca.id">
-              {{ raca.nome }}
-            </option>
-          </select>
+          <p-select [options]="racas" optionLabel="nome" optionValue="id" placeholder="Todas as raças" (onChange)="dt.filter($event.value, 'racaId', 'equals')"></p-select>
 
-          <select
-            class="filter-select"
-            [(ngModel)]="selectedStatus"
-            (change)="loadCaes()"
-          >
-            <option *ngFor="let status of statuses" [value]="status.value">
-              {{ status.label }}
-            </option>
-          </select>
+          <p-select [options]="statuses" optionLabel="label" optionValue="value" placeholder="Todos os status" (onChange)="dt.filter($event.value, 'status', 'equals')"></p-select>
         </div>
       </div>
 
-      <div
-        class="table-responsive"
-        *ngIf="filteredCaes.length > 0; else emptyState"
-      >
-        <table class="caes-table">
-          <thead>
-            <tr>
-              <th>Foto</th>
-              <th>Nome</th>
-              <th>Raça</th>
-              <th>Idade</th>
-              <th>Sexo</th>
-              <th>Dono</th>
-              <th>Data de Cadastro</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let cao of filteredCaes">
-              <td>
-                <div class="cao-photo">
-                  <img *ngIf="cao.fotos && cao.fotos.length > 0; else noPhoto"
-                       [src]="cao.fotos[0]"
-                       [alt]="cao.nome"
-                       class="photo-thumbnail">
-                  <ng-template #noPhoto>
-                    <div class="no-photo">
-                      <i class="fas fa-dog"></i>
-                    </div>
-                  </ng-template>
-                </div>
-              </td>
-              <td>
-                <div class="cao-name">
-                  <strong>{{ cao.nome }}</strong>
-                  <span *ngIf="isCaoPendente(cao)" class="badge bg-warning ms-1"
-                    >Cadastro incompleto</span
-                  >
-                  <small *ngIf="cao.numeroRegistro"
-                    >#{{ cao.numeroRegistro }}</small
-                  >
-                </div>
-              </td>
-              <td>{{ getRacaName(cao.racaId) }}</td>
-              <td>{{ formatAge(cao.dataNascimento) }}</td>
-              <td>
-                <span class="sexo-badge" [class]="cao.sexo.toLowerCase()">
-                  {{ cao.sexo === 'MACHO' ? 'Macho' : 'Fêmea' }}
-                </span>
-              </td>
-              <td>{{ cao.donoCao?.nome || 'N/A' }}</td>
-              <td>{{ formatDate(cao.createdAt) }}</td>
-              <td>
-                <div class="action-buttons">
-                  <button
-                    class="btn btn-sm btn-outline"
-                    (click)="openCaoModal(cao)"
-                    title="Detalhes"
-                  >
-                    <i class="fas fa-eye"></i>
-                  </button>
-                  <button
-                    *ngIf="isCaoPendente(cao)"
-                    class="btn btn-sm btn-success ms-1"
-                    (click)="aprovarCao(cao)"
-                    title="Aprovar"
-                  >
-                    <i class="fas fa-check"></i>
-                  </button>
-                  <button
-                    *ngIf="isCaoPendente(cao)"
-                    class="btn btn-sm btn-warning ms-1"
-                    (click)="rejeitarCao(cao)"
-                    title="Rejeitar"
-                  >
-                    <i class="fas fa-times"></i>
-                  </button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <p-table #dt [value]="filteredCaes" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10,20,50]" sortMode="multiple" [tableStyle]="{'min-width':'70rem'}" [globalFilterFields]="['nome','numeroRegistro','donoCao.nome']" dataKey="cadastroId">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Foto</th>
+            <th pSortableColumn="nome">Nome <p-sortIcon field="nome"></p-sortIcon></th>
+            <th pSortableColumn="racaId">Raça <p-sortIcon field="racaId"></p-sortIcon></th>
+            <th pSortableColumn="dataNascimento">Idade <p-sortIcon field="dataNascimento"></p-sortIcon></th>
+            <th pSortableColumn="sexo">Sexo <p-sortIcon field="sexo"></p-sortIcon></th>
+            <th pSortableColumn="donoCao.nome">Dono <p-sortIcon field="donoCao.nome"></p-sortIcon></th>
+            <th pSortableColumn="createdAt">Data de Cadastro <p-sortIcon field="createdAt"></p-sortIcon></th>
+            <th>Ações</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-cao>
+          <tr>
+            <td>
+              <div class="cao-photo">
+                <img *ngIf="cao.fotos && cao.fotos.length > 0; else noPhoto" [src]="cao.fotos[0]" [alt]="cao.nome" class="photo-thumbnail">
+                <ng-template #noPhoto>
+                  <div class="no-photo">
+                    <i class="pi pi-dog"></i>
+                  </div>
+                </ng-template>
+              </div>
+            </td>
+            <td>
+              <div class="cao-name">
+                <strong>{{ cao.nome }}</strong>
+                <span *ngIf="isCaoPendente(cao)" class="badge bg-warning ms-1">Cadastro incompleto</span>
+                <small *ngIf="cao.numeroRegistro">#{{ cao.numeroRegistro }}</small>
+              </div>
+            </td>
+            <td>{{ getRacaName(cao.racaId) }}</td>
+            <td>{{ formatAge(cao.dataNascimento) }}</td>
+            <td>
+              <span class="sexo-badge" [class]="cao.sexo.toLowerCase()">{{ cao.sexo === 'MACHO' ? 'Macho' : 'Fêmea' }}</span>
+            </td>
+            <td>{{ cao.donoCao?.nome || 'N/A' }}</td>
+            <td>{{ formatDate(cao.createdAt) }}</td>
+            <td>
+              <div class="action-buttons">
+                <button pButton type="button" icon="pi pi-eye" class="p-button-rounded p-button-text" (click)="openCaoModal(cao)" title="Detalhes"></button>
+                <button *ngIf="isCaoPendente(cao)" pButton type="button" icon="pi pi-check" class="p-button-rounded p-button-text" (click)="aprovarCao(cao)" title="Aprovar"></button>
+                <button *ngIf="isCaoPendente(cao)" pButton type="button" icon="pi pi-times" class="p-button-rounded p-button-text" (click)="rejeitarCao(cao)" title="Rejeitar"></button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
 
       <ng-template #emptyState>
         <div class="empty-state">
