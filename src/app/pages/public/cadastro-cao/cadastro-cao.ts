@@ -203,7 +203,8 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
   }
 
   nextStep() {
-    if (this.currentStep < 5) this.currentStep++;
+    // Fluxo ajustado: último passo é o 4 (Fotos). Envio de vídeo foi removido do cadastro.
+    if (this.currentStep < 4) this.currentStep++;
   }
   prevStep() {
     if (this.currentStep > 1) this.currentStep--;
@@ -384,18 +385,7 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
     return this.validationService.formatFileSize(bytes);
   }
 
-  isVideoStepValid(): boolean {
-    switch (this.videoOption) {
-      case "upload":
-        return this.selectedFile !== null;
-      case "youtube":
-        return this.videoForm.get("videoUrl")?.valid || false;
-      case "whatsapp":
-        return this.videoForm.get("confirmaWhatsapp")?.value === true;
-      default:
-        return false;
-    }
-  }
+  // Validação de vídeo removida do fluxo de cadastro
 
   isFormValid(): boolean {
     const userValid = this.proprietarioDiferente ? this.userForm.valid : true;
@@ -419,7 +409,7 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
       }
     }
 
-    return userValid && dogValid && fotosValid && this.isVideoStepValid();
+    return userValid && dogValid && fotosValid;
   }
 
   calcularIdade(data: string | Date | null): string {
@@ -501,19 +491,7 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
     if (!this.fotoPerfil) errors.push("Foto de perfil do cão");
     if (!this.fotoLateral) errors.push("Foto lateral do cão");
 
-    switch (this.videoOption) {
-      case "upload":
-        if (!this.selectedFile) errors.push("Arquivo de vídeo do cão");
-        break;
-      case "youtube":
-        if (!this.videoForm.get("videoUrl")?.valid)
-          errors.push("URL válida do vídeo no YouTube");
-        break;
-      case "whatsapp":
-        if (!this.videoForm.get("confirmaWhatsapp")?.value)
-          errors.push("Confirmação de envio de vídeo via WhatsApp");
-        break;
-    }
+    // Erros relacionados a vídeo foram removidos do cadastro
 
     return errors;
   }
@@ -523,7 +501,7 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
     if (!this.isFormValid() || this.isSubmitting) {
       this.userForm.markAllAsTouched();
       this.dogForm.markAllAsTouched();
-      this.videoForm.markAllAsTouched();
+      // videoForm não é mais necessário neste fluxo
       if (this.validationErrors.length > 0) {
         alert(
           "Existem campos obrigatórios pendentes: " +
@@ -558,27 +536,7 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
       });
     }
 
-    const mapVideoOptionToBackend = (opt: VideoOption): string => {
-      switch (opt) {
-        case "upload":
-          return "UPLOAD";
-        case "youtube":
-          return "URL";
-        case "whatsapp":
-          return "WHATSAPP";
-        default:
-          return "NONE";
-      }
-    };
-
-    const backendVideoOption = mapVideoOptionToBackend(this.videoOption);
-    formData.append("videoOption", backendVideoOption);
-    if (this.videoOption === "youtube") {
-      formData.append("videoUrl", this.videoForm.get("videoUrl")?.value);
-    } else if (this.videoOption === "whatsapp") {
-      const telefoneContato = this.userForm.get("telefone")?.value || "";
-      formData.append("whatsappContato", telefoneContato);
-    }
+    // Removido: envio de campos de vídeo (videoOption, videoUrl, whatsappContato)
 
     if (this.fotoPerfil) formData.append("fotoPerfil", this.fotoPerfil);
     if (this.fotoLateral) formData.append("fotoLateral", this.fotoLateral);
@@ -586,9 +544,7 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
       formData.append("pedigreeFrente", this.pedigreeFrente);
     if (this.pedigreeVerso)
       formData.append("pedigreeVerso", this.pedigreeVerso);
-    if (this.selectedFile && this.videoOption === "upload") {
-      formData.append("video", this.selectedFile);
-    }
+    // Removido: envio de arquivo de vídeo
 
     // Log de diagnóstico: inspecionar o payload do FormData antes do envio
     try {

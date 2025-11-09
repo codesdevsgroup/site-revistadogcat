@@ -81,14 +81,7 @@
               <div class="step-label">Fotos do Cão</div>
             </div>
             <div class="step-line" [class.active]="currentStep > 4"></div>
-            <div
-              class="step"
-              [class.active]="currentStep >= 5"
-              [class.completed]="currentStep > 5"
-            >
-              <div class="step-number">5</div>
-              <div class="step-label">Vídeo de Apresentação</div>
-            </div>
+            <!-- Passo de Vídeo removido: envio será pelo Perfil -->
           </div>
         </div>
       </div>
@@ -743,177 +736,6 @@
                 </button>
                 <button
                   type="button"
-                  class="btn btn-primary"
-                  (click)="nextStep()"
-                  [disabled]="!fotoPerfil || !fotoLateral"
-                >
-                  Próximo: Vídeo
-                </button>
-              </div>
-            </div>
-
-            <!-- Step 5: Vídeo -->
-            <div class="form-step" [class.active]="currentStep === 5">
-              <div class="step-header">
-                <h2>🎬 Vídeo de Apresentação</h2>
-                <p>
-                  Escolha como deseja enviar o vídeo de apresentação do seu cão
-                </p>
-              </div>
-
-              <div class="video-section">
-                <!-- Opções de vídeo -->
-                <div class="video-options d-flex gap-3 mb-4">
-                  <button
-                    type="button"
-                    class="btn"
-                    [class.btn-primary]="videoOption === 'upload'"
-                    [class.btn-outline-primary]="videoOption !== 'upload'"
-                    (click)="selectVideoOption('upload')"
-                  >
-                    Enviar arquivo de vídeo
-                  </button>
-                  <button
-                    type="button"
-                    class="btn"
-                    [class.btn-primary]="videoOption === 'youtube'"
-                    [class.btn-outline-primary]="videoOption !== 'youtube'"
-                    (click)="selectVideoOption('youtube')"
-                  >
-                    Link do YouTube
-                  </button>
-                  <button
-                    type="button"
-                    class="btn"
-                    [class.btn-primary]="videoOption === 'whatsapp'"
-                    [class.btn-outline-primary]="videoOption !== 'whatsapp'"
-                    (click)="selectVideoOption('whatsapp')"
-                  >
-                    Enviar por WhatsApp
-                  </button>
-                </div>
-
-                <!-- Upload de arquivo -->
-                <div *ngIf="videoOption === 'upload'" class="video-option">
-                  <p class="form-text">
-                    Formatos aceitos: MP4, MOV, AVI, WMV. Duração recomendada:
-                    até 20 segundos.
-                  </p>
-                  <input
-                    #fileInput
-                    type="file"
-                    class="d-none"
-                    (change)="onFileSelected($event)"
-                    accept="video/*"
-                  />
-                  <div class="d-flex gap-2 mb-2">
-                    <button
-                      type="button"
-                      class="btn btn-outline-secondary"
-                      (click)="triggerFileInput()"
-                    >
-                      Selecionar vídeo
-                    </button>
-                    <button
-                      type="button"
-                      class="btn btn-outline-danger"
-                      (click)="removeFile()"
-                      [disabled]="!selectedFile"
-                    >
-                      Remover
-                    </button>
-                  </div>
-                  <div *ngIf="selectedFile" class="mb-2">
-                    <strong>Arquivo:</strong> {{ selectedFile.name }} ({{
-                    formatFileSize(selectedFile.size) }})
-                  </div>
-                  <div
-                    *ngIf="uploadProgress > 0"
-                    class="upload-progress-container mt-3"
-                  >
-                    <div class="d-flex justify-content-between">
-                      <span>Enviando vídeo...</span>
-                      <span>{{ uploadProgress }}%</span>
-                    </div>
-                    <div class="progress" style="height: 8px">
-                      <div
-                        class="progress-bar"
-                        role="progressbar"
-                        [style.width.%]="uploadProgress"
-                        [attr.aria-valuenow]="uploadProgress"
-                        aria-valuemin="0"
-                        aria-valuemax="100"
-                      ></div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Link do YouTube -->
-                <div *ngIf="videoOption === 'youtube'" class="video-option">
-                  <form [formGroup]="videoForm">
-                    <div class="mb-3">
-                      <label for="videoUrl" class="form-label"
-                        >URL do vídeo no YouTube *</label
-                      >
-                      <input
-                        id="videoUrl"
-                        type="url"
-                        class="form-control"
-                        formControlName="videoUrl"
-                        placeholder="https://www.youtube.com/watch?v=..."
-                      />
-                      <div class="form-text">
-                        Insira um link válido do YouTube.
-                      </div>
-                    </div>
-                  </form>
-                </div>
-
-                <!-- Envio por WhatsApp -->
-                <div *ngIf="videoOption === 'whatsapp'" class="video-option">
-                  <form [formGroup]="videoForm">
-                    <div class="form-check mb-3">
-                      <input
-                        id="confirmaWhatsapp"
-                        class="form-check-input"
-                        type="checkbox"
-                        formControlName="confirmaWhatsapp"
-                      />
-                      <label class="form-check-label" for="confirmaWhatsapp"
-                        >Confirmo que enviarei o vídeo pelo WhatsApp após
-                        finalizar o cadastro</label
-                      >
-                    </div>
-                    <div class="alert alert-info">
-                      Após concluir o cadastro, envie o vídeo para nosso número
-                      de atendimento no WhatsApp.
-                    </div>
-                  </form>
-                </div>
-              </div>
-
-              <!-- Resumo de validação com campos faltantes -->
-              <div
-                *ngIf="validationErrors && validationErrors.length"
-                class="alert alert-danger"
-                role="alert"
-              >
-                <strong>Existem campos obrigatórios pendentes:</strong>
-                <ul class="mb-0">
-                  <li *ngFor="let err of validationErrors">{{ err }}</li>
-                </ul>
-              </div>
-
-              <div class="form-actions">
-                <button
-                  type="button"
-                  class="btn btn-secondary"
-                  (click)="prevStep()"
-                >
-                  Voltar
-                </button>
-                <button
-                  type="button"
                   class="btn btn-success"
                   (click)="submitForm()"
                   [disabled]="!isFormValid() || isSubmitting"
@@ -929,6 +751,8 @@
                 </button>
               </div>
             </div>
+
+            <!-- Removido passo de Vídeo: o envio de vídeo agora será feito pelo Perfil -->
 
             <!-- Success Message -->
             <div class="form-step" [class.active]="currentStep === 6">
@@ -975,15 +799,9 @@
               Proprietário (ID): {{ successProprietarioId }}
             </div>
           </div>
-          <ng-container [ngSwitch]="videoOption">
-            <p *ngSwitchCase="'upload'">Seu vídeo foi anexado ao cadastro.</p>
-            <p *ngSwitchCase="'youtube'">
-              Recebemos a URL do seu vídeo no YouTube.
-            </p>
-            <p *ngSwitchCase="'whatsapp'">
-              Lembrete: envie o vídeo para nosso WhatsApp conforme combinado.
-            </p>
-          </ng-container>
+          <div class="alert alert-info">
+            Você poderá enviar o vídeo de apresentação do seu cão pela tela de Perfil, na lista de cadastros.
+          </div>
         </div>
         <div class="modal-footer">
           <button
