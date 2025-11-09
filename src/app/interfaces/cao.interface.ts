@@ -1,31 +1,26 @@
-// Interface para o modelo de dados do cão
 export interface Cao {
-  // Identificação
   caoId?: string;
   nome: string;
   raca: string;
   sexo: 'macho' | 'femea';
   dataNascimento: string;
-  
-  // Características físicas
+
   peso?: string;
   altura?: string;
   cor?: string;
-  
-  // Fotos obrigatórias
-  fotoPerfil: string; // Base64 ou caminho do arquivo
-  fotoLateral: string; // Base64 ou caminho do arquivo
-  
-  // Pedigree (opcional)
+
+  fotoPerfil: string;
+  fotoLateral: string;
+
   temPedigree?: boolean;
   registroPedigree?: string;
   pedigreeFrenteUrl?: string; // URL do arquivo
   pedigreeVersoUrl?: string; // URL do arquivo
-  
+
   // Microchip (opcional)
   temMicrochip?: boolean;
   numeroMicrochip?: string;
-  
+
   // Informações adicionais
   nomePai?: string;
   nomeMae?: string;
@@ -33,12 +28,12 @@ export interface Cao {
   caracteristicas?: string;
   observacoes?: string;
   informacoesAdicionais?: string;
-  
+
   // Vídeo (opcional)
   videoOption?: 'upload' | 'youtube' | 'whatsapp' | 'none';
   videoUrl?: string;
   whatsappContato?: string;
-  
+
   // Metadados
   ativo?: boolean;
   createdAt?: string;
@@ -122,7 +117,7 @@ export const RACAS_CAO = [
 
 export const TIPOS_ARQUIVO_IMAGEM = [
   'image/jpeg',
-  'image/jpg', 
+  'image/jpg',
   'image/png',
   'image/webp'
 ] as const;

@@ -1,0 +1,83 @@
+<p-dialog [(visible)]="visible" [modal]="true" [dismissableMask]="true" [closable]="true"
+          [style]="{ width: '85vw', maxWidth: '900px' }" styleClass="modal-lg" (onHide)="onHide()">
+  <ng-template pTemplate="header">
+    <div class="modal-header">
+      <h3>
+        <i class="pi pi-cog"></i>
+        Gerenciar Raças
+      </h3>
+    </div>
+  </ng-template>
+
+  <div class="p-3">
+    <form (ngSubmit)="save.emit()" #breedForm="ngForm">
+      <div class="p-field" style="margin-bottom: 0.75rem;">
+        <label for="breedName">Nome da Raça</label>
+        <input pInputText
+               type="text"
+               id="breedName"
+               name="breedName"
+               [(ngModel)]="currentBreed.nome"
+               required
+               placeholder="Digite o nome da raça" />
+      </div>
+
+      <div class="p-field" style="margin-bottom: 0.75rem;">
+        <label for="breedDescription">Descrição</label>
+        <textarea pTextarea
+                  id="breedDescription"
+                  name="breedDescription"
+                  [(ngModel)]="currentBreed.descricao"
+                  rows="3"
+                  placeholder="Descrição da raça (opcional)"></textarea>
+      </div>
+
+      <div class="p-field" style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+        <p-toggleSwitch [(ngModel)]="currentBreed.ativo" name="breedActive"></p-toggleSwitch>
+        <label for="breedActive" style="margin: 0;">Ativa</label>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 0.5rem;">
+        <button pButton type="button" icon="pi pi-times" label="Cancelar" class="p-button-text" (click)="cancel.emit()"></button>
+        <button pButton type="submit" icon="pi pi-check" [label]="editingBreedId ? 'Atualizar' : 'Adicionar'" [disabled]="isSavingBreed || !currentBreed.nome.trim()"></button>
+      </div>
+    </form>
+
+    <div style="margin-top: 1rem;" *ngIf="racas.length > 0">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+        <h4 style="margin: 0;">Raças Cadastradas</h4>
+        <span class="p-input-icon-left">
+          <i class="pi pi-search"></i>
+          <input pInputText type="text" [(ngModel)]="racaSearchTerm" (ngModelChange)="racaSearchTermChange.emit($event)" placeholder="Filtrar raças..." />
+        </span>
+      </div>
+
+      <p-table [value]="filteredRacas" [paginator]="true" [rows]="15" responsiveLayout="scroll" sortMode="single" [sortField]="'nome'">
+        <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="nome">Nome <p-sortIcon field="nome"></p-sortIcon></th>
+            <th>Descrição</th>
+            <th style="width: 6rem;">Ações</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-raca>
+          <tr>
+            <td>{{ raca.nome }}</td>
+            <td>
+              <span *ngIf="raca.descricao; else noDesc">{{ raca.descricao }}</span>
+              <ng-template #noDesc><span class="text-muted">—</span></ng-template>
+            </td>
+            <td>
+              <button pButton type="button" icon="pi pi-pencil" class="p-button-rounded p-button-text" (click)="edit.emit(raca)" title="Editar"></button>
+              <button pButton type="button" icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger" (click)="delete.emit(raca)" title="Excluir"></button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+
+      <div *ngIf="filteredRacas.length === 0 && racaSearchTerm" style="text-align: center; padding: 1rem;">
+        <p>Nenhuma raça encontrada para "{{ racaSearchTerm }}"</p>
+      </div>
+    </div>
+  </div>
+</p-dialog>

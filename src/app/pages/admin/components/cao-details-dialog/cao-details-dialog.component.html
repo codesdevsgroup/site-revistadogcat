@@ -1,0 +1,137 @@
+<p-dialog [(visible)]="visible" [modal]="true" [dismissableMask]="true" [closable]="true"
+          [style]="{ width: '85vw', maxWidth: '1000px' }" styleClass="modal-lg" (onHide)="onHide()">
+  <ng-template pTemplate="header">
+    <div class="modal-header">
+      <h3>
+        <i class="pi pi-dog"></i>
+        Detalhes do Cão
+      </h3>
+    </div>
+  </ng-template>
+
+  <div class="modal-body" *ngIf="cao">
+      <div class="gallery">
+        <h4>Fotos</h4>
+        <div class="thumbnail-container">
+          <div class="thumbnail" *ngIf="cao.pedigreeFrente">
+            <img [src]="cao.pedigreeFrente" alt="Pedigree (Frente)">
+            <small>Pedigree Frente</small>
+          </div>
+          <div class="thumbnail" *ngIf="cao.pedigreeVerso">
+            <img [src]="cao.pedigreeVerso" alt="Pedigree (Verso)">
+            <small>Pedigree Verso</small>
+          </div>
+          <div class="thumbnail" *ngIf="cao.fotoLateral">
+            <img [src]="cao.fotoLateral" alt="Foto Lateral">
+            <small>Lateral</small>
+          </div>
+          <div class="thumbnail" *ngIf="cao.fotoPerfil">
+            <img [src]="cao.fotoPerfil" alt="Foto Perfil">
+            <small>Perfil</small>
+          </div>
+        </div>
+
+        <div class="cao-info" style="margin-top: .5rem;">
+          <div class="form-group">
+            <label>Foto Lateral</label>
+            <p-fileUpload mode="basic"
+                          [auto]="false"
+                          chooseLabel="Enviar lateral"
+                          accept="image/*"
+                          (onSelect)="onSingleImageSelect($event.files, 'fotoLateral')"></p-fileUpload>
+          </div>
+          <div class="form-group">
+            <label>Foto Perfil</label>
+            <p-fileUpload mode="basic"
+                          [auto]="false"
+                          chooseLabel="Enviar perfil"
+                          accept="image/*"
+                          (onSelect)="onSingleImageSelect($event.files, 'fotoPerfil')"></p-fileUpload>
+          </div>
+          <div class="form-group" *ngIf="cao.temPedigree">
+            <label>Pedigree (Frente)</label>
+            <p-fileUpload mode="basic"
+                          [auto]="false"
+                          chooseLabel="Enviar frente"
+                          accept="image/*"
+                          (onSelect)="onSingleImageSelect($event.files, 'pedigreeFrente')"></p-fileUpload>
+          </div>
+          <div class="form-group" *ngIf="cao.temPedigree">
+            <label>Pedigree (Verso)</label>
+            <p-fileUpload mode="basic"
+                          [auto]="false"
+                          chooseLabel="Enviar verso"
+                          accept="image/*"
+                          (onSelect)="onSingleImageSelect($event.files, 'pedigreeVerso')"></p-fileUpload>
+          </div>
+        </div>
+      </div>
+
+      <div class="cao-details">
+        <div class="cao-info">
+          <div class="form-group">
+            <label>Nome</label>
+            <input pInputText type="text" [(ngModel)]="cao.nome" [disabled]="!isEditing">
+          </div>
+
+          <div class="form-group">
+            <label>Raça</label>
+            <p-select [options]="racas" optionLabel="nome" optionValue="id" [(ngModel)]="cao.racaId" [disabled]="!isEditing"></p-select>
+          </div>
+
+          <div class="form-group">
+            <label>Data de Nascimento</label>
+            <p-datepicker [(ngModel)]="cao.dataNascimento" dateFormat="dd/mm/yy" [disabled]="!isEditing"></p-datepicker>
+          </div>
+
+          <div class="form-group">
+            <label>Sexo</label>
+            <p-select [options]="[{label: 'Macho', value: 'macho'}, {label: 'Fêmea', value: 'femea'}]" [(ngModel)]="cao.sexo" [disabled]="!isEditing"></p-select>
+          </div>
+
+          <div class="form-group">
+            <label>Dono</label>
+            <input pInputText type="text" [value]="cao.donoCao?.nome || 'N/A'" disabled>
+          </div>
+
+          <div class="form-group">
+            <label>Nº de Registro</label>
+            <input pInputText type="text" [(ngModel)]="cao.numeroRegistro" [disabled]="!isEditing">
+          </div>
+
+          <div class="form-group" style="display:flex; align-items:center; gap: .5rem;">
+            <p-toggleSwitch [(ngModel)]="cao.temPedigree" [disabled]="!isEditing"></p-toggleSwitch>
+            <label style="margin:0;">Possui Pedigree</label>
+          </div>
+
+          <div class="form-group" *ngIf="cao.temPedigree">
+            <label>Registro do Pedigree</label>
+            <input pInputText type="text" [(ngModel)]="cao.registroPedigree" [disabled]="!isEditing">
+          </div>
+
+          <div class="form-group">
+            <label>Opção de Vídeo</label>
+            <p-select [options]="videoOptions" optionLabel="label" optionValue="value" [(ngModel)]="cao.videoOption" [disabled]="!isEditing"></p-select>
+          </div>
+
+          <div class="form-group" *ngIf="cao.videoOption === 'URL'">
+            <label>URL do Vídeo</label>
+            <input pInputText type="text" [(ngModel)]="cao.videoUrl" [disabled]="!isEditing">
+          </div>
+
+          <div class="form-group" *ngIf="cao.videoOption === 'UPLOAD'">
+            <label>Arquivo de Vídeo</label>
+            <input type="file" class="form-control" (change)="onFileSelected($event)" [disabled]="!isEditing" accept="video/*">
+          </div>
+        </div>
+      </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="modal-footer">
+      <button pButton type="button" class="p-button-text" icon="pi pi-times" (click)="cancelEdit()" [label]="isEditing ? 'Cancelar' : 'Fechar'"></button>
+      <button pButton type="button" icon="pi pi-pencil" *ngIf="!isEditing" (click)="isEditing = true" label="Editar"></button>
+      <button pButton type="button" icon="pi pi-save" *ngIf="isEditing" (click)="saveCao()" label="Salvar" class="p-button-success"></button>
+    </div>
+  </ng-template>
+</p-dialog>

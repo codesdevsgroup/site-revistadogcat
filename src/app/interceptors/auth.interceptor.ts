@@ -35,8 +35,8 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     catchError((error) => {
       if (error instanceof HttpErrorResponse && error.status === 401) {
         // Exclude auth endpoints to avoid infinite loops
-        if (req.url.includes('/auth/refresh') || 
-            req.url.includes('/auth/login') || 
+        if (req.url.includes('/auth/refresh') ||
+            req.url.includes('/auth/login') ||
             req.url.includes('/auth/logout')) {
             // Não limpa a sessão aqui - deixa o AuthService gerenciar
             return throwError(() => error);
@@ -67,8 +67,6 @@ const handle401Error = (
         }),
         catchError((err) => {
           isRefreshing = false;
-          // Não chama logout aqui para evitar loop infinito
-          // O AuthService já limpa a sessão e redireciona no método refreshToken
           return throwError(() => err);
         })
       );

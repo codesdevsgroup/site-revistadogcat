@@ -26,31 +26,21 @@
         </div>
       </div>
 
-      <p-table #dt [value]="filteredCaes" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10,20,50]" sortMode="multiple" [tableStyle]="{'min-width':'70rem'}" [globalFilterFields]="['nome','numeroRegistro','donoCao.nome']" dataKey="cadastroId">
+      <p-table #dt [value]="filteredCaes" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10,20,50]" sortMode="multiple" [tableStyle]="{'min-width':'70rem'}" [globalFilterFields]="['nome','numeroRegistro','donoCao.nome']" dataKey="cadastroId" [paginatorDropdownAppendTo]="'body'">
         <ng-template pTemplate="header">
           <tr>
-            <th>Foto</th>
             <th pSortableColumn="nome">Nome <p-sortIcon field="nome"></p-sortIcon></th>
             <th pSortableColumn="racaId">Raça <p-sortIcon field="racaId"></p-sortIcon></th>
             <th pSortableColumn="dataNascimento">Idade <p-sortIcon field="dataNascimento"></p-sortIcon></th>
             <th pSortableColumn="sexo">Sexo <p-sortIcon field="sexo"></p-sortIcon></th>
             <th pSortableColumn="donoCao.nome">Dono <p-sortIcon field="donoCao.nome"></p-sortIcon></th>
             <th pSortableColumn="createdAt">Data de Cadastro <p-sortIcon field="createdAt"></p-sortIcon></th>
+            <th>Status</th>
             <th>Ações</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-cao>
           <tr>
-            <td>
-              <div class="cao-photo">
-                <img *ngIf="cao.fotos && cao.fotos.length > 0; else noPhoto" [src]="cao.fotos[0]" [alt]="cao.nome" class="photo-thumbnail">
-                <ng-template #noPhoto>
-                  <div class="no-photo">
-                    <i class="pi pi-dog"></i>
-                  </div>
-                </ng-template>
-              </div>
-            </td>
             <td>
               <div class="cao-name">
                 <strong>{{ cao.nome }}</strong>
@@ -66,10 +56,20 @@
             <td>{{ cao.donoCao?.nome || 'N/A' }}</td>
             <td>{{ formatDate(cao.createdAt) }}</td>
             <td>
+              <p-select
+                [options]="statusOptions"
+                optionLabel="label"
+                optionValue="value"
+                [(ngModel)]="cao.status"
+                (onChange)="onRowStatusChange(cao, $event.value)"
+                placeholder="Selecionar"
+              ></p-select>
+            </td>
+            <td>
               <div class="action-buttons">
                 <button pButton type="button" icon="pi pi-eye" class="p-button-rounded p-button-text" (click)="openCaoModal(cao)" title="Detalhes"></button>
-                <button *ngIf="isCaoPendente(cao)" pButton type="button" icon="pi pi-check" class="p-button-rounded p-button-text" (click)="aprovarCao(cao)" title="Aprovar"></button>
-                <button *ngIf="isCaoPendente(cao)" pButton type="button" icon="pi pi-times" class="p-button-rounded p-button-text" (click)="rejeitarCao(cao)" title="Rejeitar"></button>
+                <button pButton type="button" icon="pi pi-check" class="p-button-rounded p-button-text" (click)="aprovarCao(cao)" title="Aprovar"></button>
+                <button pButton type="button" icon="pi pi-times" class="p-button-rounded p-button-text" (click)="rejeitarCao(cao)" title="Rejeitar"></button>
               </div>
             </td>
           </tr>
@@ -102,233 +102,26 @@
   </ng-template>
 </div>
 
-<p-dialog [(visible)]="showRacaModal" [modal]="true" [dismissableMask]="true" [closable]="true"
-          [style]="{ width: '85vw', maxWidth: '900px' }" styleClass="modal-lg">
-  <ng-template pTemplate="header">
-    <div class="modal-header">
-      <h3>
-        <i class="pi pi-cog"></i>
-        Gerenciar Raças
-      </h3>
-    </div>
-  </ng-template>
+<app-raca-manage-dialog
+  [visible]="showRacaModal"
+  (visibleChange)="showRacaModal = $event"
+  [racas]="racas"
+  [currentBreed]="currentBreed"
+  [isSavingBreed]="isSavingBreed"
+  [editingBreedId]="editingBreedId"
+  [racaSearchTerm]="racaSearchTerm"
+  (racaSearchTermChange)="racaSearchTerm = $event; onRacaFilterChange()"
+  (cancel)="cancelBreedEdit()"
+  (save)="saveBreed()"
+  (edit)="editBreed($event)"
+  (delete)="deleteBreed($event)"
+></app-raca-manage-dialog>
 
-  <div class="modal-body">
-      <form class="breed-form" (ngSubmit)="saveBreed()" #breedForm="ngForm">
-        <div class="form-group">
-          <label for="breedName">Nome da Raça</label>
-          <input
-            type="text"
-            id="breedName"
-            name="breedName"
-            class="form-control"
-            [(ngModel)]="currentBreed.nome"
-            required
-            placeholder="Digite o nome da raça"
-          />
-        </div>
-
-        <div class="form-group">
-          <label for="breedDescription">Descrição</label>
-          <textarea
-            id="breedDescription"
-            name="breedDescription"
-            class="form-control"
-            [(ngModel)]="currentBreed.descricao"
-            rows="3"
-            placeholder="Descrição da raça (opcional)"
-          ></textarea>
-        </div>
-
-        <div class="form-actions">
-          <button
-            type="button"
-            class="btn btn-secondary"
-            (click)="cancelBreedEdit()"
-          >
-            Cancelar
-          </button>
-          <button
-            type="submit"
-            class="btn btn-primary"
-            [disabled]="!breedForm.valid || isSavingBreed"
-          >
-            <i class="fas fa-spinner fa-spin" *ngIf="isSavingBreed"></i>
-            {{ editingBreedId ? 'Atualizar' : 'Adicionar' }}
-          </button>
-        </div>
-      </form>
-
-      <!-- Lista de raças existentes -->
-      <div class="breeds-list" *ngIf="racas.length > 0">
-        <div class="breeds-header">
-          <h4>Raças Cadastradas</h4>
-          <div class="breeds-filter">
-            <input
-              type="text"
-              class="form-control form-control-sm"
-              [(ngModel)]="racaSearchTerm"
-              placeholder="Filtrar raças..."
-              (input)="onRacaFilterChange()"
-            />
-            <i class="fas fa-search"></i>
-          </div>
-        </div>
-
-        <div class="breed-item" *ngFor="let raca of filteredRacas">
-          <div class="breed-info">
-            <strong>{{ raca.nome }}</strong>
-            <small *ngIf="raca.descricao">{{ raca.descricao }}</small>
-          </div>
-          <div class="breed-actions">
-            <button
-              class="btn btn-sm btn-outline"
-              (click)="editBreed(raca)"
-              title="Editar"
-            >
-              <i class="pi pi-pencil"></i>
-            </button>
-            <button
-              class="btn btn-sm btn-danger"
-              (click)="deleteBreed(raca)"
-              title="Excluir"
-            >
-              <i class="pi pi-trash"></i>
-            </button>
-          </div>
-        </div>
-
-        <div
-          class="no-results"
-          *ngIf="filteredRacas.length === 0 && racaSearchTerm"
-        >
-          <p>Nenhuma raça encontrada para "{{ racaSearchTerm }}"</p>
-        </div>
-      </div>
-  </div>
-</p-dialog>
-
-<!-- Dialog para Visualizar/Editar Cão -->
-<p-dialog [(visible)]="showCaoModal" [modal]="true" [dismissableMask]="true" [closable]="true"
-          [style]="{ width: '85vw', maxWidth: '1000px' }" styleClass="modal-lg">
-  <ng-template pTemplate="header">
-    <div class="modal-header">
-      <h3>
-        <i class="pi pi-dog"></i>
-        Detalhes do Cão
-      </h3>
-    </div>
-  </ng-template>
-
-  <div class="modal-body" *ngIf="selectedCao">
-      <div class="gallery">
-        <h4>Fotos</h4>
-        <div class="thumbnail-container">
-          <div class="thumbnail" *ngFor="let foto of selectedCao.fotos">
-            <img [src]="foto" [alt]="selectedCao.nome">
-          </div>
-          <div class="thumbnail" *ngIf="selectedCao.pedigreeFrente">
-            <img [src]="selectedCao.pedigreeFrente" alt="Pedigree (Frente)">
-            <small>Pedigree Frente</small>
-          </div>
-          <div class="thumbnail" *ngIf="selectedCao.pedigreeVerso">
-            <img [src]="selectedCao.pedigreeVerso" alt="Pedigree (Verso)">
-            <small>Pedigree Verso</small>
-          </div>
-        </div>
-      </div>
-
-      <div class="cao-details">
-        <!-- Detalhes do Cão -->
-        <div class="cao-info">
-          <div class="form-group">
-            <label>Nome</label>
-            <input type="text" class="form-control" [(ngModel)]="selectedCao.nome" [disabled]="!isEditingCao">
-          </div>
-
-          <div class="form-group">
-            <label>Raça</label>
-            <select class="form-control" [(ngModel)]="selectedCao.racaId" [disabled]="!isEditingCao">
-              <option *ngFor="let raca of racas" [value]="raca.id">{{ raca.nome }}</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label>Data de Nascimento</label>
-            <input type="date" class="form-control" [ngModel]="selectedCao.dataNascimento | date:'yyyy-MM-dd'" (ngModelChange)="selectedCao.dataNascimento = $event" [disabled]="!isEditingCao">
-          </div>
-
-          <div class="form-group">
-            <label>Sexo</label>
-            <select class="form-control" [(ngModel)]="selectedCao.sexo" [disabled]="!isEditingCao">
-              <option value="MACHO">Macho</option>
-              <option value="FEMEA">Fêmea</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label>Dono</label>
-            <input type="text" class="form-control" [value]="selectedCao.donoCao?.nome || 'N/A'" disabled>
-          </div>
-
-          <div class="form-group">
-            <label>Nº de Registro</label>
-            <input type="text" class="form-control" [(ngModel)]="selectedCao.numeroRegistro" [disabled]="!isEditingCao">
-          </div>
-
-          <div class="form-group form-check">
-            <input type="checkbox" class="form-check-input" id="temPedigree" [(ngModel)]="selectedCao.temPedigree" [disabled]="!isEditingCao">
-            <label class="form-check-label" for="temPedigree">Possui Pedigree</label>
-          </div>
-
-          <div class="form-group" *ngIf="selectedCao.temPedigree">
-            <label>Registro do Pedigree</label>
-            <input type="text" class="form-control" [(ngModel)]="selectedCao.registroPedigree" [disabled]="!isEditingCao">
-          </div>
-
-          <div class="form-group">
-            <label>Opção de Vídeo</label>
-            <select class="form-control" [(ngModel)]="selectedCao.videoOption" [disabled]="!isEditingCao">
-              <option *ngFor="let option of videoOptions" [value]="option.value">{{ option.label }}</option>
-            </select>
-          </div>
-
-          <div class="form-group" *ngIf="selectedCao.videoOption === 'URL'">
-            <label>URL do Vídeo</label>
-            <input type="text" class="form-control" [(ngModel)]="selectedCao.videoUrl" [disabled]="!isEditingCao">
-          </div>
-
-          <div class="form-group" *ngIf="selectedCao.videoOption === 'UPLOAD'">
-            <label>Arquivo de Vídeo</label>
-            <input type="file" class="form-control" (change)="onFileSelected($event)" [disabled]="!isEditingCao" accept="video/*">
-          </div>
-        </div>
-      </div>
-  </div>
-
-  <ng-template pTemplate="footer">
-    <div class="modal-footer">
-      <button type="button" class="btn btn-secondary" (click)="closeCaoModal()">
-        {{ isEditingCao ? 'Cancelar' : 'Fechar' }}
-      </button>
-      <button
-        type="button"
-        class="btn btn-primary"
-        *ngIf="!isEditingCao"
-        (click)="isEditingCao = true"
-      >
-        <i class="pi pi-pencil"></i>
-        Editar
-      </button>
-      <button
-        type="button"
-        class="btn btn-success"
-        *ngIf="isEditingCao"
-        (click)="saveCao()"
-      >
-        <i class="pi pi-save"></i>
-        Salvar
-      </button>
-    </div>
-  </ng-template>
-</p-dialog>
+<app-cao-details-dialog
+  [visible]="showCaoModal"
+  [cao]="selectedCao"
+  [racas]="racas"
+  (visibleChange)="showCaoModal = $event"
+  (save)="saveCao($event)"
+  (cancel)="closeCaoModal()"
+></app-cao-details-dialog>

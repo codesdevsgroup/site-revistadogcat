@@ -136,7 +136,9 @@
                 (click)="exportarCSV()"
                 [disabled]="exportandoCSV || filtrosForm.invalid">
                 <i class="pi pi-file-excel me-2"></i>
-                <span *ngIf="!exportandoCSV">Exportar CSV</span>
+                @if (!exportandoCSV) {
+                  <span>Exportar CSV</span>
+                }
                 <span *ngIf="exportandoCSV">
                   <i class="pi pi-spin pi-spinner me-1"></i>
                   Exportando...
