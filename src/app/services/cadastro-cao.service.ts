@@ -4,10 +4,7 @@ import { Observable } from "rxjs";
 import { map } from "rxjs/operators";
 import { environment } from "../../environments/environment";
 
-// Status de cadastro de cão conforme regra atual
-// "CADASTRO_INCOMPLETO": cadastro criado, mas ainda faltam informações/validação
-// "APROVADO": cadastro aprovado e publicado
-// "REJEITADO": cadastro rejeitado
+
 export type StatusCadastro = "CADASTRO_INCOMPLETO" | "APROVADO" | "REJEITADO";
 
 export interface CadastroCao {

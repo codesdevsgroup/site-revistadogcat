@@ -55,7 +55,14 @@ export class CaesComponent implements OnInit {
   loading = false;
   searchTerm = "";
   selectedRaca = "";
-  pendentesOnly = false; // Filtro para cadastros pendentes de aprovação
+  selectedStatus: StatusCadastro | "" = "";
+  statuses: { value: StatusCadastro | ""; label: string }[] = [
+    { value: "", label: "Todos os status" },
+    { value: "APROVADO", label: "Aprovados" },
+    { value: "CADASTRO_INCOMPLETO", label: "Cadastro Incompleto" },
+    { value: "REJEITADO", label: "Rejeitados" },
+  ];
+
   pendentesRacaOnly = false; // Filtro para cadastros com raças pendentes
 
   // Modal de raças
@@ -70,6 +77,17 @@ export class CaesComponent implements OnInit {
   isEditingRaca = false;
   racaModalLoading = false;
   private caoEmAprovacao: CaoListItem | null = null;
+
+  // Modal de cães
+  showCaoModal = false;
+  selectedCao: CaoListItem | null = null;
+  isEditingCao = false;
+
+  videoOptions = [
+    { value: 'NONE', label: 'Nenhum' },
+    { value: 'URL', label: 'Link (URL)' },
+    { value: 'WHATSAPP', label: 'WhatsApp' },
+  ];
 
   constructor(
     private cadastroCaoService: CadastroCaoService,
@@ -86,41 +104,37 @@ export class CaesComponent implements OnInit {
   async loadCaes() {
     try {
       this.loading = true;
-      let data: any[];
 
-      // Normaliza diferentes formatos de resposta (array puro ou envelope { data, total })
       const normalizeList = (resp: any): any[] => {
         if (Array.isArray(resp)) return resp;
+        if (resp?.data && Array.isArray(resp.data.data)) return resp.data.data;
         if (resp && Array.isArray(resp.data)) return resp.data;
         return [];
       };
 
-      if (this.pendentesRacaOnly) {
-        const resp = await firstValueFrom(this.cadastroCaoService.getPendentesRaca());
-        data = normalizeList(resp);
-      } else if (this.pendentesOnly) {
-        const result = await firstValueFrom(
-          this.cadastroCaoService.listar({
-            pendentesValidacao: "true",
-            // Filtra cadastros incompletos para validação
-            status: "CADASTRO_INCOMPLETO" as StatusCadastro,
-          }),
-        );
-        data = normalizeList(result);
-      } else {
-        const response = await this.cadastroCaoService.findAll();
-        data = normalizeList(response);
+      const params: any = {};
+      if (this.selectedStatus) {
+        params.status = this.selectedStatus;
       }
 
-      this.caes = (data || []).map((cao: any) => ({
-        ...cao,
-        nome: cao.nomeCao ?? cao.nome,
-        donoCao: cao.proprietario ?? cao.donoCao,
-        fotos: cao.fotos ?? [],
-        racaId: cao.racaId,
-        numeroRegistro: cao.numeroRegistro,
-        status: cao.status as StatusCadastro,
-      }));
+      const result = await firstValueFrom(this.cadastroCaoService.listar(params));
+      const data = normalizeList(result);
+
+      this.caes = (data || []).map((cao: any) => {
+        const racaEncontrada = this.racas.find(
+          (r) => r.nome.toLowerCase() === cao.raca?.toLowerCase(),
+        );
+
+        return {
+          ...cao,
+          nome: cao.nomeCao ?? cao.nome,
+          donoCao: cao.proprietario ?? cao.donoCao,
+          fotos: [cao.fotoPerfil, cao.fotoLateral].filter(f => f),
+          racaId: racaEncontrada ? racaEncontrada.id : undefined,
+          numeroRegistro: cao.numeroRegistro,
+          status: cao.status as StatusCadastro,
+        };
+      });
     } catch (error) {
       console.error("Erro ao carregar cães:", error);
     } finally {
@@ -382,6 +396,8 @@ export class CaesComponent implements OnInit {
   clearFilters() {
     this.searchTerm = "";
     this.selectedRaca = "";
+    this.selectedStatus = "";
+    this.loadCaes();
   }
 
   editBreed(raca: Raca) {
@@ -398,23 +414,36 @@ export class CaesComponent implements OnInit {
   }
 
   editCao(cao: CaoListItem) {
-    // Navegar para edição do cão
-    this.router.navigate(["/cadastro-cao"], {
-      queryParams: { id: cao.cadastroCaoId },
-    });
+    this.openCaoModal(cao);
   }
 
-  async deleteCao(cao: CaoListItem) {
-    if (!confirm(`Tem certeza que deseja excluir o cão "${cao.nomeCao}"?`)) {
-      return;
-    }
+  openCaoModal(cao: CaoListItem) {
+    this.selectedCao = { ...cao };
+    this.showCaoModal = true;
+    this.isEditingCao = false; // Começa em modo de visualização
+  }
+
+  closeCaoModal() {
+    this.showCaoModal = false;
+    this.selectedCao = null;
+  }
+
+  async saveCao() {
+    if (!this.selectedCao) return;
 
     try {
-      await this.cadastroCaoService.delete(cao.cadastroCaoId);
+      await firstValueFrom(
+        this.cadastroCaoService.update(
+          this.selectedCao.cadastroCaoId,
+          this.selectedCao as any,
+        ),
+      );
+      alert("Cão atualizado com sucesso!");
+      this.closeCaoModal();
       await this.loadCaes();
     } catch (error) {
-      console.error("Erro ao excluir cão:", error);
-      alert("Erro ao excluir cão");
+      console.error("Erro ao atualizar cão:", error);
+      alert("Erro ao atualizar cão.");
     }
   }
 
@@ -425,18 +454,7 @@ export class CaesComponent implements OnInit {
         this.cadastroCaoService.aprovarCadastro(cao.cadastroCaoId),
       );
       alert(result?.mensagem || "Cadastro aprovado com sucesso");
-      if (this.pendentesOnly) {
-        this.caes = this.caes.filter(
-          (c) => c.cadastroCaoId !== cao.cadastroCaoId,
-        );
-      } else {
-        const item = this.caes.find(
-          (c) => c.cadastroCaoId === cao.cadastroCaoId,
-        );
-        if (item) {
-          (item as any).status = "APROVADO";
-        }
-      }
+      await this.loadCaes();
     } catch (error: any) {
       console.error("Erro ao aprovar cadastro:", error);
       alert(
@@ -459,18 +477,7 @@ export class CaesComponent implements OnInit {
         ),
       );
       alert(result?.mensagem || "Cadastro rejeitado com sucesso");
-      if (this.pendentesOnly) {
-        this.caes = this.caes.filter(
-          (c) => c.cadastroCaoId !== cao.cadastroCaoId,
-        );
-      } else {
-        const item = this.caes.find(
-          (c) => c.cadastroCaoId === cao.cadastroCaoId,
-        );
-        if (item) {
-          (item as any).status = "REJEITADO";
-        }
-      }
+      await this.loadCaes();
     } catch (error: any) {
       console.error("Erro ao rejeitar cadastro:", error);
       alert(

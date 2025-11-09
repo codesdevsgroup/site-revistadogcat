@@ -25,18 +25,17 @@
             type="text"
             placeholder="Buscar por nome, dono ou registro..."
             class="search-input"
-            [(ngModel)]="searchTerm"
-            (input)="filterCaes()">
+            [(ngModel)]="searchTerm">
 
-          <select class="filter-select" [(ngModel)]="selectedBreedId" (change)="filterCaes()">
+          <select class="filter-select" [(ngModel)]="selectedRaca">
             <option value="">Todas as raças</option>
             <option *ngFor="let raca of racas" [value]="raca.id">{{ raca.nome }}</option>
           </select>
 
-          <label class="form-check ms-2">
-            <input type="checkbox" class="form-check-input" [(ngModel)]="pendentesOnly" (change)="loadCaes()">
-            <span class="form-check-label">Somente cadastros incompletos</span>
-          </label>
+          <select class="filter-select" [(ngModel)]="selectedStatus" (change)="loadCaes()">
+            <option *ngFor="let status of statuses" [value]="status.value">{{ status.label }}</option>
+          </select>
+
         </div>
       </div>
 
@@ -87,14 +86,8 @@
               <td>{{ formatDate(cao.createdAt) }}</td>
               <td>
                 <div class="action-buttons">
-                  <button class="btn btn-sm btn-outline" (click)="viewCao(cao)" title="Visualizar">
+                  <button class="btn btn-sm btn-outline" (click)="openCaoModal(cao)" title="Detalhes">
                     <i class="fas fa-eye"></i>
-                  </button>
-                  <button class="btn btn-sm btn-outline" (click)="editCao(cao)" title="Editar">
-                    <i class="fas fa-edit"></i>
-                  </button>
-                  <button class="btn btn-sm btn-danger" (click)="deleteCao(cao)" title="Excluir">
-                    <i class="fas fa-trash"></i>
                   </button>
                   <button *ngIf="isCaoPendente(cao)" class="btn btn-sm btn-success ms-1" (click)="aprovarCao(cao)" title="Aprovar">
                     <i class="fas fa-check"></i>
@@ -215,6 +208,100 @@
           <p>Nenhuma raça encontrada para "{{ racaSearchTerm }}"</p>
         </div>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para Visualizar/Editar Cão -->
+<div class="modal-overlay" *ngIf="showCaoModal" (click)="closeCaoModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>
+        <i class="fas fa-dog"></i>
+        Detalhes do Cão
+      </h3>
+      <button class="btn-close" (click)="closeCaoModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="modal-body" *ngIf="selectedCao">
+      <div class="cao-details">
+        <!-- Foto do Cão -->
+        <div class="cao-photo-large">
+          <img *ngIf="selectedCao.fotos && selectedCao.fotos.length > 0"
+               [src]="selectedCao.fotos[0]"
+               [alt]="selectedCao.nome"
+               class="photo-full">
+          <div *ngIf="!selectedCao.fotos || selectedCao.fotos.length === 0" class="no-photo-full">
+            <i class="fas fa-dog"></i>
+          </div>
+        </div>
+
+        <!-- Detalhes do Cão -->
+        <div class="cao-info">
+          <div class="form-group">
+            <label>Nome</label>
+            <input type="text" class="form-control" [(ngModel)]="selectedCao.nome" [disabled]="!isEditingCao">
+          </div>
+
+          <div class="form-group">
+            <label>Raça</label>
+            <select class="form-control" [(ngModel)]="selectedCao.racaId" [disabled]="!isEditingCao">
+              <option *ngFor="let raca of racas" [value]="raca.id">{{ raca.nome }}</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Data de Nascimento</label>
+            <input type="date" class="form-control" [ngModel]="selectedCao.dataNascimento | date:'yyyy-MM-dd'" (ngModelChange)="selectedCao.dataNascimento = $event" [disabled]="!isEditingCao">
+          </div>
+
+          <div class="form-group">
+            <label>Sexo</label>
+            <select class="form-control" [(ngModel)]="selectedCao.sexo" [disabled]="!isEditingCao">
+              <option value="MACHO">Macho</option>
+              <option value="FEMEA">Fêmea</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Dono</label>
+            <input type="text" class="form-control" [value]="selectedCao.donoCao?.nome || 'N/A'" disabled>
+          </div>
+
+          <div class="form-group">
+            <label>Nº de Registro</label>
+            <input type="text" class="form-control" [(ngModel)]="selectedCao.numeroRegistro" [disabled]="!isEditingCao">
+          </div>
+
+          <div class="form-group">
+            <label>Opção de Vídeo</label>
+            <select class="form-control" [(ngModel)]="selectedCao.videoOption" [disabled]="!isEditingCao">
+              <option *ngFor="let option of videoOptions" [value]="option.value">{{ option.label }}</option>
+            </select>
+          </div>
+
+          <div class="form-group" *ngIf="selectedCao.videoOption === 'URL'">
+            <label>URL do Vídeo</label>
+            <input type="text" class="form-control" [(ngModel)]="selectedCao.videoUrl" [disabled]="!isEditingCao">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="closeCaoModal()">
+        {{ isEditingCao ? 'Cancelar' : 'Fechar' }}
+      </button>
+      <button type="button" class="btn btn-primary" *ngIf="!isEditingCao" (click)="isEditingCao = true">
+        <i class="fas fa-edit"></i>
+        Editar
+      </button>
+      <button type="button" class="btn btn-success" *ngIf="isEditingCao" (click)="saveCao()">
+        <i class="fas fa-save"></i>
+        Salvar
+      </button>
     </div>
   </div>
 </div>
