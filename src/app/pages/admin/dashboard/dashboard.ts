@@ -11,11 +11,14 @@ import { CardModule } from 'primeng/card';
 import { TooltipModule } from 'primeng/tooltip';
 import { TableModule } from 'primeng/table';
 import { ChartModule } from 'primeng/chart';
+import { DashboardService } from '../../../services/dashboard.service';
+import { DashboardResponse } from '../../../dtos/dashboard.dto';
+import { SkeletonModule } from 'primeng/skeleton';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RelatoriosModalComponent, UsuarioModalComponent, ButtonModule, CardModule, TooltipModule, TableModule, ChartModule],
+  imports: [CommonModule, RelatoriosModalComponent, UsuarioModalComponent, ButtonModule, CardModule, TooltipModule, TableModule, ChartModule, SkeletonModule],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.scss']
 })
@@ -27,42 +30,13 @@ export class DashboardComponent implements OnInit {
   isUsuarioModalVisible = false;
   selectedUsuario: Usuario | null = null;
 
-  stats = [
-    {
-      title: 'Total de Usuários',
-      value: '1,234',
-      // Ícones PrimeIcons para visual mais moderno
-      icon: 'pi pi-users',
-      color: 'primary',
-      change: '+12%'
-    },
-    {
-      title: 'Artigos Publicados',
-      value: '89',
-      icon: 'pi pi-book',
-      color: 'success',
-      change: '+5%'
-    },
-    {
-      title: 'Assinantes Ativos',
-      value: '567',
-      icon: 'pi pi-crown',
-      color: 'golden',
-      change: '+8%'
-    },
-    {
-      title: 'Visualizações',
-      value: '12.5K',
-      icon: 'pi pi-eye',
-      color: 'info',
-      change: '+15%'
-    }
-  ];
+  stats: Array<{ title: string; value: string; icon: string; color: string; change: string; changePositive: boolean }> = [];
+  isLoading = true;
 
   recentActivity = [
-    { icon: 'pi pi-user', text: 'Novo usuário cadastrado: <strong>João Silva</strong>', time: '2 minutos atrás' },
-    { icon: 'pi pi-newspaper', text: 'Artigo publicado: <strong>Cuidados com Pets no Inverno</strong>', time: '1 hora atrás' },
-    { icon: 'pi pi-crown', text: 'Nova assinatura premium ativada', time: '3 horas atrás' }
+    { icon: 'person_add', text: 'Novo usuário cadastrado: <strong>João Silva</strong>', time: '2 minutos atrás' },
+    { icon: 'description', text: 'Artigo publicado: <strong>Cuidados com Pets no Inverno</strong>', time: '1 hora atrás' },
+    { icon: 'emoji_events', text: 'Nova assinatura premium ativada', time: '3 horas atrás' }
   ];
 
   lineChartData: any;
@@ -71,16 +45,104 @@ export class DashboardComponent implements OnInit {
   constructor(
     private router: Router,
     private usuarioService: UsuarioService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private dashboardService: DashboardService
   ) {}
 
   ngOnInit(): void {
+    this.loadDashboard();
+  }
+
+  /**
+   * Carrega dados do dashboard da API e popula os cards e gráficos.
+   */
+  private loadDashboard(): void {
+    this.isLoading = true;
+    this.dashboardService.getDashboardData().subscribe({
+      next: (data: DashboardResponse) => {
+        this.populateStats(data);
+        this.populateCharts(data);
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Erro ao carregar dados do dashboard:', error);
+        this.notificationService.error('Não foi possível carregar os dados do dashboard.');
+        // Mantém a página funcional com dados vazios
+        this.stats = [];
+        this.lineChartData = { labels: [], datasets: [] };
+        this.pieChartData = { labels: [], datasets: [] };
+        this.isLoading = false;
+      }
+    });
+  }
+
+  /**
+   * Popula os cards de estatísticas com base nos dados da API
+   */
+  private populateStats(data: DashboardResponse): void {
+    // Falhas de contrato da API: proteger contra ausência de 'cards'
+    if (!data || !data.cards) {
+      this.stats = [];
+      this.notificationService.warning('Dados dos cards ausentes na resposta do dashboard.');
+      return;
+    }
+
+    const formatNumber = (n: number) => n.toLocaleString('pt-BR');
+
+    const cards = data.cards;
+    this.stats = [
+      {
+        title: 'Total de Usuários',
+        value: formatNumber(cards.totalUsuarios.value),
+        icon: 'group',
+        color: 'primary',
+        change: `${cards.totalUsuarios.percentage > 0 ? '+' : ''}${cards.totalUsuarios.percentage}%`,
+        changePositive: cards.totalUsuarios.percentage >= 0
+      },
+      {
+        title: 'Artigos Publicados',
+        value: formatNumber(cards.artigosPublicados.value),
+        icon: 'description',
+        color: 'success',
+        change: `${cards.artigosPublicados.percentage > 0 ? '+' : ''}${cards.artigosPublicados.percentage}%`,
+        changePositive: cards.artigosPublicados.percentage >= 0
+      },
+      {
+        title: 'Assinantes Ativos',
+        value: formatNumber(cards.assinantesAtivos.value),
+        icon: 'emoji_events',
+        color: 'golden',
+        change: `${cards.assinantesAtivos.percentage > 0 ? '+' : ''}${cards.assinantesAtivos.percentage}%`,
+        changePositive: cards.assinantesAtivos.percentage >= 0
+      },
+      {
+        title: 'Visualizações',
+        value: formatNumber(cards.visualizacoes.value),
+        icon: 'visibility',
+        color: 'info',
+        change: `${cards.visualizacoes.percentage > 0 ? '+' : ''}${cards.visualizacoes.percentage}%`,
+        changePositive: cards.visualizacoes.percentage >= 0
+      }
+    ];
+  }
+
+  /**
+   * Popula os gráficos de linha (crescimento mensal) e pizza (distribuição de usuários)
+   */
+  private populateCharts(data: DashboardResponse): void {
+    // Proteger contra arrays ausentes na resposta
+    const monthlyGrowth = Array.isArray(data?.monthlyGrowth) ? data.monthlyGrowth : [];
+    const userDistribution = Array.isArray(data?.userDistribution) ? data.userDistribution : [];
+
+    // Gráfico de Crescimento Mensal
+    const growthLabels = monthlyGrowth.map(m => m.month);
+    const growthCounts = monthlyGrowth.map(m => m.count);
     this.lineChartData = {
-      labels: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho'],
+      labels: growthLabels,
       datasets: [
         {
-          label: 'Usuários',
-          data: [65, 59, 80, 81, 56, 55],
+          label: 'Novos Usuários',
+          data: growthCounts,
           fill: false,
           borderColor: '#42A5F5',
           tension: .4
@@ -88,20 +150,28 @@ export class DashboardComponent implements OnInit {
       ]
     };
 
+    // Gráfico de Distribuição de Usuários
+    const labelMap: Record<string, string> = {
+      USUARIO: 'Usuários',
+      ASSINANTE: 'Assinantes',
+      ADMIN: 'Admins'
+    };
+    const distLabels = userDistribution.map(u => labelMap[u.role] ?? u.role);
+    const distCounts = userDistribution.map(u => u.count);
     this.pieChartData = {
-      labels: ['Premium', 'Básico', 'Gratuito'],
+      labels: distLabels,
       datasets: [
         {
-          data: [300, 50, 100],
+          data: distCounts,
           backgroundColor: [
-            "#FF6384",
-            "#36A2EB",
-            "#FFCE56"
+            '#42A5F5', // azul
+            '#66BB6A', // verde
+            '#FFA726'  // laranja
           ],
           hoverBackgroundColor: [
-            "#FF6384",
-            "#36A2EB",
-            "#FFCE56"
+            '#64B5F6',
+            '#81C784',
+            '#FFB74D'
           ]
         }
       ]
