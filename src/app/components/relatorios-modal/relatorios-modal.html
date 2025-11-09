@@ -120,7 +120,6 @@
           </div>
         </form>
 
-        <!-- Botões de Ação -->
         <div class="export-actions">
           <h6 class="mb-3">
             <i class="pi pi-download me-1"></i>
@@ -128,7 +127,6 @@
           </h6>
 
           <div class="row g-3">
-            <!-- Exportar CSV -->
             <div class="col-md-6">
               <button
                 type="button"
@@ -139,17 +137,18 @@
                 @if (!exportandoCSV) {
                   <span>Exportar CSV</span>
                 }
-                <span *ngIf="exportandoCSV">
-                  <i class="pi pi-spin pi-spinner me-1"></i>
-                  Exportando...
-                </span>
+                @if (exportandoCSV) {
+                  <span>
+                    <i class="pi pi-spin pi-spinner me-1"></i>
+                    Exportando...
+                  </span>
+                }
               </button>
               <small class="text-muted d-block mt-1">
                 Dados de cães e votos em planilha
               </small>
             </div>
 
-            <!-- Exportar Histórico -->
             <div class="col-md-6">
               <button
                 type="button"
@@ -168,7 +167,6 @@
               </small>
             </div>
 
-            <!-- Gerar PDF -->
             <div class="col-12">
               <button
                 type="button"
@@ -189,7 +187,6 @@
           </div>
         </div>
 
-        <!-- Status do Relatório PDF -->
         <div class="pdf-status mt-4" *ngIf="statusRelatorio">
           <div class="card">
             <div class="card-header">
@@ -209,7 +206,6 @@
                 </small>
               </div>
 
-              <!-- Barra de Progresso -->
               <div class="progress mb-3" *ngIf="statusRelatorio.status === 'processando'">
                 <div
                   class="progress-bar progress-bar-striped progress-bar-animated"
@@ -222,7 +218,6 @@
                 </div>
               </div>
 
-              <!-- Etapa Atual -->
               <div class="mb-3" *ngIf="statusRelatorio.etapaAtual">
                 <small class="text-muted">
                   <i class="pi pi-spin pi-cog me-1" *ngIf="statusRelatorio.status === 'processando'"></i>
@@ -230,7 +225,6 @@
                 </small>
               </div>
 
-              <!-- Botão de Download -->
               <div class="d-flex justify-content-between align-items-center" *ngIf="statusRelatorio.status === 'concluido'">
                 <div>
                   <button

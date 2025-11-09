@@ -10,11 +10,40 @@ import { ProfileEditModalComponent } from '../../../components/profile-edit-moda
 import { AddressModalComponent } from '../../../components/address-modal/address-modal';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { NotificationService } from '../../../services/notification.service';
+// PrimeNG
+import { ButtonModule } from 'primeng/button';
+import { CardModule } from 'primeng/card';
+import { DialogModule } from 'primeng/dialog';
+import { RadioButtonModule } from 'primeng/radiobutton';
+import { InputTextModule } from 'primeng/inputtext';
+import { FileUploadModule } from 'primeng/fileupload';
+import { CheckboxModule } from 'primeng/checkbox';
+import { TagModule } from 'primeng/tag';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { MessageModule } from 'primeng/message';
 
 @Component({
   selector: "app-profile",
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, RouterModule, ProfileEditModalComponent, AddressModalComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    FormsModule,
+    RouterModule,
+    ProfileEditModalComponent,
+    AddressModalComponent,
+    // PrimeNG modules para UI
+    ButtonModule,
+    CardModule,
+    DialogModule,
+    RadioButtonModule,
+    InputTextModule,
+    FileUploadModule,
+    CheckboxModule,
+    TagModule,
+    ProgressSpinnerModule,
+    MessageModule,
+  ],
   templateUrl: './profile.html',
   styleUrls: ['./profile.scss']
 })
@@ -186,6 +215,22 @@ export class ProfileComponent implements OnInit, OnDestroy {
       this.videoError = "";
       this.selectedVideoFile = file;
     }
+  }
+
+  // Handler para seleção via PrimeNG FileUpload
+  onPrimeVideoSelect(event: { files: File[] }): void {
+    const file = event?.files?.[0];
+    if (!file) {
+      this.selectedVideoFile = null;
+      return;
+    }
+    if (!file.type.startsWith('video/')) {
+      this.videoError = 'Selecione um arquivo de vídeo válido.';
+      this.selectedVideoFile = null;
+      return;
+    }
+    this.videoError = '';
+    this.selectedVideoFile = file;
   }
 
   submitVideo(): void {

@@ -1,23 +1,13 @@
-<section class="articles-list container py-4" aria-labelledby="articles-list-title">
-  <header class="section-header text-center mb-5">
-    <h2 id="articles-list-title" class="display-4 font-weight-bold">Nossos Artigos</h2>
-    <p class="lead text-muted">Fique por dentro das últimas novidades e dicas sobre o mundo pet.</p>
-  </header>
-
-  <div class="filters-container mb-4">
-    <div class="search-filter mb-3">
-        <input type="text" class="form-control" placeholder="Pesquisar artigos..." (input)="onSearchChange($event)">
+<section class="articles-list container" aria-label="Lista de artigos">
+  <div class="list-toolbar">
+    <div class="toolbar-actions">
+      <input type="text" class="search-input" placeholder="Pesquisar..." (input)="onSearchChange($event)" aria-label="Pesquisar artigos">
+      <select class="category-select" (change)="selectCategory($any($event.target).value)" aria-label="Selecionar categoria">
+        <option value="">Todas as categorias</option>
+        <option *ngFor="let categoria of categorias" [value]="categoria">{{ categoria }}</option>
+      </select>
     </div>
-    <div class="category-filters">
-        <h3 class="filters-title h6 text-uppercase text-muted">Filtre por Categoria</h3>
-        <div class="btn-group flex-wrap" role="group" aria-label="Filtros de categoria">
-            <button type="button" class="btn" [class.btn-primary]="!categoriaSelecionada" (click)="selectCategory('')">Todas</button>
-            <button *ngFor="let categoria of categorias" type="button" class="btn" [class.btn-primary]="categoria === categoriaSelecionada" (click)="selectCategory(categoria)">
-                {{ categoria }}
-            </button>
-        </div>
-    </div>
-</div>
+  </div>
 
   <div *ngIf="loading" class="text-center p-5"><span class="spinner-border text-primary"></span> Carregando...</div>
   <div *ngIf="error" class="alert alert-danger" role="alert">{{ error }}</div>

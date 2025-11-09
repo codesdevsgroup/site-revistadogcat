@@ -131,7 +131,9 @@
   border-radius: var(--radius-lg);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   border: 1px solid var(--gray-200);
-  overflow: hidden;
+  // Permitir que overlays/dropdowns (PrimeNG) do paginador não sejam recortados
+  // (ex.: o dropdown de "Rows per page" do p-table)
+  overflow: visible;
 }
 
 .table-header {
