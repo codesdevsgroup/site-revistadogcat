@@ -37,6 +37,15 @@
   margin: 0 auto;
   min-height: 72px;
 
+  // Garantir que o Menubar use toda a largura do container e não aplique padding extra
+  .p-menubar {
+    width: 100%;
+    background: transparent;
+    border: none;
+    padding: 0;
+    box-shadow: none;
+  }
+
   @media (max-width: 1200px) {
     padding: 16px 20px;
   }

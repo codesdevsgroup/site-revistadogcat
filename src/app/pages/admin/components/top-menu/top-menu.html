@@ -1,40 +1,43 @@
 <header class="top-menu" [class.scrolled]="isScrolled">
-  <p-menubar [model]="items">
-    <ng-template pTemplate="start">
-      <a routerLink="/" class="menu-brand" title="Voltar para o site">
-        <img src="./logo2.png" alt="Logo DogCat" class="brand-logo">
-      </a>
-    </ng-template>
+  <!-- Container interno para limitar largura e evitar que o conteúdo vá até as bordas -->
+  <div class="menu-container">
+    <p-menubar [model]="items">
+      <ng-template pTemplate="start">
+        <a routerLink="/" class="menu-brand" title="Voltar para o site">
+          <img src="./logo2.png" alt="Logo DogCat" class="brand-logo">
+        </a>
+      </ng-template>
 
-    <ng-template pTemplate="end">
-      <div class="menu-user" [class.open]="userMenuOpen">
-        <button class="user-button" (click)="toggleUserMenu()">
-          <div class="user-avatar">
-            <i class="fas fa-user"></i>
-          </div>
-          <div class="user-info">
-            <span class="user-name">{{ username }}</span>
-            <span class="user-role">{{ userRole }}</span>
-          </div>
-          <i class="fas fa-chevron-down user-arrow"></i>
-        </button>
-
-        <div class="user-dropdown" *ngIf="userMenuOpen">
-          <button type="button" class="dropdown-item" (click)="navigateToProfile()">
-            <i class="fas fa-user-circle"></i>
-            <span>Meu Perfil</span>
+      <ng-template pTemplate="end">
+        <div class="menu-user" [class.open]="userMenuOpen">
+          <button class="user-button" (click)="toggleUserMenu()">
+            <div class="user-avatar">
+              <i class="fas fa-user"></i>
+            </div>
+            <div class="user-info">
+              <span class="user-name">{{ username }}</span>
+              <span class="user-role">{{ userRole }}</span>
+            </div>
+            <i class="fas fa-chevron-down user-arrow"></i>
           </button>
-          <button type="button" class="dropdown-item" (click)="navigateToSettings()">
-              <i class="fas fa-cog"></i>
-              <span>Configurações</span>
+
+          <div class="user-dropdown" *ngIf="userMenuOpen">
+            <button type="button" class="dropdown-item" (click)="navigateToProfile()">
+              <i class="fas fa-user-circle"></i>
+              <span>Meu Perfil</span>
             </button>
-          <hr class="dropdown-divider">
-          <button type="button" class="dropdown-item logout" (click)="logout()">
-              <i class="fas fa-sign-out-alt"></i>
-              <span>Sair</span>
-            </button>
+            <button type="button" class="dropdown-item" (click)="navigateToSettings()">
+                <i class="fas fa-cog"></i>
+                <span>Configurações</span>
+              </button>
+            <hr class="dropdown-divider">
+            <button type="button" class="dropdown-item logout" (click)="logout()">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Sair</span>
+              </button>
+          </div>
         </div>
-      </div>
-    </ng-template>
-  </p-menubar>
+      </ng-template>
+    </p-menubar>
+  </div>
 </header>

@@ -304,6 +304,50 @@
   }
 }
 
+// Responsividade para "Atividade Recente" (p-table dentro de p-card)
+.recent-activity-card {
+  .p-card-body { /* permite scroll horizontal quando a tabela tem min-width grande */
+    overflow-x: auto;
+  }
+
+  .p-table { /* ocupar todo o espaço disponível do card */
+    width: 100%;
+  }
+
+  /* Ajustes de tipografia das células em telas pequenas */
+  @media (max-width: 768px) {
+    .p-table td {
+      font-size: 0.85rem;
+      white-space: nowrap; /* evita quebra estranha quando houver ícones e textos juntos */
+    }
+    .p-table .material-symbols-outlined {
+      font-size: 20px;
+    }
+  }
+}
+
+// Responsividade para "Ações Rápidas"
+.quick-actions-card {
+  .actions-grid {
+    display: grid; /* garante consistência e facilidade de ajuste */
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+
+  .action-btn {
+    justify-content: flex-start; /* garante alinhamento consistente em telas estreitas */
+  }
+
+  @media (max-width: 992px) {
+    .action-btn {
+      padding: 0.75rem 0.9rem;
+    }
+    .action-btn .material-symbols-outlined {
+      font-size: 20px;
+    }
+  }
+}
+
 @media (max-width: 768px) {
   .dashboard-container {
     padding: var(--space-4) 0;
