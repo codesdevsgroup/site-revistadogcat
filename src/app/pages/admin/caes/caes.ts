@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
+import { DialogModule } from "primeng/dialog";
 import { Router } from "@angular/router";
 import {
   CadastroCaoService,
@@ -50,7 +51,7 @@ interface Raca {
 @Component({
   selector: "app-caes",
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, DialogModule],
   templateUrl: "./caes.html",
   styleUrls: ["./caes.scss"],
 })

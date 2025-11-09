@@ -29,7 +29,8 @@ export const appConfig: ApplicationConfig = {
         preset: Lara,
         options: {
           prefix: 'p',
-          darkModeSelector: 'system',
+          // Força tema claro para evitar aparência escura indesejada
+          darkModeSelector: 'none',
           cssLayer: false
         }
       }

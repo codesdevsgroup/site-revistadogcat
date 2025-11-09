@@ -1,26 +1,27 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { RelatoriosService, FiltrosRelatorio, StatusRelatorio } from '../../services/relatorios.service';
 import { NotificationService } from '../../services/notification.service';
 import { Subject, interval } from 'rxjs';
 import { takeUntil, switchMap, takeWhile } from 'rxjs/operators';
+import { DialogModule } from 'primeng/dialog';
 
-declare var bootstrap: any;
+// Removido Bootstrap; agora usando PrimeNG Dialog
 
 @Component({
   selector: 'app-relatorios-modal',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, DialogModule],
   templateUrl: './relatorios-modal.html',
   styleUrls: ['./relatorios-modal.scss']
 })
 export class RelatoriosModalComponent implements OnInit, OnDestroy {
-  @ViewChild('modalElement', { static: true }) modalElement!: ElementRef;
+  // Controla visibilidade do Dialog PrimeNG
+  visible = false;
   
   filtrosForm: FormGroup;
   private destroy$ = new Subject<void>();
-  private modal: any;
   
   // Estados de carregamento
   exportandoCSV = false;
@@ -40,16 +41,12 @@ export class RelatoriosModalComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.modal = new bootstrap.Modal(this.modalElement.nativeElement);
     this.setDefaultDates();
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
-    if (this.modal) {
-      this.modal.dispose();
-    }
   }
 
   private createForm(): FormGroup {
@@ -79,14 +76,14 @@ export class RelatoriosModalComponent implements OnInit, OnDestroy {
    * Abre o modal
    */
   abrir(): void {
-    this.modal.show();
+    this.visible = true;
   }
 
   /**
    * Fecha o modal
    */
   fechar(): void {
-    this.modal.hide();
+    this.visible = false;
     this.resetarStatus();
   }
 

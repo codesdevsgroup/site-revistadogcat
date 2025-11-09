@@ -161,19 +161,18 @@
   </ng-template>
 </div>
 
-<div class="modal-overlay" *ngIf="showBreedModal" (click)="closeBreedModal()">
-  <div class="modal-content" (click)="$event.stopPropagation()">
+<p-dialog [(visible)]="showRacaModal" [modal]="true" [dismissableMask]="true" [closable]="true"
+          [style]="{ width: '85vw', maxWidth: '900px' }" styleClass="modal-lg">
+  <ng-template pTemplate="header">
     <div class="modal-header">
       <h3>
-        <i class="fas fa-cog"></i>
+        <i class="pi pi-cog"></i>
         Gerenciar Raças
       </h3>
-      <button class="btn-close" (click)="closeBreedModal()">
-        <i class="fas fa-times"></i>
-      </button>
     </div>
+  </ng-template>
 
-    <div class="modal-body">
+  <div class="modal-body">
       <form class="breed-form" (ngSubmit)="saveBreed()" #breedForm="ngForm">
         <div class="form-group">
           <label for="breedName">Nome da Raça</label>
@@ -246,14 +245,14 @@
               (click)="editBreed(raca)"
               title="Editar"
             >
-              <i class="fas fa-edit"></i>
+              <i class="pi pi-pencil"></i>
             </button>
             <button
               class="btn btn-sm btn-danger"
               (click)="deleteBreed(raca)"
               title="Excluir"
             >
-              <i class="fas fa-trash"></i>
+              <i class="pi pi-trash"></i>
             </button>
           </div>
         </div>
@@ -265,24 +264,22 @@
           <p>Nenhuma raça encontrada para "{{ racaSearchTerm }}"</p>
         </div>
       </div>
-    </div>
   </div>
-</div>
+</p-dialog>
 
-<!-- Modal para Visualizar/Editar Cão -->
-<div class="modal-overlay" *ngIf="showCaoModal" (click)="closeCaoModal()">
-  <div class="modal-content modal-lg" (click)="$event.stopPropagation()">
+<!-- Dialog para Visualizar/Editar Cão -->
+<p-dialog [(visible)]="showCaoModal" [modal]="true" [dismissableMask]="true" [closable]="true"
+          [style]="{ width: '85vw', maxWidth: '1000px' }" styleClass="modal-lg">
+  <ng-template pTemplate="header">
     <div class="modal-header">
       <h3>
-        <i class="fas fa-dog"></i>
+        <i class="pi pi-dog"></i>
         Detalhes do Cão
       </h3>
-      <button class="btn-close" (click)="closeCaoModal()">
-        <i class="fas fa-times"></i>
-      </button>
     </div>
+  </ng-template>
 
-    <div class="modal-body" *ngIf="selectedCao">
+  <div class="modal-body" *ngIf="selectedCao">
       <div class="gallery">
         <h4>Fotos</h4>
         <div class="thumbnail-container">
@@ -366,8 +363,9 @@
           </div>
         </div>
       </div>
-    </div>
+  </div>
 
+  <ng-template pTemplate="footer">
     <div class="modal-footer">
       <button type="button" class="btn btn-secondary" (click)="closeCaoModal()">
         {{ isEditingCao ? 'Cancelar' : 'Fechar' }}
@@ -378,7 +376,7 @@
         *ngIf="!isEditingCao"
         (click)="isEditingCao = true"
       >
-        <i class="fas fa-edit"></i>
+        <i class="pi pi-pencil"></i>
         Editar
       </button>
       <button
@@ -387,9 +385,9 @@
         *ngIf="isEditingCao"
         (click)="saveCao()"
       >
-        <i class="fas fa-save"></i>
+        <i class="pi pi-save"></i>
         Salvar
       </button>
     </div>
-  </div>
-</div>
+  </ng-template>
+</p-dialog>
