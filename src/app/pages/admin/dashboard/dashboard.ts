@@ -102,7 +102,7 @@ export class DashboardComponent implements OnInit {
       {
         title: 'Artigos Publicados',
         value: formatNumber(cards.artigosPublicados.value),
-        icon: 'description',
+        icon: 'article',
         color: 'success',
         change: `${cards.artigosPublicados.percentage > 0 ? '+' : ''}${cards.artigosPublicados.percentage}%`,
         changePositive: cards.artigosPublicados.percentage >= 0
@@ -149,6 +149,24 @@ export class DashboardComponent implements OnInit {
         }
       ]
     };
+
+    // Gráfico de Cadastro de Cães + informativo de incompletos
+    const dogsMonthly = Array.isArray(data?.dogsStats?.monthlyGrowth) ? data!.dogsStats!.monthlyGrowth : [];
+    const dogsLabels = dogsMonthly.map(m => m.month);
+    const dogsCounts = dogsMonthly.map(m => m.count);
+    this.dogsLineChartData = {
+      labels: dogsLabels,
+      datasets: [
+        {
+          label: 'Cadastros de Cães',
+          data: dogsCounts,
+          fill: false,
+          borderColor: '#10B981',
+          tension: .4
+        }
+      ]
+    };
+    this.dogsIncompleteCount = data?.dogsStats?.incompleteCount ?? 0;
 
     // Gráfico de Distribuição de Usuários
     const labelMap: Record<string, string> = {
@@ -223,4 +241,8 @@ export class DashboardComponent implements OnInit {
       }
     });
   }
+
+  // Novos estados para o terceiro card
+  dogsLineChartData: any;
+  dogsIncompleteCount: number = 0;
 }

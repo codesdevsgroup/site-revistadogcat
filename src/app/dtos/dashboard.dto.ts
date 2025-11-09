@@ -28,8 +28,14 @@ export interface UserDistributionItem {
   count: number;
 }
 
+export interface DogsStatsResponse {
+  monthlyGrowth: MonthlyGrowthItem[];
+  incompleteCount: number;
+}
+
 export interface DashboardResponse {
   cards: DashboardCards;
   monthlyGrowth: MonthlyGrowthItem[];
   userDistribution: UserDistributionItem[];
+  dogsStats?: DogsStatsResponse;
 }

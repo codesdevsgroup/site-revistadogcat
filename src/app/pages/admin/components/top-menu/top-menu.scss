@@ -362,3 +362,34 @@
     font-size: 12px;
   }
 }
+
+/* Estilo para Menubar do PrimeNG - substitui a navegação customizada */
+:host ::ng-deep .p-menubar {
+  border-radius: 0;
+  border: 0;
+  backdrop-filter: blur(16px);
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  padding: 8px 16px;
+}
+
+:host ::ng-deep .p-menubar .p-menuitem-link .p-menuitem-icon.pi {
+  font-size: 1rem;
+}
+
+.menu-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.menu-brand .brand-logo {
+  height: 32px;
+  width: auto;
+}
+
+@media (max-width: 768px) {
+  :host ::ng-deep .p-menubar {
+    padding: 6px 12px;
+  }
+}

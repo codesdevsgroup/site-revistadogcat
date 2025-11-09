@@ -1,9 +1,6 @@
 .dashboard-container {
   max-width: 1520px;
   margin: 0 auto;
-  padding: var(--space-8) var(--space-6);
-  min-height: calc(100vh - 96px);
-
   @media (max-width: 1200px) {
     padding: var(--space-6) var(--space-5);
   }
@@ -15,7 +12,6 @@
 }
 
 .dashboard-header {
-  margin-bottom: var(--space-8);
   text-align: center;
 
   .dashboard-title {
@@ -48,14 +44,14 @@
   }
 }
 
-.stat-card {
+:host ::ng-deep .stat-card {
   background: white;
   border-radius: 16px;
   padding: var(--space-6);
   display: flex;
   align-items: center;
   gap: var(--space-4);
-  box-shadow: 
+  box-shadow:
     0 4px 20px rgba(0, 0, 0, 0.08),
     0 2px 8px rgba(0, 0, 0, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.8);
@@ -75,25 +71,40 @@
 
   &:hover {
     transform: translateY(-4px);
-    box-shadow: 
+    box-shadow:
       0 8px 32px rgba(0, 0, 0, 0.12),
       0 4px 16px rgba(0, 0, 0, 0.08);
   }
 
-  &.stat-primary::before {
+  .stat-primary::before {
     background: linear-gradient(90deg, var(--primaryColor), var(--primaryColorDark));
   }
 
-  &.stat-success::before {
+  .stat-success::before {
     background: linear-gradient(90deg, var(--successColor), #22c55e);
   }
 
-  &.stat-golden::before {
+  .stat-golden::before {
     background: linear-gradient(90deg, var(--goldenColor), var(--goldenColorLight));
   }
 
-  &.stat-info::before {
+  .stat-info::before {
     background: linear-gradient(90deg, var(--infoColor), #3b82f6);
+  }
+
+  .p-card-body {
+    padding: 0;
+    width: 100%;
+  }
+
+  .p-card-content {
+    padding: 0;
+  }
+
+  .stat-content {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
   }
 
   .stat-icon {
@@ -103,64 +114,72 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    .material-icons {
+    // Ícone default: material-icons ou material-symbols
+    .material-icons,
+    .material-symbols-outlined {
       font-size: 28px;
-      color: white;
       line-height: 1;
+      color: var(--gray-700); // padrão para quando o fundo for claro
     }
     flex-shrink: 0;
+    // Fundo padrão para evitar "ícone branco em fundo branco" quando a classe de cor não aplicar
+    background: var(--gray-100);
   }
 
-  &.stat-primary .stat-icon {
+  .stat-primary .stat-icon {
     background: linear-gradient(135deg, var(--primaryColor), var(--primaryColorDark));
+    .material-icons,
+    .material-symbols-outlined { color: white; }
   }
 
-  &.stat-success .stat-icon {
+  .stat-success .stat-icon {
     background: linear-gradient(135deg, var(--successColor), #22c55e);
+    .material-icons,
+    .material-symbols-outlined { color: white; }
   }
 
-  &.stat-golden .stat-icon {
+  .stat-golden .stat-icon {
     background: linear-gradient(135deg, var(--goldenColor), var(--goldenColorLight));
+    .material-icons,
+    .material-symbols-outlined { color: white; }
   }
 
-  &.stat-info .stat-icon {
+  .stat-info .stat-icon {
     background: linear-gradient(135deg, var(--infoColor), #3b82f6);
+    .material-icons,
+    .material-symbols-outlined { color: white; }
   }
 
-  .stat-content {
-    flex: 1;
+  .stat-value {
+    font-size: 2rem;
+    font-weight: var(--fontWeight-bold);
+    color: var(--gray-800);
+    margin: 0 0 var(--space-1) 0;
+    line-height: 1;
+  }
 
-    .stat-value {
-      font-size: 2rem;
-      font-weight: var(--fontWeight-bold);
-      color: var(--gray-800);
-      margin: 0 0 var(--space-1) 0;
-      line-height: 1;
-    }
+  .stat-title {
+    font-size: 0.875rem;
+    color: var(--gray-600);
+    margin: 0 0 var(--space-2) 0;
+    font-weight: var(--fontWeight-medium);
+  }
 
-    .stat-title {
-      font-size: 0.875rem;
-      color: var(--gray-600);
-      margin: 0 0 var(--space-2) 0;
-      font-weight: var(--fontWeight-medium);
-    }
-
-    .stat-change {
-      font-size: 0.75rem;
-      font-weight: var(--fontWeight-semibold);
-      padding: 2px 8px;
-      border-radius: 6px;
-      background: rgba(34, 197, 94, 0.1);
+  .stat-change {
+    font-size: 0.75rem;
+    font-weight: var(--fontWeight-semibold);
+    padding: 2px 8px;
+    border-radius: 6px;
+    background: rgba(34, 197, 94, 0.1);
+    color: var(--successColor);
+    &.positive {
+      background: rgba(34, 197, 94, 0.12);
       color: var(--successColor);
-      &.positive {
-        background: rgba(34, 197, 94, 0.12);
-        color: var(--successColor);
-      }
+    }
 
-      &.negative {
-        background: rgba(239, 68, 68, 0.12);
-        color: var(--dangerColor, #ef4444);
-      }
+    &.negative {
+      background: rgba(239, 68, 68, 0.12);
+      color: var(--dangerColor, #ef4444);
     }
   }
 }
@@ -212,7 +231,7 @@
     box-shadow: 0 2px 6px rgba(0,0,0,0.05);
     transition: all .2s ease;
 
-    .material-icons {
+    .material-symbols-outlined {
       font-size: 22px;
     }
 
@@ -296,7 +315,7 @@
 
   .stat-card {
     padding: var(--space-4);
-    
+
     .stat-content .stat-value {
       font-size: 1.5rem;
     }
@@ -304,22 +323,18 @@
 
   .action-card {
     padding: var(--space-4);
-    
+
     i {
       font-size: 1.5rem;
     }
   }
 }
 
-// Analytics Section
 .analytics-section {
-  margin-top: var(--space-8);
-
   .analytics-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: var(--space-6);
-    margin-top: var(--space-6);
 
     @media (max-width: 768px) {
       grid-template-columns: 1fr;
@@ -327,10 +342,24 @@
     }
   }
 
+  .stat-informativo {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-top: var(--space-3);
+    padding: 6px 10px;
+    border-radius: 8px;
+    background: rgba(245, 158, 11, 0.12);
+    color: #b45309;
+
+    .material-symbols-outlined {
+      font-size: 18px;
+    }
+  }
+
   .analytics-card {
     background: white;
     border-radius: 12px;
-    padding: var(--space-6);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     border: 1px solid #e5e7eb;
     transition: all 0.3s ease;
