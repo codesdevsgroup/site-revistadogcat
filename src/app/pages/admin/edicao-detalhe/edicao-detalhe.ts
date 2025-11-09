@@ -40,7 +40,9 @@ export class EdicaoDetalheComponent {
       this.form.get('pdf')?.updateValueAndValidity();
     } else {
       this.notificationService.error('Por favor, selecione um arquivo PDF válido.');
-      event.target.value = '';
+      if (target) {
+        target.value = '';
+      }
     }
   }
 
@@ -51,14 +53,18 @@ export class EdicaoDetalheComponent {
       const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
       if (!allowedTypes.includes(file.type)) {
         this.notificationService.error('Por favor, selecione uma imagem válida (JPEG, PNG ou WebP).');
-        event.target.value = '';
+        if (target) {
+          target.value = '';
+        }
         return;
       }
       
       const maxSize = 5 * 1024 * 1024; // 5MB
       if (file.size > maxSize) {
         this.notificationService.warning('A imagem deve ter no máximo 5MB.');
-        event.target.value = '';
+        if (target) {
+          target.value = '';
+        }
         return;
       }
       

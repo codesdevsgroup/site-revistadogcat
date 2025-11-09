@@ -29,7 +29,7 @@ import {
   CadastroCaoResponse,
 } from "../../../interfaces/cao.interface";
 import { SocialMedia } from "../../../interfaces/social-media.interface";
-import { User } from "../../../interfaces/usuario.interface";
+import { Usuario as User } from "../../../interfaces/usuario.interface";
 
 @Component({
   selector: "app-cadastro-cao",
@@ -291,7 +291,9 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
     if (file) {
       const validation = this.validationService.validateImageFile(file);
       if (!validation.valid) {
-        this.notificationService.error(validation.error);
+        if (validation.error) {
+          this.notificationService.error(validation.error);
+        }
         return;
       }
       this.fotoPerfil = file;
@@ -307,7 +309,9 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
     if (file) {
       const validation = this.validationService.validateImageFile(file);
       if (!validation.valid) {
-        this.notificationService.error(validation.error);
+        if (validation.error) {
+          this.notificationService.error(validation.error);
+        }
         return;
       }
       this.fotoLateral = file;
@@ -341,7 +345,9 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
     if (file) {
       const validation = this.validationService.validateImageFile(file);
       if (!validation.valid) {
-        this.notificationService.error(validation.error);
+        if (validation.error) {
+          this.notificationService.error(validation.error);
+        }
         return;
       }
       this.pedigreeFrente = file;
@@ -354,7 +360,9 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
     if (file) {
       const validation = this.validationService.validateImageFile(file);
       if (!validation.valid) {
-        this.notificationService.error(validation.error);
+        if (validation.error) {
+          this.notificationService.error(validation.error);
+        }
         return;
       }
       this.pedigreeVerso = file;
@@ -367,7 +375,9 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
     if (file) {
       const validation = this.validationService.validateVideoFile(file);
       if (!validation.valid) {
-        this.notificationService.error(validation.error);
+        if (validation.error) {
+          this.notificationService.error(validation.error);
+        }
         return;
       }
       if (validation.warning && !window.confirm(validation.warning)) {
