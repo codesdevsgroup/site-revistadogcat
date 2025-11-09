@@ -66,7 +66,7 @@ export class ArtigosListaComponent implements OnInit {
   carregarCategorias(): void {
     this.artigosService.listarCategorias().subscribe({
       next: (categorias) => {
-        this.categorias = categorias;
+        this.categorias = Array.isArray(categorias) ? categorias : [];
         this.cdr.markForCheck();
       },
       error: (err) => {

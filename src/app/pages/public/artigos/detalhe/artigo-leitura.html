@@ -12,7 +12,7 @@
 
       <!-- Estatísticas do artigo -->
       <div class="article-stats">
-        <span class="stat-item" title="Visualizações">
+        <button class="stat-item like-button" title="Visualizações" disabled>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="18"
@@ -28,7 +28,7 @@
             />
           </svg>
           {{ totalVisualizacoes }}
-        </span>
+        </button>
         <button
           class="stat-item like-button"
           [class.liked]="curtido"

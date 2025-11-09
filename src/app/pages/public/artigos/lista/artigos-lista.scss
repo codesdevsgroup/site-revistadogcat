@@ -1,71 +1,51 @@
 :host {
   display: block;
-  background-color: #f8f9fa;
+  background-color: var(--gray-50);
 }
 
 .articles-list {
-  padding-top: 3rem;
-  padding-bottom: 3rem;
+  padding: var(--space-6) 0;
 }
 
-.section-header {
-  .display-4 {
-    color: #212529;
-  }
-  .lead {
-    color: #6c757d;
-  }
+.list-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-bottom: var(--space-4);
 }
 
-.filters-container {
-  background-color: #fff;
-  padding: 1.5rem;
-  border-radius: 0.75rem;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-  margin-bottom: 2rem;
+.toolbar-actions {
+  display: flex;
+  gap: var(--space-3);
 }
 
-.search-filter .form-control {
-  border-radius: 0.5rem;
-  padding: 0.75rem 1rem;
+.search-input,
+.category-select {
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--gray-300);
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  background: #fff;
 }
 
-.category-filters .filters-title {
-  margin-bottom: 0.75rem;
-  font-weight: 600;
+.search-input {
+  min-width: 220px;
 }
 
-.category-filters .btn-group .btn {
-  margin-right: 0.5rem;
-  margin-bottom: 0.5rem;
-  border-radius: 999px;
-  font-weight: 500;
-  transition: all 0.2s ease-in-out;
-  border-color: #dee2e6;
-  color: #495057;
-
-  &.btn-primary {
-    background-color: #007bff;
-    border-color: #007bff;
-    color: #fff;
-    box-shadow: 0 2px 4px rgba(0,123,255,0.2);
-  }
-
-  &:hover {
-    transform: translateY(-2px);
-  }
+.category-select {
+  min-width: 200px;
 }
 
 .articles-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 2rem;
+  gap: var(--space-5);
 }
 
 .article-card {
   background: #fff;
   border: none;
-  border-radius: 0.75rem;
+  border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: 0 4px 8px rgba(0,0,0,0.05);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -100,7 +80,7 @@
   }
 
   .card-content {
-    padding: 1.5rem;
+    padding: var(--space-5);
   }
 
   .category-tag {
@@ -116,13 +96,13 @@
 
   .title {
     font-size: 1.25rem;
-    font-weight: 700;
-    color: #212529;
+    font-weight: var(--fontWeight-bold);
+    color: var(--gray-800);
     line-height: 1.4;
   }
 
   .excerpt {
-    color: #6c757d;
+    color: var(--gray-600);
     font-size: 0.95rem;
     flex-grow: 1;
   }
@@ -139,6 +119,15 @@
 }
 
 @media (max-width: 768px) {
+  .list-toolbar {
+    justify-content: flex-start;
+  }
+  .search-input {
+    min-width: 180px;
+  }
+  .category-select {
+    min-width: 160px;
+  }
   .articles-grid {
     grid-template-columns: 1fr;
   }
