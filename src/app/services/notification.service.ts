@@ -9,7 +9,7 @@ export class NotificationService {
 
   constructor() {
     this.notyf = new Notyf({
-      duration: 5000, // 5 segundos
+      duration: 5000,
       position: {
         x: 'right',
         y: 'top',
@@ -55,26 +55,14 @@ export class NotificationService {
     });
   }
 
-  /**
-   * Exibe uma notificação de sucesso.
-   * @param message A mensagem a ser exibida.
-   */
   success(message: string): void {
     this.notyf.success(message);
   }
 
-  /**
-   * Exibe uma notificação de erro.
-   * @param message A mensagem a ser exibida.
-   */
   error(message: string): void {
     this.notyf.error(message);
   }
 
-  /**
-   * Exibe uma notificação de aviso.
-   * @param message A mensagem a ser exibida.
-   */
   warning(message: string): void {
     this.notyf.open({
       type: 'warning',
@@ -82,10 +70,6 @@ export class NotificationService {
     });
   }
 
-  /**
-   * Exibe uma notificação informativa.
-   * @param message A mensagem a ser exibida.
-   */
   info(message: string): void {
     this.notyf.open({
       type: 'info',
@@ -93,9 +77,6 @@ export class NotificationService {
     });
   }
 
-  /**
-   * Limpa todas as notificações.
-   */
   dismissAll(): void {
     this.notyf.dismissAll();
   }

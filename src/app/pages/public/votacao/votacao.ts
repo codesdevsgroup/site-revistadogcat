@@ -6,6 +6,7 @@ import { VotacaoService } from '../../../services/votacao.service';
 import { AuthService } from '../../../services/auth.service';
 import { LoginRequiredModalComponent } from '../components/login-required-modal/login-required-modal.component';
 import { CreateVotoDto, VotoTipo } from '../../../interfaces/votacao.interface';
+import { NotificationService } from '../../../services/notification.service';
 
 @Component({
   selector: 'app-votacao',
@@ -25,7 +26,8 @@ export class VotacaoComponent implements OnInit {
     private cadastroCaoService: CadastroCaoService,
     private votacaoService: VotacaoService,
     private authService: AuthService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private notificationService: NotificationService,
   ) {}
 
   ngOnInit(): void {
@@ -39,7 +41,7 @@ export class VotacaoComponent implements OnInit {
       this.caes = response.data || [];
     } catch (error) {
       console.error('Erro ao carregar cães para votação:', error);
-      alert('Erro ao carregar lista de cães. Tente novamente mais tarde.');
+      this.notificationService.error('Erro ao carregar lista de cães. Tente novamente mais tarde.');
     } finally {
       this.loading = false;
       this.cdr.markForCheck();
@@ -51,7 +53,6 @@ export class VotacaoComponent implements OnInit {
   }
 
   onVotar(cadastroId: string, tipo: VotoTipo): void {
-    // Exige login somente ao tentar votar
     if (!this.authService.isAuthenticated()) {
       this.loginModal?.show();
       return;
@@ -60,12 +61,12 @@ export class VotacaoComponent implements OnInit {
     const payload: CreateVotoDto = { cadastroId, tipo };
     this.votacaoService.votar(payload).subscribe({
       next: () => {
-        alert('Voto registrado com sucesso!');
+        this.notificationService.success('Voto registrado com sucesso!');
       },
       error: (err) => {
         console.error('Erro ao votar:', err);
         const message = err?.error?.message || 'Não foi possível registrar seu voto.';
-        alert(message);
+        this.notificationService.error(message);
       }
     });
   }
