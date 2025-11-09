@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { NotificationService } from '../../../../services/notification.service';
+import { CadastroAnunciante } from '../../../../interfaces/cadastro-anunciante.interface';
 
 @Component({
   selector: 'app-modal-cadastro-anunciante',
@@ -13,7 +14,7 @@ import { NotificationService } from '../../../../services/notification.service';
 export class ModalCadastroAnuncianteComponent {
   @Input() isOpen = false;
   @Output() closeModal = new EventEmitter<void>();
-  @Output() submitForm = new EventEmitter<any>();
+  @Output() submitForm = new EventEmitter<CadastroAnunciante>();
 
   cadastroForm: FormGroup;
   isSubmitting = false;

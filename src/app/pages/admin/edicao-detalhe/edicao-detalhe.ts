@@ -31,8 +31,9 @@ export class EdicaoDetalheComponent {
   get descricao() { return this.form.get('descricao'); }
   get data() { return this.form.get('data'); }
 
-  onPdfSelected(event: any) {
-    const file = event.target.files[0];
+  onPdfSelected(event: Event) {
+    const target = event.target as HTMLInputElement;
+    const file = target.files?.[0];
     if (file && file.type === 'application/pdf') {
       this.selectedPdf = file;
       this.form.patchValue({ pdf: file.name });
@@ -43,8 +44,9 @@ export class EdicaoDetalheComponent {
     }
   }
 
-  onCapaSelected(event: any) {
-    const file = event.target.files[0];
+  onCapaSelected(event: Event) {
+    const target = event.target as HTMLInputElement;
+    const file = target.files?.[0];
     if (file) {
       const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
       if (!allowedTypes.includes(file.type)) {
