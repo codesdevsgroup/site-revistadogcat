@@ -6,11 +6,16 @@ import { UsuarioModalComponent } from '../../../components/usuario-modal/usuario
 import { UsuarioService } from '../../../services/usuario.service';
 import { NotificationService } from '../../../services/notification.service';
 import { Usuario } from '../../../interfaces/usuario.interface';
+import { ButtonModule } from 'primeng/button';
+import { CardModule } from 'primeng/card';
+import { TooltipModule } from 'primeng/tooltip';
+import { TableModule } from 'primeng/table';
+import { ChartModule } from 'primeng/chart';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RelatoriosModalComponent, UsuarioModalComponent],
+  imports: [CommonModule, RelatoriosModalComponent, UsuarioModalComponent, ButtonModule, CardModule, TooltipModule, TableModule, ChartModule],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.scss']
 })
@@ -53,13 +58,54 @@ export class DashboardComponent implements OnInit {
     }
   ];
 
+  recentActivity = [
+    { icon: 'pi pi-user', text: 'Novo usuário cadastrado: <strong>João Silva</strong>', time: '2 minutos atrás' },
+    { icon: 'pi pi-newspaper', text: 'Artigo publicado: <strong>Cuidados com Pets no Inverno</strong>', time: '1 hora atrás' },
+    { icon: 'pi pi-crown', text: 'Nova assinatura premium ativada', time: '3 horas atrás' }
+  ];
+
+  lineChartData: any;
+  pieChartData: any;
+
   constructor(
     private router: Router,
     private usuarioService: UsuarioService,
     private notificationService: NotificationService
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.lineChartData = {
+      labels: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho'],
+      datasets: [
+        {
+          label: 'Usuários',
+          data: [65, 59, 80, 81, 56, 55],
+          fill: false,
+          borderColor: '#42A5F5',
+          tension: .4
+        }
+      ]
+    };
+
+    this.pieChartData = {
+      labels: ['Premium', 'Básico', 'Gratuito'],
+      datasets: [
+        {
+          data: [300, 50, 100],
+          backgroundColor: [
+            "#FF6384",
+            "#36A2EB",
+            "#FFCE56"
+          ],
+          hoverBackgroundColor: [
+            "#FF6384",
+            "#36A2EB",
+            "#FFCE56"
+          ]
+        }
+      ]
+    };
+  }
 
   /**
    * Abre o modal de relatórios e exportações

@@ -6,90 +6,50 @@
 
   <!-- Stats Cards -->
   <div class="stats-grid">
-    <div class="stat-card" *ngFor="let stat of stats" [class]="'stat-' + stat.color">
-      <div class="stat-icon">
-        <i [class]="stat.icon"></i>
-      </div>
+    <p-card *ngFor="let stat of stats" [styleClass]="'stat-card stat-' + stat.color">
       <div class="stat-content">
-        <h3 class="stat-value">{{ stat.value }}</h3>
-        <p class="stat-title">{{ stat.title }}</p>
-        <span class="stat-change positive">{{ stat.change }}</span>
+        <div class="stat-icon">
+          <i [class]="stat.icon"></i>
+        </div>
+        <div>
+          <h3 class="stat-value">{{ stat.value }}</h3>
+          <p class="stat-title">{{ stat.title }}</p>
+          <span class="stat-change positive">{{ stat.change }}</span>
+        </div>
       </div>
-    </div>
+    </p-card>
   </div>
 
   <!-- Quick Actions -->
-  <div class="quick-actions">
-    <h2 class="section-title">Ações Rápidas</h2>
+  <p-card header="Ações Rápidas" styleClass="quick-actions-card">
     <div class="actions-grid">
-      <button class="action-card" (click)="novoArtigo()" title="Criar novo artigo">
-        <i class="fas fa-plus"></i>
-        <span>Novo Artigo</span>
-      </button>
-      <button class="action-card" (click)="adicionarUsuario()" title="Adicionar novo usuário">
-        <i class="fas fa-user-plus"></i>
-        <span>Adicionar Usuário</span>
-      </button>
-      <button class="action-card" (click)="abrirRelatorios()" title="Gerar relatórios e exportações">
-        <i class="fas fa-chart-bar"></i>
-        <span>Relatórios</span>
-      </button>
+      <button pButton type="button" icon="pi pi-plus" label="Novo Artigo" (click)="novoArtigo()" pTooltip="Criar novo artigo" tooltipPosition="top"></button>
+      <button pButton type="button" icon="pi pi-user-plus" label="Adicionar Usuário" (click)="adicionarUsuario()" pTooltip="Adicionar novo usuário" tooltipPosition="top"></button>
+      <button pButton type="button" icon="pi pi-chart-bar" label="Relatórios" (click)="abrirRelatorios()" pTooltip="Gerar relatórios e exportações" tooltipPosition="top"></button>
     </div>
-  </div>
+  </p-card>
 
   <!-- Recent Activity -->
-  <div class="recent-activity">
-    <h2 class="section-title">Atividade Recente</h2>
-    <div class="activity-list">
-      <div class="activity-item">
-        <div class="activity-icon">
-          <i class="fas fa-user"></i>
-        </div>
-        <div class="activity-content">
-          <p class="activity-text">Novo usuário cadastrado: <strong>João Silva</strong></p>
-          <span class="activity-time">2 minutos atrás</span>
-        </div>
-      </div>
-      <div class="activity-item">
-        <div class="activity-icon">
-          <i class="fas fa-newspaper"></i>
-        </div>
-        <div class="activity-content">
-          <p class="activity-text">Artigo publicado: <strong>Cuidados com Pets no Inverno</strong></p>
-          <span class="activity-time">1 hora atrás</span>
-        </div>
-      </div>
-      <div class="activity-item">
-        <div class="activity-icon">
-          <i class="fas fa-crown"></i>
-        </div>
-        <div class="activity-content">
-          <p class="activity-text">Nova assinatura premium ativada</p>
-          <span class="activity-time">3 horas atrás</span>
-        </div>
-      </div>
-    </div>
-  </div>
+  <p-card header="Atividade Recente" styleClass="recent-activity-card">
+    <p-table [value]="recentActivity" [tableStyle]="{'min-width': '50rem'}">
+      <ng-template pTemplate="body" let-activity>
+        <tr>
+          <td><i [class]="activity.icon"></i></td>
+          <td [innerHTML]="activity.text"></td>
+          <td>{{activity.time}}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-card>
 
   <!-- Analytics Section -->
-  <div class="analytics-section">
-    <h2 class="section-title">Análises e Relatórios</h2>
-    <div class="analytics-grid">
-      <div class="analytics-card">
-        <h3>Crescimento Mensal</h3>
-        <div class="chart-placeholder">
-          <i class="fas fa-chart-line"></i>
-          <p>Gráfico de crescimento dos últimos 6 meses</p>
-        </div>
-      </div>
-      <div class="analytics-card">
-        <h3>Distribuição de Usuários</h3>
-        <div class="chart-placeholder">
-          <i class="fas fa-chart-pie"></i>
-          <p>Distribuição por tipo de usuário</p>
-        </div>
-      </div>
-    </div>
+  <div class="analytics-grid">
+    <p-card header="Crescimento Mensal" styleClass="analytics-card">
+      <p-chart type="line" [data]="lineChartData"></p-chart>
+    </p-card>
+    <p-card header="Distribuição de Usuários" styleClass="analytics-card">
+      <p-chart type="pie" [data]="pieChartData"></p-chart>
+    </p-card>
   </div>
 </div>
 
