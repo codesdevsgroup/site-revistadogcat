@@ -3,11 +3,13 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../../services/auth.service';
 import { Role } from '../../../../enums/role.enum';
+import { MenubarModule } from 'primeng/menubar';
+import { MenuItem } from 'primeng/api';
 
 @Component({
   selector: 'app-top-menu',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, MenubarModule],
   templateUrl: './top-menu.html',
   styleUrls: ['./top-menu.scss']
 })
@@ -16,6 +18,7 @@ export class TopMenuComponent implements OnInit, OnDestroy {
   username = '';
   userRole = '';
   isScrolled = false;
+  items: MenuItem[] = [];
 
   constructor(
     private router: Router,
@@ -26,6 +29,7 @@ export class TopMenuComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.loadUserData();
     this.checkScrollPosition();
+    this.buildMenuItems();
   }
 
   ngOnDestroy() {
@@ -76,6 +80,32 @@ export class TopMenuComponent implements OnInit, OnDestroy {
 
   private checkScrollPosition() {
     this.isScrolled = window.scrollY > 20;
+  }
+
+  // Constrói itens do Menubar com base nas permissões do usuário
+  private buildMenuItems() {
+    const items: MenuItem[] = [];
+
+    if (this.canAccessDashboard()) {
+      items.push({ label: 'Dashboard', icon: 'pi pi-chart-line', routerLink: ['/admin/dashboard'] });
+    }
+    if (this.canAccessUsers()) {
+      items.push({ label: 'Usuários', icon: 'pi pi-users', routerLink: ['/admin/usuarios'] });
+    }
+    if (this.canAccessDogs()) {
+      items.push({ label: 'Cães', icon: 'pi pi-dog', routerLink: ['/admin/caes'] });
+    }
+    if (this.canAccessArticles()) {
+      items.push({ label: 'Artigos', icon: 'pi pi-newspaper', routerLink: ['/admin/artigos'] });
+    }
+    if (this.canAccessEditions()) {
+      items.push({ label: 'Edições', icon: 'pi pi-book', routerLink: ['/admin/edicoes'] });
+    }
+    if (this.canAccessVotacao()) {
+      items.push({ label: 'Votação', icon: 'pi pi-clipboard', routerLink: ['/admin/votacao'] });
+    }
+
+    this.items = items;
   }
 
 

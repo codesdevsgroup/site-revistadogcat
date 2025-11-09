@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { EdicoesService } from '../../../services/edicoes.service';
+import { NotificationService } from '../../../services/notification.service';
 
 @Component({
   selector: 'app-edicao-detalhe',
@@ -18,7 +19,7 @@ export class EdicaoDetalheComponent {
   selectedPdf: File | null = null;
   selectedCapa: File | null = null;
 
-  constructor(private fb: FormBuilder, private edicoesService: EdicoesService, private router: Router) {
+  constructor(private fb: FormBuilder, private edicoesService: EdicoesService, private router: Router, private notificationService: NotificationService) {
     this.form = this.fb.group({
       titulo: ['', [Validators.required, Validators.minLength(3)]],
       descricao: [''],
@@ -26,39 +27,44 @@ export class EdicaoDetalheComponent {
     });
   }
 
-  // Getters para facilitar acesso aos campos do formulário no template
   get titulo() { return this.form.get('titulo'); }
   get descricao() { return this.form.get('descricao'); }
   get data() { return this.form.get('data'); }
 
-  onPdfSelected(event: any) {
-    const file = event.target.files[0];
+  onPdfSelected(event: Event) {
+    const target = event.target as HTMLInputElement;
+    const file = target.files?.[0];
     if (file && file.type === 'application/pdf') {
       this.selectedPdf = file;
       this.form.patchValue({ pdf: file.name });
       this.form.get('pdf')?.updateValueAndValidity();
     } else {
-      alert('Por favor, selecione um arquivo PDF válido.');
-      event.target.value = '';
+      this.notificationService.error('Por favor, selecione um arquivo PDF válido.');
+      if (target) {
+        target.value = '';
+      }
     }
   }
 
-  onCapaSelected(event: any) {
-    const file = event.target.files[0];
+  onCapaSelected(event: Event) {
+    const target = event.target as HTMLInputElement;
+    const file = target.files?.[0];
     if (file) {
-      // Validar tipo de arquivo
       const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
       if (!allowedTypes.includes(file.type)) {
-        alert('Por favor, selecione uma imagem válida (JPEG, PNG ou WebP).');
-        event.target.value = '';
+        this.notificationService.error('Por favor, selecione uma imagem válida (JPEG, PNG ou WebP).');
+        if (target) {
+          target.value = '';
+        }
         return;
       }
       
-      // Validar tamanho (5MB máximo)
-      const maxSize = 5 * 1024 * 1024; // 5MB em bytes
+      const maxSize = 5 * 1024 * 1024; // 5MB
       if (file.size > maxSize) {
-        alert('A imagem deve ter no máximo 5MB.');
-        event.target.value = '';
+        this.notificationService.warning('A imagem deve ter no máximo 5MB.');
+        if (target) {
+          target.value = '';
+        }
         return;
       }
       
@@ -77,7 +83,6 @@ export class EdicaoDetalheComponent {
       formData.append('data', this.form.get('data')?.value);
       formData.append('pdf', this.selectedPdf);
       
-      // Adicionar arquivo de capa se selecionado
       if (this.selectedCapa) {
         formData.append('capa', this.selectedCapa);
       }
@@ -93,7 +98,7 @@ export class EdicaoDetalheComponent {
         }
       });
     } else {
-      alert('Por favor, preencha todos os campos obrigatórios e selecione um arquivo PDF.');
+      this.notificationService.error('Por favor, preencha todos os campos obrigatórios e selecione um arquivo PDF.');
     }
   }
 

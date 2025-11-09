@@ -113,26 +113,23 @@ export class CaesComponent implements OnInit {
     try {
       this.loading = true;
 
-      const normalizeList = (resp: any): any[] => {
+      const normalizeList = (resp: { data?: { data?: CaoListItem[] } } | CaoListItem[]): CaoListItem[] => {
         if (Array.isArray(resp)) return resp;
         if (resp?.data && Array.isArray(resp.data.data)) return resp.data.data;
-        if (resp && Array.isArray(resp.data)) return resp.data;
         return [];
       };
 
-      const params: any = {};
+      const params: { status?: StatusCadastro } = {};
       if (this.selectedStatus) {
         params.status = this.selectedStatus;
       }
 
-      const result = await firstValueFrom(
-        this.cadastroCaoService.listar(params),
-      );
+      const result = await firstValueFrom(this.cadastroCaoService.listar(params));
       const data = normalizeList(result);
 
-      this.caes = (data || []).map((cao: any) => {
+      this.caes = (data || []).map((cao) => {
         const racaEncontrada = this.racas.find(
-          (r) => r.nome.toLowerCase() === cao.raca?.toLowerCase(),
+          (r) => r.nome.toLowerCase() === cao.raca?.nome.toLowerCase(),
         );
 
         return {
@@ -327,7 +324,9 @@ export class CaesComponent implements OnInit {
 
   aprovarRaca(cao: CaoListItem) {
     if (!cao.racaSugerida) {
-      alert("Este cão não tem uma raça sugerida para aprovação.");
+      this.notificationService.warning(
+        "Este cão não possui uma raça sugerida para aprovação."
+      );
       return;
     }
     this.caoEmAprovacao = cao;
@@ -477,8 +476,7 @@ export class CaesComponent implements OnInit {
     if (!updatedCao) return;
 
     try {
-      // Evitar enviar imagens em base64 via JSON (causa PayloadTooLargeError)
-      const payload: any = { ...updatedCao };
+      const payload: Partial<Cao> = { ...updatedCao };
       const imageFields = [
         'fotoPerfil',
         'fotoLateral',

@@ -1,77 +1,43 @@
 <header class="top-menu" [class.scrolled]="isScrolled">
+  <!-- Container interno para limitar largura e evitar que o conteúdo vá até as bordas -->
   <div class="menu-container">
-    <!-- Logo/Brand - Agora é um link para a home -->
-    <a routerLink="/" class="menu-brand" title="Voltar para o site">
-      <img src="./logo2.png" alt="Logo DogCat" class="brand-logo">
-    </a>
+    <p-menubar [model]="items">
+      <ng-template pTemplate="start">
+        <a routerLink="/" class="menu-brand" title="Voltar para o site">
+          <img src="./logo2.png" alt="Logo DogCat" class="brand-logo">
+        </a>
+      </ng-template>
 
-    <!-- Navigation Links -->
-    <nav class="menu-nav">
-      <!-- Dashboard - Apenas ADMIN e FUNCIONARIO -->
-      <a *ngIf="canAccessDashboard()" routerLink="/admin/dashboard" routerLinkActive="active" class="nav-link">
-        <i class="fas fa-chart-line"></i>
-        <span>Dashboard</span>
-      </a>
-      
-      <!-- Usuários - Apenas ADMIN e FUNCIONARIO -->
-      <a *ngIf="canAccessUsers()" routerLink="/admin/usuarios" routerLinkActive="active" class="nav-link">
-        <i class="fas fa-users"></i>
-        <span>Usuários</span>
-      </a>
-      
-      <!-- Cães - Apenas ADMIN e FUNCIONARIO -->
-      <a *ngIf="canAccessDogs()" routerLink="/admin/caes" routerLinkActive="active" class="nav-link">
-        <i class="fas fa-dog"></i>
-        <span>Cães</span>
-      </a>
-      
-      <!-- Artigos - ADMIN, FUNCIONARIO e EDITOR -->
-      <a *ngIf="canAccessArticles()" routerLink="/admin/artigos" routerLinkActive="active" class="nav-link">
-        <i class="fas fa-newspaper"></i>
-        <span>Artigos</span>
-      </a>
-      
-      <!-- Edições - Apenas ADMIN e FUNCIONARIO -->
-      <a *ngIf="canAccessEditions()" routerLink="/admin/edicoes" routerLinkActive="active" class="nav-link">
-        <i class="fas fa-book"></i>
-        <span>Edições</span>
-      </a>
-
-      <!-- Votação - Unificado (Kardex & Auditoria) -->
-      <a *ngIf="canAccessVotacao()" routerLink="/admin/votacao" routerLinkActive="active" class="nav-link">
-        <i class="fas fa-clipboard-list"></i>
-        <span>Votação</span>
-      </a>
-    </nav>
-
-    <!-- User Menu -->
-    <div class="menu-user" [class.open]="userMenuOpen">
-      <button class="user-button" (click)="toggleUserMenu()">
-        <div class="user-avatar">
-          <i class="fas fa-user"></i>
-        </div>
-        <div class="user-info">
-          <span class="user-name">{{ username }}</span>
-          <span class="user-role">{{ userRole }}</span>
-        </div>
-        <i class="fas fa-chevron-down user-arrow"></i>
-      </button>
-
-      <div class="user-dropdown" *ngIf="userMenuOpen">
-        <button type="button" class="dropdown-item" (click)="navigateToProfile()">
-          <i class="fas fa-user-circle"></i>
-          <span>Meu Perfil</span>
-        </button>
-        <button type="button" class="dropdown-item" (click)="navigateToSettings()">
-            <i class="fas fa-cog"></i>
-            <span>Configurações</span>
+      <ng-template pTemplate="end">
+        <div class="menu-user" [class.open]="userMenuOpen">
+          <button class="user-button" (click)="toggleUserMenu()">
+            <div class="user-avatar">
+              <i class="fas fa-user"></i>
+            </div>
+            <div class="user-info">
+              <span class="user-name">{{ username }}</span>
+              <span class="user-role">{{ userRole }}</span>
+            </div>
+            <i class="fas fa-chevron-down user-arrow"></i>
           </button>
-        <hr class="dropdown-divider">
-        <button type="button" class="dropdown-item logout" (click)="logout()">
-            <i class="fas fa-sign-out-alt"></i>
-            <span>Sair</span>
-          </button>
-      </div>
-    </div>
+
+          <div class="user-dropdown" *ngIf="userMenuOpen">
+            <button type="button" class="dropdown-item" (click)="navigateToProfile()">
+              <i class="fas fa-user-circle"></i>
+              <span>Meu Perfil</span>
+            </button>
+            <button type="button" class="dropdown-item" (click)="navigateToSettings()">
+                <i class="fas fa-cog"></i>
+                <span>Configurações</span>
+              </button>
+            <hr class="dropdown-divider">
+            <button type="button" class="dropdown-item logout" (click)="logout()">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Sair</span>
+              </button>
+          </div>
+        </div>
+      </ng-template>
+    </p-menubar>
   </div>
 </header>

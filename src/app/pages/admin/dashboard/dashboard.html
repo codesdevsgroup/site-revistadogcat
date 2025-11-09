@@ -1,67 +1,135 @@
 <div class="dashboard-container">
   <div class="dashboard-header">
-    <h1 class="dashboard-title">Dashboard</h1>
-    <p class="dashboard-subtitle">Bem-vindo ao painel administrativo</p>
+    <p class="dashboard-subtitle pb-4">Bem-vindo ao painel administrativo</p>
   </div>
 
-  <!-- Stats Cards -->
-  <div class="stats-grid">
-    <p-card *ngFor="let stat of stats" [styleClass]="'stat-card stat-' + stat.color">
-      <div class="stat-content">
-        <div class="stat-icon">
-          <i [class]="stat.icon"></i>
+  <!-- Cards: skeleton enquanto carrega -->
+  <ng-container *ngIf="isLoading; else statsBlock">
+    <div class="stats-grid">
+      <p-card styleClass="stat-card" *ngFor="let i of [1,2,3,4]">
+        <div class="stat-content">
+          <div class="stat-icon">
+            <p-skeleton width="40px" height="40px"></p-skeleton>
+          </div>
+          <div style="width: 100%">
+            <p-skeleton width="40%" height="24px"></p-skeleton>
+            <p-skeleton width="60%" height="14px" styleClass="mt-2"></p-skeleton>
+            <p-skeleton width="30%" height="12px" styleClass="mt-2"></p-skeleton>
+          </div>
         </div>
-        <div>
-          <h3 class="stat-value">{{ stat.value }}</h3>
-          <p class="stat-title">{{ stat.title }}</p>
-          <span class="stat-change positive">{{ stat.change }}</span>
-        </div>
-      </div>
-    </p-card>
-  </div>
-
-  <!-- Quick Actions -->
-  <div class="quick-actions">
-    <p-card header="Ações Rápidas" styleClass="quick-actions-card">
-      <div class="actions-grid">
-        <button pButton type="button" icon="pi pi-plus" label="Novo Artigo" (click)="novoArtigo()" pTooltip="Criar novo artigo" tooltipPosition="top"></button>
-        <button pButton type="button" icon="pi pi-user-plus" label="Adicionar Usuário" (click)="adicionarUsuario()" pTooltip="Adicionar novo usuário" tooltipPosition="top"></button>
-        <button pButton type="button" icon="pi pi-chart-bar" label="Relatórios" (click)="abrirRelatorios()" pTooltip="Gerar relatórios e exportações" tooltipPosition="top"></button>
-      </div>
-    </p-card>
-  </div>
-
-  <!-- Recent Activity -->
-  <p-card header="Atividade Recente" styleClass="recent-activity-card">
-    <p-table [value]="recentActivity" [tableStyle]="{'min-width': '50rem'}">
-      <ng-template pTemplate="body" let-activity>
-        <tr>
-          <td><i [class]="activity.icon"></i></td>
-          <td [innerHTML]="activity.text"></td>
-          <td>{{activity.time}}</td>
-        </tr>
-      </ng-template>
-    </p-table>
-  </p-card>
-
-  <!-- Analytics Section -->
-  <div class="analytics-section">
-    <div class="analytics-grid">
-      <p-card header="Crescimento Mensal" styleClass="analytics-card">
-        <p-chart type="line" [data]="lineChartData"></p-chart>
-      </p-card>
-      <p-card header="Distribuição de Usuários" styleClass="analytics-card">
-        <p-chart type="pie" [data]="pieChartData"></p-chart>
       </p-card>
     </div>
+  </ng-container>
+  <ng-template #statsBlock>
+    <div class="stats-grid">
+      <p-card *ngFor="let stat of stats" [styleClass]="'stat-card stat-' + stat.color">
+        <div class="stat-content">
+          <div class="stat-icon">
+            <span class="material-symbols-outlined">{{ stat.icon }}</span>
+          </div>
+          <div>
+            <h3 class="stat-value">{{ stat.value }}</h3>
+            <p class="stat-title">{{ stat.title }}</p>
+            <span class="stat-change" [ngClass]="{ 'positive': stat.changePositive, 'negative': !stat.changePositive }">{{ stat.change }}</span>
+          </div>
+        </div>
+      </p-card>
+    </div>
+  </ng-template>
+  <div class="content-grid">
+    <div class="content-left">
+      <div class="analytics-section">
+        <div class="analytics-grid">
+          <p-card header="Crescimento Mensal" styleClass="analytics-card">
+            <ng-container *ngIf="isLoading; else lineChartContent">
+              <p-skeleton width="100%" height="240px"></p-skeleton>
+            </ng-container>
+            <ng-template #lineChartContent>
+              <ng-container *ngIf="lineChartData?.datasets?.length; else noLineData">
+                <p-chart type="line" [data]="lineChartData"></p-chart>
+              </ng-container>
+              <ng-template #noLineData>
+                <div class="no-data">Sem dados de crescimento mensal</div>
+              </ng-template>
+            </ng-template>
+          </p-card>
+          <p-card header="Distribuição de Usuários" styleClass="analytics-card">
+            <ng-container *ngIf="isLoading; else pieChartContent">
+              <p-skeleton width="100%" height="240px"></p-skeleton>
+            </ng-container>
+            <ng-template #pieChartContent>
+              <ng-container *ngIf="pieChartData?.datasets?.length; else noPieData">
+                <p-chart type="pie" [data]="pieChartData"></p-chart>
+              </ng-container>
+              <ng-template #noPieData>
+                <div class="no-data">Sem distribuição de usuários</div>
+              </ng-template>
+            </ng-template>
+          </p-card>
+          <!-- Terceiro card analítico dentro do mesmo grid: Cadastros de Cães -->
+          <p-card header="Cadastros de Cães" styleClass="analytics-card">
+            <ng-container *ngIf="isLoading; else dogsChartContent">
+              <p-skeleton width="100%" height="240px"></p-skeleton>
+            </ng-container>
+            <ng-template #dogsChartContent>
+              <ng-container *ngIf="dogsLineChartData?.datasets?.length; else noDogsData">
+                <p-chart type="line" [data]="dogsLineChartData"></p-chart>
+                <div class="no-data" *ngIf="dogsIncompleteCount === 0">Nenhum cadastro incompleto.</div>
+                <div class="stat-informativo" *ngIf="dogsIncompleteCount > 0">
+                  <span class="material-symbols-outlined">error_outline</span>
+                  <span>{{ dogsIncompleteCount }} cadastros de cães estão incompletos</span>
+                </div>
+              </ng-container>
+              <ng-template #noDogsData>
+                <div class="no-data">Sem dados de cadastros de cães</div>
+              </ng-template>
+            </ng-template>
+          </p-card>
+        </div>
+      </div>
+
+      <p-card header="Atividade Recente (ainda não implementado)" styleClass="recent-activity-card">
+        <p-table [value]="recentActivity" [tableStyle]="{'min-width': '50rem'}">
+          <ng-template pTemplate="body" let-activity>
+            <tr>
+              <td><span class="material-symbols-outlined">{{ activity.icon }}</span></td>
+              <td [innerHTML]="activity.text"></td>
+              <td>{{activity.time}}</td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </p-card>
+    </div>
+
+    <aside class="content-right">
+      <div class="quick-actions">
+        <p-card header="Ações Rápidas" styleClass="quick-actions-card">
+          <div class="actions-grid">
+            <button type="button" class="action-btn" (click)="novoArtigo()" pTooltip="Criar novo artigo" tooltipPosition="left">
+              <span class="material-symbols-outlined">description</span>
+              <span>Novo Artigo</span>
+            </button>
+            <button type="button" class="action-btn" (click)="adicionarUsuario()" pTooltip="Adicionar novo usuário" tooltipPosition="left">
+              <span class="material-symbols-outlined">person_add</span>
+              <span>Adicionar Usuário</span>
+            </button>
+            <button type="button" class="action-btn" (click)="abrirRelatorios()" pTooltip="Gerar relatórios e exportações" tooltipPosition="left">
+              <span class="material-symbols-outlined">bar_chart</span>
+              <span>Relatórios</span>
+            </button>
+          </div>
+        </p-card>
+      </div>
+    </aside>
   </div>
+
 </div>
 
 <!-- Modal de Relatórios -->
 <app-relatorios-modal #relatoriosModal></app-relatorios-modal>
 
 <!-- Modal de Usuário -->
-<app-usuario-modal 
+<app-usuario-modal
   #usuarioModal
   [isVisible]="isUsuarioModalVisible"
   [usuario]="selectedUsuario"
