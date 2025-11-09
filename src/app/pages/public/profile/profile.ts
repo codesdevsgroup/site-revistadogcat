@@ -152,10 +152,10 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   openVideoModal(cadastro: CadastroCao): void {
     this.selectedCadastro = cadastro;
-    const currentOption = (cadastro.videoOption as any) || "NONE";
-    const validOptions = ["UPLOAD", "URL", "WHATSAPP", "NONE"];
+    const currentOption = cadastro.videoOption || "NONE";
+    const validOptions: ("UPLOAD" | "URL" | "WHATSAPP" | "NONE")[] = ["UPLOAD", "URL", "WHATSAPP", "NONE"];
     this.videoOption = validOptions.includes(currentOption)
-      ? (currentOption as any)
+      ? currentOption
       : "NONE";
     this.videoUrl = cadastro.videoUrl || "";
     this.confirmaWhatsapp = !!cadastro.whatsappContato;

@@ -28,6 +28,8 @@ import {
   SexoCao,
   CadastroCaoResponse,
 } from "../../../interfaces/cao.interface";
+import { SocialMedia } from "../../../interfaces/social-media.interface";
+import { User } from "../../../interfaces/usuario.interface";
 
 @Component({
   selector: "app-cadastro-cao",
@@ -38,7 +40,7 @@ import {
 })
 export class CadastroCaoComponent implements OnInit, OnDestroy {
   @ViewChild("fileInput") fileInput!: ElementRef;
-  socialMedia: any;
+  socialMedia: SocialMedia;
 
   currentStep = 1;
   videoOption: VideoOption = "upload";
@@ -55,7 +57,7 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
   racasLoading = false;
   racasError = false;
 
-  usuarioLogado: any = null;
+  usuarioLogado: User | null = null;
   fotoPerfil: File | null = null;
   fotoLateral: File | null = null;
   fotoPerfilPreview: string | null = null;
@@ -283,8 +285,9 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
     this.userForm.updateValueAndValidity();
   }
 
-  onFotoPerfilSelected(event: any) {
-    const file = event.target.files[0];
+  onFotoPerfilSelected(event: Event) {
+    const target = event.target as HTMLInputElement;
+    const file = target.files?.[0];
     if (file) {
       const validation = this.validationService.validateImageFile(file);
       if (!validation.valid) {
@@ -298,8 +301,9 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
     }
   }
 
-  onFotoLateralSelected(event: any) {
-    const file = event.target.files[0];
+  onFotoLateralSelected(event: Event) {
+    const target = event.target as HTMLInputElement;
+    const file = target.files?.[0];
     if (file) {
       const validation = this.validationService.validateImageFile(file);
       if (!validation.valid) {
@@ -331,8 +335,9 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
     if (input) input.value = "";
   }
 
-  onPedigreeFrenteSelected(event: any) {
-    const file = event.target.files[0];
+  onPedigreeFrenteSelected(event: Event) {
+    const target = event.target as HTMLInputElement;
+    const file = target.files?.[0];
     if (file) {
       const validation = this.validationService.validateImageFile(file);
       if (!validation.valid) {
@@ -343,8 +348,9 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
     }
   }
 
-  onPedigreeVersoSelected(event: any) {
-    const file = event.target.files[0];
+  onPedigreeVersoSelected(event: Event) {
+    const target = event.target as HTMLInputElement;
+    const file = target.files?.[0];
     if (file) {
       const validation = this.validationService.validateImageFile(file);
       if (!validation.valid) {
@@ -355,8 +361,9 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
     }
   }
 
-  onFileSelected(event: any) {
-    const file = event.target.files[0];
+  onFileSelected(event: Event) {
+    const target = event.target as HTMLInputElement;
+    const file = target.files?.[0];
     if (file) {
       const validation = this.validationService.validateVideoFile(file);
       if (!validation.valid) {
@@ -551,8 +558,7 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
     // Log de diagnóstico: inspecionar o payload do FormData antes do envio
     try {
       const debugPayload: string[] = [];
-      // Atenção: FormData.forEach não existe em todos navegadores antigos; no Angular atual funciona
-      (formData as any).forEach((value: any, key: string) => {
+      formData.forEach((value, key) => {
         if (value instanceof File) {
           debugPayload.push(`${key}=[File:${value.name}|${value.type}|${value.size}]`);
         } else {
@@ -618,8 +624,9 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
     this.router.navigateByUrl("/perfil");
   }
 
-  onCepChange(event: any) {
-    const cep = event.target.value.replace(/\D/g, "");
+  onCepChange(event: Event) {
+    const target = event.target as HTMLInputElement;
+    const cep = target.value.replace(/\D/g, "");
     if (cep.length === 8) {
       this.isCepLoading = true;
       this.cepStatus = "loading";
