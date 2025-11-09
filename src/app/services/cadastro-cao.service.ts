@@ -4,7 +4,8 @@ import { Observable } from "rxjs";
 import { map } from "rxjs/operators";
 import { environment } from "../../environments/environment";
 
-export type StatusCadastro = "PENDENTE" | "APROVADO" | "REJEITADO";
+
+export type StatusCadastro = "CADASTRO_INCOMPLETO" | "APROVADO" | "REJEITADO";
 
 export interface CadastroCao {
   cadastroId: string;
@@ -201,5 +202,38 @@ export class CadastroCaoService {
    */
   verificarPendentes(): Observable<boolean> {
     return this.contarPendentes().pipe(map((result) => result.count > 0));
+  }
+
+  /**
+   * Lista cadastros do usuário autenticado
+   */
+  meusCadastros(): Observable<CadastroCao[]> {
+    return this.http
+      .get<any>(`${this.apiUrl}/meus-cadastros`)
+      .pipe(map((response) => response?.data || response));
+  }
+
+  /**
+   * Upload de vídeo para um cadastro específico
+   * Regras de backend: valida formato, tamanho e duração
+   */
+  uploadVideo(cadastroId: string, file: File): Observable<CadastroCao> {
+    const formData = new FormData();
+    formData.append('video', file);
+    return this.http
+      .post<any>(`${this.apiUrl}/${cadastroId}/video/upload`, formData)
+      .pipe(map((response) => response?.data || response));
+  }
+
+  /**
+   * Atualiza opção de vídeo (URL, WHATSAPP ou NONE)
+   */
+  updateVideoOption(
+    cadastroId: string,
+    payload: { videoOption: 'URL' | 'WHATSAPP' | 'NONE'; videoUrl?: string }
+  ): Observable<CadastroCao> {
+    return this.http
+      .patch<any>(`${this.apiUrl}/${cadastroId}/video`, payload)
+      .pipe(map((response) => response?.data || response));
   }
 }

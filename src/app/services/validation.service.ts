@@ -57,18 +57,15 @@ export class ValidationService {
     return { valid: true };
   }
 
-  // Validação de arquivo de vídeo
   validateVideoFile(file: File): { valid: boolean; error?: string; warning?: string } {
-    // Verificar tipo de arquivo
-    const videoTypes = ['video/mp4', 'video/avi', 'video/mov', 'video/wmv'];
+    const videoTypes = ['video/mp4', 'video/avi', 'video/quicktime'];
     if (!videoTypes.includes(file.type)) {
       return {
         valid: false,
-        error: 'Tipo de arquivo não suportado. Use apenas MP4, AVI, MOV ou WMV.'
+        error: 'Tipo de arquivo não suportado. Use apenas MP4, AVI ou MOV (QuickTime).'
       };
     }
 
-    // Verificar tamanho do arquivo
     if (file.size > TAMANHO_MAX_VIDEO) {
       return {
         valid: false,
@@ -76,8 +73,6 @@ export class ValidationService {
       };
     }
 
-    // Validar duração do vídeo (aproximadamente através do tamanho)
-    // Para vídeos de boa qualidade, 20 segundos ≈ 10-30MB dependendo da resolução
     let warning;
     if (file.size > 30 * 1024 * 1024) {
       warning = 'O arquivo parece grande para um vídeo de 20 segundos. Tem certeza que o vídeo tem no máximo 20 segundos?';
@@ -86,7 +81,6 @@ export class ValidationService {
     return { valid: true, warning };
   }
 
-  // Formatar tamanho do arquivo
   formatFileSize(bytes: number): string {
     if (bytes === 0) return '0 Bytes';
     const k = 1024;
@@ -95,7 +89,6 @@ export class ValidationService {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   }
 
-  // Buscar CEP usando ViaCEP
   searchCepViaCep(cep: string): Promise<ViaCepResponse | null> {
     return this.http.get<ViaCepResponse>(`https://viacep.com.br/ws/${cep}/json/`)
       .toPromise()
@@ -108,7 +101,6 @@ export class ValidationService {
       .catch(() => null);
   }
 
-  // Buscar CEP usando API dos Correios (backup)
   searchCepCorreios(cep: string): Promise<CorreiosResponse | null> {
     return this.http.get<CorreiosResponse>(`https://apps.correios.com.br/SigepMasterJPA/AtendeClienteService/AtendeCliente/consultaCEP?cep=${cep}`)
       .toPromise()
@@ -121,7 +113,6 @@ export class ValidationService {
       .catch(() => null);
   }
 
-  // Formatar CEP
   formatCep(value: string): string {
     const cleanValue = value.replace(/\D/g, '');
     if (cleanValue.length > 5) {
@@ -130,41 +121,38 @@ export class ValidationService {
     return cleanValue;
   }
 
-  // Validar CPF
   validateCpf(cpf: string): boolean {
     cpf = cpf.replace(/\D/g, '');
-    
+
     if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) {
       return false;
     }
-    
+
     let sum = 0;
     for (let i = 0; i < 9; i++) {
       sum += parseInt(cpf.charAt(i)) * (10 - i);
     }
-    
+
     let remainder = (sum * 10) % 11;
     if (remainder === 10 || remainder === 11) remainder = 0;
     if (remainder !== parseInt(cpf.charAt(9))) return false;
-    
+
     sum = 0;
     for (let i = 0; i < 10; i++) {
       sum += parseInt(cpf.charAt(i)) * (11 - i);
     }
-    
+
     remainder = (sum * 10) % 11;
     if (remainder === 10 || remainder === 11) remainder = 0;
-    
+
     return remainder === parseInt(cpf.charAt(10));
   }
 
-  // Formatar CPF
   formatCpf(value: string): string {
     const cleanValue = value.replace(/\D/g, '');
     return cleanValue.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
   }
 
-  // Formatar telefone
   formatPhone(value: string): string {
     const cleanValue = value.replace(/\D/g, '');
     if (cleanValue.length === 11) {
@@ -175,13 +163,12 @@ export class ValidationService {
     return cleanValue;
   }
 
-  // Validador de CPF para formulários reativos
   cpfValidator(): ValidatorFn {
     return (control: AbstractControl): { [key: string]: any } | null => {
       if (!control.value) {
-        return null; // Não valida se estiver vazio (use required para isso)
+        return null;
       }
-      
+
       const isValid = this.validateCpf(control.value);
       return isValid ? null : { 'cpfInvalido': { value: control.value } };
     };

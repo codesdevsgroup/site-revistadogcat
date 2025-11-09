@@ -29,6 +29,7 @@ export class ArtigosListaComponent implements OnInit {
   loading = false;
   error: string | null = null;
   public apiUrl = environment.apiUrl;
+  searchTerm: string = '';
 
   ngOnInit(): void {
     this.carregarArtigos();
@@ -42,10 +43,11 @@ export class ArtigosListaComponent implements OnInit {
     const filtros = {
       sort: "dataPublicacao:desc",
       categoria: this.categoriaSelecionada || undefined,
+      termo: this.searchTerm || undefined,
     };
 
     this.artigosService
-      .listarPublicados(12, 1, filtros.sort, filtros.categoria)
+      .listarPublicados(12, 1, filtros.sort, filtros.categoria, filtros.termo)
       .subscribe({
         next: (data) => {
           this.artigos = Array.isArray(data) ? data : [];
@@ -73,18 +75,14 @@ export class ArtigosListaComponent implements OnInit {
     });
   }
 
-  onCategoryFilterChange(event: Event): void {
-    const selectElement = event.target as HTMLSelectElement;
-    this.categoriaSelecionada = selectElement.value || null;
+  onSearchChange(event: Event): void {
+    const inputElement = event.target as HTMLInputElement;
+    this.searchTerm = inputElement.value;
     this.carregarArtigos();
   }
 
-  limparFiltro(): void {
-    this.categoriaSelecionada = null;
-    const selectElement = document.getElementById('category-filter') as HTMLSelectElement;
-    if (selectElement) {
-      selectElement.value = "";
-    }
+  selectCategory(categoria: string): void {
+    this.categoriaSelecionada = categoria || null;
     this.carregarArtigos();
   }
 
@@ -92,9 +90,7 @@ export class ArtigosListaComponent implements OnInit {
     return item.id;
   }
 
-  // Constrói a URL da imagem a partir do filename retornado pela API
   getImagemUrl(filename?: string): string {
-    // Usa mesma imagem padrão do componente de destaque da homepage para consistência visual
     if (!filename) return "./dog/default-article.svg";
     return `${this.apiUrl}/artigos/imagem/${filename}`;
   }

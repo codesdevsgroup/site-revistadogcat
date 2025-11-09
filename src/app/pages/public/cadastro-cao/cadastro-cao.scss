@@ -1,5 +1,5 @@
-@use '../../../../styles/variables';
-@use '../../../../styles/mixins' as *;
+@use "../../../../styles/variables";
+@use "../../../../styles/mixins" as *;
 
 @mixin card-base {
   background: var(--white);
@@ -8,21 +8,29 @@
 }
 
 .cadastro-container {
-  background: linear-gradient(135deg, var(--gray-50) 0%, var(--tertiaryColor) 100%);
-  min-height: 100vh;
+  background: linear-gradient(
+    135deg,
+    var(--gray-50) 0%,
+    var(--tertiaryColor) 100%
+  );
 
   .hero-header {
-    background: linear-gradient(135deg, var(--primaryColor) 0%, var(--primaryColorDark) 100%);
+    background: linear-gradient(
+      135deg,
+      var(--primaryColor) 0%,
+      var(--primaryColorDark) 100%
+    );
     color: var(--white);
     padding: var(--space-3) 0;
     position: relative;
     overflow: hidden;
 
     &::before {
-      content: '';
+      content: "";
       position: absolute;
       inset: 0;
-      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="%23ffffff" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>') repeat;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="%23ffffff" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>')
+        repeat;
       opacity: 0.3;
     }
 
@@ -31,27 +39,31 @@
       z-index: 2;
     }
 
+    /* Linha com ícone e título lado a lado */
+    .hero-title {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      justify-content: center; /* mantém centralizado dentro do bloco */
+      margin-bottom: var(--space-2);
+    }
+
     .hero-icon {
       font-size: 1.5rem;
-      margin-bottom: var(--space-2);
+      /* quando usado na .hero-title, não precisamos de margem inferior */
+      margin-bottom: 0;
       animation: bounce 2s infinite;
     }
 
     h1 {
       font-size: 1.875rem;
       font-weight: var(--fontWeight-extrabold);
-      margin-bottom: var(--space-2);
+      /* margem inferior tratada pela .hero-title */
+      margin-bottom: 0;
       background: linear-gradient(45deg, var(--white), var(--goldenColor));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-    }
-
-    .hero-subtitle {
-      font-size: var(--space-4);
-      font-weight: var(--fontWeight-semibold);
-      margin-bottom: var(--space-3);
-      color: var(--secondaryColor);
     }
 
     .hero-description {
@@ -604,8 +616,12 @@
   }
 
   @keyframes cep-spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
   }
 
   .sr-only {
@@ -653,7 +669,8 @@
 }
 
 @keyframes bounce {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
   }
   50% {
@@ -661,32 +678,57 @@
   }
 }
 
-  @keyframes shake {
-    0%, 100% {
-      transform: translateX(0);
-    }
-    25%, 75% {
-      transform: translateX(-5px);
-    }
-    50% {
-      transform: translateX(5px);
-    }
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25%,
+  75% {
+    transform: translateX(-5px);
+  }
+  50% {
+    transform: translateX(5px);
+  }
+}
+
+/* Destaque para a opção de cadastro de terceiros */
+.third-party-owner-block {
+  border: 2px solid var(--primaryColor);
+  background: var(--primaryColor-light);
+  border-radius: var(--radius-lg);
+  display: block;
+
+  .form-check-label {
+    color: var(--primaryColor);
+    font-weight: var(--fontWeight-semibold);
   }
 
-  /* Destaque para a opção de cadastro de terceiros */
-  .third-party-owner-block {
-    border: 2px solid var(--primaryColor);
-    background: var(--primaryColor-light);
-    border-radius: var(--radius-lg);
-    display: block;
-
-    .form-check-label {
-      color: var(--primaryColor);
-      font-weight: var(--fontWeight-semibold);
-    }
-
-    .form-check-input:focus {
-      border-color: var(--primaryColor);
-      box-shadow: 0 0 0 0.2rem rgba(26, 61, 30, 0.25);
-    }
+  .form-check-input:focus {
+    border-color: var(--primaryColor);
+    box-shadow: 0 0 0 0.2rem rgba(26, 61, 30, 0.25);
   }
+}
+
+.example-image-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.example-image-container figure {
+  margin: 0;
+}
+
+.example-image-container img {
+  max-height: 200px;
+  width: auto;
+  object-fit: cover;
+}
+
+.example-image-container figcaption {
+  font-size: 0.8rem;
+  color: var(--gray-600);
+  margin-top: 0.5rem;
+}
