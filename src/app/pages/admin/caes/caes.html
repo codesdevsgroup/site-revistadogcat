@@ -20,9 +20,9 @@
         <div class="table-filters">
           <input pInputText type="text" placeholder="Buscar por nome, dono ou registro..." class="search-input" (input)="dt.filterGlobal($any($event.target).value, 'contains')" />
 
-          <p-select [options]="racas" optionLabel="nome" optionValue="id" placeholder="Todas as raças" (onChange)="dt.filter($event.value, 'racaId', 'equals')" [overlayOptions]="{ appendTo: 'body' }"></p-select>
+          <p-select [options]="racas" optionLabel="nome" optionValue="id" placeholder="Todas as raças" (onChange)="dt.filter($event.value, 'racaId', 'equals')" appendTo="body"></p-select>
 
-          <p-select [options]="statuses" optionLabel="label" optionValue="value" placeholder="Todos os status" (onChange)="dt.filter($event.value, 'status', 'equals')" [overlayOptions]="{ appendTo: 'body' }"></p-select>
+          <p-select [options]="statuses" optionLabel="label" optionValue="value" placeholder="Todos os status" (onChange)="dt.filter($event.value, 'status', 'equals')" appendTo="body"></p-select>
         </div>
       </div>
 
@@ -63,7 +63,7 @@
                 [(ngModel)]="cao.status"
                 (onChange)="onRowStatusChange(cao, $event.value)"
                 placeholder="Selecionar"
-                [overlayOptions]="{ appendTo: 'body' }"
+                appendTo="body"
               ></p-select>
             </td>
             <td>

@@ -13,6 +13,7 @@ import {
 } from "../../../services/cadastro-cao.service";
 import { RacaService } from "../../../services/raca.service";
 import { AuthService } from "../../../services/auth.service";
+import { NotificationService } from "../../../services/notification.service";
 import { firstValueFrom } from "rxjs";
 import { CaoDetailsDialogComponent } from "src/app/pages/admin/components/cao-details-dialog/cao-details-dialog.component";
 import { AdminCao as Cao } from "src/app/interfaces";
@@ -100,6 +101,7 @@ export class CaesComponent implements OnInit {
     private racaService: RacaService,
     private authService: AuthService,
     private router: Router,
+    private notificationService: NotificationService,
   ) {}
 
   ngOnInit() {
@@ -143,6 +145,7 @@ export class CaesComponent implements OnInit {
       });
     } catch (error) {
       console.error("Erro ao carregar cães:", error);
+      this.notificationService.error("Erro ao carregar lista de cães. Tente novamente.");
     } finally {
       this.loading = false;
     }
@@ -161,6 +164,7 @@ export class CaesComponent implements OnInit {
       this.updateFilteredRacas();
     } catch (error) {
       console.error("Erro ao carregar raças:", error);
+      this.notificationService.error("Erro ao carregar raças. Tente novamente.");
     }
   }
 
@@ -277,7 +281,7 @@ export class CaesComponent implements OnInit {
 
   async saveRaca() {
     if (!this.racaForm.nome.trim()) {
-      alert("Nome da raça é obrigatório");
+      this.notificationService.warning("Nome da raça é obrigatório.");
       return;
     }
 
@@ -312,9 +316,10 @@ export class CaesComponent implements OnInit {
 
       await this.loadRacas();
       this.closeRacaModal();
+      this.notificationService.success(this.isEditingRaca ? "Raça atualizada com sucesso!" : "Raça criada com sucesso!");
     } catch (error) {
       console.error("Erro ao salvar raça:", error);
-      alert("Erro ao salvar raça");
+      this.notificationService.error("Erro ao salvar raça. Tente novamente.");
     } finally {
       this.racaModalLoading = false;
     }
@@ -340,9 +345,10 @@ export class CaesComponent implements OnInit {
     try {
       await this.racaService.delete(raca.racaId);
       await this.loadRacas();
+      this.notificationService.success("Raça excluída com sucesso!");
     } catch (error) {
       console.error("Erro ao excluir raça:", error);
-      alert("Erro ao excluir raça");
+      this.notificationService.error("Erro ao excluir raça. Tente novamente.");
     }
   }
 
@@ -490,13 +496,12 @@ export class CaesComponent implements OnInit {
       await firstValueFrom(
         this.cadastroCaoService.update(updatedCao.cadastroId, payload),
       );
-
-      alert("Cão atualizado com sucesso!");
+      this.notificationService.success("Cão atualizado com sucesso!");
       this.closeCaoModal();
       await this.loadCaes();
     } catch (error) {
       console.error("Erro ao atualizar cão:", error);
-      alert("Erro ao atualizar cão.");
+      this.notificationService.error("Erro ao atualizar cão. Tente novamente.");
     }
   }
 
@@ -505,33 +510,29 @@ export class CaesComponent implements OnInit {
       const result = await firstValueFrom(
         this.cadastroCaoService.aprovarCadastro(cao.cadastroId),
       );
-      alert(result?.mensagem || "Cadastro aprovado com sucesso");
+      this.notificationService.success(result?.mensagem || "Cadastro aprovado com sucesso!");
       await this.loadCaes();
     } catch (error: any) {
       console.error("Erro ao aprovar cadastro:", error);
-      alert(
-        error?.error?.message || error?.message || "Erro ao aprovar cadastro",
-      );
+      this.notificationService.error(error?.error?.message || error?.message || "Erro ao aprovar cadastro. Tente novamente.");
     }
   }
 
   async rejeitarCao(cao: CaoListItem) {
     const motivo = prompt("Informe o motivo da rejeição:");
     if (!motivo || !motivo.trim()) {
-      alert("Motivo da rejeição é obrigatório");
+      this.notificationService.warning("Motivo da rejeição é obrigatório.");
       return;
     }
     try {
       const result = await firstValueFrom(
         this.cadastroCaoService.rejeitarCadastro(cao.cadastroId, motivo.trim()),
       );
-      alert(result?.mensagem || "Cadastro rejeitado com sucesso");
+      this.notificationService.success(result?.mensagem || "Cadastro rejeitado com sucesso!");
       await this.loadCaes();
     } catch (error: any) {
       console.error("Erro ao rejeitar cadastro:", error);
-      alert(
-        error?.error?.message || error?.message || "Erro ao rejeitar cadastro",
-      );
+      this.notificationService.error(error?.error?.message || error?.message || "Erro ao rejeitar cadastro. Tente novamente.");
     }
   }
 
@@ -547,13 +548,11 @@ export class CaesComponent implements OnInit {
           motivoRejeicao: null,
         } as any),
       );
-      alert("Status atualizado para incompleto");
+      this.notificationService.success("Status atualizado para incompleto!");
       await this.loadCaes();
     } catch (error: any) {
       console.error("Erro ao definir cadastro incompleto:", error);
-      alert(
-        error?.error?.message || error?.message || "Erro ao atualizar status",
-      );
+      this.notificationService.error(error?.error?.message || error?.message || "Erro ao atualizar status. Tente novamente.");
     }
   }
 
