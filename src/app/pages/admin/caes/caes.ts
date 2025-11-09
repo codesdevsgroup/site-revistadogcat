@@ -11,7 +11,7 @@ import { AuthService } from "../../../services/auth.service";
 import { firstValueFrom } from "rxjs";
 
 interface CaoListItem {
-  cadastroCaoId: string;
+  cadastroId: string;
   nomeCao: string;
   raca: {
     nome: string;
@@ -31,6 +31,12 @@ interface CaoListItem {
   fotos?: string[];
   status?: StatusCadastro;
   racaSugerida?: string;
+  videoOption?: string;
+  videoUrl?: string;
+  temPedigree?: boolean;
+  registroPedigree?: string;
+  pedigreeFrente?: string;
+  pedigreeVerso?: string;
 }
 
 interface Raca {
@@ -82,11 +88,13 @@ export class CaesComponent implements OnInit {
   showCaoModal = false;
   selectedCao: CaoListItem | null = null;
   isEditingCao = false;
+  selectedFile: File | null = null;
 
   videoOptions = [
-    { value: 'NONE', label: 'Nenhum' },
-    { value: 'URL', label: 'Link (URL)' },
-    { value: 'WHATSAPP', label: 'WhatsApp' },
+    { value: "NONE", label: "Nenhum" },
+    { value: "URL", label: "Link (URL)" },
+    { value: "WHATSAPP", label: "WhatsApp" },
+    { value: "UPLOAD", label: "Enviar Arquivo" },
   ];
 
   constructor(
@@ -95,6 +103,13 @@ export class CaesComponent implements OnInit {
     private authService: AuthService,
     private router: Router,
   ) {}
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.selectedFile = input.files[0];
+    }
+  }
 
   ngOnInit() {
     this.loadCaes();
@@ -117,7 +132,9 @@ export class CaesComponent implements OnInit {
         params.status = this.selectedStatus;
       }
 
-      const result = await firstValueFrom(this.cadastroCaoService.listar(params));
+      const result = await firstValueFrom(
+        this.cadastroCaoService.listar(params),
+      );
       const data = normalizeList(result);
 
       this.caes = (data || []).map((cao: any) => {
@@ -129,10 +146,14 @@ export class CaesComponent implements OnInit {
           ...cao,
           nome: cao.nomeCao ?? cao.nome,
           donoCao: cao.proprietario ?? cao.donoCao,
-          fotos: [cao.fotoPerfil, cao.fotoLateral].filter(f => f),
+          fotos: [cao.fotoPerfil, cao.fotoLateral].filter((f) => f),
           racaId: racaEncontrada ? racaEncontrada.id : undefined,
           numeroRegistro: cao.numeroRegistro,
           status: cao.status as StatusCadastro,
+          temPedigree: cao.temPedigree,
+          registroPedigree: cao.registroPedigree,
+          pedigreeFrente: cao.pedigreeFrente,
+          pedigreeVerso: cao.pedigreeVerso,
         };
       });
     } catch (error) {
@@ -295,7 +316,7 @@ export class CaesComponent implements OnInit {
 
       if (this.caoEmAprovacao && newRaca && newRaca.racaId) {
         await firstValueFrom(
-          this.cadastroCaoService.update(this.caoEmAprovacao.cadastroCaoId, {
+          this.cadastroCaoService.update(this.caoEmAprovacao.cadastroId, {
             racaId: newRaca.racaId,
             racaSugerida: null,
           } as any),
@@ -432,12 +453,24 @@ export class CaesComponent implements OnInit {
     if (!this.selectedCao) return;
 
     try {
+      // 1. Update text fields and other data
       await firstValueFrom(
         this.cadastroCaoService.update(
-          this.selectedCao.cadastroCaoId,
+          this.selectedCao.cadastroId,
           this.selectedCao as any,
         ),
       );
+
+      // 2. Upload video if selected
+      if (this.selectedFile && this.selectedCao.videoOption === "UPLOAD") {
+        await firstValueFrom(
+          this.cadastroCaoService.uploadVideo(
+            this.selectedCao.cadastroId,
+            this.selectedFile,
+          ),
+        );
+      }
+
       alert("Cão atualizado com sucesso!");
       this.closeCaoModal();
       await this.loadCaes();
@@ -451,7 +484,7 @@ export class CaesComponent implements OnInit {
   async aprovarCao(cao: CaoListItem) {
     try {
       const result = await firstValueFrom(
-        this.cadastroCaoService.aprovarCadastro(cao.cadastroCaoId),
+        this.cadastroCaoService.aprovarCadastro(cao.cadastroId),
       );
       alert(result?.mensagem || "Cadastro aprovado com sucesso");
       await this.loadCaes();
@@ -471,10 +504,7 @@ export class CaesComponent implements OnInit {
     }
     try {
       const result = await firstValueFrom(
-        this.cadastroCaoService.rejeitarCadastro(
-          cao.cadastroCaoId,
-          motivo.trim(),
-        ),
+        this.cadastroCaoService.rejeitarCadastro(cao.cadastroId, motivo.trim()),
       );
       alert(result?.mensagem || "Cadastro rejeitado com sucesso");
       await this.loadCaes();
