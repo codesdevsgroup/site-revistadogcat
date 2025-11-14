@@ -4,7 +4,7 @@
 export interface ArtigoResponseDto {
   artigoId: string;
   titulo: string;
-  conteudo: any;
+  conteudo: unknown;
   resumo?: string;
   autor: {
     userId: string;
@@ -17,7 +17,7 @@ export interface ArtigoResponseDto {
   imagemCapa?: string;
   visualizacoes: number;
   curtidas: number;
-  comentarios: any[];
+  comentarios: unknown[];
   destaque: boolean;
   tags?: string[];
   createdAt: string;
@@ -27,7 +27,7 @@ export interface ArtigoResponseDto {
 export interface Artigo {
   id: string;
   titulo: string;
-  conteudo: any;
+  conteudo: unknown;
   resumo?: string;
   autor: string;
   autorId: string;
@@ -46,7 +46,7 @@ export interface Artigo {
 
 export interface ArtigoInput {
   titulo: string;
-  conteudo: any;
+  conteudo: unknown;
   resumo?: string;
   autorId: string;
   categoria: string;

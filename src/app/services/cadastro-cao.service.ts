@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { map } from "rxjs/operators";
+import type { ApiResponse, ListResult } from "@app-types/api";
 import { environment } from "../../environments/environment";
 
 
@@ -106,7 +107,7 @@ export class CadastroCaoService {
   /**
    * Lista cadastros com filtros
    */
-  listar(params?: ListCadastrosParams): Observable<any> {
+  listar(params?: ListCadastrosParams): Observable<ListResult<CaoListItem>> {
     let httpParams = new HttpParams();
 
     if (params) {
@@ -119,12 +120,12 @@ export class CadastroCaoService {
     }
 
     return this.http
-      .get<any>(this.apiUrl, { params: httpParams })
-      .pipe(map((response) => response?.data || response));
+      .get<ApiResponse<ListResult<CaoListItem>>>(this.apiUrl, { params: httpParams })
+      .pipe(map((response) => response?.data || ({} as ListResult<CaoListItem>)));
   }
 
-  findOne(id: string): Promise<any> {
-    return this.http.get(`${this.apiUrl}/${id}`).toPromise();
+  findOne(id: string): Promise<CadastroCao> {
+    return this.http.get<ApiResponse<CadastroCao>>(`${this.apiUrl}/${id}`).toPromise().then(r => (r?.data ?? (r as any)) as CadastroCao);
   }
 
   /**
@@ -132,23 +133,23 @@ export class CadastroCaoService {
    */
   obterCadastro(id: string): Observable<CadastroCao> {
     return this.http
-      .get<any>(`${this.apiUrl}/${id}`)
-      .pipe(map((response) => response?.data || response));
+      .get<ApiResponse<CadastroCao>>(`${this.apiUrl}/${id}`)
+      .pipe(map((response) => response?.data || (response as unknown as CadastroCao)));
   }
 
   /**
    * Remove um cadastro pelo ID (Admin)
    */
-  delete(id: string): Promise<any> {
-    return this.http.delete(`${this.apiUrl}/${id}`).toPromise();
+  delete(id: string): Promise<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`).toPromise();
   }
 
   update(id: string, data: Partial<CadastroCao>): Observable<CadastroCao> {
-    return this.http.patch<any>(`${this.apiUrl}/${id}`, data).pipe(map(response => response?.data || response));
+    return this.http.patch<ApiResponse<CadastroCao>>(`${this.apiUrl}/${id}`, data).pipe(map(response => response?.data || (response as unknown as CadastroCao)));
   }
 
   getPendentesRaca(limit: number = 50): Observable<CadastroCao[]> {
-    return this.http.get<any>(`${this.apiUrl}/pendentes-raca?limit=${limit}`).pipe(map(response => response?.data || response));
+    return this.http.get<ApiResponse<CadastroCao[]>>(`${this.apiUrl}/pendentes-raca?limit=${limit}`).pipe(map(response => response?.data || []));
   }
 
   /**
@@ -156,8 +157,8 @@ export class CadastroCaoService {
    */
   listarPendentes(limit: number = 50): Observable<CadastroCao[]> {
     return this.http
-      .get<any>(`${this.apiUrl}/pendentes/validacao?limit=${limit}`)
-      .pipe(map((response) => response?.data || response));
+      .get<ApiResponse<CadastroCao[]>>(`${this.apiUrl}/pendentes/validacao?limit=${limit}`)
+      .pipe(map((response) => response?.data || []));
   }
 
   /**
@@ -165,8 +166,8 @@ export class CadastroCaoService {
    */
   contarPendentes(): Observable<{ count: number }> {
     return this.http
-      .get<any>(`${this.apiUrl}/pendentes/count`)
-      .pipe(map((response) => response?.data || response));
+      .get<ApiResponse<{ count: number }>>(`${this.apiUrl}/pendentes/count`)
+      .pipe(map((response) => response?.data || { count: 0 }));
   }
 
   /**
@@ -177,8 +178,8 @@ export class CadastroCaoService {
       acao: "APROVAR",
     };
     return this.http
-      .post<any>(`${this.apiUrl}/${cadastroId}/aprovar`, dto)
-      .pipe(map((response) => response?.data || response));
+      .post<ApiResponse<AprovarCadastroResponse>>(`${this.apiUrl}/${cadastroId}/aprovar`, dto)
+      .pipe(map((response) => response?.data || ({} as AprovarCadastroResponse)));
   }
 
   /**
@@ -193,8 +194,8 @@ export class CadastroCaoService {
       motivoRejeicao: motivo,
     };
     return this.http
-      .post<any>(`${this.apiUrl}/${cadastroId}/aprovar`, dto)
-      .pipe(map((response) => response?.data || response));
+      .post<ApiResponse<AprovarCadastroResponse>>(`${this.apiUrl}/${cadastroId}/aprovar`, dto)
+      .pipe(map((response) => response?.data || ({} as AprovarCadastroResponse)));
   }
 
   /**
@@ -209,8 +210,8 @@ export class CadastroCaoService {
    */
   meusCadastros(): Observable<CadastroCao[]> {
     return this.http
-      .get<any>(`${this.apiUrl}/meus-cadastros`)
-      .pipe(map((response) => response?.data || response));
+      .get<ApiResponse<CadastroCao[]>>(`${this.apiUrl}/meus-cadastros`)
+      .pipe(map((response) => response?.data || []));
   }
 
   /**
@@ -221,8 +222,8 @@ export class CadastroCaoService {
     const formData = new FormData();
     formData.append('video', file);
     return this.http
-      .post<any>(`${this.apiUrl}/${cadastroId}/video/upload`, formData)
-      .pipe(map((response) => response?.data || response));
+      .post<ApiResponse<CadastroCao>>(`${this.apiUrl}/${cadastroId}/video/upload`, formData)
+      .pipe(map((response) => response?.data || (response as unknown as CadastroCao)));
   }
 
   /**
@@ -233,7 +234,7 @@ export class CadastroCaoService {
     payload: { videoOption: 'URL' | 'WHATSAPP' | 'NONE'; videoUrl?: string }
   ): Observable<CadastroCao> {
     return this.http
-      .patch<any>(`${this.apiUrl}/${cadastroId}/video`, payload)
-      .pipe(map((response) => response?.data || response));
+      .patch<ApiResponse<CadastroCao>>(`${this.apiUrl}/${cadastroId}/video`, payload)
+      .pipe(map((response) => response?.data || (response as unknown as CadastroCao)));
   }
 }

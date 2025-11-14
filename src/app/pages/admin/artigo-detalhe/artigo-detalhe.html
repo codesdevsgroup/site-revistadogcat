@@ -1,16 +1,11 @@
 <div class="artigo-detalhe-container">
-
-
-  <!-- Main Content -->
   <div class="content-wrapper">
     <form [formGroup]="artigoForm" (ngSubmit)="onSubmit()">
-
-      <!-- Configurações Horizontais no Topo -->
       <div class="config-section">
         <div class="config-header">
           <h3 class="config-title">
             <i class="fas fa-cog me-2"></i>
-            Configurações
+            {{ isEditMode ? 'Editar Artigo' : 'Novo Artigo' }}
           </h3>
           <div class="config-actions">
             <button type="button" class="btn btn-outline-secondary me-2" (click)="onCancel()">
@@ -24,14 +19,8 @@
           </div>
         </div>
         <div class="config-content">
-          <!-- Layout em Grid: Esquerda/Centro + Direita -->
           <div class="config-row config-row-main-grid">
-            <!-- Coluna Esquerda/Centro -->
             <div class="left-column">
-              <h1 class="page-title">
-        {{ isEditMode ? 'Editar Artigo' : 'Novo Artigo' }}
-      </h1>
-              <!-- Primeira linha: Título -->
               <div class="config-row">
                 <div class="form-group">
                   <label for="titulo" class="form-label">Título *</label>
@@ -49,8 +38,6 @@
                   </div>
                 </div>
               </div>
-
-              <!-- Segunda linha: Resumo (Opcional) -->
               <div class="config-row">
                 <div class="form-group resumo-field">
                   <label for="resumo" class="form-label">
@@ -145,7 +132,6 @@
                 </div>
               </div>
 
-              <!-- Terceira linha: Data de Publicação e Status -->
               <div class="config-row config-row-two-cols">
                 <div class="form-group">
                   <label for="dataPublicacao" class="form-label">Data de Publicação *</label>
@@ -246,7 +232,6 @@
         </div>
       </div>
 
-      <!-- Área Central - Editor -->
       <div class="editor-area">
         <div class="editor-header">
           <h3 class="editor-title">
@@ -261,12 +246,10 @@
           </div>
         </div>
 
-        <!-- Placeholder para o Tiptap Editor -->
         <div class="editor-container">
           <div class="tiptap-placeholder">
             <div class="placeholder-content">
 
-              <!-- PrimeNG Editor -->
               <p-editor
                 formControlName="conteudo"
                 [style]="{ height: '420px' }"
@@ -280,7 +263,6 @@
           </div>
         </div>
 
-        <!-- Contador de caracteres -->
         <div class="editor-footer">
           <small class="text-muted">
             <i class="fas fa-keyboard me-1"></i>
