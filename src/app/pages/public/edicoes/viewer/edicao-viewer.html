@@ -19,11 +19,35 @@
         </a>
       </div>
     </div>
+
+    <div class="viewer-side-toolbar" *ngIf="!isMobile">
+      <button class="btn btn-icon" (click)="prevPage()" [disabled]="currentPage <= 1" title="Página anterior">
+        <i class="pi pi-angle-up"></i>
+      </button>
+      <span class="page-info">{{ currentPage }} / {{ totalPages || '?' }}</span>
+      <button class="btn btn-icon" (click)="nextPage()" [disabled]="totalPages > 0 && currentPage >= totalPages" title="Próxima página">
+        <i class="pi pi-angle-down"></i>
+      </button>
+      <div class="toolbar-divider"></div>
+      <button class="btn btn-icon" (click)="zoomOut()" title="Diminuir zoom">
+        <i class="pi pi-minus"></i>
+      </button>
+      <button class="btn btn-icon" (click)="zoomIn()" title="Aumentar zoom">
+        <i class="pi pi-plus"></i>
+      </button>
+      <div class="toolbar-divider"></div>
+      <button class="btn btn-icon" (click)="toggleViewMode()" title="Alternar modo">
+        <i class="pi pi-book"></i>
+      </button>
+      <a class="btn btn-icon" routerLink="/edicoes" title="Voltar">
+        <i class="pi pi-arrow-left"></i>
+      </a>
+    </div>
     <ngx-extended-pdf-viewer
       [src]="pdfSrc"
       [height]="viewerHeight"
       [showBorders]="false"
-      [showToolbar]="true"
+      [showToolbar]="isMobile"
       [pageViewMode]="pageViewMode"
       [zoom]="computedZoom"
       [page]="currentPage"
