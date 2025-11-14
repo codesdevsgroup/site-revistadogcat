@@ -1,7 +1,11 @@
 <div class="dashboard-container">
-  <div class="dashboard-header">
-    <p class="dashboard-subtitle pb-4">Bem-vindo ao painel administrativo</p>
-  </div>
+  <p-panel>
+    <ng-template pTemplate="header">
+      <div class="dashboard-header">
+        <p class="dashboard-subtitle pb-4">Bem-vindo ao painel administrativo</p>
+      </div>
+    </ng-template>
+  </p-panel>
 
   <!-- Cards: skeleton enquanto carrega -->
   <ng-container *ngIf="isLoading; else statsBlock">
@@ -30,7 +34,7 @@
           <div>
             <h3 class="stat-value">{{ stat.value }}</h3>
             <p class="stat-title">{{ stat.title }}</p>
-            <span class="stat-change" [ngClass]="{ 'positive': stat.changePositive, 'negative': !stat.changePositive }">{{ stat.change }}</span>
+            <p-tag class="stat-change-tag" [severity]="stat.changePositive ? 'success' : 'danger'" [value]="stat.change"></p-tag>
           </div>
         </div>
       </p-card>
@@ -46,7 +50,7 @@
             </ng-container>
             <ng-template #lineChartContent>
               <ng-container *ngIf="lineChartData?.datasets?.length; else noLineData">
-                <p-chart type="line" [data]="lineChartData"></p-chart>
+                <p-chart type="line" [data]="lineChartData" [options]="chartOptions"></p-chart>
               </ng-container>
               <ng-template #noLineData>
                 <div class="no-data">Sem dados de crescimento mensal</div>
@@ -67,13 +71,19 @@
             </ng-template>
           </p-card>
           <!-- Terceiro card analítico dentro do mesmo grid: Cadastros de Cães -->
-          <p-card header="Cadastros de Cães" styleClass="analytics-card">
+          <p-card styleClass="analytics-card">
+            <ng-template pTemplate="header">
+              <div class="card-header-flex">
+                <span>Cadastros de Cães</span>
+                <span *ngIf="dogsIncompleteCount>0" pBadge severity="warn" [value]="dogsIncompleteCount"></span>
+              </div>
+            </ng-template>
             <ng-container *ngIf="isLoading; else dogsChartContent">
               <p-skeleton width="100%" height="240px"></p-skeleton>
             </ng-container>
             <ng-template #dogsChartContent>
               <ng-container *ngIf="dogsLineChartData?.datasets?.length; else noDogsData">
-                <p-chart type="line" [data]="dogsLineChartData"></p-chart>
+                <p-chart type="line" [data]="dogsLineChartData" [options]="chartOptions"></p-chart>
                 <div class="no-data" *ngIf="dogsIncompleteCount === 0">Nenhum cadastro incompleto.</div>
                 <div class="stat-informativo" *ngIf="dogsIncompleteCount > 0">
                   <span class="material-symbols-outlined">error_outline</span>
@@ -88,6 +98,7 @@
         </div>
       </div>
 
+      <p-divider></p-divider>
       <p-card header="Atividade Recente (ainda não implementado)" styleClass="recent-activity-card">
         <p-table [value]="recentActivity" [tableStyle]="{'min-width': '50rem'}">
           <ng-template pTemplate="body" let-activity>
