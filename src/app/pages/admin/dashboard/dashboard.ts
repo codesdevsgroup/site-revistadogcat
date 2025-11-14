@@ -172,6 +172,8 @@ export class DashboardComponent implements OnInit {
       ]
     };
     this.chartOptions = {
+      responsive: true,
+      maintainAspectRatio: false,
       plugins: {
         legend: { labels: { color: '#374151' } },
       },
