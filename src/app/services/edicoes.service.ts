@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { Edicao } from '../interfaces/edicao';
 
@@ -24,15 +25,26 @@ export class EdicoesService {
       if (params.page) httpParams = httpParams.set('page', String(params.page));
       if (params.limit) httpParams = httpParams.set('limit', String(params.limit));
     }
-    return this.http.get<Edicao[]>(this.apiUrl, { params: httpParams });
+    return this.http.get<any>(this.apiUrl, { params: httpParams }).pipe(
+      map((resp) => {
+        const data = resp?.data;
+        if (Array.isArray(data)) return data as Edicao[];
+        if (Array.isArray(resp)) return resp as Edicao[];
+        return [];
+      })
+    );
   }
 
   obterEdicao(id: string): Observable<Edicao> {
-    return this.http.get<Edicao>(`${this.apiUrl}/${id}`);
+    return this.http.get<any>(`${this.apiUrl}/${id}`).pipe(
+      map((resp) => (resp?.data ?? resp) as Edicao)
+    );
   }
 
   listarUltima(): Observable<Edicao> {
-    return this.http.get<Edicao>(`${this.apiUrl}/ultima`);
+    return this.http.get<any>(`${this.apiUrl}/ultima`).pipe(
+      map((resp) => (resp?.data ?? resp) as Edicao)
+    );
   }
 
   /**

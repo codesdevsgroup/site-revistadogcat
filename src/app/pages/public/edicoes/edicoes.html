@@ -29,9 +29,7 @@
       </div>
       <div class="modal-body">
         <ng-container *ngIf="currentPdfUrl; else noPdf">
-          <object [data]="currentPdfUrl" type="application/pdf" width="100%" height="100%">
-            <p>Seu navegador não conseguiu mostrar o PDF. <a [href]="currentPdfUrl" target="_blank" rel="noopener">Abrir em nova aba</a>.</p>
-          </object>
+          <ngx-extended-pdf-viewer [src]="currentPdfUrl" height="100%" pageViewMode="book" [showBorders]="false"></ngx-extended-pdf-viewer>
         </ng-container>
         <ng-template #noPdf>
           <p>PDF não disponível.</p>

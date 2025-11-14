@@ -1,12 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
 import { Edicao } from '../../../interfaces/edicao';
+import { environment } from '../../../../environments/environment';
 import { EdicoesService } from '../../../services/edicoes.service';
 
 @Component({
   selector: 'app-edicoes',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, NgxExtendedPdfViewerModule],
   templateUrl: './edicoes.html',
   styleUrl: './edicoes.scss'
 })
@@ -17,6 +19,7 @@ export class EdicoesComponent implements OnInit {
 
   showModal = false;
   currentPdfUrl: string | null = null;
+  public apiUrl = environment.apiUrl;
 
   constructor(private edicoesService: EdicoesService) {}
 
@@ -38,7 +41,8 @@ export class EdicoesComponent implements OnInit {
     if (!edicao.pdfUrl) {
       return;
     }
-    this.currentPdfUrl = edicao.pdfUrl;
+    const url = edicao.pdfUrl;
+    this.currentPdfUrl = url.startsWith('http') ? url : `${this.apiUrl}${url}`;
     this.showModal = true;
   }
 

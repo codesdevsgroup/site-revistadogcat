@@ -29,7 +29,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     { label: 'Home', route: '/' },
     { label: 'Expo Dog', route: '/expo-dog' },
     { label: 'Votação', route: '/votacao' },
-    { label: 'Edições', route: '/edicoes' },
+    { label: 'Edições da Revista', route: '/edicoes' },
     { label: 'Artigos', route: '/artigos' },
   ];
 

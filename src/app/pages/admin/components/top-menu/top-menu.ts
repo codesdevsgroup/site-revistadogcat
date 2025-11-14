@@ -99,7 +99,7 @@ export class TopMenuComponent implements OnInit, OnDestroy {
       items.push({ label: 'Artigos', icon: 'pi pi-newspaper', routerLink: ['/admin/artigos'] });
     }
     if (this.canAccessEditions()) {
-      items.push({ label: 'Edições', icon: 'pi pi-book', routerLink: ['/admin/edicoes'] });
+      items.push({ label: 'Edições da Revista', icon: 'pi pi-book', routerLink: ['/admin/edicoes'] });
     }
     if (this.canAccessVotacao()) {
       items.push({ label: 'Votação', icon: 'pi pi-clipboard', routerLink: ['/admin/votacao'] });
