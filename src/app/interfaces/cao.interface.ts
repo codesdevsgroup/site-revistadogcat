@@ -14,6 +14,7 @@ export interface Cao {
 
   temPedigree?: boolean;
   registroPedigree?: string;
+  entidadeEmissoraPedigree?: string;
   pedigreeFrenteUrl?: string; // URL do arquivo
   pedigreeVersoUrl?: string; // URL do arquivo
 

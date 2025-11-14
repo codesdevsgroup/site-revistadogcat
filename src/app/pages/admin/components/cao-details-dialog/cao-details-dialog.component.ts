@@ -10,6 +10,7 @@ import { ButtonModule } from 'primeng/button';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { DatePickerModule } from 'primeng/datepicker';
 import { FileUploadModule } from 'primeng/fileupload';
+import { CadastroCaoService } from '../../../../services/cadastro-cao.service';
 
 @Component({
   selector: 'app-cao-details-dialog',
@@ -46,7 +47,7 @@ export class CaoDetailsDialogComponent implements OnChanges {
     { label: 'Upload de Arquivo', value: 'UPLOAD' }
   ];
 
-  constructor() { }
+  constructor(private cadastroCaoService: CadastroCaoService) { }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['cao'] && this.cao) {
@@ -72,14 +73,18 @@ export class CaoDetailsDialogComponent implements OnChanges {
 
   async onSingleImageSelect(files: File[], target: 'fotoLateral' | 'fotoPerfil' | 'pedigreeFrente' | 'pedigreeVerso'): Promise<void> {
     if (!this.cao || !files?.length) return;
-    const preview = await this.readFileAsDataURL(files[0]);
+    const file = files[0];
+    const preview = await this.readFileAsDataURL(file);
     this.cao[target] = preview;
+    this.cadastroCaoService.uploadImagem(this.cao.cadastroId!, target as any, file).subscribe();
   }
 
   onFileSelected(event: any): void {
     const file: File | undefined = event?.target?.files?.[0];
     if (!file) return;
-    console.log('Vídeo selecionado:', file.name, file.type, file.size);
+    if (this.cao?.cadastroId) {
+      this.cadastroCaoService.uploadVideo(this.cao.cadastroId, file).subscribe();
+    }
   }
 
   saveCao(): void {

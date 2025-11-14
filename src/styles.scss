@@ -389,3 +389,15 @@ a {
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
+@import 'notyf/notyf.min.css';
+
+// Ajustes de visibilidade e sobreposição para Notyf
+.notyf {
+  z-index: 20000;
+}
+.notyf__toast {
+  opacity: 1 !important;
+}
+.notyf__wrapper {
+  color: #fff;
+}

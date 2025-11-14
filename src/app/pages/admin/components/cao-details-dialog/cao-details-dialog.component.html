@@ -108,6 +108,10 @@
             <label>Registro do Pedigree</label>
             <input pInputText type="text" [(ngModel)]="cao.registroPedigree" [disabled]="!isEditing">
           </div>
+          <div class="form-group" *ngIf="cao.temPedigree">
+            <label>Entidade Emissora do Pedigree</label>
+            <input pInputText type="text" [(ngModel)]="cao.entidadeEmissoraPedigree" [disabled]="!isEditing">
+          </div>
 
           <div class="form-group">
             <label>Opção de Vídeo</label>
