@@ -78,9 +78,22 @@ export class EdicaoDetalheComponent {
       this.saving = true;
       
       const formData = new FormData();
-      formData.append('titulo', this.form.get('titulo')?.value);
-      formData.append('descricao', this.form.get('descricao')?.value);
-      formData.append('data', this.form.get('data')?.value);
+      const titulo: string = (this.form.get('titulo')?.value ?? '').trim();
+      const descricaoRaw: string = (this.form.get('descricao')?.value ?? '').trim();
+      const dataRaw: string = this.form.get('data')?.value;
+
+      formData.append('titulo', titulo);
+
+      // Envia 'descricao' somente se houver conteúdo (backend valida mínimo de 10)
+      if (descricaoRaw.length > 0) {
+        formData.append('descricao', descricaoRaw);
+      }
+
+      // Converte data para ISO 8601 se fornecida
+      if (dataRaw) {
+        const iso = new Date(dataRaw).toISOString();
+        formData.append('data', iso);
+      }
       formData.append('pdf', this.selectedPdf);
       
       if (this.selectedCapa) {

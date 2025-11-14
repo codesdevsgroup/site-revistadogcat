@@ -8,7 +8,7 @@
 
   <div class="row" *ngIf="!loading; else loadingTpl">
     <div class="col-12" *ngIf="caes.length === 0">
-      <div class="alert alert-info">Nenhum cão cadastrado encontrado.</div>
+      <div class="alert alert-info">Nenhum cão aprovado para votação.</div>
     </div>
 
     <div class="col-md-4 mb-4" *ngFor="let cao of caes; trackBy: trackByCadastroId">
