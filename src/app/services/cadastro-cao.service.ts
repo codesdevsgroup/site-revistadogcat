@@ -21,6 +21,7 @@ export interface CadastroCao {
   altura?: string;
   temPedigree: boolean;
   registroPedigree?: string;
+  entidadeEmissoraPedigree?: string;
   pedigreeFrente?: string;
   pedigreeVerso?: string;
   temMicrochip: boolean;

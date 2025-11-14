@@ -103,6 +103,7 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
       altura: [""],
       temPedigree: [false, Validators.required],
       registroPedigree: [""],
+      entidadeEmissoraPedigree: [""],
       temMicrochip: [false, Validators.required],
       numeroMicrochip: [""],
       nomePai: [""],
@@ -160,14 +161,19 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
       .get("temPedigree")
       ?.valueChanges.subscribe((hasPedigree) => {
         const control = this.dogForm.get("registroPedigree");
+        const issuerControl = this.dogForm.get("entidadeEmissoraPedigree");
         if (hasPedigree) {
           control?.setValidators([Validators.required]);
+          issuerControl?.setValidators([Validators.required]);
         } else {
           control?.clearValidators();
           control?.reset();
+          issuerControl?.clearValidators();
+          issuerControl?.reset();
           this.pedigreeFrente = this.pedigreeVerso = null;
         }
         control?.updateValueAndValidity();
+        issuerControl?.updateValueAndValidity();
       });
 
     const microchipSub = this.dogForm
@@ -420,7 +426,8 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
 
     if (this.dogForm.get("temPedigree")?.value) {
       if (
-        !this.dogForm.get("registroPedigree")?.value &&
+        (!this.dogForm.get("registroPedigree")?.value ||
+          !this.dogForm.get("entidadeEmissoraPedigree")?.value) &&
         !this.pedigreeFrente &&
         !this.pedigreeVerso
       ) {
@@ -495,6 +502,9 @@ export class CadastroCaoComponent implements OnInit, OnDestroy {
     if (this.dogForm.get("temPedigree")?.value) {
       if (this.dogForm.get("registroPedigree")?.invalid) {
         errors.push("Nº de registro do pedigree");
+      }
+      if (this.dogForm.get("entidadeEmissoraPedigree")?.invalid) {
+        errors.push("Entidade emissora do pedigree");
       }
       if (!this.pedigreeFrente || !this.pedigreeVerso) {
         errors.push("Imagens do pedigree (frente e verso)");
