@@ -42,10 +42,12 @@
               <button class="btn btn-outline-primary btn-sm" [disabled]="!edicao.pdfUrl" (click)="abrirPdf(edicao)">
                 <i class="fas fa-file-pdf"></i> Abrir
               </button>
-              <!-- Futuro: editar -->
-              <!-- <a class="btn btn-outline-secondary btn-sm" [routerLink]="['/admin/edicoes', edicao.id]">
+              <a class="btn btn-outline-secondary btn-sm" [routerLink]="['/admin/edicoes', edicao.id]">
                 <i class="fas fa-edit"></i> Editar
-              </a> -->
+              </a>
+              <button class="btn btn-outline-danger btn-sm" (click)="excluir(edicao)">
+                <i class="fas fa-trash"></i> Excluir
+              </button>
             </td>
           </tr>
         </tbody>

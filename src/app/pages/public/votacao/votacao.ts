@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { CadastroCaoService, CaoListItem } from '../../../services/cadastro-cao.service';
@@ -7,6 +7,8 @@ import { AuthService } from '../../../services/auth.service';
 import { LoginRequiredModalComponent } from '../components/login-required-modal/login-required-modal.component';
 import { CreateVotoDto, VotoTipo } from '../../../interfaces/votacao.interface';
 import { NotificationService } from '../../../services/notification.service';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-votacao',
@@ -16,11 +18,12 @@ import { NotificationService } from '../../../services/notification.service';
   styleUrls: ['./votacao.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class VotacaoComponent implements OnInit {
+export class VotacaoComponent implements OnInit, OnDestroy {
   @ViewChild(LoginRequiredModalComponent) loginModal?: LoginRequiredModalComponent;
 
   caes: CaoListItem[] = [];
   loading = false;
+  private destroy$ = new Subject<void>();
 
   constructor(
     private cadastroCaoService: CadastroCaoService,
@@ -34,18 +37,29 @@ export class VotacaoComponent implements OnInit {
     this.loadCaes();
   }
 
-  async loadCaes(): Promise<void> {
-    try {
-      this.loading = true;
-      const response = await this.cadastroCaoService.findAll();
-      this.caes = response.data || [];
-    } catch (error) {
-      console.error('Erro ao carregar cães para votação:', error);
-      this.notificationService.error('Erro ao carregar lista de cães. Tente novamente mais tarde.');
-    } finally {
-      this.loading = false;
-      this.cdr.markForCheck();
-    }
+  loadCaes(): void {
+    this.loading = true;
+    this.cadastroCaoService
+      .listar({ status: 'APROVADO', ativo: 'true' })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (result) => {
+          this.caes = result?.data || [];
+          this.loading = false;
+          this.cdr.markForCheck();
+        },
+        error: (error) => {
+          console.error('Erro ao carregar cães para votação:', error);
+          this.notificationService.error('Erro ao carregar lista de cães. Tente novamente mais tarde.');
+          this.loading = false;
+          this.cdr.markForCheck();
+        }
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   trackByCadastroId(index: number, item: CaoListItem): string {

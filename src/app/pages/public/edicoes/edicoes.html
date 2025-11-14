@@ -12,31 +12,13 @@
         <div class="card-body">
           <h2 class="card-title">{{ edicao.titulo }}</h2>
           <p class="card-description">{{ edicao.descricao }}</p>
-          <button class="btn btn-open" [disabled]="!edicao.pdfUrl" (click)="abrirPdf(edicao)">
+          <a class="btn btn-open" [class.disabled]="!edicao.pdfUrl" [routerLink]="['/edicoes', edicao.id, 'visualizar']" [attr.aria-disabled]="!edicao.pdfUrl ? true : null">
             {{ edicao.pdfUrl ? 'Abrir PDF' : 'Em breve' }}
-          </button>
+          </a>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="pdf-modal" *ngIf="showModal">
-    <div class="modal-backdrop" (click)="fecharModal()"></div>
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>Visualização da Edição</h3>
-        <button class="btn btn-close" (click)="fecharModal()">Fechar</button>
-      </div>
-      <div class="modal-body">
-        <ng-container *ngIf="currentPdfUrl; else noPdf">
-          <object [data]="currentPdfUrl" type="application/pdf" width="100%" height="100%">
-            <p>Seu navegador não conseguiu mostrar o PDF. <a [href]="currentPdfUrl" target="_blank" rel="noopener">Abrir em nova aba</a>.</p>
-          </object>
-        </ng-container>
-        <ng-template #noPdf>
-          <p>PDF não disponível.</p>
-        </ng-template>
-      </div>
-    </div>
-  </div>
+  
 </section>

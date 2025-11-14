@@ -37,6 +37,20 @@ export class AdminEdicoesComponent implements OnInit {
     window.open(edicao.pdfUrl, '_blank');
   }
 
+  excluir(edicao: Edicao): void {
+    const confirmar = window.confirm(`Excluir a edição "${edicao.titulo}"? (remoção lógica)`);
+    if (!confirmar) return;
+    this.edicoesService.excluirEdicao(edicao.id).subscribe({
+      next: () => {
+        this.edicoes = this.edicoes.filter(e => e.id !== edicao.id);
+      },
+      error: (err) => {
+        console.error('Erro ao excluir edição', err);
+        this.error = 'Não foi possível excluir a edição.';
+      }
+    });
+  }
+
   trackByEdicaoId(index: number, edicao: Edicao): string {
     return edicao.id;
   }

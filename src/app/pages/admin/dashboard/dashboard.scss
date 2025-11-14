@@ -457,12 +457,22 @@
 
     p-chart {
       display: block;
-      height: 280px; // Altura fixa para consistência
+      width: 100%;
+      height: 280px;
     }
 
     // Específico para gráfico de pizza, se precisar de ajuste fino
     p-chart[type="pie"] {
       height: 260px;
+    }
+
+    @media (max-width: 768px) {
+      p-chart {
+        height: 200px;
+      }
+      p-chart[type="pie"] {
+        height: 180px;
+      }
     }
 
     .chart-placeholder {

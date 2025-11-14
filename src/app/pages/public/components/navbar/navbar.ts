@@ -29,13 +29,14 @@ export class NavbarComponent implements OnInit, OnDestroy {
     { label: 'Home', route: '/' },
     { label: 'Expo Dog', route: '/expo-dog' },
     { label: 'Votação', route: '/votacao' },
-    { label: 'Edições', route: '/edicoes' },
+    { label: 'Edições da Revista', route: '/edicoes' },
     { label: 'Artigos', route: '/artigos' },
   ];
 
   isMenuOpen = false;
   userMenuOpen = false;
   isScrolled = false;
+  isCompact = false;
   username = '';
   userRole = '';
 
@@ -66,6 +67,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
     // Atualiza estado inicialmente conforme posição da página
     this.updateScrollState();
+    this.updateCompactState();
+    this.router.events.subscribe(() => this.updateCompactState());
   }
 
   ngOnDestroy() {
@@ -81,6 +84,11 @@ export class NavbarComponent implements OnInit, OnDestroy {
   private updateScrollState() {
     // Ajuste simples: considera scroll > 10px como estado "scrolled"
     this.isScrolled = (window.scrollY || document.documentElement.scrollTop || document.body.scrollTop || 0) > 10;
+  }
+
+  private updateCompactState() {
+    const url = this.router.url || '';
+    this.isCompact = /\/edicoes\/[^/]+\/visualizar(\?.*)?$/.test(url);
   }
 
   private loadUserData() {

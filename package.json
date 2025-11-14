@@ -44,6 +44,7 @@
     "bootstrap": "^5.3.6",
     "chart.js": "^4.5.1",
     "marked": "^15.0.12",
+    "ngx-extended-pdf-viewer": "^25.6.0-alpha.3",
     "ngx-markdown": "^20.0.0",
     "notyf": "^3.10.0",
     "primeicons": "^7.0.0",
