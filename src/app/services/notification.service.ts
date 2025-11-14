@@ -9,10 +9,12 @@ export class NotificationService {
 
   constructor() {
     this.notyf = new Notyf({
-      duration: 5000,
+      duration: 6000,
+      dismissible: true,
+      ripple: false,
       position: {
         x: 'right',
-        y: 'top',
+        y: 'bottom',
       },
       types: [
         {

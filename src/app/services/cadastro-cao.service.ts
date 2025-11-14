@@ -238,4 +238,21 @@ export class CadastroCaoService {
       .patch<ApiResponse<CadastroCao>>(`${this.apiUrl}/${cadastroId}/video`, payload)
       .pipe(map((response) => response?.data || (response as unknown as CadastroCao)));
   }
+
+  uploadImagem(
+    cadastroId: string,
+    campo: 'fotoPerfil' | 'fotoLateral' | 'pedigreeFrente' | 'pedigreeVerso',
+    file: File,
+  ): Observable<CadastroCao> {
+    const formData = new FormData();
+    formData.append(campo, file);
+    let endpoint = '';
+    if (campo === 'fotoPerfil') endpoint = `${this.apiUrl}/${cadastroId}/foto-perfil`;
+    else if (campo === 'fotoLateral') endpoint = `${this.apiUrl}/${cadastroId}/foto-lateral`;
+    else if (campo === 'pedigreeFrente') endpoint = `${this.apiUrl}/${cadastroId}/pedigree/frente`;
+    else endpoint = `${this.apiUrl}/${cadastroId}/pedigree/verso`;
+    return this.http
+      .patch<ApiResponse<CadastroCao>>(endpoint, formData)
+      .pipe(map((response) => response?.data || (response as unknown as CadastroCao)));
+  }
 }
