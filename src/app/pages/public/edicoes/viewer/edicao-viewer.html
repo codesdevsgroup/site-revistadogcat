@@ -1,0 +1,13 @@
+<section class="viewer-container" *ngIf="!loading; else carregando">
+  <div class="viewer-body" *ngIf="pdfSrc; else erro">
+    <ngx-extended-pdf-viewer [src]="pdfSrc" height="100%" [showBorders]="false" [pageViewMode]="pageViewMode" [zoom]="initialZoom"></ngx-extended-pdf-viewer>
+  </div>
+</section>
+
+<ng-template #carregando>
+  <div class="loading">Carregando edição...</div>
+  </ng-template>
+
+<ng-template #erro>
+  <div class="error">PDF não disponível.</div>
+</ng-template>

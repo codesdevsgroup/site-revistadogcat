@@ -16,12 +16,13 @@ export const publicRoutes: Routes = [
   {
     path: '',
     component: PublicComponent,
-    children: [
+  children: [
       { path: '', component: HomeComponent },
       { path: 'assinaturas', component: AssinaturasComponent },
       { path: 'expo-dog', component: ExpoDogComponent },
       { path: 'votacao', component: VotacaoComponent },
       { path: 'edicoes', component: EdicoesComponent },
+      { path: 'edicoes/:id/visualizar', loadComponent: () => import('./edicoes/viewer/edicao-viewer').then(m => m.EdicaoViewerComponent) },
       { path: 'artigos', component: ArtigosListaComponent },
       { path: 'artigos/:id', component: ArtigoLeituraComponent },
       { path: 'cadastro-cao', component: CadastroCaoComponent, canActivate: [AuthGuard], resolve: { auth: AuthResolver } },

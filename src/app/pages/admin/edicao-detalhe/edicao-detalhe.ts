@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { EdicoesService } from '../../../services/edicoes.service';
 import { NotificationService } from '../../../services/notification.service';
 
@@ -18,13 +18,20 @@ export class EdicaoDetalheComponent {
   isLoading = false;
   selectedPdf: File | null = null;
   selectedCapa: File | null = null;
+  edicaoId: string | null = null;
+  isEdit = false;
 
-  constructor(private fb: FormBuilder, private edicoesService: EdicoesService, private router: Router, private notificationService: NotificationService) {
+  constructor(private fb: FormBuilder, private edicoesService: EdicoesService, private router: Router, private notificationService: NotificationService, private route: ActivatedRoute) {
     this.form = this.fb.group({
       titulo: ['', [Validators.required, Validators.minLength(3)]],
       descricao: [''],
       data: ['', Validators.required]
     });
+    this.edicaoId = this.route.snapshot.paramMap.get('id');
+    this.isEdit = !!this.edicaoId && this.edicaoId !== 'novo';
+    if (this.isEdit && this.edicaoId) {
+      this.carregarEdicao(this.edicaoId);
+    }
   }
 
   get titulo() { return this.form.get('titulo'); }
@@ -115,12 +122,56 @@ export class EdicaoDetalheComponent {
     }
   }
 
+  atualizarEdicao() {
+    if (this.form.valid && this.edicaoId) {
+      this.isLoading = true;
+      this.saving = true;
+
+      const formData = new FormData();
+      const titulo: string = (this.form.get('titulo')?.value ?? '').trim();
+      const descricaoRaw: string = (this.form.get('descricao')?.value ?? '').trim();
+      const dataRaw: string = this.form.get('data')?.value;
+
+      formData.append('titulo', titulo);
+      if (descricaoRaw.length > 0) {
+        formData.append('descricao', descricaoRaw);
+      }
+      if (dataRaw) {
+        const iso = new Date(dataRaw).toISOString();
+        formData.append('data', iso);
+      }
+      if (this.selectedPdf) {
+        formData.append('pdf', this.selectedPdf);
+      }
+      if (this.selectedCapa) {
+        formData.append('capa', this.selectedCapa);
+      }
+
+      this.edicoesService.atualizarEdicao(this.edicaoId, formData).subscribe({
+        next: () => {
+          this.router.navigate(['/admin/edicoes']);
+        },
+        error: (error) => {
+          console.error('Erro ao atualizar edição:', error);
+          this.isLoading = false;
+          this.saving = false;
+        }
+      });
+    } else {
+      this.notificationService.error('Por favor, preencha todos os campos obrigatórios.');
+    }
+  }
+
   onSubmit(): void {
     if (this.form.invalid) {
       this.markTouched();
       return;
     }
-    this.criarEdicao();
+    if (this.isEdit) {
+      this.atualizarEdicao();
+    } else {
+      this.criarEdicao();
+    }
   }
 
   onCancel(): void {
@@ -134,6 +185,25 @@ export class EdicaoDetalheComponent {
   private markTouched(): void {
     Object.keys(this.form.controls).forEach(key => {
       this.form.get(key)?.markAsTouched();
+    });
+  }
+
+  private carregarEdicao(id: string): void {
+    this.isLoading = true;
+    this.edicoesService.obterEdicao(id).subscribe({
+      next: (e) => {
+        this.form.patchValue({
+          titulo: e.titulo ?? '',
+          descricao: e.descricao ?? '',
+          data: e.data ? new Date(e.data).toISOString().substring(0, 10) : ''
+        });
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Erro ao carregar edição', err);
+        this.notificationService.error('Não foi possível carregar a edição.');
+        this.isLoading = false;
+      }
     });
   }
 }

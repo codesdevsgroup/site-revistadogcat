@@ -54,4 +54,14 @@ export class EdicoesService {
   criarEdicao(formData: FormData): Observable<any> {
     return this.http.post(`${this.apiUrl}`, formData);
   }
+
+  atualizarEdicao(id: string, formData: FormData): Observable<Edicao> {
+    return this.http.patch<any>(`${this.apiUrl}/${id}`, formData).pipe(
+      map((resp) => (resp?.data ?? resp) as Edicao)
+    );
+  }
+
+  excluirEdicao(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
 }

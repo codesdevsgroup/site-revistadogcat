@@ -36,6 +36,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   isMenuOpen = false;
   userMenuOpen = false;
   isScrolled = false;
+  isCompact = false;
   username = '';
   userRole = '';
 
@@ -66,6 +67,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
     // Atualiza estado inicialmente conforme posição da página
     this.updateScrollState();
+    this.updateCompactState();
+    this.router.events.subscribe(() => this.updateCompactState());
   }
 
   ngOnDestroy() {
@@ -81,6 +84,11 @@ export class NavbarComponent implements OnInit, OnDestroy {
   private updateScrollState() {
     // Ajuste simples: considera scroll > 10px como estado "scrolled"
     this.isScrolled = (window.scrollY || document.documentElement.scrollTop || document.body.scrollTop || 0) > 10;
+  }
+
+  private updateCompactState() {
+    const url = this.router.url || '';
+    this.isCompact = /\/edicoes\/[^/]+\/visualizar(\?.*)?$/.test(url);
   }
 
   private loadUserData() {

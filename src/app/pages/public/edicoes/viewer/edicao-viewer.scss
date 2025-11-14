@@ -1,0 +1,20 @@
+.viewer-container {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(90dvh - var(--navbar-height));
+  padding: var(--space-2) var(--space-2);
+}
+
+.viewer-body {
+  flex: 1;
+  min-height: 0;
+}
+
+.viewer-body ngx-extended-pdf-viewer {
+  width: 100%;
+  display: block;
+}
+
+.loading, .error {
+  padding: var(--space-4);
+}

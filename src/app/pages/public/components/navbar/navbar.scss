@@ -1,5 +1,6 @@
 // Navbar Configuration
 $navbar-height: 70px;
+$navbar-height-compact: 48px;
 $navbar-padding-y: var(--space-3);
 $navbar-padding-x: var(--space-4);
 $navbar-brand-height: 46px;
@@ -369,6 +370,30 @@ $navbar-transition: var(--transition-fast);
         height: 38px;
       }
     }
+  }
+}
+
+/* Compact mode for viewer page */
+.navbar.compact {
+  min-height: $navbar-height-compact;
+  padding-top: var(--space-1);
+  padding-bottom: var(--space-1);
+
+  .navbar-brand img {
+    height: 32px;
+  }
+
+  .nav-link {
+    margin-left: var(--space-2);
+    padding: var(--space-1) var(--space-2);
+    font-size: 0.95rem;
+  }
+
+  .btn-login,
+  .btn-admin {
+    padding: 4px 10px;
+    font-size: 0.9rem;
+    margin-left: var(--space-2);
   }
 }
 
