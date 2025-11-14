@@ -1,11 +1,8 @@
 <div class="dashboard-container">
-  <p-panel>
-    <ng-template pTemplate="header">
-      <div class="dashboard-header">
-        <p class="dashboard-subtitle pb-4">Bem-vindo ao painel administrativo</p>
-      </div>
-    </ng-template>
-  </p-panel>
+  <div class="dashboard-header">
+    <h2 class="dashboard-title">Bem-vindo ao painel administrativo</h2>
+    <p class="dashboard-subtitle">Acompanhe os principais indicadores e ações do site.</p>
+  </div>
 
   <!-- Cards: skeleton enquanto carrega -->
   <ng-container *ngIf="isLoading; else statsBlock">
