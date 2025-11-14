@@ -1,6 +1,6 @@
 <section class="viewer-container" *ngIf="!loading; else carregando">
   <div class="viewer-body" *ngIf="pdfSrc; else erro">
-    <div class="viewer-toolbar">
+    <div class="viewer-toolbar" #toolbar>
       <div class="toolbar-left">
         <button class="btn btn-nav" (click)="prevPage()" [disabled]="currentPage <= 1" title="Página anterior">
           <i class="pi pi-angle-left"></i>
@@ -21,11 +21,11 @@
     </div>
     <ngx-extended-pdf-viewer
       [src]="pdfSrc"
-      height="100%"
+      [height]="viewerHeight"
       [showBorders]="false"
       [showToolbar]="true"
       [pageViewMode]="pageViewMode"
-      [zoom]="initialZoom"
+      [zoom]="computedZoom"
       [page]="currentPage"
       (pageChange)="onPageChange($event)"
       (pagesLoaded)="onPagesLoaded($event)"
