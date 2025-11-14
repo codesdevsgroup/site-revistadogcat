@@ -19,36 +19,9 @@ import { CaoDetailsDialogComponent } from "src/app/pages/admin/components/cao-de
 import { AdminCao as Cao } from "src/app/interfaces";
 import { RacaManageDialogComponent } from "src/app/pages/admin/components/raca-manage-dialog/raca-manage-dialog.component";
 
-interface CaoListItem {
-  cadastroId: string;
-  nomeCao: string;
-  raca: {
-    nome: string;
-  };
-  dataNascimento: Date;
-  sexo: string;
-  proprietario: {
-    nome: string;
-  };
-  createdAt: Date;
-  nome?: string;
-  registroPedigree?: string;
-  numeroRegistro?: string;
-  racaId?: string;
-  donoCao?: {
-    nome: string;
-  };
-  status?: StatusCadastro;
-  racaSugerida?: string;
-}
+import { CaoListItem, Raca } from '../../../interfaces/caes';
 
-interface Raca {
-  racaId: string;
-  id?: string;
-  nome: string;
-  descricao?: string;
-  ativo: boolean;
-}
+
 
 @Component({
   selector: "app-caes",
@@ -140,7 +113,7 @@ export class CaesComponent implements OnInit {
         return {
           ...cao,
           dataNascimento: new Date(cao.dataNascimento),
-          createdAt: new Date(cao.createdAt),
+          createdAt: cao.createdAt ? new Date(cao.createdAt) : new Date(),
           // Normaliza raca para objeto com nome, garantindo compatibilidade no filtro
           raca: { nome: racaNome },
           racaId: racaEncontrada ? racaEncontrada.id : undefined,
@@ -459,7 +432,7 @@ export class CaesComponent implements OnInit {
       videoUrl: undefined,
       whatsappContato: undefined,
       observacoes: undefined,
-      createdAt: caoListItem.createdAt,
+      createdAt: (caoListItem.createdAt ?? new Date()),
       updatedAt: new Date(),
       status: caoListItem.status || 'CADASTRO_INCOMPLETO',
       motivoRejeicao: undefined,

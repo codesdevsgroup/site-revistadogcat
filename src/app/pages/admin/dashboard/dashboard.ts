@@ -11,6 +11,11 @@ import { CardModule } from 'primeng/card';
 import { TooltipModule } from 'primeng/tooltip';
 import { TableModule } from 'primeng/table';
 import { ChartModule } from 'primeng/chart';
+import { TagModule } from 'primeng/tag';
+import { DividerModule } from 'primeng/divider';
+import { BadgeModule } from 'primeng/badge';
+import { PanelModule } from 'primeng/panel';
+import { ProgressBarModule } from 'primeng/progressbar';
 import { DashboardService } from '../../../services/dashboard.service';
 import { DashboardResponse } from '../../../dtos/dashboard.dto';
 import { SkeletonModule } from 'primeng/skeleton';
@@ -18,7 +23,7 @@ import { SkeletonModule } from 'primeng/skeleton';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RelatoriosModalComponent, UsuarioModalComponent, ButtonModule, CardModule, TooltipModule, TableModule, ChartModule, SkeletonModule],
+  imports: [CommonModule, RelatoriosModalComponent, UsuarioModalComponent, ButtonModule, CardModule, TooltipModule, TableModule, ChartModule, SkeletonModule, TagModule, DividerModule, BadgeModule, PanelModule, ProgressBarModule],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.scss']
 })
@@ -41,6 +46,7 @@ export class DashboardComponent implements OnInit {
 
   lineChartData: any;
   pieChartData: any;
+  chartOptions: any;
 
   constructor(
     private router: Router,
@@ -164,6 +170,15 @@ export class DashboardComponent implements OnInit {
           tension: .4
         }
       ]
+    };
+    this.chartOptions = {
+      plugins: {
+        legend: { labels: { color: '#374151' } },
+      },
+      scales: {
+        x: { ticks: { color: '#6B7280' }, grid: { color: '#E5E7EB' } },
+        y: { ticks: { color: '#6B7280' }, grid: { color: '#E5E7EB' } }
+      }
     };
 
     // Gráfico de Cadastro de Cães + informativo de incompletos

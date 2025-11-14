@@ -18,7 +18,7 @@ import { Subject, takeUntil } from "rxjs";
   standalone: true,
   imports: [CommonModule, RouterModule],
   templateUrl: "./artigo-leitura.html",
-  styleUrl: "./artigo-leitura.scss",
+  styleUrls: ["./artigo-leitura.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ArtigoLeituraComponent implements OnInit, OnDestroy {
@@ -39,6 +39,12 @@ export class ArtigoLeituraComponent implements OnInit, OnDestroy {
   processandoCurtida = false;
 
   private destroy$ = new Subject<void>();
+
+  private markForCheckSafe(): void {
+    const anyCdr: any = this.cdr as any;
+    if (anyCdr && anyCdr.destroyed) return;
+    this.cdr.markForCheck();
+  }
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get("id");
@@ -71,7 +77,7 @@ export class ArtigoLeituraComponent implements OnInit, OnDestroy {
           this.totalCurtidas = art.curtidas || 0;
           this.totalVisualizacoes = art.visualizacoes || 0;
           this.loading = false;
-          this.cdr.markForCheck();
+          this.markForCheckSafe();
 
           // Registrar visualização
           this.registrarVisualizacao(id);
@@ -84,7 +90,7 @@ export class ArtigoLeituraComponent implements OnInit, OnDestroy {
           this.error =
             "Não foi possível carregar o artigo. Tente novamente mais tarde.";
           this.loading = false;
-          this.cdr.markForCheck();
+          this.markForCheckSafe();
         },
       });
   }
@@ -99,7 +105,7 @@ export class ArtigoLeituraComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (result) => {
           this.totalVisualizacoes = result.totalViews;
-          this.cdr.markForCheck();
+          this.markForCheckSafe();
         },
         error: (err) => {
           console.warn("Erro ao registrar visualização:", err);
@@ -117,7 +123,7 @@ export class ArtigoLeituraComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (curtido) => {
           this.curtido = curtido;
-          this.cdr.markForCheck();
+          this.markForCheckSafe();
         },
         error: (err) => {
           console.warn("Erro ao verificar curtida:", err);
@@ -143,12 +149,12 @@ export class ArtigoLeituraComponent implements OnInit, OnDestroy {
           this.curtido = result.curtido;
           this.totalCurtidas = result.totalCurtidas;
           this.processandoCurtida = false;
-          this.cdr.markForCheck();
+          this.markForCheckSafe();
         },
         error: (err) => {
           console.error("Erro ao curtir artigo:", err);
           this.processandoCurtida = false;
-          this.cdr.markForCheck();
+          this.markForCheckSafe();
         },
       });
   }
