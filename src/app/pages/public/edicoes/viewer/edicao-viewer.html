@@ -1,6 +1,6 @@
 <section class="viewer-container" *ngIf="!loading; else carregando">
   <div class="viewer-body" *ngIf="pdfSrc; else erro">
-    <div class="viewer-toolbar" #toolbar>
+    <div class="viewer-toolbar" #toolbar *ngIf="isMobile">
       <div class="toolbar-left">
         <button class="btn btn-nav" (click)="prevPage()" [disabled]="currentPage <= 1" title="Página anterior">
           <i class="pi pi-angle-left"></i>
