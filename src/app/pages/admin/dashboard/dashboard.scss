@@ -401,6 +401,26 @@
     }
   }
 
+  // Unifica aparência dos cabeçalhos dos cards analíticos
+  :host ::ng-deep .analytics-card .p-card-header {
+    padding: var(--space-4) var(--space-5);
+    border-bottom: 1px solid #e5e7eb;
+    background: #fff;
+  }
+
+  .analytics-card .card-title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #1f2937;
+  }
+
+  .analytics-card .card-header-flex {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
   .stat-informativo {
     display: inline-flex;
     align-items: center;
