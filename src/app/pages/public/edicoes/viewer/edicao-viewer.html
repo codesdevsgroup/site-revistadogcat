@@ -1,6 +1,48 @@
 <section class="viewer-container" *ngIf="!loading; else carregando">
   <div class="viewer-body" *ngIf="pdfSrc; else erro">
-    <ngx-extended-pdf-viewer [src]="pdfSrc" height="100%" [showBorders]="false" [pageViewMode]="pageViewMode" [zoom]="initialZoom"></ngx-extended-pdf-viewer>
+    <div class="viewer-toolbar">
+      <div class="toolbar-left">
+        <button class="btn btn-nav" (click)="prevPage()" [disabled]="currentPage <= 1" title="Página anterior">
+          <i class="pi pi-angle-left"></i>
+        </button>
+        <span class="page-info">{{ currentPage }} / {{ totalPages || '?' }}</span>
+        <button class="btn btn-nav" (click)="nextPage()" [disabled]="totalPages > 0 && currentPage >= totalPages" title="Próxima página">
+          <i class="pi pi-angle-right"></i>
+        </button>
+      </div>
+      <div class="toolbar-right">
+        <button class="btn btn-icon" (click)="toggleViewMode()" [disabled]="isMobile" [title]="pageViewMode === 'book' ? 'Página única' : 'Modo livro'">
+          <i class="pi pi-book"></i>
+        </button>
+        <a class="btn btn-icon" routerLink="/edicoes" title="Voltar">
+          <i class="pi pi-arrow-left"></i>
+        </a>
+      </div>
+    </div>
+    <ngx-extended-pdf-viewer
+      [src]="pdfSrc"
+      height="100%"
+      [showBorders]="false"
+      [showToolbar]="true"
+      [pageViewMode]="pageViewMode"
+      [zoom]="initialZoom"
+      [page]="currentPage"
+      (pageChange)="onPageChange($event)"
+      (pagesLoaded)="onPagesLoaded($event)"
+    ></ngx-extended-pdf-viewer>
+
+    <div class="mobile-hint-overlay" *ngIf="showMobileHint" (click)="dismissHint()">
+      <div class="mobile-hint-card" (click)="$event.stopPropagation()">
+        <h3>Leitura em dispositivo maior</h3>
+        <p>
+          Para melhor experiência em modo revista, recomendamos ler em um computador, notebook ou tablet.
+        </p>
+        <p>
+          No celular, use o modo página única ou ajuste o zoom conforme necessário.
+        </p>
+        <button class="btn btn-primary" (click)="dismissHint()">OK</button>
+      </div>
+    </div>
   </div>
 </section>
 
