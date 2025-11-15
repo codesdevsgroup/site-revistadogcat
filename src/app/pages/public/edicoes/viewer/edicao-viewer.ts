@@ -94,11 +94,16 @@ export class EdicaoViewerComponent implements OnInit, AfterViewInit {
   }
 
   private updateViewerHeight() {
+    const rootH = document.documentElement?.clientHeight || window.innerHeight;
     const navEl = document.querySelector('.navbar') as HTMLElement | null;
-    const navH = navEl?.offsetHeight || 50;
-    const toolbarH = this.toolbarRef?.nativeElement?.offsetHeight || 0;
-    const totalPadding = 16; // aprox. padding vertical do container
-    const h = Math.max(300, (window.innerHeight - navH - toolbarH - totalPadding));
+    const navH = navEl?.offsetHeight || 0;
+    const toolbarH = this.isMobile ? (this.toolbarRef?.nativeElement?.offsetHeight || 0) : 0;
+    const containerEl = document.querySelector('.viewer-container') as HTMLElement | null;
+    const styles = containerEl ? getComputedStyle(containerEl) : undefined;
+    const paddingTop = styles ? parseFloat(styles.paddingTop) : 0;
+    const paddingBottom = styles ? parseFloat(styles.paddingBottom) : -18;
+    const totalPadding = (paddingTop + paddingBottom) || 0;
+    const h = Math.max(300, Math.ceil(rootH - navH - toolbarH - totalPadding));
     this.viewerHeight = `${h}px`;
   }
 
@@ -133,5 +138,28 @@ export class EdicaoViewerComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.updateViewerHeight();
+  }
+
+  private getZoomPercent(): number {
+    if (typeof this.computedZoom === 'number') {
+      return this.computedZoom;
+    }
+    if (typeof this.computedZoom === 'string') {
+      const m = this.computedZoom.match(/(\d+)%/);
+      if (m) return parseInt(m[1], 10);
+    }
+    return 100;
+  }
+
+  zoomIn() {
+    const current = this.getZoomPercent();
+    const next = Math.min(300, current + 10);
+    this.computedZoom = `${next}%`;
+  }
+
+  zoomOut() {
+    const current = this.getZoomPercent();
+    const next = Math.max(25, current - 10);
+    this.computedZoom = `${next}%`;
   }
 }
