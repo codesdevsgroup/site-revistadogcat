@@ -48,7 +48,7 @@
       [height]="viewerHeight"
       [showBorders]="false"
       [showToolbar]="false"
-      [pageViewMode]="pageViewMode"
+      [pageViewMode]="isMobile ? 'multiple' : pageViewMode"
       [zoom]="computedZoom"
       [page]="currentPage"
       (pageChange)="onPageChange($event)"

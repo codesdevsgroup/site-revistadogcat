@@ -18,7 +18,7 @@ export class EdicaoViewerComponent implements OnInit, AfterViewInit {
   pdfSrc: string = '';
   loading = true;
   error?: string;
-  pageViewMode: 'book' | 'single' = 'book';
+  pageViewMode: 'book' | 'single' | 'multiple' = 'book';
   initialZoom: string | number = '100%';
   computedZoom: string | number = '100%';
   viewerHeight: string = '100%';
@@ -72,6 +72,21 @@ export class EdicaoViewerComponent implements OnInit, AfterViewInit {
     this.updateViewerHeight();
   }
 
+  @HostListener('wheel', ['$event'])
+  onWheel(event: WheelEvent) {
+    if (this.isMobile) return;
+    if (this.pageViewMode === 'multiple') return;
+    const target = event.target as HTMLElement | null;
+    const inViewer = !!target?.closest('.viewer-body');
+    if (!inViewer) return;
+    event.preventDefault();
+    if (event.deltaY > 0) {
+      this.nextPage();
+    } else if (event.deltaY < 0) {
+      this.prevPage();
+    }
+  }
+
   toggleViewMode() {
     this.pageViewMode = this.pageViewMode === 'book' ? 'single' : 'book';
   }
@@ -79,7 +94,11 @@ export class EdicaoViewerComponent implements OnInit, AfterViewInit {
   private updateModeByViewport() {
     const w = typeof window !== 'undefined' ? window.innerWidth : 1200;
     this.isMobile = w < 576;
-    this.pageViewMode = w < 992 ? 'single' : 'book';
+    if (!this.isMobile) {
+      this.pageViewMode = w < 992 ? 'single' : 'book';
+    } else {
+      this.pageViewMode = 'multiple';
+    }
   }
 
   private updateZoomByViewport() {
