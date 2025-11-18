@@ -97,11 +97,11 @@ export class EdicaoViewerComponent implements OnInit, AfterViewInit {
     const rootH = document.documentElement?.clientHeight || window.innerHeight;
     const navEl = document.querySelector('.navbar') as HTMLElement | null;
     const navH = navEl?.offsetHeight || 0;
-    const toolbarH = this.isMobile ? (this.toolbarRef?.nativeElement?.offsetHeight || 0) : 0;
+    const toolbarH = 0;
     const containerEl = document.querySelector('.viewer-container') as HTMLElement | null;
     const styles = containerEl ? getComputedStyle(containerEl) : undefined;
     const paddingTop = styles ? parseFloat(styles.paddingTop) : 0;
-    const paddingBottom = styles ? parseFloat(styles.paddingBottom) : -18;
+    const paddingBottom = styles ? parseFloat(styles.paddingBottom) : 0;
     const totalPadding = (paddingTop + paddingBottom) || 0;
     const h = Math.max(300, Math.ceil(rootH - navH - toolbarH - totalPadding));
     this.viewerHeight = `${h}px`;

@@ -1,6 +1,6 @@
 <section class="viewer-container" *ngIf="!loading; else carregando">
   <div class="viewer-body" #viewerBody *ngIf="pdfSrc; else erro">
-    <div class="viewer-toolbar" #toolbar *ngIf="isMobile">
+    <div class="viewer-toolbar" #toolbar *ngIf="false">
       <div class="toolbar-left">
         <button class="btn btn-nav" (click)="prevPage()" [disabled]="currentPage <= 1" title="Página anterior">
           <i class="pi pi-angle-left"></i>
@@ -20,7 +20,7 @@
       </div>
     </div>
 
-    <div class="viewer-side-toolbar" *ngIf="!isMobile">
+    <div class="viewer-side-toolbar">
       <button class="btn btn-icon" (click)="prevPage()" [disabled]="currentPage <= 1" title="Página anterior">
         <i class="pi pi-angle-up"></i>
       </button>
@@ -47,7 +47,7 @@
       [src]="pdfSrc"
       [height]="viewerHeight"
       [showBorders]="false"
-      [showToolbar]="isMobile"
+      [showToolbar]="false"
       [pageViewMode]="pageViewMode"
       [zoom]="computedZoom"
       [page]="currentPage"

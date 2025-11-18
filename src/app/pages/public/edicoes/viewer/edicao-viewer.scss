@@ -90,6 +90,29 @@
   }
 }
 
+@media (max-width: 576px) {
+  .viewer-side-toolbar {
+    position: fixed;
+    bottom: 8px;
+    right: 8px;
+    top: auto;
+    flex-direction: row;
+    gap: 8px;
+    padding: 6px;
+  }
+
+  .viewer-side-toolbar .btn-icon {
+    height: 36px;
+    min-width: 36px;
+    padding: 0 8px;
+    border-radius: var(--radius-md);
+  }
+
+  .viewer-side-toolbar .page-info {
+    display: none;
+  }
+}
+
 .mobile-hint-overlay {
   position: absolute;
   inset: 0;
