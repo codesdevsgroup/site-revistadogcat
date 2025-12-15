@@ -1,7 +1,9 @@
 <div class="dashboard-container">
   <div class="dashboard-header">
     <h2 class="dashboard-title">Bem-vindo ao painel administrativo</h2>
-    <p class="dashboard-subtitle">Acompanhe os principais indicadores e ações do site.</p>
+    <p class="dashboard-subtitle">
+      Acompanhe os principais indicadores e ações do site.
+    </p>
   </div>
 
   <!-- Cards: skeleton enquanto carrega -->
@@ -14,8 +16,16 @@
           </div>
           <div style="width: 100%">
             <p-skeleton width="40%" height="24px"></p-skeleton>
-            <p-skeleton width="60%" height="14px" styleClass="mt-2"></p-skeleton>
-            <p-skeleton width="30%" height="12px" styleClass="mt-2"></p-skeleton>
+            <p-skeleton
+              width="60%"
+              height="14px"
+              styleClass="mt-2"
+            ></p-skeleton>
+            <p-skeleton
+              width="30%"
+              height="12px"
+              styleClass="mt-2"
+            ></p-skeleton>
           </div>
         </div>
       </p-card>
@@ -23,7 +33,10 @@
   </ng-container>
   <ng-template #statsBlock>
     <div class="stats-grid">
-      <p-card *ngFor="let stat of stats" [styleClass]="'stat-card stat-' + stat.color">
+      <p-card
+        *ngFor="let stat of stats"
+        [styleClass]="'stat-card stat-' + stat.color"
+      >
         <div class="stat-content">
           <div class="stat-icon">
             <span class="material-symbols-outlined">{{ stat.icon }}</span>
@@ -31,7 +44,11 @@
           <div>
             <h3 class="stat-value">{{ stat.value }}</h3>
             <p class="stat-title">{{ stat.title }}</p>
-            <p-tag class="stat-change-tag" [severity]="stat.changePositive ? 'success' : 'danger'" [value]="stat.change"></p-tag>
+            <p-tag
+              class="stat-change-tag"
+              [severity]="stat.changePositive ? 'success' : 'danger'"
+              [value]="stat.change"
+            ></p-tag>
           </div>
         </div>
       </p-card>
@@ -46,8 +63,14 @@
               <p-skeleton width="100%" height="240px"></p-skeleton>
             </ng-container>
             <ng-template #lineChartContent>
-              <ng-container *ngIf="lineChartData?.datasets?.length; else noLineData">
-                <p-chart type="line" [data]="lineChartData" [options]="chartOptions"></p-chart>
+              <ng-container
+                *ngIf="lineChartData?.datasets?.length; else noLineData"
+              >
+                <p-chart
+                  type="line"
+                  [data]="lineChartData"
+                  [options]="chartOptions"
+                ></p-chart>
               </ng-container>
               <ng-template #noLineData>
                 <div class="no-data">Sem dados de crescimento mensal</div>
@@ -59,7 +82,9 @@
               <p-skeleton width="100%" height="240px"></p-skeleton>
             </ng-container>
             <ng-template #pieChartContent>
-              <ng-container *ngIf="pieChartData?.datasets?.length; else noPieData">
+              <ng-container
+                *ngIf="pieChartData?.datasets?.length; else noPieData"
+              >
                 <p-chart type="pie" [data]="pieChartData"></p-chart>
               </ng-container>
               <ng-template #noPieData>
@@ -67,40 +92,94 @@
               </ng-template>
             </ng-template>
           </p-card>
-          <!-- Terceiro card analítico dentro do mesmo grid: Cadastros de Cães -->
-          <p-card styleClass="analytics-card">
+          <!-- Terceiro card analítico redesenhado: Cadastros de Cães -->
+          <p-card styleClass="analytics-card dog-stats-card">
             <ng-template pTemplate="header">
               <div class="card-header-flex">
-                <h3 class="card-title">Cadastros de Cães</h3>
-                <span *ngIf="dogsIncompleteCount>0" pBadge severity="warn" [value]="dogsIncompleteCount"></span>
+                <div class="header-title-group">
+                  <div class="header-icon-container">
+                    <span class="material-symbols-outlined">pets</span>
+                  </div>
+                  <h3 class="card-title">Cadastros de Cães</h3>
+                </div>
+                <!-- Badge customizado -->
+                <div
+                  *ngIf="dogsIncompleteCount > 0"
+                  class="custom-badge warning"
+                >
+                  <span class="pulse-dot"></span>
+                  {{ dogsIncompleteCount }} Pendentes
+                </div>
+                <div
+                  *ngIf="dogsIncompleteCount === 0"
+                  class="custom-badge success"
+                >
+                  <span
+                    class="material-symbols-outlined"
+                    style="font-size: 14px"
+                    >check</span
+                  >
+                  Tudo em dia
+                </div>
               </div>
             </ng-template>
-            <ng-container *ngIf="isLoading; else dogsChartContent">
-              <p-skeleton width="100%" height="240px"></p-skeleton>
-            </ng-container>
-            <ng-template #dogsChartContent>
-              <ng-container *ngIf="dogsLineChartData?.datasets?.length; else noDogsData">
-                <p-chart type="line" [data]="dogsLineChartData" [options]="chartOptions"></p-chart>
-                <div class="no-data" *ngIf="dogsIncompleteCount === 0">Nenhum cadastro incompleto.</div>
-                <div class="stat-informativo" *ngIf="dogsIncompleteCount > 0">
-                  <span class="material-symbols-outlined">error_outline</span>
-                  <span>{{ dogsIncompleteCount }} cadastros de cães estão incompletos</span>
-                </div>
+
+            <div class="card-content-wrapper">
+              <ng-container *ngIf="isLoading; else dogsChartContent">
+                <p-skeleton width="100%" height="240px"></p-skeleton>
               </ng-container>
-              <ng-template #noDogsData>
-                <div class="no-data">Sem dados de cadastros de cães</div>
+              <ng-template #dogsChartContent>
+                <ng-container
+                  *ngIf="dogsLineChartData?.datasets?.length; else noDogsData"
+                >
+                  <div class="chart-container">
+                    <p-chart
+                      type="line"
+                      [data]="dogsLineChartData"
+                      [options]="chartOptions"
+                    ></p-chart>
+                  </div>
+
+                  <div class="attention-box" *ngIf="dogsIncompleteCount > 0">
+                    <div class="attention-icon">
+                      <span class="material-symbols-outlined"
+                        >priority_high</span
+                      >
+                    </div>
+                    <div class="attention-content">
+                      <strong>Atenção Necessária</strong>
+                      <span
+                        >{{ dogsIncompleteCount }} cadastros estão incompletos e
+                        precisam de revisão.</span
+                      >
+                    </div>
+                  </div>
+                </ng-container>
+                <ng-template #noDogsData>
+                  <div class="no-data-state">
+                    <span class="material-symbols-outlined">pets</span>
+                    <p>Sem dados de cadastros de cães</p>
+                  </div>
+                </ng-template>
               </ng-template>
-            </ng-template>
+            </div>
           </p-card>
         </div>
       </div>
 
       <p-divider></p-divider>
-      <p-card header="Atividade Recente (ainda não implementado)" styleClass="recent-activity-card">
+      <p-card
+        header="Atividade Recente (ainda não implementado)"
+        styleClass="recent-activity-card"
+      >
         <p-table [value]="recentActivity" [tableStyle]="{'min-width': '50rem'}">
           <ng-template pTemplate="body" let-activity>
             <tr>
-              <td><span class="material-symbols-outlined">{{ activity.icon }}</span></td>
+              <td>
+                <span class="material-symbols-outlined"
+                  >{{ activity.icon }}</span
+                >
+              </td>
               <td [innerHTML]="activity.text"></td>
               <td>{{activity.time}}</td>
             </tr>
@@ -113,15 +192,33 @@
       <div class="quick-actions">
         <p-card header="Ações Rápidas" styleClass="quick-actions-card">
           <div class="actions-grid">
-            <button type="button" class="action-btn" (click)="novoArtigo()" pTooltip="Criar novo artigo" tooltipPosition="left">
+            <button
+              type="button"
+              class="action-btn"
+              (click)="novoArtigo()"
+              pTooltip="Criar novo artigo"
+              tooltipPosition="left"
+            >
               <span class="material-symbols-outlined">description</span>
               <span>Novo Artigo</span>
             </button>
-            <button type="button" class="action-btn" (click)="adicionarUsuario()" pTooltip="Adicionar novo usuário" tooltipPosition="left">
+            <button
+              type="button"
+              class="action-btn"
+              (click)="adicionarUsuario()"
+              pTooltip="Adicionar novo usuário"
+              tooltipPosition="left"
+            >
               <span class="material-symbols-outlined">person_add</span>
               <span>Adicionar Usuário</span>
             </button>
-            <button type="button" class="action-btn" (click)="abrirRelatorios()" pTooltip="Gerar relatórios e exportações" tooltipPosition="left">
+            <button
+              type="button"
+              class="action-btn"
+              (click)="abrirRelatorios()"
+              pTooltip="Gerar relatórios e exportações"
+              tooltipPosition="left"
+            >
               <span class="material-symbols-outlined">bar_chart</span>
               <span>Relatórios</span>
             </button>
@@ -130,7 +227,6 @@
       </div>
     </aside>
   </div>
-
 </div>
 
 <!-- Modal de Relatórios -->
@@ -142,6 +238,6 @@
   [isVisible]="isUsuarioModalVisible"
   [usuario]="selectedUsuario"
   (close)="fecharUsuarioModal()"
-  (save)="salvarUsuario($event)">
+  (save)="salvarUsuario($event)"
+>
 </app-usuario-modal>
-
