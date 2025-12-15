@@ -5,20 +5,22 @@
     </header>
 
     <div class="edicoes-grid">
-      <div class="edicao-card" *ngFor="let edicao of edicoesList">
-        <div class="card-header">
-          <span class="card-date">{{ formatarData(edicao.data) }}</span>
+      @for (edicao of edicoesList; track edicao) {
+        <div class="edicao-card">
+          <div class="card-header">
+            <span class="card-date">{{ formatarData(edicao.data) }}</span>
+          </div>
+          <div class="card-body">
+            <h2 class="card-title">{{ edicao.titulo }}</h2>
+            <p class="card-description">{{ edicao.descricao }}</p>
+            <a class="btn btn-open" [class.disabled]="!edicao.pdfUrl" [routerLink]="['/edicoes', edicao.id, 'visualizar']" [attr.aria-disabled]="!edicao.pdfUrl ? true : null">
+              {{ edicao.pdfUrl ? 'Abrir PDF' : 'Em breve' }}
+            </a>
+          </div>
         </div>
-        <div class="card-body">
-          <h2 class="card-title">{{ edicao.titulo }}</h2>
-          <p class="card-description">{{ edicao.descricao }}</p>
-          <a class="btn btn-open" [class.disabled]="!edicao.pdfUrl" [routerLink]="['/edicoes', edicao.id, 'visualizar']" [attr.aria-disabled]="!edicao.pdfUrl ? true : null">
-            {{ edicao.pdfUrl ? 'Abrir PDF' : 'Em breve' }}
-          </a>
-        </div>
-      </div>
+      }
     </div>
   </div>
 
-  
+
 </section>

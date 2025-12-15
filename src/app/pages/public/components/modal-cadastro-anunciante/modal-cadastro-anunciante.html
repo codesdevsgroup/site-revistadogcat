@@ -29,10 +29,12 @@
               class="form-control"
               [class.is-invalid]="isFieldInvalid('nome')"
               placeholder="Seu nome completo"
-            >
-            <div class="invalid-feedback" *ngIf="isFieldInvalid('nome')">
-              {{ getFieldError('nome') }}
-            </div>
+              >
+            @if (isFieldInvalid('nome')) {
+              <div class="invalid-feedback">
+                {{ getFieldError('nome') }}
+              </div>
+            }
           </div>
 
           <div class="form-group">
@@ -47,10 +49,12 @@
               class="form-control"
               [class.is-invalid]="isFieldInvalid('email')"
               placeholder="seu@email.com"
-            >
-            <div class="invalid-feedback" *ngIf="isFieldInvalid('email')">
-              {{ getFieldError('email') }}
-            </div>
+              >
+            @if (isFieldInvalid('email')) {
+              <div class="invalid-feedback">
+                {{ getFieldError('email') }}
+              </div>
+            }
           </div>
         </div>
 
@@ -67,10 +71,12 @@
               class="form-control"
               [class.is-invalid]="isFieldInvalid('telefone')"
               placeholder="(11) 99999-9999"
-            >
-            <div class="invalid-feedback" *ngIf="isFieldInvalid('telefone')">
-              {{ getFieldError('telefone') }}
-            </div>
+              >
+            @if (isFieldInvalid('telefone')) {
+              <div class="invalid-feedback">
+                {{ getFieldError('telefone') }}
+              </div>
+            }
           </div>
 
           <div class="form-group">
@@ -85,10 +91,12 @@
               class="form-control"
               [class.is-invalid]="isFieldInvalid('empresa')"
               placeholder="Nome do seu negócio"
-            >
-            <div class="invalid-feedback" *ngIf="isFieldInvalid('empresa')">
-              {{ getFieldError('empresa') }}
-            </div>
+              >
+            @if (isFieldInvalid('empresa')) {
+              <div class="invalid-feedback">
+                {{ getFieldError('empresa') }}
+              </div>
+            }
           </div>
         </div>
 
@@ -101,7 +109,7 @@
             id="tipoAnuncio"
             formControlName="tipoAnuncio"
             class="form-control"
-          >
+            >
             <option value="canil">Canil</option>
             <option value="gatil">Gatil</option>
             <option value="petshop">Pet Shop</option>
@@ -131,17 +139,23 @@
             class="btn btn-secondary"
             (click)="onClose()"
             [disabled]="isSubmitting"
-          >
+            >
             Cancelar
           </button>
           <button
             type="submit"
             class="btn btn-primary"
             [disabled]="!cadastroForm.valid || isSubmitting"
-          >
-            <span *ngIf="isSubmitting" class="spinner"></span>
-            <span *ngIf="!isSubmitting">📤 Enviar Cadastro</span>
-            <span *ngIf="isSubmitting">Enviando...</span>
+            >
+            @if (isSubmitting) {
+              <span class="spinner"></span>
+            }
+            @if (!isSubmitting) {
+              <span>📤 Enviar Cadastro</span>
+            }
+            @if (isSubmitting) {
+              <span>Enviando...</span>
+            }
           </button>
         </div>
       </form>

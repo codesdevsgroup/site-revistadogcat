@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { EdicoesService } from '../../../services/edicoes.service';
@@ -8,7 +8,7 @@ import { NotificationService } from '../../../services/notification.service';
 @Component({
   selector: 'app-edicao-detalhe',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [ReactiveFormsModule],
   templateUrl: './edicao-detalhe.html',
   styleUrl: './edicao-detalhe.scss'
 })

@@ -1,5 +1,5 @@
 import { Component, HostListener, ElementRef, OnInit, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../../services/auth.service';
 import { Role } from '../../../../enums/role.enum';
@@ -9,7 +9,7 @@ import { MenuItem } from 'primeng/api';
 @Component({
   selector: 'app-top-menu',
   standalone: true,
-  imports: [CommonModule, RouterModule, MenubarModule],
+  imports: [RouterModule, MenubarModule],
   templateUrl: './top-menu.html',
   styleUrls: ['./top-menu.scss']
 })

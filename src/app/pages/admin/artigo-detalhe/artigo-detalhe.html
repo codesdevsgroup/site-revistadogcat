@@ -31,11 +31,17 @@
                     formControlName="titulo"
                     [class.is-invalid]="titulo?.invalid && titulo?.touched"
                     placeholder="Digite o título do artigo"
-                  >
-                  <div class="invalid-feedback" *ngIf="titulo?.invalid && titulo?.touched">
-                    <div *ngIf="titulo?.errors?.['required']">Título é obrigatório</div>
-                    <div *ngIf="titulo?.errors?.['minlength']">Título deve ter pelo menos 3 caracteres</div>
-                  </div>
+                    >
+                  @if (titulo?.invalid && titulo?.touched) {
+                    <div class="invalid-feedback">
+                      @if (titulo?.errors?.['required']) {
+                        <div>Título é obrigatório</div>
+                      }
+                      @if (titulo?.errors?.['minlength']) {
+                        <div>Título deve ter pelo menos 3 caracteres</div>
+                      }
+                    </div>
+                  }
                 </div>
               </div>
               <div class="config-row">
@@ -55,17 +61,21 @@
                   ></textarea>
                   <div class="form-text">
                     <small class="character-counter"
-                           [class.text-warning]="(resumo?.value?.length || 0) > 250"
-                           [class.text-danger]="(resumo?.value?.length || 0) > 290">
+                      [class.text-warning]="(resumo?.value?.length || 0) > 250"
+                      [class.text-danger]="(resumo?.value?.length || 0) > 290">
                       <i class="fas fa-info-circle me-1"></i>
                       O resumo ajuda os leitores a entender rapidamente o conteúdo do artigo.
                       Máximo de 300 caracteres. ({{ resumo?.value?.length || 0 }}/300)
                     </small>
-                    <div *ngIf="resumo?.invalid && resumo?.touched" class="invalid-feedback d-block">
-                      <small *ngIf="resumo?.errors?.['maxlength']" class="text-danger">
-                        O resumo deve ter no máximo 300 caracteres.
-                      </small>
-                    </div>
+                    @if (resumo?.invalid && resumo?.touched) {
+                      <div class="invalid-feedback d-block">
+                        @if (resumo?.errors?.['maxlength']) {
+                          <small class="text-danger">
+                            O resumo deve ter no máximo 300 caracteres.
+                          </small>
+                        }
+                      </div>
+                    }
                   </div>
                 </div>
               </div>
@@ -79,15 +89,19 @@
                     class="form-select"
                     formControlName="autor"
                     [class.is-invalid]="autor?.invalid && autor?.touched"
-                  >
+                    >
                     <option value="">Selecione um autor</option>
-                    <option *ngFor="let autor of autores" [value]="autor.userId">
-                      {{ autor.name }}
-                    </option>
+                    @for (autor of autores; track autor) {
+                      <option [value]="autor.userId">
+                        {{ autor.name }}
+                      </option>
+                    }
                   </select>
-                  <div class="invalid-feedback" *ngIf="autor?.invalid && autor?.touched">
-                    Autor é obrigatório
-                  </div>
+                  @if (autor?.invalid && autor?.touched) {
+                    <div class="invalid-feedback">
+                      Autor é obrigatório
+                    </div>
+                  }
                 </div>
 
                 <div class="form-group">
@@ -97,15 +111,19 @@
                     class="form-select"
                     formControlName="categoria"
                     [class.is-invalid]="categoria?.invalid && categoria?.touched"
-                  >
+                    >
                     <option value="">Selecione uma categoria</option>
-                    <option *ngFor="let cat of categorias" [value]="cat.nome">
-                      {{ cat.nome }}
-                    </option>
+                    @for (cat of categorias; track cat) {
+                      <option [value]="cat.nome">
+                        {{ cat.nome }}
+                      </option>
+                    }
                   </select>
-                  <div class="invalid-feedback" *ngIf="categoria?.invalid && categoria?.touched">
-                    Categoria é obrigatória
-                  </div>
+                  @if (categoria?.invalid && categoria?.touched) {
+                    <div class="invalid-feedback">
+                      Categoria é obrigatória
+                    </div>
+                  }
                 </div>
 
                 <div class="form-group">
@@ -115,20 +133,30 @@
                     class="form-select"
                     formControlName="publico"
                     [class.is-invalid]="publico?.invalid && publico?.touched"
-                  >
-                    <option *ngFor="let pub of publicoOptions" [value]="pub.value">
-                      {{ pub.label }}
-                    </option>
+                    >
+                    @for (pub of publicoOptions; track pub) {
+                      <option [value]="pub.value">
+                        {{ pub.label }}
+                      </option>
+                    }
                   </select>
                   <div class="form-text">
                     <i class="fas fa-info-circle me-1"></i>
-                    <span class="text-success" *ngIf="publico?.value === 'publico'">Visível para todos os visitantes</span>
-                    <span class="text-warning" *ngIf="publico?.value === 'assinantes'">Visível apenas para assinantes</span>
-                    <span class="text-danger" *ngIf="publico?.value === 'privado'">Visível apenas para administradores</span>
+                    @if (publico?.value === 'publico') {
+                      <span class="text-success">Visível para todos os visitantes</span>
+                    }
+                    @if (publico?.value === 'assinantes') {
+                      <span class="text-warning">Visível apenas para assinantes</span>
+                    }
+                    @if (publico?.value === 'privado') {
+                      <span class="text-danger">Visível apenas para administradores</span>
+                    }
                   </div>
-                  <div class="invalid-feedback" *ngIf="publico?.invalid && publico?.touched">
-                    Público é obrigatório
-                  </div>
+                  @if (publico?.invalid && publico?.touched) {
+                    <div class="invalid-feedback">
+                      Público é obrigatório
+                    </div>
+                  }
                 </div>
               </div>
 
@@ -141,10 +169,12 @@
                     class="form-control"
                     formControlName="dataPublicacao"
                     [class.is-invalid]="dataPublicacao?.invalid && dataPublicacao?.touched"
-                  >
-                  <div class="invalid-feedback" *ngIf="dataPublicacao?.invalid && dataPublicacao?.touched">
-                    Data de publicação é obrigatória
-                  </div>
+                    >
+                  @if (dataPublicacao?.invalid && dataPublicacao?.touched) {
+                    <div class="invalid-feedback">
+                      Data de publicação é obrigatória
+                    </div>
+                  }
                 </div>
 
                 <div class="form-group">
@@ -154,14 +184,18 @@
                     class="form-select"
                     formControlName="status"
                     [class.is-invalid]="status?.invalid && status?.touched"
-                  >
-                    <option *ngFor="let st of statusOptions" [value]="st.value">
-                      {{ st.label }}
-                    </option>
+                    >
+                    @for (st of statusOptions; track st) {
+                      <option [value]="st.value">
+                        {{ st.label }}
+                      </option>
+                    }
                   </select>
-                  <div class="invalid-feedback" *ngIf="status?.invalid && status?.touched">
-                    Status é obrigatório
-                  </div>
+                  @if (status?.invalid && status?.touched) {
+                    <div class="invalid-feedback">
+                      Status é obrigatório
+                    </div>
+                  }
                 </div>
               </div>
             </div>
@@ -172,63 +206,70 @@
                 <label for="fotoDestaque" class="form-label">Foto de Destaque *</label>
 
                 <!-- Preview da imagem -->
-                <div class="foto-destaque-container" *ngIf="fotoDestaque">
-                  <div class="foto-preview">
-                    <img [src]="getImagemUrl(fotoDestaque)" alt="Preview da foto de destaque" class="preview-image">
-                    <button type="button" class="btn-remove-foto" (click)="removerFotoDestaque()" title="Remover foto">
-                      <i class="fas fa-times"></i>
-                    </button>
+                @if (fotoDestaque) {
+                  <div class="foto-destaque-container">
+                    <div class="foto-preview">
+                      <img [src]="getImagemUrl(fotoDestaque)" alt="Preview da foto de destaque" class="preview-image">
+                      <button type="button" class="btn-remove-foto" (click)="removerFotoDestaque()" title="Remover foto">
+                        <i class="fas fa-times"></i>
+                      </button>
+                    </div>
                   </div>
-                </div>
+                }
 
                 <!-- Input de upload -->
-                <div class="upload-area" *ngIf="!fotoDestaque">
-                  <input
-                    #fotoDestaqueInput
-                    type="file"
-                    id="fotoDestaque"
-                    class="form-control-file"
-                    accept="image/jpeg,image/png,image/webp"
-                    (change)="onFotoDestaqueChange($event)"
-                    [class.is-invalid]="fotoDestaqueControl?.invalid && fotoDestaqueControl?.touched"
-                  >
-                  <div class="upload-placeholder">
-                    <label for="fotoDestaque" class="upload-label">
-                      <i class="fas fa-cloud-upload-alt"></i>
-                      <span>Clique para selecionar uma imagem</span>
-                      <small>JPEG, PNG ou WebP - Máximo 5MB</small>
-                    </label>
+                @if (!fotoDestaque) {
+                  <div class="upload-area">
+                    <input
+                      #fotoDestaqueInput
+                      type="file"
+                      id="fotoDestaque"
+                      class="form-control-file"
+                      accept="image/jpeg,image/png,image/webp"
+                      (change)="onFotoDestaqueChange($event)"
+                      [class.is-invalid]="fotoDestaqueControl?.invalid && fotoDestaqueControl?.touched"
+                      >
+                    <div class="upload-placeholder">
+                      <label for="fotoDestaque" class="upload-label">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <span>Clique para selecionar uma imagem</span>
+                        <small>JPEG, PNG ou WebP - Máximo 5MB</small>
+                      </label>
+                    </div>
                   </div>
-                </div>
-                <div class="invalid-feedback" *ngIf="fotoDestaqueControl?.invalid && fotoDestaqueControl?.touched">
-                  Foto de destaque é obrigatória
-                </div>
+                }
+                @if (fotoDestaqueControl?.invalid && fotoDestaqueControl?.touched) {
+                  <div class="invalid-feedback">
+                    Foto de destaque é obrigatória
+                  </div>
+                }
               </div>
             </div>
           </div>
 
           <!-- Terceira linha - Informações do Artigo -->
-          <div class="config-row" *ngIf="isEditMode && artigoCarregado">
-
-            <!-- Informações do Artigo -->
-            <div class="info-section">
-              <h4 class="info-title">Informações</h4>
-              <div class="info-items">
-                <div class="info-item">
-                  <span class="info-label">ID:</span>
-                  <span class="info-value">#{{ artigoId }}</span>
-                </div>
-                <div class="info-item">
-                  <span class="info-label">Criado em:</span>
-                  <span class="info-value">{{ dataCriacao | date:'dd/MM/yyyy' }}</span>
-                </div>
-                <div class="info-item">
-                  <span class="info-label">Última edição:</span>
-                  <span class="info-value">{{ dataUltimaEdicao | date:'dd/MM/yyyy' }}</span>
+          @if (isEditMode && artigoCarregado) {
+            <div class="config-row">
+              <!-- Informações do Artigo -->
+              <div class="info-section">
+                <h4 class="info-title">Informações</h4>
+                <div class="info-items">
+                  <div class="info-item">
+                    <span class="info-label">ID:</span>
+                    <span class="info-value">#{{ artigoId }}</span>
+                  </div>
+                  <div class="info-item">
+                    <span class="info-label">Criado em:</span>
+                    <span class="info-value">{{ dataCriacao | date:'dd/MM/yyyy' }}</span>
+                  </div>
+                  <div class="info-item">
+                    <span class="info-label">Última edição:</span>
+                    <span class="info-value">{{ dataUltimaEdicao | date:'dd/MM/yyyy' }}</span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          }
         </div>
       </div>
 
@@ -256,9 +297,11 @@
                 [class.is-invalid]="conteudo?.invalid && conteudo?.touched"
               ></p-editor>
 
-              <div class="invalid-feedback" *ngIf="conteudo?.invalid && conteudo?.touched">
-                Conteúdo é obrigatório
-              </div>
+              @if (conteudo?.invalid && conteudo?.touched) {
+                <div class="invalid-feedback">
+                  Conteúdo é obrigatório
+                </div>
+              }
             </div>
           </div>
         </div>

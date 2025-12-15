@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ModalCadastroAnuncianteComponent } from '../modal-cadastro-anunciante/modal-cadastro-anunciante';
 
 @Component({
   selector: 'app-anuncie-aqui',
   standalone: true,
-  imports: [CommonModule, ModalCadastroAnuncianteComponent],
+  imports: [ModalCadastroAnuncianteComponent],
   templateUrl: './anuncie-aqui.html',
   styleUrl: './anuncie-aqui.scss'
 })

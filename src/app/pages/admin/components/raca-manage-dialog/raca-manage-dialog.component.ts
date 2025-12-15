@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
@@ -20,15 +20,14 @@ export interface Raca {
   selector: 'app-raca-manage-dialog',
   standalone: true,
   imports: [
-    CommonModule,
     FormsModule,
     DialogModule,
     InputTextModule,
     TextareaModule,
     ToggleSwitchModule,
     ButtonModule,
-    TableModule,
-  ],
+    TableModule
+],
   templateUrl: './raca-manage-dialog.component.html',
   styleUrls: ['./raca-manage-dialog.component.scss'],
 })

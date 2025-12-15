@@ -5,112 +5,117 @@
       class="navbar-brand d-flex align-items-center"
       [routerLink]="brandConfig.route"
       (click)="closeMenu()"
-    >
+      >
       <img
         [src]="brandConfig.logoSrc"
         [alt]="brandConfig.logoAlt"
         loading="lazy"
-      />
-    </a>
+        />
+      </a>
 
-    <!-- Mobile Toggle Button -->
-    <button
-      class="navbar-toggler"
-      type="button"
-      [attr.aria-expanded]="isMenuOpen"
-      [attr.aria-controls]="'navbarNav'"
-      aria-label="Toggle navigation"
-      (click)="toggleMenu()"
-    >
-      <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <!-- Navigation Menu -->
-    <div
-      class="navbar-collapse"
-      [class.collapse]="!isMenuOpen"
-      [class.show]="isMenuOpen"
-      id="navbarNav"
-    >
-      <ul class="navbar-nav ms-auto align-items-center">
-        <!-- Itens de navegação normais -->
-        <li
-          class="nav-item"
-          *ngFor="let item of navigationItems; trackBy: trackByRoute"
+      <!-- Mobile Toggle Button -->
+      <button
+        class="navbar-toggler"
+        type="button"
+        [attr.aria-expanded]="isMenuOpen"
+        [attr.aria-controls]="'navbarNav'"
+        aria-label="Toggle navigation"
+        (click)="toggleMenu()"
         >
-          <a
-            class="nav-link"
-            [routerLink]="item.route"
-            routerLinkActive="active"
-            [routerLinkActiveOptions]="{ exact: item.route === '/' }"
-            (click)="closeMenu()"
-          >
-            <i *ngIf="item.icon" [class]="item.icon" aria-hidden="true"></i>
-            {{ item.label }}
-          </a>
-        </li>
+        <span class="navbar-toggler-icon"></span>
+      </button>
 
-        <!-- CTA de Assinatura sempre visível -->
-        <li class="nav-item d-none d-lg-block">
-          <a class="btn btn-cta" routerLink="/assinaturas" (click)="closeMenu()" title="Assine agora">
-            <i class="fas fa-crown" aria-hidden="true"></i>
-            Assine agora
-          </a>
-        </li>
+      <!-- Navigation Menu -->
+      <div
+        class="navbar-collapse"
+        [class.collapse]="!isMenuOpen"
+        [class.show]="isMenuOpen"
+        id="navbarNav"
+        >
+        <ul class="navbar-nav ms-auto align-items-center">
+          <!-- Itens de navegação normais -->
+          @for (item of navigationItems; track trackByRoute($index, item)) {
+            <li
+              class="nav-item"
+              >
+              <a
+                class="nav-link"
+                [routerLink]="item.route"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: item.route === '/' }"
+                (click)="closeMenu()"
+                >
+                @if (item.icon) {
+                  <i [class]="item.icon" aria-hidden="true"></i>
+                }
+                {{ item.label }}
+              </a>
+            </li>
+          }
 
-        <!-- Bloco de Autenticação Dinâmico -->
-        <ng-container *ngIf="isAuthenticated$ | async; else loginButton">
-          <!-- Mostrado quando o usuário ESTÁ logado -->
-          <li class="nav-item">
-            <div class="menu-user" [class.open]="userMenuOpen">
-              <button class="user-button" (click)="toggleUserMenu()">
-                <div class="user-avatar">
-                  <i class="fas fa-user"></i>
-                </div>
-                <div class="user-info">
-                  <span class="user-name">{{ username }}</span>
-                </div>
-                <i class="fas fa-chevron-down user-arrow"></i>
-              </button>
-
-              <div class="user-dropdown" *ngIf="userMenuOpen">
-                <button type="button" class="dropdown-item" (click)="navigateToProfile()">
-                  <i class="fas fa-user-circle"></i>
-                  <span>Meu Perfil</span>
-                </button>
-                <button *ngIf="canAccessAdminPanel()" type="button" class="dropdown-item" (click)="navigateToAdminPanel()">
-                  <i class="fas fa-tachometer-alt"></i>
-                  <span>Painel</span>
-                </button>
-                <hr class="dropdown-divider">
-                <button type="button" class="dropdown-item logout" (click)="logout()">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span>Sair</span>
-                  </button>
-              </div>
-            </div>
-          </li>
-        </ng-container>
-
-        <!-- Template para o botão de Login -->
-        <ng-template #loginButton>
-          <!-- Mostrado quando o usuário NÃO ESTÁ logado -->
-          <li class="nav-item">
-            <a class="btn btn-login" routerLink="/auth/login" (click)="closeMenu()">
-              <i class="fas fa-sign-in-alt" aria-hidden="true"></i>
-              Login
+          <!-- CTA de Assinatura sempre visível -->
+          <li class="nav-item d-none d-lg-block">
+            <a class="btn btn-cta" routerLink="/assinaturas" (click)="closeMenu()" title="Assine agora">
+              <i class="fas fa-crown" aria-hidden="true"></i>
+              Assine agora
             </a>
           </li>
-        </ng-template>
 
-        <!-- CTA visível em mobile (dentro do collapse) -->
-        <li class="nav-item d-lg-none mt-2">
-          <a class="btn btn-cta w-100" routerLink="/assinaturas" (click)="closeMenu()" title="Assine agora">
-            <i class="fas fa-crown" aria-hidden="true"></i>
-            Assine agora
-          </a>
-        </li>
-      </ul>
+          <!-- Bloco de Autenticação Dinâmico -->
+          @if (isAuthenticated$ | async) {
+            <!-- Mostrado quando o usuário ESTÁ logado -->
+            <li class="nav-item">
+              <div class="menu-user" [class.open]="userMenuOpen">
+                <button class="user-button" (click)="toggleUserMenu()">
+                  <div class="user-avatar">
+                    <i class="fas fa-user"></i>
+                  </div>
+                  <div class="user-info">
+                    <span class="user-name">{{ username }}</span>
+                  </div>
+                  <i class="fas fa-chevron-down user-arrow"></i>
+                </button>
+                @if (userMenuOpen) {
+                  <div class="user-dropdown">
+                    <button type="button" class="dropdown-item" (click)="navigateToProfile()">
+                      <i class="fas fa-user-circle"></i>
+                      <span>Meu Perfil</span>
+                    </button>
+                    @if (canAccessAdminPanel()) {
+                      <button type="button" class="dropdown-item" (click)="navigateToAdminPanel()">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Painel</span>
+                      </button>
+                    }
+                    <hr class="dropdown-divider">
+                    <button type="button" class="dropdown-item logout" (click)="logout()">
+                      <i class="fas fa-sign-out-alt"></i>
+                      <span>Sair</span>
+                    </button>
+                  </div>
+                }
+              </div>
+            </li>
+          } @else {
+            <!-- Mostrado quando o usuário NÃO ESTÁ logado -->
+            <li class="nav-item">
+              <a class="btn btn-login" routerLink="/auth/login" (click)="closeMenu()">
+                <i class="fas fa-sign-in-alt" aria-hidden="true"></i>
+                Login
+              </a>
+            </li>
+          }
+
+          <!-- Template para o botão de Login -->
+
+          <!-- CTA visível em mobile (dentro do collapse) -->
+          <li class="nav-item d-lg-none mt-2">
+            <a class="btn btn-cta w-100" routerLink="/assinaturas" (click)="closeMenu()" title="Assine agora">
+              <i class="fas fa-crown" aria-hidden="true"></i>
+              Assine agora
+            </a>
+          </li>
+        </ul>
+      </div>
     </div>
-  </div>
-</nav>
+  </nav>

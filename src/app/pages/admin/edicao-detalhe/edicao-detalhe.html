@@ -1,34 +1,44 @@
 <div class="container">
   <h2>Nova Edição</h2>
-  
+
   <form [formGroup]="form" (ngSubmit)="onSubmit()">
     <div class="form-group">
       <label for="titulo">Título *</label>
-      <input 
-        type="text" 
-        id="titulo" 
-        formControlName="titulo" 
+      <input
+        type="text"
+        id="titulo"
+        formControlName="titulo"
         class="form-control"
         placeholder="Digite o título da edição"
-      >
-      <div *ngIf="form.get('titulo')?.invalid && form.get('titulo')?.touched" class="error-message">
-        <span *ngIf="form.get('titulo')?.errors?.['required']">Título é obrigatório</span>
-        <span *ngIf="form.get('titulo')?.errors?.['minlength']">Título deve ter pelo menos 3 caracteres</span>
-      </div>
+        >
+      @if (form.get('titulo')?.invalid && form.get('titulo')?.touched) {
+        <div class="error-message">
+          @if (form.get('titulo')?.errors?.['required']) {
+            <span>Título é obrigatório</span>
+          }
+          @if (form.get('titulo')?.errors?.['minlength']) {
+            <span>Título deve ter pelo menos 3 caracteres</span>
+          }
+        </div>
+      }
     </div>
 
     <div class="form-group">
       <label for="descricao">Descrição</label>
-      <textarea 
-        id="descricao" 
-        formControlName="descricao" 
+      <textarea
+        id="descricao"
+        formControlName="descricao"
         class="form-control"
         placeholder="Digite uma descrição para a edição (opcional)"
         rows="3"
       ></textarea>
-      <div *ngIf="form.get('descricao')?.invalid && form.get('descricao')?.touched" class="error-message">
-        <span *ngIf="form.get('descricao')?.errors?.['minlength']">Descrição deve ter pelo menos 10 caracteres</span>
-      </div>
+      @if (form.get('descricao')?.invalid && form.get('descricao')?.touched) {
+        <div class="error-message">
+          @if (form.get('descricao')?.errors?.['minlength']) {
+            <span>Descrição deve ter pelo menos 10 caracteres</span>
+          }
+        </div>
+      }
     </div>
 
     <div class="form-group">
@@ -42,10 +52,14 @@
         class="form-control"
         formControlName="data"
         [class.is-invalid]="data?.invalid && data?.touched"
-      />
-      <div class="invalid-feedback" *ngIf="data?.invalid && data?.touched">
-        <div *ngIf="data?.errors?.['required']">Data é obrigatória</div>
-      </div>
+        />
+      @if (data?.invalid && data?.touched) {
+        <div class="invalid-feedback">
+          @if (data?.errors?.['required']) {
+            <div>Data é obrigatória</div>
+          }
+        </div>
+      }
     </div>
 
     <!-- Campo Imagem de Capa (Opcional) -->
@@ -60,16 +74,18 @@
         class="form-control"
         accept="image/jpeg,image/jpg,image/png,image/webp"
         (change)="onCapaSelected($event)"
-      />
-      <div class="file-info" *ngIf="selectedCapa">
-        <small class="text-success">
-          <i class="fas fa-check-circle me-1"></i>
-          Imagem selecionada: {{ selectedCapa.name }}
-        </small>
-      </div>
+        />
+      @if (selectedCapa) {
+        <div class="file-info">
+          <small class="text-success">
+            <i class="fas fa-check-circle me-1"></i>
+            Imagem selecionada: {{ selectedCapa.name }}
+          </small>
+        </div>
+      }
       <small class="form-text text-muted">
         <i class="fas fa-info-circle me-1"></i>
-        Se não fornecida, a capa será gerada automaticamente da primeira página do PDF. 
+        Se não fornecida, a capa será gerada automaticamente da primeira página do PDF.
         Formatos aceitos: JPEG, PNG, WebP (máx. 5MB)
       </small>
     </div>
@@ -86,34 +102,42 @@
         accept=".pdf"
         (change)="onPdfSelected($event)"
         [class.is-invalid]="!selectedPdf && form.touched"
-      />
-      <div class="file-info" *ngIf="selectedPdf">
-        <small class="text-muted">
-          <i class="fas fa-check-circle text-success me-1"></i>
-          Arquivo selecionado: {{ selectedPdf.name }}
-        </small>
-      </div>
-      <div class="invalid-feedback" *ngIf="!selectedPdf && form.touched">
-        Arquivo PDF é obrigatório
-      </div>
+        />
+      @if (selectedPdf) {
+        <div class="file-info">
+          <small class="text-muted">
+            <i class="fas fa-check-circle text-success me-1"></i>
+            Arquivo selecionado: {{ selectedPdf.name }}
+          </small>
+        </div>
+      }
+      @if (!selectedPdf && form.touched) {
+        <div class="invalid-feedback">
+          Arquivo PDF é obrigatório
+        </div>
+      }
     </div>
 
     <div class="form-actions">
-      <button 
-        type="button" 
-        class="btn btn-secondary" 
+      <button
+        type="button"
+        class="btn btn-secondary"
         (click)="cancelar()"
-      >
+        >
         <i class="fas fa-times"></i>
         Cancelar
       </button>
-      <button 
-        type="submit" 
-        class="btn btn-primary" 
+      <button
+        type="submit"
+        class="btn btn-primary"
         [disabled]="form.invalid || isLoading"
-      >
-        <i class="fas fa-save" *ngIf="!isLoading"></i>
-        <i class="fas fa-spinner fa-spin" *ngIf="isLoading"></i>
+        >
+        @if (!isLoading) {
+          <i class="fas fa-save"></i>
+        }
+        @if (isLoading) {
+          <i class="fas fa-spinner fa-spin"></i>
+        }
         {{ isLoading ? 'Salvando...' : 'Salvar Edição' }}
       </button>
     </div>

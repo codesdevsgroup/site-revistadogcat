@@ -1,6 +1,6 @@
 <!-- Dialog de Relatórios (PrimeNG) -->
 <p-dialog [(visible)]="visible" [modal]="true" [closable]="true" [dismissableMask]="true"
-          [style]="{ width: '70vw', maxWidth: '1000px' }" styleClass="modal-lg relatorios-modal" [contentStyle]="{ padding: '0' }">
+  [style]="{ width: '70vw', maxWidth: '1000px' }" styleClass="modal-lg relatorios-modal" [contentStyle]="{ padding: '0' }">
   <ng-template pTemplate="header">
     <div class="modal-header">
       <h5 class="modal-title" id="relatoriosModalLabel">
@@ -11,202 +11,213 @@
   </ng-template>
 
   <div class="modal-body">
-        <!-- Formulário de Filtros -->
-        <form [formGroup]="filtrosForm" class="mb-4">
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <label for="dataInicio" class="form-label">
-                <i class="fas fa-calendar-alt me-1"></i>
-                Data Início *
-              </label>
-              <input
-                type="date"
-                id="dataInicio"
-                class="form-control"
-                formControlName="dataInicio"
-                [class.is-invalid]="filtrosForm.get('dataInicio')?.invalid && filtrosForm.get('dataInicio')?.touched">
-            </div>
+    <!-- Formulário de Filtros -->
+    <form [formGroup]="filtrosForm" class="mb-4">
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="dataInicio" class="form-label">
+            <i class="fas fa-calendar-alt me-1"></i>
+            Data Início *
+          </label>
+          <input
+            type="date"
+            id="dataInicio"
+            class="form-control"
+            formControlName="dataInicio"
+            [class.is-invalid]="filtrosForm.get('dataInicio')?.invalid && filtrosForm.get('dataInicio')?.touched">
+        </div>
 
-            <div class="col-md-6 mb-3">
-              <label for="dataFim" class="form-label">
-                <i class="fas fa-calendar-alt me-1"></i>
-                Data Fim *
-              </label>
-              <input
-                type="date"
-                id="dataFim"
-                class="form-control"
-                formControlName="dataFim"
-                [class.is-invalid]="filtrosForm.get('dataFim')?.invalid && filtrosForm.get('dataFim')?.touched">
-            </div>
-          </div>
+        <div class="col-md-6 mb-3">
+          <label for="dataFim" class="form-label">
+            <i class="fas fa-calendar-alt me-1"></i>
+            Data Fim *
+          </label>
+          <input
+            type="date"
+            id="dataFim"
+            class="form-control"
+            formControlName="dataFim"
+            [class.is-invalid]="filtrosForm.get('dataFim')?.invalid && filtrosForm.get('dataFim')?.touched">
+        </div>
+      </div>
 
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <label for="categoria" class="form-label">
-                <i class="fas fa-tags me-1"></i>
-                Categoria
-              </label>
-              <select id="categoria" class="form-select" formControlName="categoria">
-                <option value="">Todas as categorias</option>
-                <option value="filhote">Filhote</option>
-                <option value="adulto">Adulto</option>
-                <option value="senior">Senior</option>
-              </select>
-            </div>
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="categoria" class="form-label">
+            <i class="fas fa-tags me-1"></i>
+            Categoria
+          </label>
+          <select id="categoria" class="form-select" formControlName="categoria">
+            <option value="">Todas as categorias</option>
+            <option value="filhote">Filhote</option>
+            <option value="adulto">Adulto</option>
+            <option value="senior">Senior</option>
+          </select>
+        </div>
 
-            <div class="col-md-6 mb-3">
-              <label for="tipoVoto" class="form-label">
-                <i class="fas fa-vote-yea me-1"></i>
-                Tipo de Voto
-              </label>
-              <select id="tipoVoto" class="form-select" formControlName="tipoVoto">
-                <option value="">Todos os tipos</option>
-                <option value="NORMAL">Voto Normal</option>
-                <option value="SUPER">Super Voto</option>
-              </select>
-            </div>
-          </div>
+        <div class="col-md-6 mb-3">
+          <label for="tipoVoto" class="form-label">
+            <i class="fas fa-vote-yea me-1"></i>
+            Tipo de Voto
+          </label>
+          <select id="tipoVoto" class="form-select" formControlName="tipoVoto">
+            <option value="">Todos os tipos</option>
+            <option value="NORMAL">Voto Normal</option>
+            <option value="SUPER">Super Voto</option>
+          </select>
+        </div>
+      </div>
 
-          <!-- Opções para PDF -->
-          <div class="row">
-            <div class="col-12">
-              <h6 class="mb-3">
-                <i class="fas fa-cog me-1"></i>
-                Opções de Relatório
-              </h6>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="col-md-4 mb-3">
-              <div class="form-check form-switch">
-                <input
-                  class="form-check-input"
-                  type="checkbox"
-                  id="incluirHistorico"
-                  formControlName="incluirHistorico">
-                <label class="form-check-label" for="incluirHistorico">
-                  Incluir Histórico
-                </label>
-              </div>
-            </div>
-
-            <div class="col-md-4 mb-3">
-              <div class="form-check form-switch">
-                <input
-                  class="form-check-input"
-                  type="checkbox"
-                  id="incluirGraficos"
-                  formControlName="incluirGraficos">
-                <label class="form-check-label" for="incluirGraficos">
-                  Incluir Gráficos
-                </label>
-              </div>
-            </div>
-
-            <div class="col-md-4 mb-3">
-              <div class="form-check form-switch">
-                <input
-                  class="form-check-input"
-                  type="checkbox"
-                  id="incluirFotos"
-                  formControlName="incluirFotos">
-                <label class="form-check-label" for="incluirFotos">
-                  Incluir Fotos
-                </label>
-              </div>
-            </div>
-          </div>
-        </form>
-
-        <div class="export-actions">
+      <!-- Opções para PDF -->
+      <div class="row">
+        <div class="col-12">
           <h6 class="mb-3">
-            <i class="pi pi-download me-1"></i>
-            Exportações Disponíveis
+            <i class="fas fa-cog me-1"></i>
+            Opções de Relatório
           </h6>
+        </div>
+      </div>
 
-          <div class="row g-3">
-            <div class="col-md-6">
-              <button
-                type="button"
-                class="btn btn-success w-100"
-                (click)="exportarCSV()"
-                [disabled]="exportandoCSV || filtrosForm.invalid">
-                <i class="pi pi-file-excel me-2"></i>
-                @if (!exportandoCSV) {
-                  <span>Exportar CSV</span>
-                }
-                @if (exportandoCSV) {
-                  <span>
-                    <i class="pi pi-spin pi-spinner me-1"></i>
-                    Exportando...
-                  </span>
-                }
-              </button>
-              <small class="text-muted d-block mt-1">
-                Dados de cães e votos em planilha
-              </small>
-            </div>
-
-            <div class="col-md-6">
-              <button
-                type="button"
-                class="btn btn-info w-100"
-                (click)="exportarHistoricoCSV()"
-                [disabled]="exportandoHistorico || filtrosForm.invalid">
-                <i class="pi pi-history me-2"></i>
-                <span *ngIf="!exportandoHistorico">Histórico CSV</span>
-                <span *ngIf="exportandoHistorico">
-                  <i class="pi pi-spin pi-spinner me-1"></i>
-                  Exportando...
-                </span>
-              </button>
-              <small class="text-muted d-block mt-1">
-                Histórico completo de votações
-              </small>
-            </div>
-
-            <div class="col-12">
-              <button
-                type="button"
-                class="btn btn-danger w-100"
-                (click)="gerarRelatorioPDF()"
-                [disabled]="gerandoPDF || filtrosForm.invalid">
-                <i class="pi pi-file-pdf me-2"></i>
-                <span *ngIf="!gerandoPDF">Gerar Relatório PDF</span>
-                <span *ngIf="gerandoPDF">
-                  <i class="pi pi-spin pi-spinner me-1"></i>
-                  Iniciando geração...
-                </span>
-              </button>
-              <small class="text-muted d-block mt-1">
-                Relatório com Top 20 cães e Top 5 usuários mais ativos
-              </small>
-            </div>
+      <div class="row">
+        <div class="col-md-4 mb-3">
+          <div class="form-check form-switch">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              id="incluirHistorico"
+              formControlName="incluirHistorico">
+            <label class="form-check-label" for="incluirHistorico">
+              Incluir Histórico
+            </label>
           </div>
         </div>
 
-        <div class="pdf-status mt-4" *ngIf="statusRelatorio">
-          <div class="card">
-            <div class="card-header">
-              <h6 class="mb-0">
-                <i class="pi pi-file-pdf me-2"></i>
-                Status do Relatório PDF
-              </h6>
-            </div>
-            <div class="card-body">
-              <div class="d-flex justify-content-between align-items-center mb-3">
-                <span [class]="getStatusClass()">
-                  <i class="pi pi-circle me-1"></i>
-                  {{ getStatusText() }}
-                </span>
-                <small class="text-muted" *ngIf="statusRelatorio.estimativaMinutos">
+        <div class="col-md-4 mb-3">
+          <div class="form-check form-switch">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              id="incluirGraficos"
+              formControlName="incluirGraficos">
+            <label class="form-check-label" for="incluirGraficos">
+              Incluir Gráficos
+            </label>
+          </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+          <div class="form-check form-switch">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              id="incluirFotos"
+              formControlName="incluirFotos">
+            <label class="form-check-label" for="incluirFotos">
+              Incluir Fotos
+            </label>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <div class="export-actions">
+      <h6 class="mb-3">
+        <i class="pi pi-download me-1"></i>
+        Exportações Disponíveis
+      </h6>
+
+      <div class="row g-3">
+        <div class="col-md-6">
+          <button
+            type="button"
+            class="btn btn-success w-100"
+            (click)="exportarCSV()"
+            [disabled]="exportandoCSV || filtrosForm.invalid">
+            <i class="pi pi-file-excel me-2"></i>
+            @if (!exportandoCSV) {
+              <span>Exportar CSV</span>
+            }
+            @if (exportandoCSV) {
+              <span>
+                <i class="pi pi-spin pi-spinner me-1"></i>
+                Exportando...
+              </span>
+            }
+          </button>
+          <small class="text-muted d-block mt-1">
+            Dados de cães e votos em planilha
+          </small>
+        </div>
+
+        <div class="col-md-6">
+          <button
+            type="button"
+            class="btn btn-info w-100"
+            (click)="exportarHistoricoCSV()"
+            [disabled]="exportandoHistorico || filtrosForm.invalid">
+            <i class="pi pi-history me-2"></i>
+            @if (!exportandoHistorico) {
+              <span>Histórico CSV</span>
+            }
+            @if (exportandoHistorico) {
+              <span>
+                <i class="pi pi-spin pi-spinner me-1"></i>
+                Exportando...
+              </span>
+            }
+          </button>
+          <small class="text-muted d-block mt-1">
+            Histórico completo de votações
+          </small>
+        </div>
+
+        <div class="col-12">
+          <button
+            type="button"
+            class="btn btn-danger w-100"
+            (click)="gerarRelatorioPDF()"
+            [disabled]="gerandoPDF || filtrosForm.invalid">
+            <i class="pi pi-file-pdf me-2"></i>
+            @if (!gerandoPDF) {
+              <span>Gerar Relatório PDF</span>
+            }
+            @if (gerandoPDF) {
+              <span>
+                <i class="pi pi-spin pi-spinner me-1"></i>
+                Iniciando geração...
+              </span>
+            }
+          </button>
+          <small class="text-muted d-block mt-1">
+            Relatório com Top 20 cães e Top 5 usuários mais ativos
+          </small>
+        </div>
+      </div>
+    </div>
+
+    @if (statusRelatorio) {
+      <div class="pdf-status mt-4">
+        <div class="card">
+          <div class="card-header">
+            <h6 class="mb-0">
+              <i class="pi pi-file-pdf me-2"></i>
+              Status do Relatório PDF
+            </h6>
+          </div>
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <span [class]="getStatusClass()">
+                <i class="pi pi-circle me-1"></i>
+                {{ getStatusText() }}
+              </span>
+              @if (statusRelatorio.estimativaMinutos) {
+                <small class="text-muted">
                   Estimativa: {{ statusRelatorio.estimativaMinutos }} min
                 </small>
-              </div>
-
-              <div class="progress mb-3" *ngIf="statusRelatorio.status === 'processando'">
+              }
+            </div>
+            @if (statusRelatorio.status === 'processando') {
+              <div class="progress mb-3">
                 <div
                   class="progress-bar progress-bar-striped progress-bar-animated"
                   role="progressbar"
@@ -217,15 +228,19 @@
                   {{ statusRelatorio.progresso || 0 }}%
                 </div>
               </div>
-
-              <div class="mb-3" *ngIf="statusRelatorio.etapaAtual">
+            }
+            @if (statusRelatorio.etapaAtual) {
+              <div class="mb-3">
                 <small class="text-muted">
-                  <i class="pi pi-spin pi-cog me-1" *ngIf="statusRelatorio.status === 'processando'"></i>
+                  @if (statusRelatorio.status === 'processando') {
+                    <i class="pi pi-spin pi-cog me-1"></i>
+                  }
                   {{ statusRelatorio.etapaAtual }}
                 </small>
               </div>
-
-              <div class="d-flex justify-content-between align-items-center" *ngIf="statusRelatorio.status === 'concluido'">
+            }
+            @if (statusRelatorio.status === 'concluido') {
+              <div class="d-flex justify-content-between align-items-center">
                 <div>
                   <button
                     type="button"
@@ -236,18 +251,24 @@
                   </button>
                 </div>
                 <div class="text-end">
-                  <small class="text-muted d-block" *ngIf="statusRelatorio.tamanhoArquivo">
-                    Tamanho: {{ statusRelatorio.tamanhoArquivo }}
-                  </small>
-                  <small class="text-muted d-block" *ngIf="statusRelatorio.validoAte">
-                    Válido até: {{ statusRelatorio.validoAte | date:'dd/MM/yyyy HH:mm' }}
-                  </small>
+                  @if (statusRelatorio.tamanhoArquivo) {
+                    <small class="text-muted d-block">
+                      Tamanho: {{ statusRelatorio.tamanhoArquivo }}
+                    </small>
+                  }
+                  @if (statusRelatorio.validoAte) {
+                    <small class="text-muted d-block">
+                      Válido até: {{ statusRelatorio.validoAte | date:'dd/MM/yyyy HH:mm' }}
+                    </small>
+                  }
                 </div>
               </div>
-            </div>
+            }
           </div>
         </div>
       </div>
+    }
+  </div>
 
   <ng-template pTemplate="footer">
     <div class="modal-footer">

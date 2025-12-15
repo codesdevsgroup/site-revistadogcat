@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { RouterOutlet } from '@angular/router';
 import { NavbarComponent } from './components/navbar/navbar';
 import { WhatsappFloatComponent } from './components/whatsapp-float/whatsapp-float';
@@ -7,7 +7,7 @@ import { WhatsappFloatComponent } from './components/whatsapp-float/whatsapp-flo
 @Component({
   selector: 'app-public',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, NavbarComponent, WhatsappFloatComponent],
+  imports: [RouterOutlet, NavbarComponent, WhatsappFloatComponent],
   template: `
     <app-navbar />
     <div class="main-content with-navbar">

@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { RelatoriosService, KardexRelatorio } from '../../../../services/relatorios.service';
 import { NotificationService } from '../../../../services/notification.service';
@@ -7,7 +7,7 @@ import { NotificationService } from '../../../../services/notification.service';
 @Component({
   selector: 'app-admin-votacao-kardex',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [ReactiveFormsModule],
   templateUrl: './kardex.html',
   styleUrls: ['./kardex.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush

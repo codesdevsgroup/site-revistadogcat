@@ -4,37 +4,51 @@
       <input type="text" class="search-input" placeholder="Pesquisar..." (input)="onSearchChange($event)" aria-label="Pesquisar artigos">
       <select class="category-select" (change)="selectCategory($any($event.target).value)" aria-label="Selecionar categoria">
         <option value="">Todas as categorias</option>
-        <option *ngFor="let categoria of categorias" [value]="categoria">{{ categoria }}</option>
+        @for (categoria of categorias; track categoria) {
+          <option [value]="categoria">{{ categoria }}</option>
+        }
       </select>
     </div>
   </div>
 
-  <div *ngIf="loading" class="text-center p-5"><span class="spinner-border text-primary"></span> Carregando...</div>
-  <div *ngIf="error" class="alert alert-danger" role="alert">{{ error }}</div>
+  @if (loading) {
+    <div class="text-center p-5"><span class="spinner-border text-primary"></span> Carregando...</div>
+  }
+  @if (error) {
+    <div class="alert alert-danger" role="alert">{{ error }}</div>
+  }
 
-  <div class="articles-grid" *ngIf="!loading && !error">
-    <div class="article-card" *ngFor="let artigo of artigos; trackBy: trackById">
-      <a [routerLink]="['/artigos', artigo.id]" class="card-link">
-        <div class="card-image-container">
-            <img class="cover" [src]="getImagemUrl(artigo.imagemCapa)" [alt]="artigo.titulo" loading="lazy">
+  @if (!loading && !error) {
+    <div class="articles-grid">
+      @for (artigo of artigos; track trackById($index, artigo)) {
+        <div class="article-card">
+          <a [routerLink]="['/artigos', artigo.id]" class="card-link">
+            <div class="card-image-container">
+              <img class="cover" [src]="getImagemUrl(artigo.imagemCapa)" [alt]="artigo.titulo" loading="lazy">
+            </div>
+            <div class="card-content">
+              <h3 class="title">{{ artigo.titulo }}</h3>
+              @if (artigo.resumo) {
+                <p class="excerpt">{{ artigo.resumo }}</p>
+              }
+              <div class="meta">
+                <span class="author">✍️ {{ artigo.autor }}</span>
+                <span class="date">{{ artigo.dataPublicacao | date:'dd/MM/yyyy' }}</span>
+                @if (artigo.categoria) {
+                  <span class="category">{{ artigo.categoria }}</span>
+                }
+              </div>
+            </div>
+          </a>
         </div>
-        <div class="card-content">
-          <h3 class="title">{{ artigo.titulo }}</h3>
-          <p class="excerpt" *ngIf="artigo.resumo">{{ artigo.resumo }}</p>
-          <div class="meta">
-            <span class="author">✍️ {{ artigo.autor }}</span>
-            <span class="date">{{ artigo.dataPublicacao | date:'dd/MM/yyyy' }}</span>
-            @if (artigo.categoria) {
-              <span class="category">{{ artigo.categoria }}</span>
-            }
-          </div>
-        </div>
-      </a>
+      }
     </div>
-  </div>
+  }
 
-  <div *ngIf="!loading && artigos.length === 0" class="text-center p-5">
-    <p class="h5">Nenhum artigo encontrado.</p>
-    <p class="text-muted">Tente ajustar seus filtros ou volte mais tarde.</p>
-  </div>
+  @if (!loading && artigos.length === 0) {
+    <div class="text-center p-5">
+      <p class="h5">Nenhum artigo encontrado.</p>
+      <p class="text-muted">Tente ajustar seus filtros ou volte mais tarde.</p>
+    </div>
+  }
 </section>

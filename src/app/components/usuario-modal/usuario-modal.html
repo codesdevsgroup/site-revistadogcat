@@ -13,18 +13,24 @@
     <!-- Corpo do Modal com o Formulário -->
     <div class="modal-body">
       <!-- Alerta de Bloqueio -->
-      <div class="alert alert-warning" *ngIf="isUserBlocked()">
-        <i class="fas fa-lock"></i>
-        <strong>Usuário Bloqueado!</strong>
-        <p>
-          Este usuário está bloqueado por exceder o limite de tentativas de
-          login.
-        </p>
-        <p *ngIf="getLoginAttemptsMessage()">{{ getLoginAttemptsMessage() }}</p>
-        <p *ngIf="usuario?.blockedUntil">
-          Bloqueado até: {{ usuario?.blockedUntil | date:'dd/MM/yyyy HH:mm' }}
-        </p>
-      </div>
+      @if (isUserBlocked()) {
+        <div class="alert alert-warning">
+          <i class="fas fa-lock"></i>
+          <strong>Usuário Bloqueado!</strong>
+          <p>
+            Este usuário está bloqueado por exceder o limite de tentativas de
+            login.
+          </p>
+          @if (getLoginAttemptsMessage()) {
+            <p>{{ getLoginAttemptsMessage() }}</p>
+          }
+          @if (usuario?.blockedUntil) {
+            <p>
+              Bloqueado até: {{ usuario?.blockedUntil | date:'dd/MM/yyyy HH:mm' }}
+            </p>
+          }
+        </div>
+      }
 
       <form [formGroup]="usuarioForm" (ngSubmit)="onSave()">
         <!-- Linha 1: Nome Completo e Nome de Usuário -->
@@ -36,7 +42,7 @@
               type="text"
               formControlName="name"
               class="form-control"
-            />
+              />
           </div>
           <div class="form-group">
             <label for="userName">Nome de Usuário</label>
@@ -45,7 +51,7 @@
               type="text"
               formControlName="userName"
               class="form-control"
-            />
+              />
           </div>
         </div>
 
@@ -57,7 +63,7 @@
             type="email"
             formControlName="email"
             class="form-control"
-          />
+            />
         </div>
 
         <!-- Linha 3: CPF e Telefone -->
@@ -70,101 +76,107 @@
               formControlName="cpf"
               class="form-control"
               [class.is-invalid]="usuarioForm.get('cpf')?.invalid && usuarioForm.get('cpf')?.touched"
-            />
-            <div
-              class="invalid-feedback"
-              *ngIf="usuarioForm.get('cpf')?.invalid && usuarioForm.get('cpf')?.touched"
-            >
-              <span *ngIf="usuarioForm.get('cpf')?.errors?.['cpfInvalido']"
-                >CPF inválido</span
-              >
+              />
+            @if (usuarioForm.get('cpf')?.invalid && usuarioForm.get('cpf')?.touched) {
+              <div
+                class="invalid-feedback"
+                >
+                @if (usuarioForm.get('cpf')?.errors?.['cpfInvalido']) {
+                  <span
+                    >CPF inválido</span
+                    >
+                  }
+                </div>
+              }
+            </div>
+            <div class="form-group">
+              <label for="telefone">Telefone (Opcional)</label>
+              <input
+                id="telefone"
+                type="tel"
+                formControlName="telefone"
+                class="form-control"
+                />
             </div>
           </div>
-          <div class="form-group">
-            <label for="telefone">Telefone (Opcional)</label>
-            <input
-              id="telefone"
-              type="tel"
-              formControlName="telefone"
-              class="form-control"
-            />
-          </div>
-        </div>
 
-        <!-- Linha 4: Senha (apenas para novos usuários) -->
-        <div class="form-group" *ngIf="!isEditMode">
-          <label for="password">Senha</label>
-          <input
-            id="password"
-            type="password"
-            formControlName="password"
-            class="form-control"
-          />
-          <small class="form-text"
-            >Mínimo de 8 caracteres. Deixe em branco na edição para não
-            alterar.</small
-          >
-        </div>
-
-        <!-- Linha 5: Role e Status -->
-        <div class="form-row">
-          <div class="form-group">
-            <label for="role">Tipo (Role)</label>
-            <select id="role" formControlName="role" class="form-select">
-              <option value="USUARIO">Usuário</option>
-              <option value="DONO_PET_APROVADO">Dono de Pet Aprovado</option>
-              <option value="ASSINANTE">Assinante</option>
-              <option value="DONO_PET_APROVADO_ASSINANTE">
-                Dono de Pet Aprovado + Assinante
-              </option>
-              <option value="EDITOR">Editor</option>
-              <option value="ADMIN">Admin</option>
-              <option value="FUNCIONARIO">Funcionário</option>
-              <option value="JURADO">Jurado</option>
-            </select>
-          </div>
-          <div class="form-group form-check-group">
-            <label class="form-check-label">
+          <!-- Linha 4: Senha (apenas para novos usuários) -->
+          @if (!isEditMode) {
+            <div class="form-group">
+              <label for="password">Senha</label>
               <input
-                type="checkbox"
-                formControlName="active"
-                class="form-check-input"
-              />
-              Usuário Ativo
-            </label>
+                id="password"
+                type="password"
+                formControlName="password"
+                class="form-control"
+                />
+              <small class="form-text"
+                >Mínimo de 8 caracteres. Deixe em branco na edição para não
+                alterar.</small
+                >
+              </div>
+            }
+
+            <!-- Linha 5: Role e Status -->
+            <div class="form-row">
+              <div class="form-group">
+                <label for="role">Tipo (Role)</label>
+                <select id="role" formControlName="role" class="form-select">
+                  <option value="USUARIO">Usuário</option>
+                  <option value="DONO_PET_APROVADO">Dono de Pet Aprovado</option>
+                  <option value="ASSINANTE">Assinante</option>
+                  <option value="DONO_PET_APROVADO_ASSINANTE">
+                    Dono de Pet Aprovado + Assinante
+                  </option>
+                  <option value="EDITOR">Editor</option>
+                  <option value="ADMIN">Admin</option>
+                  <option value="FUNCIONARIO">Funcionário</option>
+                  <option value="JURADO">Jurado</option>
+                </select>
+              </div>
+              <div class="form-group form-check-group">
+                <label class="form-check-label">
+                  <input
+                    type="checkbox"
+                    formControlName="active"
+                    class="form-check-input"
+                    />
+                  Usuário Ativo
+                </label>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <!-- Rodapé do Modal -->
+        <div class="modal-footer">
+          <div class="footer-left">
+            @if (isEditMode && isUserBlocked()) {
+              <button
+                type="button"
+                class="btn btn-warning"
+                (click)="onUnblockUser()"
+                [disabled]="isUnblocking"
+                title="Desbloquear usuário"
+                >
+                <i class="fas fa-unlock"></i>
+                {{ isUnblocking ? 'Desbloqueando...' : 'Desbloquear Login' }}
+              </button>
+            }
+          </div>
+          <div class="footer-right">
+            <button type="button" class="btn btn-secondary" (click)="onClose()">
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              (click)="onSave()"
+              [disabled]="usuarioForm.invalid"
+              >
+              {{ isEditMode ? 'Salvar Alterações' : 'Criar Usuário' }}
+            </button>
           </div>
         </div>
-      </form>
-    </div>
-
-    <!-- Rodapé do Modal -->
-    <div class="modal-footer">
-      <div class="footer-left">
-        <button
-          type="button"
-          class="btn btn-warning"
-          *ngIf="isEditMode && isUserBlocked()"
-          (click)="onUnblockUser()"
-          [disabled]="isUnblocking"
-          title="Desbloquear usuário"
-        >
-          <i class="fas fa-unlock"></i>
-          {{ isUnblocking ? 'Desbloqueando...' : 'Desbloquear Login' }}
-        </button>
-      </div>
-      <div class="footer-right">
-        <button type="button" class="btn btn-secondary" (click)="onClose()">
-          Cancelar
-        </button>
-        <button
-          type="submit"
-          class="btn btn-primary"
-          (click)="onSave()"
-          [disabled]="usuarioForm.invalid"
-        >
-          {{ isEditMode ? 'Salvar Alterações' : 'Criar Usuário' }}
-        </button>
       </div>
     </div>
-  </div>
-</div>

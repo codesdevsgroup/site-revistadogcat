@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, OnDestroy, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { RouterModule } from '@angular/router';
 import { CadastroCaoService, CaoListItem } from '../../../services/cadastro-cao.service';
 import { VotacaoService } from '../../../services/votacao.service';
@@ -13,7 +13,7 @@ import { takeUntil } from 'rxjs/operators';
 @Component({
   selector: 'app-votacao',
   standalone: true,
-  imports: [CommonModule, RouterModule, LoginRequiredModalComponent],
+  imports: [RouterModule, LoginRequiredModalComponent],
   templateUrl: './votacao.html',
   styleUrls: ['./votacao.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush

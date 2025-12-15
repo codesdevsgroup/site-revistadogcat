@@ -14,7 +14,7 @@
   </div>
 
   <!-- Container principal que aguarda a resolução do Observable -->
-  <ng-container *ngIf="usuarios$ | async as usuarios; else loadingOrError">
+  @if (usuarios$ | async; as usuarios) {
     <div class="usuarios-table-container">
       <div class="table-header">
         <h2>Lista de Usuários ({{ usuarios.length }})</h2>
@@ -25,8 +25,7 @@
             placeholder="Buscar por nome, email ou CPF..."
             class="search-input"
             [formControl]="searchControl"
-          />
-
+            />
           <!-- Seletor de role conectado ao FormControl -->
           <select class="filter-select" [formControl]="roleControl">
             <option value="">Todos os tipos</option>
@@ -42,7 +41,6 @@
           </select>
         </div>
       </div>
-
       <div class="table-responsive">
         <table class="usuarios-table">
           <thead>
@@ -57,85 +55,86 @@
             </tr>
           </thead>
           <tbody>
-            <tr
-              *ngFor="let usuario of usuarios; trackBy: trackByUserId"
-              class="table-row"
-            >
-              <td class="user-id">#{{ usuario.userId.substring(0, 8) }}...</td>
-              <td class="user-name">
-                <div class="user-info">
-                  <div class="user-avatar">
-                    <img
-                      *ngIf="usuario.avatarUrl; else defaultAvatar"
-                      [src]="usuario.avatarUrl"
-                      alt="Avatar de {{usuario.name}}"
-                      class="avatar-image"
-                    />
-                    <ng-template #defaultAvatar>
-                      <i class="fas fa-user"></i>
-                    </ng-template>
-                  </div>
-                  <span>{{ usuario.name }}</span>
-                </div>
-              </td>
-              <td class="user-email">{{ usuario.email }}</td>
-              <td class="user-tipo">
-                <span class="badge" [ngClass]="getRoleClass(usuario.role)">
-                  {{ usuario.role }}
-                </span>
-              </td>
-              <td class="user-status">
-                <span
-                  class="status-indicator"
-                  [ngClass]="getStatusClass(usuario.active)"
+            @for (usuario of usuarios; track trackByUserId($index, usuario)) {
+              <tr
+                class="table-row"
                 >
-                  <i
-                    class="fas"
-                    [ngClass]="usuario.active ? 'fa-check-circle' : 'fa-times-circle'"
-                  ></i>
-                  {{ usuario.active ? 'Ativo' : 'Inativo' }}
-                </span>
-              </td>
-              <td class="user-date">
-                {{ usuario.createdAt | date:'dd/MM/yyyy' }}
-              </td>
-              <td class="user-actions">
-                <div class="action-buttons">
-                  <!-- Botão para abrir o modal em modo de edição -->
-                  <button
-                    class="btn-action btn-edit"
-                    (click)="openModal(usuario)"
-                    title="Editar"
-                  >
-                    <i class="fas fa-edit"></i>
-                  </button>
-                  <button
-                    class="btn-action btn-delete"
-                    (click)="excluirUsuario(usuario)"
-                    title="Excluir"
-                  >
-                    <i class="fas fa-trash"></i>
-                  </button>
-                </div>
-              </td>
-            </tr>
+                <td class="user-id">#{{ usuario.userId.substring(0, 8) }}...</td>
+                <td class="user-name">
+                  <div class="user-info">
+                    <div class="user-avatar">
+                      @if (usuario.avatarUrl) {
+                        <img
+                          [src]="usuario.avatarUrl"
+                          alt="Avatar de {{usuario.name}}"
+                          class="avatar-image"
+                          />
+                      } @else {
+                        <i class="fas fa-user"></i>
+                      }
+                    </div>
+                    <span>{{ usuario.name }}</span>
+                  </div>
+                </td>
+                <td class="user-email">{{ usuario.email }}</td>
+                <td class="user-tipo">
+                  <span class="badge" [ngClass]="getRoleClass(usuario.role)">
+                    {{ usuario.role }}
+                  </span>
+                </td>
+                <td class="user-status">
+                  <span
+                    class="status-indicator"
+                    [ngClass]="getStatusClass(usuario.active)"
+                    >
+                    <i
+                      class="fas"
+                      [ngClass]="usuario.active ? 'fa-check-circle' : 'fa-times-circle'"
+                    ></i>
+                    {{ usuario.active ? 'Ativo' : 'Inativo' }}
+                  </span>
+                </td>
+                <td class="user-date">
+                  {{ usuario.createdAt | date:'dd/MM/yyyy' }}
+                </td>
+                <td class="user-actions">
+                  <div class="action-buttons">
+                    <!-- Botão para abrir o modal em modo de edição -->
+                    <button
+                      class="btn-action btn-edit"
+                      (click)="openModal(usuario)"
+                      title="Editar"
+                      >
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button
+                      class="btn-action btn-delete"
+                      (click)="excluirUsuario(usuario)"
+                      title="Excluir"
+                      >
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
           </tbody>
         </table>
       </div>
-
-      <div *ngIf="usuarios.length === 0" class="empty-state">
-        <i class="fas fa-user-slash"></i>
-        <p>Nenhum usuário encontrado.</p>
-      </div>
+      @if (usuarios.length === 0) {
+        <div class="empty-state">
+          <i class="fas fa-user-slash"></i>
+          <p>Nenhum usuário encontrado.</p>
+        </div>
+      }
     </div>
-  </ng-container>
-
-  <ng-template #loadingOrError>
+  } @else {
     <div class="loading-state">
       <i class="fas fa-spinner fa-spin"></i>
       <p>Carregando usuários...</p>
     </div>
-  </ng-template>
+  }
+
 </div>
 
 <!-- Componente do Modal -->
@@ -145,5 +144,5 @@
   (close)="closeModal()"
   (save)="handleSave($event)"
   (userUnblocked)="handleUserUnblocked()"
->
+  >
 </app-usuario-modal>

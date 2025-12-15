@@ -18,7 +18,9 @@
       <div class="col-md-2">
         <label class="form-label" for="tipo">Tipo</label>
         <select id="tipo" class="form-select" formControlName="tipo">
-          <option *ngFor="let t of tipos" [value]="t.value">{{ t.label }}</option>
+          @for (t of tipos; track t) {
+            <option [value]="t.value">{{ t.label }}</option>
+          }
         </select>
       </div>
       <div class="col-md-2">
@@ -51,45 +53,48 @@
       </div>
     </div>
 
-    <div class="table-responsive" *ngIf="data() as d; else loadingTpl">
-      <table class="table table-striped mb-0">
-        <thead>
-          <tr>
-            <th style="width: 180px">Data</th>
-            <th style="width: 140px">Tipo</th>
-            <th>Usuário</th>
-            <th>Cão</th>
-            <th style="width: 120px" class="text-muted">IP</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let v of d.votos; trackBy: trackByVoto">
-            <td>{{ v.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
-            <td>
-              <span class="badge" [ngClass]="{ 'bg-secondary': v.tipo === 'COMUM', 'bg-warning text-dark': v.tipo === 'SUPER' }">
-                {{ v.tipo === 'COMUM' ? 'Comum' : 'Super' }}
-              </span>
-            </td>
-            <td>
-              <div class="small text-muted">UserID:</div>
-              <div class="fw-semibold">{{ v.userId }}</div>
-            </td>
-            <td>
-              <div class="small text-muted">Cadastro:</div>
-              <div class="fw-semibold">{{ v.cadastroId }}</div>
-            </td>
-            <td class="text-muted">{{ v.ip || '-' }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <ng-template #loadingTpl>
+    @if (data(); as d) {
+      <div class="table-responsive">
+        <table class="table table-striped mb-0">
+          <thead>
+            <tr>
+              <th style="width: 180px">Data</th>
+              <th style="width: 140px">Tipo</th>
+              <th>Usuário</th>
+              <th>Cão</th>
+              <th style="width: 120px" class="text-muted">IP</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (v of d.votos; track trackByVoto($index, v)) {
+              <tr>
+                <td>{{ v.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
+                <td>
+                  <span class="badge" [ngClass]="{ 'bg-secondary': v.tipo === 'COMUM', 'bg-warning text-dark': v.tipo === 'SUPER' }">
+                    {{ v.tipo === 'COMUM' ? 'Comum' : 'Super' }}
+                  </span>
+                </td>
+                <td>
+                  <div class="small text-muted">UserID:</div>
+                  <div class="fw-semibold">{{ v.userId }}</div>
+                </td>
+                <td>
+                  <div class="small text-muted">Cadastro:</div>
+                  <div class="fw-semibold">{{ v.cadastroId }}</div>
+                </td>
+                <td class="text-muted">{{ v.ip || '-' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
       <div class="text-center py-4">
         <i class="fas fa-spinner fa-spin fa-2x"></i>
         <p class="mt-2">Carregando registros...</p>
       </div>
-    </ng-template>
+    }
+
 
     <!-- Paginação -->
     <div class="card-footer d-flex justify-content-between align-items-center">

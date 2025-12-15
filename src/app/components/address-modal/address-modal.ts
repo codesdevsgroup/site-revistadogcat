@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Endereco } from '../../interfaces/endereco.interface';
 import { TipoEndereco, TIPOS_ENDERECO_OPTIONS } from '../../enums/tipo-endereco.enum';
@@ -7,7 +7,7 @@ import { TipoEndereco, TIPOS_ENDERECO_OPTIONS } from '../../enums/tipo-endereco.
 @Component({
   selector: 'app-address-modal',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [ReactiveFormsModule],
   templateUrl: './address-modal.html',
   styleUrls: ['./address-modal.scss']
 })

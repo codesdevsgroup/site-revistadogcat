@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
-import { CommonModule } from '@angular/common';
+
 import { TopMenuComponent } from './components/top-menu/top-menu';
 import { AuthService } from '../../services/auth.service';
 import { Role } from '../../enums/role.enum';
@@ -8,7 +8,7 @@ import { Role } from '../../enums/role.enum';
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, TopMenuComponent],
+  imports: [RouterOutlet, TopMenuComponent],
   templateUrl: './admin.html',
   styleUrls: ['./admin.scss']
 })

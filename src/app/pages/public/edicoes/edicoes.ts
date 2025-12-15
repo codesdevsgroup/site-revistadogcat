@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
 import { RouterModule } from '@angular/router';
 import { Edicao } from '../../../interfaces/edicao';
@@ -9,7 +9,7 @@ import { EdicoesService } from '../../../services/edicoes.service';
 @Component({
   selector: 'app-edicoes',
   standalone: true,
-  imports: [CommonModule, RouterModule, NgxExtendedPdfViewerModule],
+  imports: [RouterModule, NgxExtendedPdfViewerModule],
   templateUrl: './edicoes.html',
   styleUrl: './edicoes.scss'
 })

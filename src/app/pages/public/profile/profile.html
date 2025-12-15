@@ -1,171 +1,179 @@
 <div class="profile-container">
-@if (loading) {
-  <div class="loading-container">
-    <p-progressSpinner styleClass="text-primary"></p-progressSpinner>
-    <p class="mt-3">Carregando perfil...</p>
-  </div>
-
-}
-
-  <div *ngIf="error && !loading">
-    <p-message severity="error" [text]="error"></p-message>
-  </div>
-
-  <div *ngIf="!loading && !error && user" class="profile-content">
-    <div class="profile-header">
-      <div class="row align-items-center">
-        <div class="col-md-8">
-          <h1 class="page-title">
-            <i class="fas fa-user-circle me-3"></i>
-            Meu Perfil
-          </h1>
-          <p class="text-muted">
-            Gerencie suas informações pessoais e endereços.
-          </p>
-        </div>
-        <div class="col-md-4 text-md-end">
-          <button pButton type="button" label="Editar Perfil" icon="pi pi-pencil" (click)="onEditProfile()"></button>
-        </div>
-      </div>
+  @if (loading) {
+    <div class="loading-container">
+      <p-progressSpinner styleClass="text-primary"></p-progressSpinner>
+      <p class="mt-3">Carregando perfil...</p>
     </div>
 
-    <div class="profile-section">
-      <div class="section-header">
-        <h3><i class="fas fa-id-card me-2"></i> Dados Cadastrais</h3>
-      </div>
-      <p-card>
-        <ng-template pTemplate="content">
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <label class="form-label fw-bold">Nome Completo</label>
-              <p class="form-control-plaintext">
-                {{ user.name || user.userName || 'Não informado' }}
-              </p>
-            </div>
-            <div class="col-md-6 mb-3">
-              <label class="form-label fw-bold">E-mail</label>
-              <p class="form-control-plaintext">
-                {{ user.email || 'Não informado' }}
-              </p>
-            </div>
-            <div class="col-md-6 mb-3">
-              <label class="form-label fw-bold">Telefone</label>
-              <p class="form-control-plaintext">
-                {{ user.telefone || 'Não informado' }}
-              </p>
-            </div>
-            <div class="col-md-6 mb-3">
-              <label class="form-label fw-bold">CPF</label>
-              <p class="form-control-plaintext">
-                {{ user.cpf || 'Não informado' }}
-              </p>
-            </div>
-            <div class="col-md-6 mb-3">
-              <label class="form-label fw-bold">Tipo de Usuário</label>
-              <p class="form-control-plaintext">
-                <p-tag [value]="getRoleDisplayName(user.role)" severity="secondary"></p-tag>
-              </p>
-            </div>
+  }
+
+  @if (error && !loading) {
+    <div>
+      <p-message severity="error" [text]="error"></p-message>
+    </div>
+  }
+
+  @if (!loading && !error && user) {
+    <div class="profile-content">
+      <div class="profile-header">
+        <div class="row align-items-center">
+          <div class="col-md-8">
+            <h1 class="page-title">
+              <i class="fas fa-user-circle me-3"></i>
+              Meu Perfil
+            </h1>
+            <p class="text-muted">
+              Gerencie suas informações pessoais e endereços.
+            </p>
           </div>
-        </ng-template>
-      </p-card>
-    </div>
-
-    <div class="profile-section">
-      <div
-        class="section-header d-flex justify-content-between align-items-center"
-      >
-        <h3><i class="fas fa-map-marker-alt me-2"></i> Meus Endereços</h3>
-        <button pButton type="button" label="Adicionar Endereço" icon="pi pi-plus" class="p-button-sm" (click)="openAddressModal()"></button>
+          <div class="col-md-4 text-md-end">
+            <button pButton type="button" label="Editar Perfil" icon="pi pi-pencil" (click)="onEditProfile()"></button>
+          </div>
+        </div>
       </div>
-      <ng-template #noAddress>
+      <div class="profile-section">
+        <div class="section-header">
+          <h3><i class="fas fa-id-card me-2"></i> Dados Cadastrais</h3>
+        </div>
         <p-card>
           <ng-template pTemplate="content">
-            <i class="fas fa-map-marked-alt fa-3x text-muted mb-3"></i>
-            <h5 class="text-muted mb-2">Nenhum endereço cadastrado</h5>
-            <p class="text-muted mb-3">
-              Adicione um endereço para ver seus detalhes aqui.
-            </p>
-          </ng-template>
-        </p-card>
-      </ng-template>
-    </div>
-
-    <!-- Meus Cães -->
-    <div class="profile-section">
-      <div
-        class="section-header d-flex justify-content-between align-items-center"
-      >
-        <h3><i class="fas fa-dog me-2"></i> Meus Cães</h3>
-        <a [routerLink]="['/public/cadastro-cao']">
-          <button pButton type="button" label="Cadastrar novo cão" icon="pi pi-plus" class="p-button-sm p-button-outlined"></button>
-        </a>
-      </div>
-
-      <div *ngIf="loadingDogs" class="text-center py-4">
-        <div class="spinner-border text-primary" role="status">
-          <span class="visually-hidden">Carregando...</span>
-        </div>
-        <p class="mt-3">Carregando seus cadastros...</p>
-      </div>
-
-      <div
-        *ngIf="dogsError && !loadingDogs"
-        class="alert alert-danger"
-        role="alert"
-      >
-        <i class="fas fa-exclamation-triangle me-2"></i>
-        {{ dogsError }}
-      </div>
-
-      <div *ngIf="!loadingDogs && !dogsError">
-        <p-card *ngIf="dogs.length === 0">
-          <ng-template pTemplate="content">
-            <i class="fas fa-dog fa-3x text-muted mb-3"></i>
-            <h5 class="text-muted mb-2">Você ainda não cadastrou nenhum cão</h5>
-            <p class="text-muted mb-3">
-              Cadastre um cão para poder enviar o vídeo na sua lista.
-            </p>
-            <a [routerLink]="['/public/cadastro-cao']">
-              <button pButton type="button" label="Cadastrar cão" icon="pi pi-plus"></button>
-            </a>
-          </ng-template>
-        </p-card>
-
-        <div class="row" *ngIf="dogs.length > 0">
-          <div class="col-md-6 col-lg-4 mb-4" *ngFor="let dog of dogs">
-            <div class="card h-100">
-              <div class="card-body d-flex flex-column">
-                <div class="d-flex align-items-center mb-3">
-                  <i class="fas fa-paw fa-lg text-primary me-2"></i>
-                  <h5 class="card-title mb-0">{{ dog.nome }}</h5>
-                </div>
-                <p class="mb-2"><span class="fw-bold">Raça:</span> {{ dog.raca || '—' }}</p>
-                <p class="mb-2"><span class="fw-bold">Sexo:</span> {{ dog.sexo }}</p>
-                <p class="mb-2"><span class="fw-bold">Status:</span>
-                  <p-tag
-                    [value]="dog.status === 'CADASTRO_INCOMPLETO' ? 'Cadastro incompleto' : (dog.status || '—')"
-                    [severity]="dog.status === 'CADASTRO_INCOMPLETO' ? 'warn' : (dog.status === 'APROVADO' ? 'success' : (dog.status === 'REJEITADO' ? 'danger' : 'info'))"
-                  ></p-tag>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold">Nome Completo</label>
+                <p class="form-control-plaintext">
+                  {{ user.name || user.userName || 'Não informado' }}
                 </p>
-
-                <div
-                  class="mt-auto d-flex justify-content-between align-items-center"
-                >
-                  <button pButton type="button" class="p-button-sm p-button-outlined" icon="pi pi-video" label="Enviar vídeo" (click)="openVideoModal(dog)"></button>
-                  <small
-                    class="text-muted"
-                    *ngIf="dog.videoOption && dog.videoOption !== 'NONE'"
-                    >Vídeo: {{ dog.videoOption }}</small
-                  >
-                </div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold">E-mail</label>
+                <p class="form-control-plaintext">
+                  {{ user.email || 'Não informado' }}
+                </p>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold">Telefone</label>
+                <p class="form-control-plaintext">
+                  {{ user.telefone || 'Não informado' }}
+                </p>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold">CPF</label>
+                <p class="form-control-plaintext">
+                  {{ user.cpf || 'Não informado' }}
+                </p>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold">Tipo de Usuário</label>
+                <p class="form-control-plaintext">
+                  <p-tag [value]="getRoleDisplayName(user.role)" severity="secondary"></p-tag>
+                </p>
               </div>
             </div>
-          </div>
+          </ng-template>
+        </p-card>
+      </div>
+      <div class="profile-section">
+        <div
+          class="section-header d-flex justify-content-between align-items-center"
+          >
+          <h3><i class="fas fa-map-marker-alt me-2"></i> Meus Endereços</h3>
+          <button pButton type="button" label="Adicionar Endereço" icon="pi pi-plus" class="p-button-sm" (click)="openAddressModal()"></button>
         </div>
+        <ng-template #noAddress>
+          <p-card>
+            <ng-template pTemplate="content">
+              <i class="fas fa-map-marked-alt fa-3x text-muted mb-3"></i>
+              <h5 class="text-muted mb-2">Nenhum endereço cadastrado</h5>
+              <p class="text-muted mb-3">
+                Adicione um endereço para ver seus detalhes aqui.
+              </p>
+            </ng-template>
+          </p-card>
+        </ng-template>
+      </div>
+      <!-- Meus Cães -->
+      <div class="profile-section">
+        <div
+          class="section-header d-flex justify-content-between align-items-center"
+          >
+          <h3><i class="fas fa-dog me-2"></i> Meus Cães</h3>
+          <a [routerLink]="['/public/cadastro-cao']">
+            <button pButton type="button" label="Cadastrar novo cão" icon="pi pi-plus" class="p-button-sm p-button-outlined"></button>
+          </a>
+        </div>
+        @if (loadingDogs) {
+          <div class="text-center py-4">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Carregando...</span>
+            </div>
+            <p class="mt-3">Carregando seus cadastros...</p>
+          </div>
+        }
+        @if (dogsError && !loadingDogs) {
+          <div
+            class="alert alert-danger"
+            role="alert"
+            >
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            {{ dogsError }}
+          </div>
+        }
+        @if (!loadingDogs && !dogsError) {
+          <div>
+            @if (dogs.length === 0) {
+              <p-card>
+                <ng-template pTemplate="content">
+                  <i class="fas fa-dog fa-3x text-muted mb-3"></i>
+                  <h5 class="text-muted mb-2">Você ainda não cadastrou nenhum cão</h5>
+                  <p class="text-muted mb-3">
+                    Cadastre um cão para poder enviar o vídeo na sua lista.
+                  </p>
+                  <a [routerLink]="['/public/cadastro-cao']">
+                    <button pButton type="button" label="Cadastrar cão" icon="pi pi-plus"></button>
+                  </a>
+                </ng-template>
+              </p-card>
+            }
+            @if (dogs.length > 0) {
+              <div class="row">
+                @for (dog of dogs; track dog) {
+                  <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100">
+                      <div class="card-body d-flex flex-column">
+                        <div class="d-flex align-items-center mb-3">
+                          <i class="fas fa-paw fa-lg text-primary me-2"></i>
+                          <h5 class="card-title mb-0">{{ dog.nome }}</h5>
+                        </div>
+                        <p class="mb-2"><span class="fw-bold">Raça:</span> {{ dog.raca || '—' }}</p>
+                        <p class="mb-2"><span class="fw-bold">Sexo:</span> {{ dog.sexo }}</p>
+                        <p class="mb-2"><span class="fw-bold">Status:</span>
+                        <p-tag
+                          [value]="dog.status === 'CADASTRO_INCOMPLETO' ? 'Cadastro incompleto' : (dog.status || '—')"
+                          [severity]="dog.status === 'CADASTRO_INCOMPLETO' ? 'warn' : (dog.status === 'APROVADO' ? 'success' : (dog.status === 'REJEITADO' ? 'danger' : 'info'))"
+                        ></p-tag>
+                      </p>
+                      <div
+                        class="mt-auto d-flex justify-content-between align-items-center"
+                        >
+                        <button pButton type="button" class="p-button-sm p-button-outlined" icon="pi pi-video" label="Enviar vídeo" (click)="openVideoModal(dog)"></button>
+                        @if (dog.videoOption && dog.videoOption !== 'NONE') {
+                          <small
+                            class="text-muted"
+                            >Vídeo: {{ dog.videoOption }}</small
+                            >
+                          }
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        }
       </div>
     </div>
-  </div>
+  }
 
   <!-- Profile Edit Modal -->
   <app-profile-edit-modal
@@ -173,7 +181,7 @@
     [user]="user"
     (closeModal)="closeProfileEditModal()"
     (profileUpdated)="onProfileUpdated($event)"
-  >
+    >
   </app-profile-edit-modal>
 
   <!-- Address Modal -->
@@ -182,18 +190,20 @@
     [address]="currentEditingAddress"
     (closeModal)="closeAddressModal()"
     (addressSaved)="onAddressSaved($event)"
-  >
+    >
   </app-address-modal>
 
   <!-- Modal: Enviar Vídeo do Cão (PrimeNG) -->
   <p-dialog [(visible)]="isVideoModalOpen" [modal]="true" [dismissableMask]="true" [closable]="true" header="Enviar vídeo do cão" [style]="{width: '520px'}">
     <ng-template pTemplate="content">
-      <div *ngIf="selectedCadastro" class="mb-3">
-        <p class="mb-1">
-          <span class="fw-bold">Cão:</span> {{ selectedCadastro.nome }}
-        </p>
-        <p class="text-muted mb-0">Escolha uma opção de envio de vídeo:</p>
-      </div>
+      @if (selectedCadastro) {
+        <div class="mb-3">
+          <p class="mb-1">
+            <span class="fw-bold">Cão:</span> {{ selectedCadastro.nome }}
+          </p>
+          <p class="text-muted mb-0">Escolha uma opção de envio de vídeo:</p>
+        </div>
+      }
 
       <div class="mb-3">
         <div class="field-radiobutton mb-2">
@@ -214,25 +224,33 @@
         </div>
       </div>
 
-      <div *ngIf="videoOption === 'UPLOAD'" class="mb-3">
-        <label class="form-label">Selecione o arquivo de vídeo</label>
-        <p-fileUpload mode="basic" accept="video/*" chooseLabel="Escolher" (onSelect)="onPrimeVideoSelect($event)"></p-fileUpload>
-        <small class="text-muted">Formatos suportados conforme regras do sistema.</small>
-      </div>
+      @if (videoOption === 'UPLOAD') {
+        <div class="mb-3">
+          <label class="form-label">Selecione o arquivo de vídeo</label>
+          <p-fileUpload mode="basic" accept="video/*" chooseLabel="Escolher" (onSelect)="onPrimeVideoSelect($event)"></p-fileUpload>
+          <small class="text-muted">Formatos suportados conforme regras do sistema.</small>
+        </div>
+      }
 
-      <div *ngIf="videoOption === 'URL'" class="mb-3">
-        <label class="form-label">URL do vídeo (YouTube ou outro)</label>
-        <input pInputText type="url" [(ngModel)]="videoUrl" placeholder="https://..." />
-      </div>
+      @if (videoOption === 'URL') {
+        <div class="mb-3">
+          <label class="form-label">URL do vídeo (YouTube ou outro)</label>
+          <input pInputText type="url" [(ngModel)]="videoUrl" placeholder="https://..." />
+        </div>
+      }
 
-      <div *ngIf="videoOption === 'WHATSAPP'" class="mb-3 d-flex align-items-center">
-        <p-checkbox inputId="confirmaWhatsapp" [(ngModel)]="confirmaWhatsapp" binary="true"></p-checkbox>
-        <label for="confirmaWhatsapp" class="ms-2">Confirmo que enviarei o vídeo via WhatsApp para a equipe.</label>
-      </div>
+      @if (videoOption === 'WHATSAPP') {
+        <div class="mb-3 d-flex align-items-center">
+          <p-checkbox inputId="confirmaWhatsapp" [(ngModel)]="confirmaWhatsapp" binary="true"></p-checkbox>
+          <label for="confirmaWhatsapp" class="ms-2">Confirmo que enviarei o vídeo via WhatsApp para a equipe.</label>
+        </div>
+      }
 
-      <div *ngIf="videoError">
-        <p-message severity="error" [text]="videoError"></p-message>
-      </div>
+      @if (videoError) {
+        <div>
+          <p-message severity="error" [text]="videoError"></p-message>
+        </div>
+      }
     </ng-template>
     <ng-template pTemplate="footer">
       <button pButton type="button" label="Cancelar" class="p-button-text" (click)="closeVideoModal()" [disabled]="isSubmittingVideo"></button>

@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { Router, RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../../../services/auth.service';
@@ -26,13 +26,11 @@ import { MessageModule } from 'primeng/message';
   selector: "app-profile",
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     FormsModule,
     RouterModule,
     ProfileEditModalComponent,
     AddressModalComponent,
-    // PrimeNG modules para UI
     ButtonModule,
     CardModule,
     DialogModule,
@@ -42,8 +40,8 @@ import { MessageModule } from 'primeng/message';
     CheckboxModule,
     TagModule,
     ProgressSpinnerModule,
-    MessageModule,
-  ],
+    MessageModule
+],
   templateUrl: './profile.html',
   styleUrls: ['./profile.scss']
 })

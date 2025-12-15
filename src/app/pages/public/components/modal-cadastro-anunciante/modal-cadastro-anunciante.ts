@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { NotificationService } from '../../../../services/notification.service';
 import { CadastroAnunciante } from '../../../../interfaces/cadastro-anunciante.interface';
@@ -7,7 +7,7 @@ import { CadastroAnunciante } from '../../../../interfaces/cadastro-anunciante.i
 @Component({
   selector: 'app-modal-cadastro-anunciante',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [ReactiveFormsModule],
   templateUrl: './modal-cadastro-anunciante.html',
   styleUrls: ['./modal-cadastro-anunciante.scss']
 })

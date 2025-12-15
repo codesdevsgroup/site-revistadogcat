@@ -6,37 +6,41 @@
     </div>
   </div>
 
-  <div class="row" *ngIf="!loading; else loadingTpl">
-    <div class="col-12" *ngIf="caes.length === 0">
-      <div class="alert alert-info">Nenhum cão aprovado para votação.</div>
-    </div>
-
-    <div class="col-md-4 mb-4" *ngFor="let cao of caes; trackBy: trackByCadastroId">
-      <div class="card h-100 shadow-sm">
-        <div class="card-body d-flex flex-column">
-          <h5 class="card-title">{{ cao.nomeCao }}</h5>
-          <p class="card-subtitle mb-2 text-muted">Raça: {{ cao.raca.nome }}</p>
-          <p class="mb-2">Proprietário: {{ cao.proprietario.nome }}</p>
-          <div class="mt-auto d-flex gap-2">
-            <button class="btn btn-outline-primary" (click)="onVotar(cao.cadastroCaoId, 'COMUM')">
-              Votar (Comum)
-            </button>
-            <button class="btn btn-primary" (click)="onVotar(cao.cadastroCaoId, 'SUPER')">
-              Votar (Super)
-            </button>
+  @if (!loading) {
+    <div class="row">
+      @if (caes.length === 0) {
+        <div class="col-12">
+          <div class="alert alert-info">Nenhum cão aprovado para votação.</div>
+        </div>
+      }
+      @for (cao of caes; track trackByCadastroId($index, cao)) {
+        <div class="col-md-4 mb-4">
+          <div class="card h-100 shadow-sm">
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title">{{ cao.nomeCao }}</h5>
+              <p class="card-subtitle mb-2 text-muted">Raça: {{ cao.raca.nome }}</p>
+              <p class="mb-2">Proprietário: {{ cao.proprietario.nome }}</p>
+              <div class="mt-auto d-flex gap-2">
+                <button class="btn btn-outline-primary" (click)="onVotar(cao.cadastroCaoId, 'COMUM')">
+                  Votar (Comum)
+                </button>
+                <button class="btn btn-primary" (click)="onVotar(cao.cadastroCaoId, 'SUPER')">
+                  Votar (Super)
+                </button>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      }
     </div>
-  </div>
-
-  <ng-template #loadingTpl>
+  } @else {
     <div class="d-flex justify-content-center align-items-center py-5">
       <div class="spinner-border" role="status">
         <span class="visually-hidden">Carregando...</span>
       </div>
     </div>
-  </ng-template>
+  }
+
 
   <!-- Modal de Login Necessário -->
   <app-login-required-modal [returnUrl]="'/votacao'"></app-login-required-modal>

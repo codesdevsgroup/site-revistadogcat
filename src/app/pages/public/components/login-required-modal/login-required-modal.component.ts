@@ -1,13 +1,13 @@
 import { Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
+
 
 declare var bootstrap: any;
 
 @Component({
   selector: 'app-login-required-modal',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './login-required-modal.component.html',
   styleUrl: './login-required-modal.component.scss'
 })

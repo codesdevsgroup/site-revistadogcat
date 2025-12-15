@@ -1,5 +1,5 @@
 import { Component, OnInit, HostListener, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
 import { EdicoesService } from '../../../../services/edicoes.service';
@@ -9,7 +9,7 @@ import { environment } from '../../../../../environments/environment';
 @Component({
   selector: 'app-edicao-viewer',
   standalone: true,
-  imports: [CommonModule, RouterModule, NgxExtendedPdfViewerModule],
+  imports: [RouterModule, NgxExtendedPdfViewerModule],
   templateUrl: './edicao-viewer.html',
   styleUrl: './edicao-viewer.scss'
 })

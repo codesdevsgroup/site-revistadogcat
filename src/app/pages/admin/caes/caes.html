@@ -5,27 +5,25 @@
       Cães Cadastrados
     </h1>
     <div class="page-actions">
-      <button pButton type="button" icon="pi pi-cog" label="Gerenciar Raças"
-        (click)="openBreedModal()"
-        *ngIf="canManageBreeds()"
-      ></button>
+      @if (canManageBreeds()) {
+        <button pButton type="button" icon="pi pi-cog" label="Gerenciar Raças"
+          (click)="openBreedModal()"
+        ></button>
+      }
       <button pButton type="button" icon="pi pi-plus" label="Cadastrar Cão" (click)="navigateToCadastro()"></button>
     </div>
   </div>
 
-  <ng-container *ngIf="!isLoading; else loadingTemplate">
+  @if (!isLoading) {
     <div class="caes-table-container">
       <div class="table-header">
         <h2>Lista de Cães ({{ filteredCaes.length }})</h2>
         <div class="table-filters">
           <input pInputText type="text" placeholder="Buscar por nome, dono ou registro..." class="search-input" (input)="dt.filterGlobal($any($event.target).value, 'contains')" />
-
           <p-select [options]="racas" optionLabel="nome" optionValue="id" placeholder="Todas as raças" (onChange)="dt.filter($event.value, 'racaId', 'equals')" appendTo="body"></p-select>
-
           <p-select [options]="statuses" optionLabel="label" optionValue="value" placeholder="Todos os status" (onChange)="dt.filter($event.value, 'status', 'equals')" appendTo="body"></p-select>
         </div>
       </div>
-
       <p-table #dt [value]="filteredCaes" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10,20,50]" sortMode="multiple" [tableStyle]="{'min-width':'70rem'}" [globalFilterFields]="['nome','numeroRegistro','donoCao.nome']" dataKey="cadastroId" [paginatorDropdownAppendTo]="'body'">
         <ng-template pTemplate="header">
           <tr>
@@ -44,8 +42,12 @@
             <td>
               <div class="cao-name">
                 <strong>{{ cao.nome }}</strong>
-                <span *ngIf="isCaoPendente(cao)" class="badge bg-warning ms-1">Cadastro incompleto</span>
-                <small *ngIf="cao.numeroRegistro">#{{ cao.numeroRegistro }}</small>
+                @if (isCaoPendente(cao)) {
+                  <span class="badge bg-warning ms-1">Cadastro incompleto</span>
+                }
+                @if (cao.numeroRegistro) {
+                  <small>#{{ cao.numeroRegistro }}</small>
+                }
               </div>
             </td>
             <td>{{ getRacaName(cao.racaId) || cao.raca?.nome || 'N/A' }}</td>
@@ -75,31 +77,33 @@
           </tr>
         </ng-template>
       </p-table>
-
       <ng-template #emptyState>
         <div class="empty-state">
           <i class="fas fa-dog"></i>
           <h3>Nenhum cão encontrado</h3>
-          <p *ngIf="searchTerm || selectedBreedId">
-            Tente ajustar os filtros de busca ou
-            <button class="btn-link" (click)="clearFilters()">
-              limpar filtros
-            </button>
-          </p>
-          <p *ngIf="!searchTerm && !selectedBreedId">
-            Ainda não há cães cadastrados no sistema.
-          </p>
+          @if (searchTerm || selectedBreedId) {
+            <p>
+              Tente ajustar os filtros de busca ou
+              <button class="btn-link" (click)="clearFilters()">
+                limpar filtros
+              </button>
+            </p>
+          }
+          @if (!searchTerm && !selectedBreedId) {
+            <p>
+              Ainda não há cães cadastrados no sistema.
+            </p>
+          }
         </div>
       </ng-template>
     </div>
-  </ng-container>
-
-  <ng-template #loadingTemplate>
+  } @else {
     <div class="loading-state">
       <div class="spinner"></div>
       <p>Carregando cães...</p>
     </div>
-  </ng-template>
+  }
+
 </div>
 
 <app-raca-manage-dialog

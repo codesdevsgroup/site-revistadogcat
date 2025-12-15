@@ -12,7 +12,7 @@ import {
   ReactiveFormsModule,
 } from "@angular/forms";
 import { RouterModule, Router } from "@angular/router";
-import { CommonModule } from "@angular/common";
+
 import { HttpEvent, HttpEventType } from "@angular/common/http";
 import { Subscription } from "rxjs";
 import { FooterComponent } from "../components/footer/footer";
@@ -34,7 +34,7 @@ import { Usuario as User } from "../../../interfaces/usuario.interface";
 @Component({
   selector: "app-cadastro-cao",
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, FooterComponent],
+  imports: [ReactiveFormsModule, RouterModule, FooterComponent],
   templateUrl: "./cadastro-cao.html",
   styleUrls: ["./cadastro-cao.scss"],
 })

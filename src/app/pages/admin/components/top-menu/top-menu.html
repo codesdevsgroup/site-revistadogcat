@@ -21,21 +21,23 @@
             <i class="fas fa-chevron-down user-arrow"></i>
           </button>
 
-          <div class="user-dropdown" *ngIf="userMenuOpen">
-            <button type="button" class="dropdown-item" (click)="navigateToProfile()">
-              <i class="fas fa-user-circle"></i>
-              <span>Meu Perfil</span>
-            </button>
-            <button type="button" class="dropdown-item" (click)="navigateToSettings()">
+          @if (userMenuOpen) {
+            <div class="user-dropdown">
+              <button type="button" class="dropdown-item" (click)="navigateToProfile()">
+                <i class="fas fa-user-circle"></i>
+                <span>Meu Perfil</span>
+              </button>
+              <button type="button" class="dropdown-item" (click)="navigateToSettings()">
                 <i class="fas fa-cog"></i>
                 <span>Configurações</span>
               </button>
-            <hr class="dropdown-divider">
-            <button type="button" class="dropdown-item logout" (click)="logout()">
+              <hr class="dropdown-divider">
+              <button type="button" class="dropdown-item logout" (click)="logout()">
                 <i class="fas fa-sign-out-alt"></i>
                 <span>Sair</span>
               </button>
-          </div>
+            </div>
+          }
         </div>
       </ng-template>
     </p-menubar>

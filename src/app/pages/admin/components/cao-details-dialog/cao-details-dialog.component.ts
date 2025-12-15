@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { SelectItem } from 'primeng/api';
 import { AdminCao as Cao, AdminRaca as Raca } from 'src/app/interfaces';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
@@ -16,7 +16,6 @@ import { CadastroCaoService } from '../../../../services/cadastro-cao.service';
   selector: 'app-cao-details-dialog',
   standalone: true,
   imports: [
-    CommonModule,
     FormsModule,
     DialogModule,
     InputTextModule,
@@ -25,7 +24,7 @@ import { CadastroCaoService } from '../../../../services/cadastro-cao.service';
     ToggleSwitchModule,
     DatePickerModule,
     FileUploadModule
-  ],
+],
   templateUrl: './cao-details-dialog.component.html',
   styleUrls: ['./cao-details-dialog.component.scss']
 })

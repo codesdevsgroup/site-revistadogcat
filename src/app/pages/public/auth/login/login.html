@@ -8,22 +8,28 @@
 
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="auth-form">
       <div class="form-group">
-          <label for="identification" class="form-label">E-mail ou CPF</label>
-          <input
-            type="text"
-            id="identification"
-            formControlName="identification"
-            class="form-input"
-            [class.error]="loginForm.get('identification')?.invalid && loginForm.get('identification')?.touched"
-            placeholder="Digite seu e-mail ou CPF"
+        <label for="identification" class="form-label">E-mail ou CPF</label>
+        <input
+          type="text"
+          id="identification"
+          formControlName="identification"
+          class="form-input"
+          [class.error]="loginForm.get('identification')?.invalid && loginForm.get('identification')?.touched"
+          placeholder="Digite seu e-mail ou CPF"
           >
-          <div class="error-message" *ngIf="loginForm.get('identification')?.invalid && loginForm.get('identification')?.touched">
-             <span *ngIf="loginForm.get('identification')?.errors?.['required']">E-mail ou CPF é obrigatório</span>
-             <span *ngIf="loginForm.get('identification')?.errors?.['invalidIdentification']">Digite um e-mail válido ou CPF com 11 dígitos</span>
-           </div>
+          @if (loginForm.get('identification')?.invalid && loginForm.get('identification')?.touched) {
+            <div class="error-message">
+              @if (loginForm.get('identification')?.errors?.['required']) {
+                <span>E-mail ou CPF é obrigatório</span>
+              }
+              @if (loginForm.get('identification')?.errors?.['invalidIdentification']) {
+                <span>Digite um e-mail válido ou CPF com 11 dígitos</span>
+              }
+            </div>
+          }
         </div>
 
-      <div class="form-group">
+        <div class="form-group">
           <label for="password" class="form-label">Senha</label>
           <div class="password-input-container">
             <input
@@ -33,47 +39,57 @@
               class="form-input"
               [class.error]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
               placeholder="Digite sua senha"
-            >
-            <button
-              type="button"
-              class="password-toggle"
-              (click)="togglePasswordVisibility()"
-            >
-              <i [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
-            </button>
+              >
+              <button
+                type="button"
+                class="password-toggle"
+                (click)="togglePasswordVisibility()"
+                >
+                <i [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+              </button>
+            </div>
+            @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
+              <div class="error-message">
+                @if (loginForm.get('password')?.errors?.['required']) {
+                  <span>Senha é obrigatória</span>
+                }
+                @if (loginForm.get('password')?.errors?.['minlength']) {
+                  <span>Senha é obrigatória</span>
+                }
+              </div>
+            }
           </div>
-          <div class="error-message" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
-            <span *ngIf="loginForm.get('password')?.errors?.['required']">Senha é obrigatória</span>
-            <span *ngIf="loginForm.get('password')?.errors?.['minlength']">Senha é obrigatória</span>
+
+          <div class="form-actions">
+            <a routerLink="/auth/reset-password" class="forgot-password-link">
+              Esqueceu sua senha?
+            </a>
           </div>
-        </div>
 
-      <div class="form-actions">
-        <a routerLink="/auth/reset-password" class="forgot-password-link">
-          Esqueceu sua senha?
-        </a>
+          <button
+            type="submit"
+            class="auth-button primary"
+            [disabled]="isSubmitting || loginForm.invalid"
+            >
+            @if (!isSubmitting) {
+              <span>Entrar</span>
+            }
+            @if (isSubmitting) {
+              <span class="loading-text">
+                <i class="fas fa-spinner loading-icon"></i>
+                Entrando...
+              </span>
+            }
+          </button>
+
+          <div class="auth-footer">
+            <p class="auth-footer-text">
+              Não tem uma conta?
+              <a routerLink="/auth/register" class="auth-link">
+                Criar conta
+              </a>
+            </p>
+          </div>
+        </form>
       </div>
-
-      <button
-          type="submit"
-          class="auth-button primary"
-          [disabled]="isSubmitting || loginForm.invalid"
-        >
-          <span *ngIf="!isSubmitting">Entrar</span>
-          <span *ngIf="isSubmitting" class="loading-text">
-          <i class="fas fa-spinner loading-icon"></i>
-          Entrando...
-        </span>
-        </button>
-
-      <div class="auth-footer">
-        <p class="auth-footer-text">
-          Não tem uma conta?
-          <a routerLink="/auth/register" class="auth-link">
-            Criar conta
-          </a>
-        </p>
-      </div>
-    </form>
-  </div>
-</div>
+    </div>

@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { Router } from '@angular/router';
 import { RelatoriosModalComponent } from '../../../components/relatorios-modal/relatorios-modal';
 import { UsuarioModalComponent } from '../../../components/usuario-modal/usuario-modal';
@@ -23,7 +23,7 @@ import { SkeletonModule } from 'primeng/skeleton';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RelatoriosModalComponent, UsuarioModalComponent, ButtonModule, CardModule, TooltipModule, TableModule, ChartModule, SkeletonModule, TagModule, DividerModule, BadgeModule, PanelModule, ProgressBarModule],
+  imports: [RelatoriosModalComponent, UsuarioModalComponent, ButtonModule, CardModule, TooltipModule, TableModule, ChartModule, SkeletonModule, TagModule, DividerModule, BadgeModule, PanelModule, ProgressBarModule],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.scss']
 })

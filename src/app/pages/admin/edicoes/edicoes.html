@@ -8,50 +8,60 @@
   </div>
 
   <div class="content">
-    <div class="alert alert-info" *ngIf="loading">Carregando edições...</div>
-    <div class="alert alert-danger" *ngIf="!loading && error">{{ error }}</div>
+    @if (loading) {
+      <div class="alert alert-info">Carregando edições...</div>
+    }
+    @if (!loading && error) {
+      <div class="alert alert-danger">{{ error }}</div>
+    }
 
-    <div class="empty-state" *ngIf="!loading && !error && edicoesList.length === 0">
-      <i class="fas fa-book"></i>
-      <p>Nenhuma edição cadastrada ainda.</p>
-      <a class="btn btn-secondary" routerLink="/admin/edicoes/novo">Cadastrar Edição</a>
-    </div>
+    @if (!loading && !error && edicoesList.length === 0) {
+      <div class="empty-state">
+        <i class="fas fa-book"></i>
+        <p>Nenhuma edição cadastrada ainda.</p>
+        <a class="btn btn-secondary" routerLink="/admin/edicoes/novo">Cadastrar Edição</a>
+      </div>
+    }
 
-    <div class="table-responsive" *ngIf="edicoesList.length > 0">
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th>Data</th>
-            <th>Título</th>
-            <th>Descrição</th>
-            <th>PDF</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let edicao of edicoesList; trackBy: trackByEdicaoId">
-            <td>{{ formatarData(edicao.data) }}</td>
-            <td>{{ edicao.titulo }}</td>
-            <td>{{ edicao.descricao | slice:0:50 }}{{ edicao.descricao.length > 50 ? '...' : '' }}</td>
-            <td>
-              <span class="badge" [class.bg-success]="edicao.pdfUrl" [class.bg-secondary]="!edicao.pdfUrl">
-                {{ edicao.pdfUrl ? 'Disponível' : 'Em breve' }}
-              </span>
-            </td>
-            <td class="actions">
-              <button class="btn btn-outline-primary btn-sm" [disabled]="!edicao.pdfUrl" (click)="abrirPdf(edicao)">
-                <i class="fas fa-file-pdf"></i> Abrir
-              </button>
-              <a class="btn btn-outline-secondary btn-sm" [routerLink]="['/admin/edicoes', edicao.id]">
-                <i class="fas fa-edit"></i> Editar
-              </a>
-              <button class="btn btn-outline-danger btn-sm" (click)="excluir(edicao)">
-                <i class="fas fa-trash"></i> Excluir
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    @if (edicoesList.length > 0) {
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Título</th>
+              <th>Descrição</th>
+              <th>PDF</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (edicao of edicoesList; track trackByEdicaoId($index, edicao)) {
+              <tr>
+                <td>{{ formatarData(edicao.data) }}</td>
+                <td>{{ edicao.titulo }}</td>
+                <td>{{ edicao.descricao | slice:0:50 }}{{ edicao.descricao.length > 50 ? '...' : '' }}</td>
+                <td>
+                  <span class="badge" [class.bg-success]="edicao.pdfUrl" [class.bg-secondary]="!edicao.pdfUrl">
+                    {{ edicao.pdfUrl ? 'Disponível' : 'Em breve' }}
+                  </span>
+                </td>
+                <td class="actions">
+                  <button class="btn btn-outline-primary btn-sm" [disabled]="!edicao.pdfUrl" (click)="abrirPdf(edicao)">
+                    <i class="fas fa-file-pdf"></i> Abrir
+                  </button>
+                  <a class="btn btn-outline-secondary btn-sm" [routerLink]="['/admin/edicoes', edicao.id]">
+                    <i class="fas fa-edit"></i> Editar
+                  </a>
+                  <button class="btn btn-outline-danger btn-sm" (click)="excluir(edicao)">
+                    <i class="fas fa-trash"></i> Excluir
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
   </div>
 </div>
