@@ -15,17 +15,33 @@
       }
       @for (cao of caes; track trackByCadastroId($index, cao)) {
         <div class="col-md-4 mb-4">
-          <div class="card h-100 shadow-sm">
-            <div class="card-body d-flex flex-column">
-              <h5 class="card-title">{{ cao.nomeCao }}</h5>
-              <p class="card-subtitle mb-2 text-muted">Raça: {{ cao.raca.nome }}</p>
-              <p class="mb-2">Proprietário: {{ cao.proprietario.nome }}</p>
-              <div class="mt-auto d-flex gap-2">
-                <button class="btn btn-outline-primary" (click)="onVotar(cao.cadastroCaoId, 'COMUM')">
-                  Votar (Comum)
+          <div class="edicao-card glass-card h-100">
+            <div class="card-image-wrapper">
+               @if (cao.fotoPerfil) {
+                <img [src]="cao.fotoPerfil" [alt]="cao.nomeCao" class="card-img" loading="lazy">
+               } @else {
+                <div class="default-cover">
+                  <span class="cover-icon">🐕</span>
+                  <span class="cover-text">Sem Foto</span>
+                </div>
+               }
+               <div class="card-overlay">
+                 <span class="edition-badge">{{ cao.raca.nome }}</span>
+               </div>
+            </div>
+
+            <div class="card-content">
+              <h2 class="card-title">{{ cao.nomeCao }}</h2>
+              <p class="card-description mb-2">
+                <i class="fas fa-user-circle me-1"></i> {{ cao.proprietario.nome }}
+              </p>
+
+              <div class="card-actions mt-3">
+                <button class="btn btn-vote-common mb-2" (click)="onVotar(cao.cadastroCaoId, 'COMUM')">
+                  <i class="far fa-thumbs-up"></i> Votar (Comum)
                 </button>
-                <button class="btn btn-primary" (click)="onVotar(cao.cadastroCaoId, 'SUPER')">
-                  Votar (Super)
+                <button class="btn btn-vote-super" (click)="onVotar(cao.cadastroCaoId, 'SUPER')">
+                  <i class="fas fa-star"></i> Votar (Super)
                 </button>
               </div>
             </div>

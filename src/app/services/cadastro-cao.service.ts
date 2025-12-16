@@ -56,6 +56,7 @@ export interface CaoListItem {
   createdAt: string;
   status?: StatusCadastro;
   ativo?: boolean;
+  fotoPerfil?: string;
 }
 
 export interface CaoListResponse {
