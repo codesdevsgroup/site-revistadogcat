@@ -1,75 +1,26 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-
-import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { NotificationService } from '../../../../services/notification.service';
 
 @Component({
   selector: 'app-newsletter',
   standalone: true,
-  imports: [FormsModule, ReactiveFormsModule],
+  imports: [CommonModule],
   templateUrl: './newsletter.html',
-  styleUrl: './newsletter.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrl: './newsletter.scss'
 })
-export class NewsletterComponent implements OnInit {
-  newsletterForm: FormGroup;
-  isSubmitting = false;
-  submitMessage = '';
-  submitSuccess = false;
+export class NewsletterComponent {
+  constructor(private notificationService: NotificationService) {}
 
-  constructor(private fb: FormBuilder) {
-    this.newsletterForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-      acceptTerms: [false, [Validators.requiredTrue]]
-    });
-  }
-
-  ngOnInit() {}
-
-  get email() {
-    return this.newsletterForm.get('email');
-  }
-
-  get acceptTerms() {
-    return this.newsletterForm.get('acceptTerms');
-  }
-
-  onSubmit() {
-    if (this.newsletterForm.valid) {
-      this.isSubmitting = true;
-      this.submitMessage = '';
-      
-      // Simular envio (aqui você integraria com um serviço real)
-      setTimeout(() => {
-        this.isSubmitting = false;
-        this.submitSuccess = true;
-        this.submitMessage = 'Obrigado! Você foi inscrito com sucesso em nossa newsletter.';
-        this.newsletterForm.reset();
-        
-        // Limpar mensagem após 5 segundos
-        setTimeout(() => {
-          this.submitMessage = '';
-          this.submitSuccess = false;
-        }, 5000);
-      }, 2000);
-    } else {
-      this.markFormGroupTouched();
+  assinarWhatsapp(phone: string): void {
+    if (!phone || phone.length < 8) {
+      this.notificationService.warning('Por favor, digite um número de WhatsApp válido.');
+      return;
     }
-  }
 
-  private markFormGroupTouched() {
-    Object.keys(this.newsletterForm.controls).forEach(key => {
-      const control = this.newsletterForm.get(key);
-      control?.markAsTouched();
-    });
-  }
-
-  getEmailErrorMessage(): string {
-    if (this.email?.hasError('required')) {
-      return 'E-mail é obrigatório';
-    }
-    if (this.email?.hasError('email')) {
-      return 'Digite um e-mail válido';
-    }
-    return '';
+    // Simulação de chamada de API (Bot)
+    setTimeout(() => {
+      this.notificationService.success('Sucesso! Em breve você receberá nossas novidades no WhatsApp.');
+    }, 500);
   }
 }

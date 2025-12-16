@@ -8,6 +8,8 @@ import { Router } from '@angular/router';
 import { EdicoesService } from '../../../services/edicoes.service';
 import { NotificationService } from '../../../services/notification.service';
 import AOS from 'aos';
+import { NewsletterComponent } from '../components/newsletter/newsletter';
+import { CategoriesComponent } from '../components/categories/categories';
 
 @Component({
   selector: 'app-home',
@@ -17,7 +19,9 @@ import AOS from 'aos';
     FooterComponent,
     ExpoDogComponent,
     AnuncieAquiComponent,
-    CountUpDirective
+    CountUpDirective,
+    NewsletterComponent,
+    CategoriesComponent
   ],
   templateUrl: './home.html',
   styleUrl: './home.scss'
@@ -39,40 +43,27 @@ export class HomeComponent implements OnInit {
   // Inicializa AOS (Animate On Scroll) para animações de entrada suaves nos blocos da Home
   ngOnInit(): void {
     AOS.init({
-      duration: 800,
-      once: true,
-      offset: 100
+      duration: 1000,
+      once: true
     });
   }
 
-  sejaAssinante(): void {
-    const message = 'Estamos finalizando os planos de assinatura. Aproveite! Todo o conteúdo do site está disponível gratuitamente por tempo limitado.';
-    // Usando window.alert ou serviço de notificação se preferir um modal mais bonito depois
-    // this.notificationService.info(message);
-    // Como o user pediu "um modal, aviso", e o notificationService é um toaster,
-    // um alert nativo é mais intrusivo como "aviso", ou podemos usar o notificationService com duração longa.
-    // O user disse "modal, aviso", vou usar o notificationService.info que é mais elegante,
-    // mas se ele quiser um modal real, precisaria criar um componente.
-    // Dado o contexto "aviso", o toaster info serve bem.
-    this.notificationService.info(message);
+  sejaAssinante() {
+    this.notificationService.info('Funcionalidade de assinatura em breve! Entre em contato conosco pelo WhatsApp.');
   }
 
-  verUltimaEdicao(): void {
+  verUltimaEdicao() {
     this.edicoesService.listarUltima().subscribe({
       next: (edicao) => {
         if (edicao && edicao.id) {
           this.router.navigate(['/edicoes', edicao.id, 'visualizar']);
         } else {
-          this.notificationService.warning('Nenhuma edição disponível no momento.');
           this.router.navigate(['/edicoes']);
         }
       },
-      error: (err) => {
-        console.error('Erro ao buscar última edição', err);
-        // Fallback para a lista
+      error: () => {
         this.router.navigate(['/edicoes']);
       }
     });
   }
 }
-
