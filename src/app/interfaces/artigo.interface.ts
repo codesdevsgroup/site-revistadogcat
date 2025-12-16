@@ -40,6 +40,7 @@ export interface Artigo {
   comentarios: number;
   destaque: boolean;
   tags?: string[];
+  tempoLeitura?: string;
   createdAt: string;
   updatedAt: string;
 }
