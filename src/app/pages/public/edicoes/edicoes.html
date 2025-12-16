@@ -5,22 +5,48 @@
     </header>
 
     <div class="edicoes-grid">
-      @for (edicao of edicoesList; track edicao) {
-        <div class="edicao-card">
-          <div class="card-header">
-            <span class="card-date">{{ formatarData(edicao.data) }}</span>
+      @for (edicao of edicoesList; track $index) {
+        <div class="edicao-card glass-card">
+          <div class="card-image-wrapper">
+             @if (edicao.capaUrl) {
+              <img [src]="edicao.capaUrl" [alt]="edicao.titulo" class="card-img" loading="lazy">
+             } @else {
+              <div class="default-cover">
+                <span class="cover-icon">📖</span>
+                <span class="cover-text">Revista Dog & Cat</span>
+              </div>
+             }
+             <div class="card-overlay">
+               <span class="edition-badge">{{ formatarData(edicao.data) }}</span>
+             </div>
           </div>
-          <div class="card-body">
+
+          <div class="card-content">
             <h2 class="card-title">{{ edicao.titulo }}</h2>
-            <p class="card-description">{{ edicao.descricao }}</p>
-            <a class="btn btn-open" [class.disabled]="!edicao.pdfUrl" [routerLink]="['/edicoes', edicao.id, 'visualizar']" [attr.aria-disabled]="!edicao.pdfUrl ? true : null">
-              {{ edicao.pdfUrl ? 'Abrir PDF' : 'Em breve' }}
-            </a>
+            <p class="card-description">{{ edicao.descricao || 'Confira os destaques desta edição incrível.' }}</p>
+
+            <div class="card-actions">
+              <a class="btn btn-view" [routerLink]="['/edicoes', edicao.id, 'visualizar']">
+                Ver Edição
+                <i class="fas fa-arrow-right"></i>
+              </a>
+            </div>
           </div>
         </div>
       }
     </div>
   </div>
 
+  @if (loading) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Carregando edições...</p>
+    </div>
+  }
 
+  @if (error) {
+    <div class="error-state">
+      <p>😕 {{ error }}</p>
+    </div>
+  }
 </section>
