@@ -93,7 +93,7 @@
     <div class="form-group">
       <label for="pdf" class="form-label">
         <i class="fas fa-file-pdf me-2"></i>
-        Arquivo PDF *
+        Arquivo PDF {{ isEdit ? '(Opcional se manter o atual)' : '*' }}
       </label>
       <input
         type="file"
@@ -101,7 +101,7 @@
         class="form-control"
         accept=".pdf"
         (change)="onPdfSelected($event)"
-        [class.is-invalid]="!selectedPdf && form.touched"
+        [class.is-invalid]="!isEdit && !selectedPdf && form.touched"
         />
       @if (selectedPdf) {
         <div class="file-info">
@@ -111,7 +111,7 @@
           </small>
         </div>
       }
-      @if (!selectedPdf && form.touched) {
+      @if (!isEdit && !selectedPdf && form.touched) {
         <div class="invalid-feedback">
           Arquivo PDF é obrigatório
         </div>
