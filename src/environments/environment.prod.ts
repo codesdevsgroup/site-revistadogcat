@@ -5,9 +5,9 @@ export const environment = {
   version: '1.0.0',
   enableLogging: false,
   enableDebugMode: false,
-  maxFileUploadSize: 5242880,
-  supportedImageFormats: ['jpg', 'jpeg', 'png', 'webp'],
-  cacheTimeout: 1800000,
+  maxFileUploadSize: 5242880, // 5MB
+  supportedImageFormats: ['jpg', 'jpeg', 'png', 'gif', 'webp'],
+  cacheTimeout: 300000, // 5 minutes
   features: {
     enableAnalytics: true,
     enableErrorReporting: true,
