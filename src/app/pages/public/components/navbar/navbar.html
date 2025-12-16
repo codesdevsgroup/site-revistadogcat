@@ -53,13 +53,14 @@
             </li>
           }
 
-          <!-- CTA de Assinatura sempre visível -->
+          <!-- CTA de Assinatura sempre visível
           <li class="nav-item d-none d-lg-block">
             <a class="btn btn-cta" routerLink="/assinaturas" (click)="closeMenu()" title="Assine agora">
               <i class="fas fa-crown" aria-hidden="true"></i>
               Assine agora
             </a>
           </li>
+          -->
 
           <!-- Bloco de Autenticação Dinâmico -->
           @if (isAuthenticated$ | async) {
@@ -108,13 +109,14 @@
 
           <!-- Template para o botão de Login -->
 
-          <!-- CTA visível em mobile (dentro do collapse) -->
+          <!-- CTA visível em mobile (dentro do collapse)
           <li class="nav-item d-lg-none mt-2">
             <a class="btn btn-cta w-100" routerLink="/assinaturas" (click)="closeMenu()" title="Assine agora">
               <i class="fas fa-crown" aria-hidden="true"></i>
               Assine agora
             </a>
           </li>
+          -->
         </ul>
       </div>
     </div>

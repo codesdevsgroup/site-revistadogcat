@@ -42,20 +42,18 @@ $navbar-transition: var(--transition-fast);
 }
 
 .navbar {
-  background: linear-gradient(135deg,
-    #1a3d1e 0%,
-    #2a5d34 50%,
-    #1a3d1e 100%);
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
-  box-shadow: var(--shadow-lg);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  /* Premium Dark Glassmorphism */
+  background: rgba(6, 18, 8, 0.85); /* Much darker premium green */
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
   position: fixed;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   top: 0;
   left: 0;
   right: 0;
   z-index: var(--z-sticky);
-  transition: $navbar-transition;
   min-height: $navbar-height;
 
   &::before {
@@ -75,7 +73,6 @@ $navbar-transition: var(--transition-fast);
     z-index: -1;
   }
 
-  // Brand styling
   &-brand {
     @include navbar-item-base;
     font-size: 1.6875rem;
@@ -105,48 +102,38 @@ $navbar-transition: var(--transition-fast);
   .nav-link {
     @include navbar-item-base;
     margin-left: $navbar-padding-x;
-    padding: var(--space-2) var(--space-2);
-    color: rgba(255, 255, 255, 0.92);
-    background: transparent;
-    border: none;
-    border-radius: 0;
-    transition: color var(--transition-fast), transform var(--transition-fast);
-
-    // Underline moderno (cresce da esquerda para a direita)
-    &::after {
-      content: '';
-      position: absolute;
-      left: 0;
-      bottom: -4px;
-      height: 2px;
-      width: 0;
-      background: linear-gradient(90deg, var(--goldenColor), var(--goldenColorLight));
-      transition: width var(--transition-fast);
-      border-radius: var(--radius-md);
-    }
+    padding: 8px 16px;
+    color: rgba(255, 255, 255, 0.85); /* High contrast off-white */
+    font-size: 0.95rem;
+    font-weight: 500;
+    border-radius: 50px;
+    transition: all 0.3s ease;
 
     &:hover {
-      color: rgba(255, 255, 255, 1);
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.1);
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
       transform: translateY(-1px);
-
-      &::after { width: 100%; }
     }
 
     &.active {
-      color: rgba(255, 255, 255, 1);
-
-      &::after { width: 100%; }
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.15);
+      font-weight: 600;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
     }
 
-    &:focus,
+    // Remove old underline styles to keep it clean
+    &::after {
+      display: none;
+    }
+
     &:focus-visible {
-      outline: none !important;
-      box-shadow: none !important;
-      &::after { width: 100%; }
+      outline: 2px solid rgba(255, 255, 255, 0.5);
+      outline-offset: 2px;
     }
   }
 
-  // Login button styling
   .btn-login {
     background: linear-gradient(135deg, var(--goldenColor) 0%, var(--goldenColorLight) 100%);
     color: var(--primaryColor) !important;
