@@ -21,8 +21,8 @@ export class ArtigosComponent implements OnInit {
   featuredArtigo?: Artigo;
   categories: string[] = [];
   activeCategory: string = 'Todos';
-  tituloSecao: string = 'Novidades da Revista';
-  subtituloSecao: string = 'Leituras recentes e recomendações sobre cães e gatos.';
+  tituloSecao: string = 'Destaques do Blog';
+  subtituloSecao: string = 'Conteúdo especializado, dicas de saúde e tudo sobre o universo pet.';
 
   constructor(private artigosService: ArtigosService, private cdr: ChangeDetectorRef) {}
 

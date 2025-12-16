@@ -1,0 +1,169 @@
+<section class="news-section" aria-labelledby="news-title">
+  <!-- Decor -->
+  <div class="bg-decor-blob blob-1"></div>
+  <div class="bg-decor-blob blob-2"></div>
+
+  <div class="container position-relative z-2">
+    <!-- Header -->
+    <div class="section-header text-center mb-5" data-aos="fade-down">
+      <div class="subtitle-badge">
+        <span class="dot"></span> Atualizações
+      </div>
+      <h2 id="news-title" class="section-title">{{ tituloSecao }}</h2>
+      <p class="section-subtitle">{{ subtituloSecao }}</p>
+    </div>
+
+    <!-- Filters -->
+    @if (categories.length > 1) {
+      <div class="filter-container mb-5" data-aos="fade-up">
+        <div class="filter-scroll">
+          <button
+            class="filter-pill"
+            [class.active]="activeCategory === 'Todos'"
+            (click)="selecionarCategoria('Todos')"
+            [attr.aria-pressed]="activeCategory === 'Todos'"
+          >
+            Todos
+          </button>
+          @for (cat of categories; track cat) {
+            <button
+              class="filter-pill"
+              [class.active]="activeCategory === cat"
+              (click)="selecionarCategoria(cat)"
+              [attr.aria-pressed]="activeCategory === cat"
+            >
+              {{ cat }}
+            </button>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- Content -->
+    @if (!loading && !error) {
+
+      <!-- Featured Article -->
+      @if (featuredArtigo; as fa) {
+        @if (activeCategory === 'Todos' || activeCategory === fa.categoria) {
+          <div class="featured-wrapper mb-5" data-aos="fade-up">
+            <div class="featured-card glass-panel">
+              <div class="row g-0 align-items-center h-100">
+                <div class="col-lg-7 h-100">
+                  <div class="featured-image-container">
+                    <img
+                      [src]="getImagemUrl(fa.imagemCapa)"
+                      [alt]="fa.titulo"
+                      (error)="onImageError($event)"
+                      class="featured-img"
+                    >
+                    <div class="floating-badge">
+                      <span class="icon">🔥</span> Destaque da Semana
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-5">
+                  <div class="featured-content">
+                    <div class="meta-tags mb-3">
+                      <span class="category-tag">{{ fa.categoria }}</span>
+                      <span class="date-tag">
+                        <i class="far fa-calendar"></i>
+                        {{ fa.dataPublicacao | date:'dd MMM, yyyy':'':'pt-BR' }}
+                      </span>
+                    </div>
+                    <h3 class="featured-title">{{ fa.titulo }}</h3>
+                    <p class="featured-excerpt">{{ resumoCurto(fa.resumo) }}</p>
+
+                    <div class="featured-footer">
+                      <div class="author">
+                        <div class="avatar-placeholder">{{ fa.autor.charAt(0) }}</div>
+                        <span>{{ fa.autor }}</span>
+                      </div>
+                      <a [routerLink]="['/artigos', fa.id]" class="btn-read-more">
+                        Ler Artigo <i class="fas fa-arrow-right"></i>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+      }
+
+      <!-- Articles Grid -->
+      <div class="articles-grid">
+        @for (artigo of artigosFiltrados; track trackById($index, artigo)) {
+          @if (artigo.id !== featuredArtigo?.id || activeCategory !== 'Todos') {
+            <article class="article-card glass-panel" data-aos="fade-up" [attr.data-aos-delay]="$index * 50">
+              <div class="card-image-wrapper">
+                <img
+                  [src]="getImagemUrl(artigo.imagemCapa)"
+                  [alt]="artigo.titulo"
+                  (error)="onImageError($event)"
+                  class="card-img"
+                  loading="lazy"
+                >
+                <div class="category-overlay">{{ artigo.categoria }}</div>
+              </div>
+
+              <div class="card-content">
+                <div class="card-meta">
+                  <span class="date">{{ artigo.dataPublicacao | date:'dd MMM':'':'pt-BR' }}</span>
+                  <span class="separator">•</span>
+                  <span class="read-time">{{ artigo.tempoLeitura || '5 min' }} leitura</span>
+                </div>
+
+                <h3 class="card-title">
+                  <a [routerLink]="['/artigos', artigo.id]">{{ artigo.titulo }}</a>
+                </h3>
+
+                <p class="card-excerpt">{{ resumoCurto(artigo.resumo) }}</p>
+
+                <div class="card-footer">
+                  <span class="author-name">Por {{ artigo.autor }}</span>
+                  <a [routerLink]="['/artigos', artigo.id]" class="link-arrow">
+                    <i class="fas fa-arrow-right"></i>
+                  </a>
+                </div>
+              </div>
+            </article>
+          }
+        }
+      </div>
+
+    } @else {
+      <!-- Loading State -->
+      @if (loading) {
+        <div class="articles-grid">
+          @for (i of [1,2,3]; track i) {
+            <div class="article-card glass-panel skeleton-mode">
+              <div class="skeleton-image"></div>
+              <div class="p-4">
+                <div class="skeleton-line w-25 mb-3"></div>
+                <div class="skeleton-line w-75 mb-3 h-20"></div>
+                <div class="skeleton-line w-100 mb-2"></div>
+                <div class="skeleton-line w-50"></div>
+              </div>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Error State -->
+      @if (error) {
+        <div class="text-center py-5 glass-panel error-panel mx-auto" style="max-width: 500px">
+          <div class="error-icon mb-3">😕</div>
+          <h3>Ops! Algo deu errado</h3>
+          <p class="mb-0 text-muted">{{ error }}</p>
+        </div>
+      }
+    }
+
+    <!-- View All Action -->
+    <div class="text-center mt-5" data-aos="fade-up">
+      <a routerLink="/artigos" class="btn btn-outline-gradient">
+        Ver Todas as Matérias
+      </a>
+    </div>
+  </div>
+</section>

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ArtigosComponent } from '../components/destaque-edicao/artigos';
+import { ArtigosComponent } from '../components/artigos/artigos';
 import { FooterComponent } from '../components/footer/footer';
 import { ExpoDogComponent } from '../components/expo-dog/expo-dog';
 import { AnuncieAquiComponent } from '../components/anuncie-aqui/anuncie-aqui';
