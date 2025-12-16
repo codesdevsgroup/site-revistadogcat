@@ -1,0 +1,35 @@
+<section class="faq-section" aria-labelledby="faq-title">
+  <div class="container">
+    <div class="row justify-content-center mb-5">
+      <div class="col-lg-8 text-center">
+        <span class="badge-faq">Dúvidas?</span>
+        <h2 id="faq-title" class="section-title">Perguntas Frequentes</h2>
+        <p class="section-subtitle">Tudo o que você precisa saber sobre a Revista Dog & Cat BR</p>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="faq-list">
+          <div
+            class="faq-item"
+            *ngFor="let item of faqItems; let i = index"
+            [class.active]="item.isOpen"
+            (click)="toggleItem(i)"
+          >
+            <div class="faq-header">
+              <h3>{{ item.question }}</h3>
+              <span class="icon-toggle">
+                <i class="fas fa-plus" *ngIf="!item.isOpen"></i>
+                <i class="fas fa-minus" *ngIf="item.isOpen"></i>
+              </span>
+            </div>
+            <div class="faq-body" [style.max-height]="item.isOpen ? '200px' : '0'">
+              <p>{{ item.answer }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

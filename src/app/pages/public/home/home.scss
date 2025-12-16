@@ -585,38 +585,7 @@
   }
 }
 
-.faq-section {
-  background: var(--gray-50);
-}
 
-.glass-card {
-  background: rgba(255,255,255,0.8);
-  border: 1px solid rgba(255,255,255,0.6);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
-}
-
-.accordion-button {
-  border-radius: var(--radius-lg) !important;
-  background-color: var(--white);
-  color: var(--gray-900);
-}
-
-.accordion-button:focus {
-  box-shadow: none;
-}
-
-.faq-section .accordion {
-  --bs-accordion-bg: var(--white);
-  --bs-accordion-border-color: var(--gray-200);
-  --bs-accordion-active-bg: var(--gray-100);
-  --bs-accordion-active-color: var(--primaryColor);
-}
-
-.faq-section .accordion-button:not(.collapsed) {
-  background-color: var(--gray-100);
-  color: var(--primaryColor);
-}
 
 @media (max-width: 992px) {
   .hero-section {

@@ -10,6 +10,7 @@ import { NotificationService } from '../../../services/notification.service';
 import AOS from 'aos';
 import { NewsletterComponent } from '../components/newsletter/newsletter';
 import { CategoriesComponent } from '../components/categories/categories';
+import { FaqComponent } from '../components/faq/faq.component';
 
 @Component({
   selector: 'app-home',
@@ -21,7 +22,8 @@ import { CategoriesComponent } from '../components/categories/categories';
     AnuncieAquiComponent,
     CountUpDirective,
     NewsletterComponent,
-    CategoriesComponent
+    CategoriesComponent,
+    FaqComponent
   ],
   templateUrl: './home.html',
   styleUrl: './home.scss'
