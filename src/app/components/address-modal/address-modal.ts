@@ -19,7 +19,7 @@ export class AddressModalComponent implements OnInit {
 
   private fb = inject(FormBuilder);
   addressForm!: FormGroup;
-  loading = false; // Manter para feedback visual, se necessário
+  loading = false;
   loadingCep = false;
   error = '';
   success = '';
@@ -64,10 +64,7 @@ export class AddressModalComponent implements OnInit {
     this.loadingCep = true;
     this.error = '';
     cep.replace(/\D/g, '');
-// A lógica de busca de CEP via API externa (ViaCEP) deve ser implementada aqui ou em um novo serviço,
-    // se ainda for necessária, já que o EnderecoService foi removido.
-    // Por enquanto, apenas limpa o CEP.
-    this.loadingCep = false; // Desativar loading, pois não há chamada externa
+    this.loadingCep = false;
   }
 
   onCepInput(event: any) {
@@ -107,15 +104,13 @@ export class AddressModalComponent implements OnInit {
       this.loading = true;
       this.error = '';
       this.success = '';
-      const formData: Endereco = this.addressForm.value; // Tipar formData como Endereco
-
-      // Como o endpoint de endereços foi removido, o modal agora apenas emite os dados do formulário.
+      const formData: Endereco = this.addressForm.value;
       this.success = 'Dados do endereço prontos para uso!';
-      this.addressSaved.emit(formData); // Emite os dados do formulário
+      this.addressSaved.emit(formData);
       setTimeout(() => {
         this.loading = false;
         this.onClose();
-      }, 500); // Pequeno delay para feedback visual
+      }, 500);
     } else {
       Object.values(this.addressForm.controls).forEach(control => control.markAsTouched());
     }
