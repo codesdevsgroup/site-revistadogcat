@@ -51,7 +51,7 @@ export class HomeComponent implements OnInit {
   }
 
   sejaAssinante() {
-    this.notificationService.info('Funcionalidade de assinatura em breve! Entre em contato conosco pelo WhatsApp.');
+    this.notificationService.info('Os planos de assinaturas estão sendo criados. Todos os dados da revista estão públicos no momento.');
   }
 
   verUltimaEdicao() {
