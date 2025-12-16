@@ -1,40 +1,88 @@
 <app-newsletter></app-newsletter>
 
 <footer class="footer">
-  <div class="footer-content">
-    <div class="footer-section">
-      <h4>Contato</h4>
-      <p>Rua Dr. José Martins, 111, Sala 03</p>
-      <p>Centro, Sorocaba, SP</p>
-      <p>(15) 99835-0750</p>
-      <p>contato&#64;revistadogcat.com.br</p>
-    </div>
-    <div class="footer-section">
-      <h4>Redes Sociais</h4>
-      <div class="social-links">
-        <a [href]="socialMedia.instagram.url" target="_blank">{{ socialMedia.instagram.displayName }}</a>
-        <a [href]="socialMedia.facebook.url" target="_blank">{{ socialMedia.facebook.displayName }}</a>
-        <a [href]="socialMedia.tiktok.url" target="_blank">{{ socialMedia.tiktok.displayName }}</a>
-        <a [href]="socialMedia.whatsapp.url" target="_blank">{{ socialMedia.whatsapp.displayName }}</a>
+  <!-- Decor Blobs -->
+  <div class="footer-blob blob-1"></div>
+  <div class="footer-blob blob-2"></div>
+
+  <div class="footer-content container">
+    <!-- Brand / Contact -->
+    <div class="footer-section brand-section">
+      <div class="brand-logo mb-4">
+        <h3 class="brand-title">Revista <span class="highlight">Dog&Cat</span></h3>
+        <p class="brand-tagline">O universo pet em suas mãos</p>
+      </div>
+
+      <div class="contact-info">
+        <div class="contact-item">
+          <i class="fas fa-map-marker-alt icon"></i>
+          <div>
+            <p>Rua Dr. José Martins, 111, Sala 03</p>
+            <p class="text-xs text-muted">Centro, Sorocaba, SP</p>
+          </div>
+        </div>
+        <div class="contact-item">
+          <i class="fas fa-phone-alt icon"></i>
+          <p>(15) 99835-0750</p>
+        </div>
+        <div class="contact-item">
+          <i class="fas fa-envelope icon"></i>
+          <p>contato&#64;revistadogcat.com.br</p>
+        </div>
       </div>
     </div>
-    <div class="footer-section">
-      <h4>Links Rápidos</h4>
-      <ul>
-        <li><a href="#">Planos de Assinatura</a></li>
-        <li><a href="#">Edição do Mês</a></li>
-        <li><a href="#">Expo Dog BR</a></li>
-        <li><a href="#">Área do Leitor</a></li>
+
+    <!-- Quick Links -->
+    <div class="footer-section links-section">
+      <h4 class="section-title">Explorar</h4>
+      <ul class="footer-links">
+        <li><a href="#"><i class="fas fa-chevron-right arrow"></i> Planos de Assinatura</a></li>
+        <li><a href="#"><i class="fas fa-chevron-right arrow"></i> Edição do Mês</a></li>
+        <li><a href="#"><i class="fas fa-chevron-right arrow"></i> Expo Dog BR</a></li>
+        <li><a href="#"><i class="fas fa-chevron-right arrow"></i> Área do Leitor</a></li>
       </ul>
     </div>
-  </div>
-  <div class="footer-bottom">
-    <p>© 2025 Revista Dog & Cat BR - Todos os direitos reservados</p>
-    <p>GRÁFICA E EDITORA: PARATODOS</p>
+
+    <!-- Social Media -->
+    <div class="footer-section social-section">
+      <h4 class="section-title">Conecte-se</h4>
+      <p class="mb-4 text-muted small">Siga nossas redes para dicas diárias e novidades.</p>
+
+      <div class="social-links-grid">
+        <a [href]="socialMedia.instagram.url" target="_blank" class="social-btn instagram" aria-label="Instagram">
+          <i class="fab fa-instagram"></i>
+          <span class="tooltip">Instagram</span>
+        </a>
+        <a [href]="socialMedia.facebook.url" target="_blank" class="social-btn facebook" aria-label="Facebook">
+          <i class="fab fa-facebook-f"></i>
+          <span class="tooltip">Facebook</span>
+        </a>
+        <a [href]="socialMedia.tiktok.url" target="_blank" class="social-btn tiktok" aria-label="TikTok">
+          <i class="fab fa-tiktok"></i>
+          <span class="tooltip">TikTok</span>
+        </a>
+        <a [href]="socialMedia.whatsapp.url" target="_blank" class="social-btn whatsapp" aria-label="WhatsApp">
+          <i class="fab fa-whatsapp"></i>
+          <span class="tooltip">WhatsApp</span>
+        </a>
+      </div>
+    </div>
   </div>
 
-  <!-- Faixa CodeDevs -->
-  <div class="codedevs-banner">
-    <p>Desenvolvido com <span class="heart">❤️</span> por <span class="codedevs-text">CodeDevs</span></p>
+  <div class="footer-bottom">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-md-6 text-center text-md-start">
+          <p class="copyright">© 2025 Revista Dog & Cat BR - Todos os direitos reservados</p>
+          <p class="sub-copyright">GRÁFICA E EDITORA: PARATODOS</p>
+        </div>
+        <div class="col-md-6 text-center text-md-end mt-3 mt-md-0">
+           <!-- CodeDevs Banner Integrated -->
+           <div class="codedevs-badge">
+             Desenvolvido com <span class="heart">❤️</span> por <span class="codedevs-text">CodeDevs</span>
+           </div>
+        </div>
+      </div>
+    </div>
   </div>
 </footer>
