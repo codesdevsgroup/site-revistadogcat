@@ -5,7 +5,7 @@
   box-shadow: var(--borderBoxShadow);
   height: 100%;
   transition: transform 0.3s ease;
-  
+
   &:hover {
     transform: translateY(-5px);
   }
@@ -20,11 +20,11 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  
+
   .icon {
     font-size: 1.08rem;
   }
-  
+
   &:hover {
     transform: translateY(-2px);
   }
@@ -32,7 +32,7 @@
 
 @mixin section-base {
   padding: 5rem 0;
-  
+
   &:nth-child(even) {
     background: var(--tertiaryColor);
   }
@@ -224,7 +224,7 @@
                 font-size: 2.25rem;
                 filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
                 animation: trophyBounce 2s ease-in-out infinite;
-                
+
                 &:nth-child(1) { animation-delay: 0s; }
                 &:nth-child(2) { animation-delay: 0.5s; }
                 &:nth-child(3) { animation-delay: 1s; }
@@ -375,7 +375,7 @@
           justify-content: center;
           text-align: center;
           padding: 1rem;
-          
+
           // Corrigir anti-aliasing
           -webkit-backface-visibility: hidden;
           backface-visibility: hidden;
@@ -639,69 +639,6 @@
       transform: translateY(-2px);
     }
   }
-
-  // CTA Section
-  .cta-section {
-    @include gradient-primary;
-    color: white;
-    padding: 5rem 0;
-    text-align: center;
-
-    h2 {
-      font-size: 2.25rem;
-      margin-bottom: 1rem;
-      font-weight: 700;
-    }
-
-    p {
-      font-size: 1.08rem;
-      margin-bottom: 2rem;
-      opacity: 0.9;
-    }
-
-    .cta-buttons {
-      display: flex;
-      gap: 1rem;
-      justify-content: center;
-      flex-wrap: wrap;
-      margin-bottom: 2rem;
-    }
-
-    .btn-cta, .btn-secondary-cta {
-      @include btn-base;
-    }
-
-    .btn-cta {
-      background: var(--secondaryColor);
-      color: var(--primaryColor);
-
-      &:hover {
-        background: #a8d157;
-        box-shadow: 0 10px 25px rgba(186, 235, 108, 0.3);
-      }
-    }
-
-    .btn-secondary-cta {
-      background: transparent;
-      color: white;
-      border: 2px solid white;
-
-      &:hover {
-        background: white;
-        color: var(--primaryColor);
-      }
-    }
-
-    .contact-info {
-      margin-top: 2rem;
-
-      p {
-        margin-bottom: 0.5rem;
-        font-size: 0.9rem;
-        opacity: 0.8;
-      }
-    }
-  }
 }
 
 // Animações
@@ -749,11 +686,6 @@
 
     .hero-buttons {
       justify-content: center;
-    }
-
-    .cta-buttons {
-      flex-direction: column;
-      align-items: center;
     }
   }
 }
