@@ -15,126 +15,130 @@
 
   <!-- Container principal que aguarda a resolução do Observable -->
   @if (usuarios$ | async; as usuarios) {
-    <div class="usuarios-table-container">
-      <div class="table-header">
-        <h2>Lista de Usuários ({{ usuarios.length }})</h2>
-        <div class="table-filters">
-          <!-- Campo de busca conectado ao FormControl -->
-          <input
-            type="text"
-            placeholder="Buscar por nome, email ou CPF..."
-            class="search-input"
-            [formControl]="searchControl"
-            />
-          <!-- Seletor de role conectado ao FormControl -->
-          <select class="filter-select" [formControl]="roleControl">
-            <option value="">Todos os tipos</option>
-            <option value="ADMIN">Admin</option>
-            <option value="EDITOR">Editor</option>
-            <option value="FUNCIONARIO">Funcionário</option>
-            <option value="ASSINANTE">Assinante</option>
-            <option value="DONO_PET_APROVADO_ASSINANTE">
-              Dono de Pet (Assinante)
-            </option>
-            <option value="DONO_PET_APROVADO">Dono de Pet</option>
-            <option value="USUARIO">Usuário Comum</option>
-          </select>
-        </div>
+  <div class="usuarios-table-container">
+    <div class="table-header">
+      <h2>Lista de Usuários ({{ usuarios.length }})</h2>
+      <div class="table-filters">
+        <!-- Campo de busca conectado ao FormControl -->
+        <input
+          type="text"
+          placeholder="Buscar por nome, email ou CPF..."
+          class="search-input"
+          [formControl]="searchControl"
+        />
+        <!-- Seletor de role conectado ao FormControl -->
+        <select class="filter-select" [formControl]="roleControl">
+          <option value="">Todos os tipos</option>
+          <option value="ADMIN">Admin</option>
+          <option value="EDITOR">Editor</option>
+          <option value="FUNCIONARIO">Funcionário</option>
+          <option value="ASSINANTE">Assinante</option>
+          <option value="DONO_PET_APROVADO_ASSINANTE">
+            Dono de Pet (Assinante)
+          </option>
+          <option value="DONO_PET_APROVADO">Dono de Pet</option>
+          <option value="USUARIO">Usuário Comum</option>
+        </select>
       </div>
-      <div class="table-responsive">
-        <table class="usuarios-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Nome</th>
-              <th>Email</th>
-              <th>Tipo (Role)</th>
-              <th>Status</th>
-              <th>Data Cadastro</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (usuario of usuarios; track trackByUserId($index, usuario)) {
-              <tr
-                class="table-row"
+    </div>
+    <div class="table-responsive">
+      <table class="usuarios-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Email</th>
+            <th>Tipo (Role)</th>
+            <th>Status</th>
+            <th>Data Cadastro</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (usuario of usuarios; track trackByUserId($index, usuario)) {
+          <tr class="table-row">
+            <td class="user-id">#{{ usuario.userId.substring(0, 8) }}...</td>
+            <td class="user-name">
+              <div class="user-info">
+                <div class="user-avatar">
+                  @if (usuario.avatarUrl) {
+                  <img
+                    [src]="usuario.avatarUrl"
+                    alt="Avatar de {{usuario.name}}"
+                    class="avatar-image"
+                  />
+                  } @else {
+                  <i class="fas fa-user"></i>
+                  }
+                </div>
+                <span>{{ usuario.name }}</span>
+              </div>
+            </td>
+            <td class="user-email">{{ usuario.email }}</td>
+            <td class="user-tipo">
+              <span class="badge" [ngClass]="getRoleClass(usuario.role)">
+                {{ usuario.role }}
+              </span>
+            </td>
+            <td class="user-status">
+              <span
+                class="status-indicator"
+                [ngClass]="getStatusClass(usuario.active)"
+              >
+                <i
+                  class="fas"
+                  [ngClass]="usuario.active ? 'fa-check-circle' : 'fa-times-circle'"
+                ></i>
+                {{ usuario.active ? 'Ativo' : 'Inativo' }}
+              </span>
+            </td>
+            <td class="user-date">
+              {{ usuario.createdAt | date:'dd/MM/yyyy' }}
+            </td>
+            <td class="user-actions">
+              <div class="action-buttons">
+                <!-- Botão para abrir o modal em modo de edição -->
+                <button
+                  class="btn-action btn-password"
+                  (click)="openPasswordModal(usuario)"
+                  title="Alterar Senha"
                 >
-                <td class="user-id">#{{ usuario.userId.substring(0, 8) }}...</td>
-                <td class="user-name">
-                  <div class="user-info">
-                    <div class="user-avatar">
-                      @if (usuario.avatarUrl) {
-                        <img
-                          [src]="usuario.avatarUrl"
-                          alt="Avatar de {{usuario.name}}"
-                          class="avatar-image"
-                          />
-                      } @else {
-                        <i class="fas fa-user"></i>
-                      }
-                    </div>
-                    <span>{{ usuario.name }}</span>
-                  </div>
-                </td>
-                <td class="user-email">{{ usuario.email }}</td>
-                <td class="user-tipo">
-                  <span class="badge" [ngClass]="getRoleClass(usuario.role)">
-                    {{ usuario.role }}
-                  </span>
-                </td>
-                <td class="user-status">
-                  <span
-                    class="status-indicator"
-                    [ngClass]="getStatusClass(usuario.active)"
-                    >
-                    <i
-                      class="fas"
-                      [ngClass]="usuario.active ? 'fa-check-circle' : 'fa-times-circle'"
-                    ></i>
-                    {{ usuario.active ? 'Ativo' : 'Inativo' }}
-                  </span>
-                </td>
-                <td class="user-date">
-                  {{ usuario.createdAt | date:'dd/MM/yyyy' }}
-                </td>
-                <td class="user-actions">
-                  <div class="action-buttons">
-                    <!-- Botão para abrir o modal em modo de edição -->
-                    <button
-                      class="btn-action btn-edit"
-                      (click)="openModal(usuario)"
-                      title="Editar"
-                      >
-                      <i class="fas fa-edit"></i>
-                    </button>
-                    <button
-                      class="btn-action btn-delete"
-                      (click)="excluirUsuario(usuario)"
-                      title="Excluir"
-                      >
-                      <i class="fas fa-trash"></i>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      </div>
-      @if (usuarios.length === 0) {
-        <div class="empty-state">
-          <i class="fas fa-user-slash"></i>
-          <p>Nenhum usuário encontrado.</p>
-        </div>
-      }
+                  <i class="fas fa-lock"></i>
+                </button>
+                <button
+                  class="btn-action btn-edit"
+                  (click)="openModal(usuario)"
+                  title="Editar"
+                >
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button
+                  class="btn-action btn-delete"
+                  (click)="excluirUsuario(usuario)"
+                  title="Excluir"
+                >
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
     </div>
+    @if (usuarios.length === 0) {
+    <div class="empty-state">
+      <i class="fas fa-user-slash"></i>
+      <p>Nenhum usuário encontrado.</p>
+    </div>
+    }
+  </div>
   } @else {
-    <div class="loading-state">
-      <i class="fas fa-spinner fa-spin"></i>
-      <p>Carregando usuários...</p>
-    </div>
+  <div class="loading-state">
+    <i class="fas fa-spinner fa-spin"></i>
+    <p>Carregando usuários...</p>
+  </div>
   }
-
 </div>
 
 <!-- Componente do Modal -->
@@ -144,5 +148,50 @@
   (close)="closeModal()"
   (save)="handleSave($event)"
   (userUnblocked)="handleUserUnblocked()"
-  >
+>
 </app-usuario-modal>
+
+<!-- Modal de Alteração de Senha -->
+@if (isPasswordModalVisible) {
+<div class="modal-overlay">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Alterar Senha</h2>
+      <button class="close-btn" (click)="closePasswordModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p>Usuário: <strong>{{selectedUsuarioForPassword?.name}}</strong></p>
+      <div class="form-group">
+        <label>Nova Senha</label>
+        <input
+          type="password"
+          [formControl]="passwordControl"
+          placeholder="Digite a nova senha"
+        />
+      </div>
+      <div class="form-group">
+        <label>Confirmar Senha</label>
+        <input
+          type="password"
+          [formControl]="confirmPasswordControl"
+          placeholder="Repita a nova senha"
+        />
+      </div>
+      @if (passwordError) {
+      <div class="error-message">{{passwordError}}</div>
+      }
+    </div>
+    <div class="modal-footer">
+      <button
+        class="btn btn-secondary btn-cancel"
+        (click)="closePasswordModal()"
+      >
+        Cancelar
+      </button>
+      <button class="btn btn-primary" (click)="submitPasswordChange()">
+        Salvar Senha
+      </button>
+    </div>
+  </div>
+</div>
+}

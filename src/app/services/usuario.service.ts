@@ -61,6 +61,12 @@ export class UsuarioService {
       .pipe(catchError(this.handleError));
   }
 
+  changePassword(userId: string, password: string): Observable<void> {
+    return this.http
+      .patch<void>(`${this.apiUrl}/${userId}/password`, { password })
+      .pipe(catchError(this.handleError));
+  }
+
   private handleError(error: any): Observable<never> {
     console.error("Erro na chamada da API de usuários:", error);
     return throwError(() => error);

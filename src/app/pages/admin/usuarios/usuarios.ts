@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { ReactiveFormsModule, FormControl } from "@angular/forms";
+import { ReactiveFormsModule, FormControl, Validators } from "@angular/forms";
 import { UsuarioService } from "../../../services/usuario.service";
 import { UserFilters } from "../../../dtos/usuario.dto";
 import { Usuario } from "../../../interfaces/usuario.interface";
@@ -38,6 +38,13 @@ export class UsuariosComponent implements OnInit, OnDestroy {
 
   isModalVisible = false;
   selectedUsuario: Usuario | null = null;
+
+  // Password Change Logic
+  isPasswordModalVisible = false;
+  selectedUsuarioForPassword: Usuario | null = null;
+  passwordControl = new FormControl("", [Validators.required, Validators.minLength(8)]);
+  confirmPasswordControl = new FormControl("", [Validators.required]);
+  passwordError: string | null = null;
 
   constructor(
     private usuarioService: UsuarioService,
@@ -105,6 +112,49 @@ export class UsuariosComponent implements OnInit, OnDestroy {
   closeModal(): void {
     this.isModalVisible = false;
     this.selectedUsuario = null;
+  }
+
+  openPasswordModal(usuario: Usuario): void {
+    this.selectedUsuarioForPassword = usuario;
+    this.passwordControl.reset();
+    this.confirmPasswordControl.reset();
+    this.passwordError = null;
+    this.isPasswordModalVisible = true;
+  }
+
+  closePasswordModal(): void {
+    this.isPasswordModalVisible = false;
+    this.selectedUsuarioForPassword = null;
+    this.passwordControl.reset();
+    this.confirmPasswordControl.reset();
+  }
+
+  submitPasswordChange(): void {
+    if (this.passwordControl.invalid || this.confirmPasswordControl.invalid) {
+        this.passwordError = "Por favor, preencha a senha corretamente (min. 8 caracteres).";
+        return;
+    }
+
+    const pass = this.passwordControl.value;
+    const confirm = this.confirmPasswordControl.value;
+
+    if (pass !== confirm) {
+        this.passwordError = "As senhas não coincidem.";
+        return;
+    }
+
+    if (!this.selectedUsuarioForPassword) return;
+
+    this.usuarioService.changePassword(this.selectedUsuarioForPassword.userId, pass!).subscribe({
+        next: () => {
+            this.notificationService.success("Senha alterada com sucesso!");
+            this.closePasswordModal();
+        },
+        error: (err) => {
+            this.passwordError = err.error?.message || "Erro ao alterar senha.";
+            this.notificationService.error(this.passwordError!);
+        }
+    });
   }
 
   handleUserUnblocked(): void {
