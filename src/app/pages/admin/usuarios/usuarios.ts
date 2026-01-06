@@ -16,11 +16,12 @@ import {
 } from "rxjs/operators";
 import { UsuarioModalComponent } from "../../../components/usuario-modal/usuario-modal";
 import { NotificationService } from "../../../services/notification.service";
+import { SkeletonComponent } from "../../../components/skeleton/skeleton.component";
 
 @Component({
   selector: "app-usuarios",
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, UsuarioModalComponent],
+  imports: [CommonModule, ReactiveFormsModule, UsuarioModalComponent, SkeletonComponent],
   templateUrl: "./usuarios.html",
   styleUrls: ["./usuarios.scss"],
 })

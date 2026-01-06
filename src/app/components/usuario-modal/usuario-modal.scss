@@ -9,11 +9,14 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  /* backdrop-filter não funciona em todos os browsers com opacity, mas melhora o visual onde funciona */
+  backdrop-filter: blur(4px);
   opacity: 0;
   visibility: hidden;
   transition:
-    opacity 0.3s ease,
-    visibility 0.3s ease;
+    opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    visibility 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    backdrop-filter 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   z-index: 1000;
 
   &.visible {
@@ -30,11 +33,15 @@
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
   width: 100%;
   max-width: 600px;
-  transform: scale(0.9);
-  transition: transform 0.3s ease;
+  transform: scale(0.95) translateY(10px);
+  opacity: 0;
+  transition:
+    transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 
   .visible & {
-    transform: scale(1);
+    transform: scale(1) translateY(0);
+    opacity: 1;
   }
 }
 

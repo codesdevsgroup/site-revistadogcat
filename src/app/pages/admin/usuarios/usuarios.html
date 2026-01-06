@@ -134,9 +134,53 @@
     }
   </div>
   } @else {
-  <div class="loading-state">
-    <i class="fas fa-spinner fa-spin"></i>
-    <p>Carregando usuários...</p>
+  <div class="usuarios-table-container">
+    <div class="table-header">
+      <h2>Lista de Usuários <app-skeleton width="30px" height="20px" style="display: inline-block"></app-skeleton></h2>
+      <div class="table-filters">
+        <app-skeleton width="300px" height="40px"></app-skeleton>
+        <app-skeleton width="150px" height="40px"></app-skeleton>
+      </div>
+    </div>
+    <div class="table-responsive">
+      <table class="usuarios-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Email</th>
+            <th>Tipo (Role)</th>
+            <th>Status</th>
+            <th>Data Cadastro</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of [1, 2, 3, 4, 5]; track item) {
+          <tr class="table-row">
+            <td><app-skeleton width="60px"></app-skeleton></td>
+            <td>
+              <div class="user-info">
+                <app-skeleton width="40px" height="40px" borderRadius="50%" style="margin-right: 10px"></app-skeleton>
+                <app-skeleton width="120px"></app-skeleton>
+              </div>
+            </td>
+            <td><app-skeleton width="180px"></app-skeleton></td>
+            <td><app-skeleton width="100px"></app-skeleton></td>
+            <td><app-skeleton width="80px"></app-skeleton></td>
+            <td><app-skeleton width="90px"></app-skeleton></td>
+            <td>
+               <div class="action-buttons">
+                 <app-skeleton width="32px" height="32px" borderRadius="4px"></app-skeleton>
+                 <app-skeleton width="32px" height="32px" borderRadius="4px"></app-skeleton>
+                 <app-skeleton width="32px" height="32px" borderRadius="4px"></app-skeleton>
+               </div>
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
   </div>
   }
 </div>
