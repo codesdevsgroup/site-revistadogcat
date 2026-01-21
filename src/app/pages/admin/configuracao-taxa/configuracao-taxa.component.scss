@@ -1,0 +1,155 @@
+.configuracao-taxa-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.page-header {
+  margin-bottom: 2rem;
+
+  h2 {
+    color: #333;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+
+    i {
+      color: #667eea;
+    }
+  }
+}
+
+.config-card {
+  border: none;
+  border-radius: 12px;
+
+  .card-body {
+    padding: 2rem;
+  }
+}
+
+.loading-container {
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  .spinner-border {
+    width: 3rem;
+    height: 3rem;
+  }
+}
+
+.input-group-lg {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
+  overflow: hidden;
+
+  .input-group-text {
+    background: #667eea;
+    color: white;
+    font-weight: 600;
+    border: none;
+    padding: 0.75rem 1rem;
+  }
+
+  input {
+    border: 1px solid #dee2e6;
+    padding: 0.75rem 1rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+
+    &:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+  }
+}
+
+.form-check-switch {
+  .form-check-input {
+    cursor: pointer;
+
+    &:checked {
+      background-color: #28a745;
+      border-color: #28a745;
+    }
+  }
+
+  .form-check-label {
+    font-size: 1.1rem;
+  }
+}
+
+.alert {
+  border-radius: 8px;
+  border: none;
+
+  &.alert-info {
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    color: #0d47a1;
+  }
+
+  &.alert-warning {
+    background: #fff8e1;
+    border-left: 4px solid #ffc107;
+    color: #856404;
+
+    .alert-heading {
+      color: #f57c00;
+    }
+
+    ul {
+      padding-left: 1.5rem;
+      margin-top: 0.5rem;
+
+      li {
+        margin-bottom: 0.25rem;
+      }
+    }
+  }
+}
+
+.btn {
+  border-radius: 8px;
+  padding: 0.625rem 1.5rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  &.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+
+    &:hover:not(:disabled) {
+      background: linear-gradient(135deg, #5568d3 0%, #65408b 100%);
+    }
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+@media (max-width: 768px) {
+  .configuracao-taxa-container {
+    padding: 1rem;
+  }
+
+  .config-card .card-body {
+    padding: 1.5rem;
+  }
+
+  .d-flex.gap-3 {
+    flex-direction: column;
+
+    button {
+      width: 100%;
+    }
+  }
+}

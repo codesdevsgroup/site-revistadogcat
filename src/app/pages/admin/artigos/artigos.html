@@ -70,16 +70,15 @@
     <p-table #dt [value]="artigos" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10,20,50]" sortMode="multiple" [tableStyle]="{'min-width':'70rem'}" [globalFilterFields]="['titulo','autor','categoria','status']" dataKey="id">
       <ng-template pTemplate="header">
         <tr>
-          <th pSortableColumn="id">ID <p-sortIcon field="id"></p-sortIcon></th>
+          <th pSortableColumn="id" style="width: 80px">ID <p-sortIcon field="id"></p-sortIcon></th>
           <th pSortableColumn="titulo">Título <p-sortIcon field="titulo"></p-sortIcon></th>
-          <th pSortableColumn="autor">Autor <p-sortIcon field="autor"></p-sortIcon></th>
-          <th pSortableColumn="categoria">Categoria <p-sortIcon field="categoria"></p-sortIcon></th>
-          <th pSortableColumn="status">Status <p-sortIcon field="status"></p-sortIcon></th>
-          <th pSortableColumn="dataPublicacao">Data Publicação <p-sortIcon field="dataPublicacao"></p-sortIcon></th>
-          <th pSortableColumn="visualizacoes">Visualizações <p-sortIcon field="visualizacoes"></p-sortIcon></th>
-          <th>Engajamento</th>
-          <th>Destaque</th>
-          <th>Ações</th>
+          <th pSortableColumn="autor" style="width: 140px">Autor <p-sortIcon field="autor"></p-sortIcon></th>
+          <th pSortableColumn="categoria" style="width: 140px">Categoria <p-sortIcon field="categoria"></p-sortIcon></th>
+          <th pSortableColumn="status" style="width: 150px">Status <p-sortIcon field="status"></p-sortIcon></th>
+          <th pSortableColumn="dataPublicacao" style="width: 120px">Data Publicação <p-sortIcon field="dataPublicacao"></p-sortIcon></th>
+          <th pSortableColumn="visualizacoes" style="width: 80px">Views <p-sortIcon field="visualizacoes"></p-sortIcon></th>
+          <th style="width: 70px">Likes</th>
+          <th style="width: 140px">Ações</th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-artigo>
@@ -95,10 +94,16 @@
             <span class="badge" [ngClass]="getCategoriaClass(artigo.categoria)">{{ artigo.categoria }}</span>
           </td>
           <td>
-            <span class="status-indicator" [ngClass]="getStatusClass(artigo.status)">
-              <i class="pi pi-circle-fill"></i>
-              {{ artigo.status | titlecase }}
-            </span>
+            <p-select
+              [options]="statusOptionsArtigos"
+              optionLabel="label"
+              optionValue="value"
+              [(ngModel)]="artigo.status"
+              (onChange)="onArtigoStatusChange(artigo, $event.value)"
+              placeholder="Status"
+              appendTo="body"
+              [style]="{'width': '140px', 'font-size': '0.875rem'}"
+            ></p-select>
           </td>
           <td class="artigo-date">{{ artigo.dataPublicacao | date:'dd/MM/yyyy' }}</td>
           <td class="artigo-views">
@@ -113,13 +118,12 @@
               </span>
             </div>
           </td>
-          <td class="artigo-destaque">
-            <button pButton type="button" icon="pi pi-star" [class.active]="artigo.destaque" (click)="alterarDestaque(artigo)" [title]="artigo.destaque ? 'Remover destaque' : 'Adicionar destaque'" class="p-button-rounded p-button-text"></button>
-          </td>
           <td>
             <div class="action-buttons">
+              <button pButton type="button" icon="pi pi-eye" class="p-button-rounded p-button-text p-button-info" [routerLink]="['/artigos', artigo.id]" title="Visualizar artigo"></button>
+              <button pButton type="button" icon="pi pi-star" [class.active]="artigo.destaque" (click)="alterarDestaque(artigo)" [title]="artigo.destaque ? 'Remover destaque' : 'Adicionar destaque'" class="p-button-rounded p-button-text p-button-warning"></button>
               <button pButton type="button" icon="pi pi-pencil" class="p-button-rounded p-button-text" [routerLink]="[artigo.id]" (click)="editarArtigo(artigo)" title="Editar artigo"></button>
-              <button pButton type="button" icon="pi pi-trash" class="p-button-rounded p-button-text" (click)="excluirArtigo(artigo)" title="Excluir artigo"></button>
+              <button pButton type="button" icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger" (click)="excluirArtigo(artigo)" title="Excluir artigo"></button>
             </div>
           </td>
         </tr>

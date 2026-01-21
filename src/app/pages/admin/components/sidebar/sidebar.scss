@@ -1,0 +1,91 @@
+.sidebar {
+  width: 220px; // Reduzido de 260px
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: #fff;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  z-index: 990; /* Below navbar (usually 1030) if navbar is full width, or adjust top if below navbar */
+  padding-top: 80px; // Reduzido de 100px
+  transition: transform 0.3s ease;
+
+  @media (max-width: 992px) {
+    transform: translateX(-100%);
+    &.active {
+      transform: translateX(0);
+    }
+  }
+}
+
+.sidebar-header {
+  padding: 0 1rem 1rem; // Reduzido de 1.5rem
+
+  .sidebar-title {
+    font-size: 1.1rem; // Reduzido de 1.25rem
+    font-weight: 700;
+    color: var(--primary-color, #333);
+    margin: 0;
+  }
+}
+
+.sidebar-nav {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 0.75rem; // Reduzido de 1rem
+
+  .nav-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .nav-item {
+    margin-bottom: 0.25rem; // Reduzido de 0.5rem
+  }
+
+  .nav-link {
+    display: flex;
+    align-items: center;
+    padding: 0.6rem 0.85rem; // Reduzido de 0.75rem 1rem
+    color: #666;
+    text-decoration: none;
+    border-radius: 6px; // Reduzido de 8px
+    transition: all 0.2s ease;
+    font-weight: 500;
+    font-size: 0.9rem; // Adicionado para texto menor
+
+    i {
+      width: 20px; // Reduzido de 24px
+      margin-right: 10px; // Reduzido de 12px
+      font-size: 1rem; // Reduzido de 1.1rem
+      text-align: center;
+    }
+
+    &:hover {
+      background-color: #f8f9fa;
+      color: var(--primary-color, #007bff);
+      transform: translateX(5px);
+    }
+
+    &.active {
+      background-color: #e7f1ff; // Light primary
+      color: var(--primary-color, #007bff);
+      font-weight: 600;
+    }
+  }
+}
+
+.sidebar-footer {
+  padding: 1rem; // Reduzido de 1.5rem
+  border-top: 1px solid #eee;
+
+  .copyright {
+    font-size: 0.75rem;
+    color: #999;
+    margin: 0;
+    text-align: center;
+  }
+}

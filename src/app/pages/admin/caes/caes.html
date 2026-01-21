@@ -24,17 +24,17 @@
           <p-select [options]="statuses" optionLabel="label" optionValue="value" placeholder="Todos os status" (onChange)="dt.filter($event.value, 'status', 'equals')" appendTo="body"></p-select>
         </div>
       </div>
-      <p-table #dt [value]="filteredCaes" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10,20,50]" sortMode="multiple" [tableStyle]="{'min-width':'70rem'}" [globalFilterFields]="['nome','numeroRegistro','donoCao.nome']" dataKey="cadastroId" [paginatorDropdownAppendTo]="'body'">
+      <p-table #dt [value]="filteredCaes" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10,20,50]" sortMode="multiple" [tableStyle]="{'min-width':'60rem'}" [globalFilterFields]="['nome','numeroRegistro','donoCao.nome']" dataKey="cadastroId" [paginatorDropdownAppendTo]="'body'">
         <ng-template pTemplate="header">
           <tr>
             <th pSortableColumn="nome">Nome <p-sortIcon field="nome"></p-sortIcon></th>
             <th pSortableColumn="racaId">Raça <p-sortIcon field="racaId"></p-sortIcon></th>
             <th pSortableColumn="dataNascimento">Idade <p-sortIcon field="dataNascimento"></p-sortIcon></th>
-            <th pSortableColumn="sexo">Sexo <p-sortIcon field="sexo"></p-sortIcon></th>
             <th pSortableColumn="donoCao.nome">Dono <p-sortIcon field="donoCao.nome"></p-sortIcon></th>
-            <th pSortableColumn="createdAt">Data de Cadastro <p-sortIcon field="createdAt"></p-sortIcon></th>
-            <th>Status</th>
-            <th>Ações</th>
+            <th pSortableColumn="createdAt">Data Cadastro <p-sortIcon field="createdAt"></p-sortIcon></th>
+            <th style="width: 180px">Status Aprovação</th>
+            <th style="width: 150px">Status Pagamento</th>
+            <th style="width: 100px">Ações</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-cao>
@@ -43,7 +43,7 @@
               <div class="cao-name">
                 <strong>{{ cao.nome }}</strong>
                 @if (isCaoPendente(cao)) {
-                  <span class="badge bg-warning ms-1">Cadastro incompleto</span>
+                  <span class="badge bg-warning ms-1">Incompleto</span>
                 }
                 @if (cao.numeroRegistro) {
                   <small>#{{ cao.numeroRegistro }}</small>
@@ -52,9 +52,6 @@
             </td>
             <td>{{ getRacaName(cao.racaId) || cao.raca?.nome || 'N/A' }}</td>
             <td>{{ formatAge(cao.dataNascimento) }}</td>
-            <td>
-              <span class="sexo-badge" [class]="cao.sexo.toLowerCase()">{{ cao.sexo === 'MACHO' ? 'Macho' : 'Fêmea' }}</span>
-            </td>
             <td>{{ cao.donoCao?.nome || 'N/A' }}</td>
             <td>{{ formatDate(cao.createdAt) }}</td>
             <td>
@@ -66,7 +63,24 @@
                 (onChange)="onRowStatusChange(cao, $event.value)"
                 placeholder="Selecionar"
                 appendTo="body"
+                [style]="{'width': '100%', 'font-size': '0.875rem'}"
               ></p-select>
+            </td>
+            <td>
+              @if (cao.statusPagamento) {
+                <span class="badge" [ngClass]="{
+                  'bg-success': cao.statusPagamento === 'PAGO',
+                  'bg-warning': cao.statusPagamento === 'PENDENTE',
+                  'bg-danger': cao.statusPagamento === 'CANCELADO',
+                  'bg-secondary': cao.statusPagamento === 'EXPIRADO'
+                }">
+                  {{ cao.statusPagamento === 'PAGO' ? 'Pago' :
+                     cao.statusPagamento === 'PENDENTE' ? 'Pendente' :
+                     cao.statusPagamento === 'CANCELADO' ? 'Cancelado' : 'Expirado' }}
+                </span>
+              } @else {
+                <span class="badge bg-secondary">Sem pgto</span>
+              }
             </td>
             <td>
               <div class="action-buttons">

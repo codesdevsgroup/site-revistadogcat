@@ -1,7 +1,11 @@
 <div class="painel-container">
-  <app-top-menu></app-top-menu>
-  
+  <app-navbar></app-navbar>
+  <app-sidebar [isOpen]="sidebarOpen" (linkClicked)="sidebarOpen = false"></app-sidebar>
+
   <main class="painel-content">
+    <button class="btn btn-outline-primary d-lg-none mb-3" (click)="toggleSidebar()">
+      <i class="fas fa-bars me-2"></i>Menu Admin
+    </button>
     <router-outlet></router-outlet>
   </main>
 </div>

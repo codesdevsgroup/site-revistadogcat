@@ -1,153 +1,210 @@
 .votacao-container {
   min-height: 80vh;
+  max-width: 1400px;
+  margin: 0 auto;
+}
 
-  h1 {
-    font-size: clamp(2rem, 4vw, 3rem);
-    color: var(--primaryColor, #1a3d1e);
-    font-weight: var(--fontWeight-extrabold);
-    margin-bottom: var(--space-4);
+.page-title {
+  font-size: clamp(2rem, 4vw, 2.5rem);
+  font-weight: 800;
+  color: #1f2937;
+  margin-bottom: 0.75rem;
+}
 
-    background: linear-gradient(135deg, var(--goldenColor, #d4af37), var(--goldenColorDark, #aa8c2c));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+.page-subtitle {
+  font-size: 1.125rem;
+  color: #6b7280;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.dogs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
   }
 }
 
-.glass-card {
-  background: #ffffff;
-  border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-  border: 1px solid rgba(0, 0, 0, 0.05);
+.dog-card {
+  background: white;
+  border-radius: 16px;
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  height: 100%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  border: 1px solid #f0f0f0;
 
   &:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 
-    .card-img {
+    .dog-image {
       transform: scale(1.05);
     }
   }
 }
 
-.card-image-wrapper {
+.dog-image-wrapper {
   position: relative;
   width: 100%;
-  aspect-ratio: 1/1; /* Square for dogs */
+  aspect-ratio: 4/3;
   overflow: hidden;
-  background: var(--gray-100);
+  background: #f3f4f6;
 }
 
-.card-img {
+.dog-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.6s ease;
+  transition: transform 0.4s ease;
 }
 
-.default-cover {
+.dog-no-image {
   width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, var(--gray-200), var(--gray-300));
-  color: var(--gray-500);
-  gap: 1rem;
+  background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+  color: #9ca3af;
+  gap: 0.75rem;
 
-  .cover-icon {
+  .no-image-icon {
     font-size: 3rem;
   }
 
-  .cover-text {
-    font-weight: 700;
+  .no-image-text {
+    font-weight: 600;
+    font-size: 0.875rem;
     text-transform: uppercase;
-    font-size: 0.9rem;
+    letter-spacing: 0.05em;
   }
 }
 
-.card-overlay {
+.dog-badge {
   position: absolute;
   top: 1rem;
   right: 1rem;
   z-index: 2;
 }
 
-.edition-badge {
+.breed-name {
   background: rgba(255, 255, 255, 0.95);
-  color: var(--primaryColor);
-  padding: 0.4rem 0.8rem;
+  backdrop-filter: blur(8px);
+  color: #1f2937;
+  padding: 0.5rem 1rem;
   border-radius: 50px;
   font-weight: 700;
-  font-size: 0.75rem;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(5px);
+  font-size: 0.8125rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
-.card-content {
+.dog-info {
   padding: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  background: #ffffff;
 }
 
-.card-title {
-  font-size: 1.4rem;
-  margin: 0 0 0.5rem 0;
-  color: #111827;
+.dog-name {
+  font-size: 1.5rem;
   font-weight: 800;
+  color: #111827;
+  margin: 0 0 0.5rem 0;
+  line-height: 1.2;
 }
 
-.card-description {
-  font-size: 0.95rem;
-  color: #6b7280;
-  line-height: 1.5;
-}
-
-.card-actions {
-  margin-top: auto;
+.dog-owner {
   display: flex;
-  flex-direction: column;
+  align-items: center;
   gap: 0.5rem;
+  font-size: 0.9375rem;
+  color: #6b7280;
+  margin: 0 0 1.5rem 0;
+
+  svg {
+    flex-shrink: 0;
+    opacity: 0.7;
+  }
+}
+
+.vote-buttons {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.btn-vote {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1rem;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+  }
 }
 
 .btn-vote-common {
-  width: 100%;
-  padding: 0.75rem;
-  border-radius: 12px;
-  background: var(--gray-100);
-  color: var(--gray-700);
-  font-weight: 600;
-  border: 1px solid transparent;
-  transition: all 0.3s ease;
+  background: #f3f4f6;
+  color: #374151;
 
   &:hover {
-    background: var(--gray-200);
+    background: #e5e7eb;
     transform: translateY(-2px);
   }
 }
 
 .btn-vote-super {
-  width: 100%;
-  padding: 0.75rem;
-  border-radius: 12px;
-  background: linear-gradient(135deg, var(--primaryColor), var(--primaryColorDark));
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
   color: white;
-  font-weight: 700;
-  border: none;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 6px rgba(var(--primaryColorRGB), 0.2);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
 
   &:hover {
-    box-shadow: 0 8px 15px rgba(var(--primaryColorRGB), 0.3);
+    box-shadow: 0 6px 16px rgba(245, 158, 11, 0.4);
     transform: translateY(-2px);
+  }
+}
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  gap: 1rem;
+
+  .spinner {
+    width: 48px;
+    height: 48px;
+    border: 4px solid #f3f4f6;
+    border-top-color: var(--primaryColor, #1a3d1e);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  p {
+    color: #6b7280;
+    font-size: 1rem;
+    margin: 0;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
 }

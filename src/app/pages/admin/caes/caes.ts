@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
-
+import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { DialogModule } from "primeng/dialog";
 import { TableModule } from "primeng/table";
@@ -26,7 +26,7 @@ import { CaoListItem, Raca } from '../../../interfaces/caes';
 @Component({
   selector: "app-caes",
   standalone: true,
-  imports: [FormsModule, DialogModule, TableModule, InputTextModule, SelectModule, ButtonModule, CaoDetailsDialogComponent, RacaManageDialogComponent],
+  imports: [CommonModule, FormsModule, DialogModule, TableModule, InputTextModule, SelectModule, ButtonModule, CaoDetailsDialogComponent, RacaManageDialogComponent],
   templateUrl: "./caes.html",
   styleUrls: ["./caes.scss"],
 })

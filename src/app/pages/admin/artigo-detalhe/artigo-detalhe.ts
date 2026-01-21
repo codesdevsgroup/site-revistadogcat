@@ -128,7 +128,7 @@ export class ArtigoDetalheComponent implements OnInit {
 
         console.log('Dados do artigo carregado:', formData);
         this.artigoForm.patchValue(formData);
-        
+
         // Forçar atualização do conteúdo após um pequeno delay para garantir que o TipTap esteja pronto
         setTimeout(() => {
           const conteudoValue = typeof artigo.conteudo === 'object' ? this.extractHtmlFromContent(artigo.conteudo) : artigo.conteudo;
@@ -138,12 +138,12 @@ export class ArtigoDetalheComponent implements OnInit {
         }, 100);
         this.fotoDestaque = artigo.imagemCapa || null;
         this.imagemOriginalUrl = artigo.imagemCapa || null; // Armazenar URL original
-        
+
         // Para artigos existentes, a foto de destaque não é obrigatória
         // (pode manter a imagem atual ou trocar por uma nova)
         this.artigoForm.get('fotoDestaque')?.clearValidators();
         this.artigoForm.get('fotoDestaque')?.updateValueAndValidity();
-        
+
         // Definir datas
         this.dataCriacao = new Date(artigo.createdAt);
         this.dataUltimaEdicao = new Date(artigo.updatedAt);
@@ -171,13 +171,18 @@ export class ArtigoDetalheComponent implements OnInit {
 
   // Mapear status do backend para o formulário
   private mapStatusToForm(status: string): string {
+    const statusUpper = status.toUpperCase();
     const statusMap: Record<string, string> = {
       'RASCUNHO': 'rascunho',
       'REVISAO': 'revisao',
       'PUBLICADO': 'publicado',
       'ARQUIVADO': 'arquivado'
     };
-    return statusMap[status] || 'rascunho';
+    const mapped = statusMap[statusUpper];
+    if (!mapped) {
+      console.warn(`Status desconhecido recebido: "${status}". Usando rascunho como padrão.`);
+    }
+    return mapped || 'rascunho';
   }
 
   // Extrair HTML do conteúdo TipTap
@@ -194,7 +199,7 @@ export class ArtigoDetalheComponent implements OnInit {
   // Converter conteúdo TipTap básico para HTML
   private convertTipTapToHtml(content: any): string {
     if (!content.content) return '';
-    
+
     let html = '';
     for (const node of content.content) {
       if (node.type === 'paragraph' && node.content) {
@@ -228,14 +233,14 @@ export class ArtigoDetalheComponent implements OnInit {
       const control = this.artigoForm.get(key);
       console.log(`- ${key}: válido=${control?.valid}, valor="${control?.value}", erros=`, control?.errors);
     });
-    
+
     if (!this.artigoForm.valid) {
       console.log('❌ Formulário inválido - parando execução');
       this.markFormGroupTouched();
       this.mostrarErrosValidacao();
       return;
     }
-    
+
     console.log('✅ Formulário válido - prosseguindo com salvamento');
 
     const formData = this.artigoForm.value;
@@ -272,9 +277,9 @@ export class ArtigoDetalheComponent implements OnInit {
     console.log('=== INÍCIO DO PROCESSO DE SALVAMENTO ===');
     console.log('Imagem selecionada para upload:', !!this.imagemSelecionada);
     console.log('Payload base:', payloadBase);
-    
+
     let operacao$: Observable<Artigo>;
-    
+
     if (this.isEditMode && this.artigoId) {
        // Modo edição - atualizar artigo existente
        operacao$ = this.artigosService.atualizarArtigo(this.artigoId, payloadBase, this.imagemSelecionada || undefined);
@@ -282,7 +287,7 @@ export class ArtigoDetalheComponent implements OnInit {
        // Modo criação - criar novo artigo
        operacao$ = this.artigosService.criarArtigo(payloadBase, this.imagemSelecionada || undefined);
      }
-    
+
     operacao$
       .subscribe({
         next: (artigo: Artigo) => {
@@ -315,7 +320,7 @@ export class ArtigoDetalheComponent implements OnInit {
   private mostrarErrosValidacao(): void {
     console.log('=== VERIFICAÇÃO DETALHADA DE ERROS ===');
     const erros: string[] = [];
-    
+
     // Verificar cada campo e seus valores atuais
     const titulo = this.artigoForm.get('titulo');
     console.log('Campo título:', { valid: titulo?.valid, value: titulo?.value, errors: titulo?.errors });
@@ -327,7 +332,7 @@ export class ArtigoDetalheComponent implements OnInit {
         erros.push('Título deve ter pelo menos 3 caracteres');
       }
     }
-    
+
     const autor = this.artigoForm.get('autor');
     console.log('Campo autor:', { valid: autor?.valid, value: autor?.value, errors: autor?.errors });
     if (autor?.invalid) {
@@ -336,7 +341,7 @@ export class ArtigoDetalheComponent implements OnInit {
         erros.push('Autor não foi selecionado');
       }
     }
-    
+
     const categoria = this.artigoForm.get('categoria');
     console.log('Campo categoria:', { valid: categoria?.valid, value: categoria?.value, errors: categoria?.errors });
     if (categoria?.invalid) {
@@ -345,7 +350,7 @@ export class ArtigoDetalheComponent implements OnInit {
         erros.push('Categoria não foi selecionada');
       }
     }
-    
+
     const dataPublicacao = this.artigoForm.get('dataPublicacao');
     console.log('Campo dataPublicacao:', { valid: dataPublicacao?.valid, value: dataPublicacao?.value, errors: dataPublicacao?.errors });
     if (dataPublicacao?.invalid) {
@@ -354,7 +359,7 @@ export class ArtigoDetalheComponent implements OnInit {
         erros.push('Data de publicação não foi definida');
       }
     }
-    
+
     const conteudo = this.artigoForm.get('conteudo');
     console.log('Campo conteudo:', { valid: conteudo?.valid, value: conteudo?.value, errors: conteudo?.errors });
     if (conteudo?.invalid) {
@@ -363,7 +368,7 @@ export class ArtigoDetalheComponent implements OnInit {
         erros.push('Conteúdo está vazio');
       }
     }
-    
+
     const fotoDestaque = this.artigoForm.get('fotoDestaque');
     console.log('Campo fotoDestaque:', { valid: fotoDestaque?.valid, value: fotoDestaque?.value, errors: fotoDestaque?.errors });
     console.log('Estado da imagem:', { fotoDestaque: this.fotoDestaque, isEditMode: this.isEditMode });
@@ -375,15 +380,15 @@ export class ArtigoDetalheComponent implements OnInit {
         erros.push('Foto de destaque é obrigatória para novos artigos');
       }
     }
-    
+
     if (this.resumo?.invalid && this.resumo.errors?.['maxlength']) {
       erros.push('Resumo deve ter no máximo 300 caracteres');
     }
-    
+
     console.log('=== RESULTADO DA VALIDAÇÃO ===');
     console.log('Total de erros encontrados:', erros.length);
     console.log('Lista de erros:', erros);
-    
+
     if (erros.length > 0) {
       this.notificationService.error(`Problemas encontrados: ${erros.join(', ')}`);
       console.log('❌ Erros específicos detectados');
@@ -415,7 +420,7 @@ export class ArtigoDetalheComponent implements OnInit {
     const file = event.target.files[0];
     console.log('=== NOVA IMAGEM SELECIONADA ===');
     console.log('Arquivo selecionado:', file);
-    
+
     if (file) {
       // Validar tipo de arquivo
       const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
@@ -449,7 +454,7 @@ export class ArtigoDetalheComponent implements OnInit {
   removerFotoDestaque(): void {
     // Limpar a imagem selecionada
     this.imagemSelecionada = null;
-    
+
     // Remover a foto de destaque atual
     this.fotoDestaque = null;
     this.artigoForm.patchValue({ fotoDestaque: '' });

@@ -1,0 +1,28 @@
+<aside class="sidebar" [class.active]="isOpen">
+  <div class="sidebar-header">
+    <h2 class="sidebar-title">Painel Admin</h2>
+  </div>
+
+  <nav class="sidebar-nav">
+    <ul class="nav-list">
+      @for (item of items; track item.label) {
+      <li class="nav-item">
+        <a
+          [routerLink]="item.routerLink"
+          class="nav-link"
+          [class.active]="isActive(item.routerLink)"
+          [title]="item.label"
+          (click)="onLinkClick()"
+        >
+          <i [class]="item.icon"></i>
+          <span class="nav-label">{{ item.label }}</span>
+        </a>
+      </li>
+      }
+    </ul>
+  </nav>
+
+  <div class="sidebar-footer">
+    <p class="copyright">© Revista DogCat</p>
+  </div>
+</aside>

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { TableModule } from 'primeng/table';
 import { InputTextModule } from 'primeng/inputtext';
@@ -11,7 +12,7 @@ import type { Artigo } from '../../../interfaces/artigo.interface';
 @Component({
   selector: 'app-artigos',
   standalone: true,
-  imports: [CommonModule, RouterModule, TableModule, InputTextModule, SelectModule, ButtonModule],
+  imports: [CommonModule, FormsModule, RouterModule, TableModule, InputTextModule, SelectModule, ButtonModule],
   templateUrl: './artigos.html',
   styleUrls: ['./artigos.scss']
 })
@@ -19,6 +20,13 @@ export class ArtigosComponent {
   artigos: Artigo[] = [];
   loading = true;
   error?: string;
+
+  statusOptionsArtigos = [
+    { value: 'rascunho', label: 'Rascunho' },
+    { value: 'revisao', label: 'Em Revisão' },
+    { value: 'publicado', label: 'Publicado' },
+    { value: 'arquivado', label: 'Arquivado' }
+  ];
 
   constructor(private artigosService: ArtigosService) {}
 
@@ -104,6 +112,30 @@ export class ArtigosComponent {
       },
       error: (err) => {
         console.error('Erro ao atualizar destaque', err);
+      }
+    });
+  }
+
+  onArtigoStatusChange(artigo: Artigo, novoStatus: string): void {
+    // Mapear status do frontend para o backend
+    const statusMap: Record<string, string> = {
+      'rascunho': 'RASCUNHO',
+      'revisao': 'REVISAO',
+      'publicado': 'PUBLICADO',
+      'arquivado': 'ARQUIVADO'
+    };
+
+    this.artigosService.atualizarParcialArtigo(artigo.id, {
+      status: statusMap[novoStatus] || novoStatus
+    }).subscribe({
+      next: (atualizado) => {
+        artigo.status = novoStatus as any;
+        console.log(`Status do artigo ${artigo.id} atualizado para ${novoStatus}`);
+      },
+      error: (err) => {
+        console.error('Erro ao atualizar status do artigo', err);
+        // Reverter mudança em caso de erro
+        this.ngOnInit();
       }
     });
   }

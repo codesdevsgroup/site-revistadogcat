@@ -1,54 +1,96 @@
-<section class="articles-list container" aria-label="Lista de artigos">
+<section class="articles-list container py-5">
+  <div class="page-header">
+    <h1 class="page-title">📰 Artigos</h1>
+    <p class="page-subtitle">Explore nossos conteúdos sobre cães e gatos</p>
+  </div>
+
   <div class="list-toolbar">
-    <div class="toolbar-actions">
-      <input type="text" class="search-input" placeholder="Pesquisar..." (input)="onSearchChange($event)" aria-label="Pesquisar artigos">
-      <select class="category-select" (change)="selectCategory($any($event.target).value)" aria-label="Selecionar categoria">
-        <option value="">Todas as categorias</option>
-        @for (categoria of categorias; track categoria) {
-          <option [value]="categoria">{{ categoria }}</option>
-        }
-      </select>
-    </div>
+    <input
+      type="text"
+      class="search-input"
+      placeholder="🔍 Pesquisar artigos..."
+      (input)="onSearchChange($event)"
+      aria-label="Pesquisar artigos"
+    >
+    <select
+      class="category-select"
+      (change)="selectCategory($any($event.target).value)"
+      aria-label="Selecionar categoria"
+    >
+      <option value="">Todas as categorias</option>
+      @for (categoria of categorias; track categoria) {
+        <option [value]="categoria">{{ categoria }}</option>
+      }
+    </select>
   </div>
 
   @if (loading) {
-    <div class="text-center p-5"><span class="spinner-border text-primary"></span> Carregando...</div>
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Carregando artigos...</p>
+    </div>
   }
+
   @if (error) {
-    <div class="alert alert-danger" role="alert">{{ error }}</div>
+    <div class="alert alert-danger">{{ error }}</div>
   }
 
   @if (!loading && !error) {
     <div class="articles-grid">
       @for (artigo of artigos; track trackById($index, artigo)) {
-        <div class="article-card">
+        <article class="article-card">
           <a [routerLink]="['/artigos', artigo.id]" class="card-link">
-            <div class="card-image-container">
-              <img class="cover" [src]="getImagemUrl(artigo.imagemCapa)" [alt]="artigo.titulo" loading="lazy">
-            </div>
-            <div class="card-content">
-              <h3 class="title">{{ artigo.titulo }}</h3>
-              @if (artigo.resumo) {
-                <p class="excerpt">{{ artigo.resumo }}</p>
+            <div class="card-image">
+              @if (artigo.imagemCapa) {
+                <img
+                  [src]="getImagemUrl(artigo.imagemCapa)"
+                  [alt]="artigo.titulo"
+                  loading="lazy"
+                >
+              } @else {
+                <div class="no-image">
+                  <span class="icon">📄</span>
+                  <span class="text">Sem imagem</span>
+                </div>
               }
-              <div class="meta">
-                <span class="author">✍️ {{ artigo.autor }}</span>
-                <span class="date">{{ artigo.dataPublicacao | date:'dd/MM/yyyy' }}</span>
-                @if (artigo.categoria) {
-                  <span class="category">{{ artigo.categoria }}</span>
-                }
+              @if (artigo.categoria) {
+                <span class="category-badge">{{ artigo.categoria }}</span>
+              }
+            </div>
+
+            <div class="card-body">
+              <h2 class="article-title">{{ artigo.titulo }}</h2>
+
+              @if (artigo.resumo) {
+                <p class="article-excerpt">{{ artigo.resumo }}</p>
+              }
+
+              <div class="article-meta">
+                <span class="meta-item author">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
+                  </svg>
+                  {{ artigo.autor }}
+                </span>
+                <span class="meta-item date">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/>
+                  </svg>
+                  {{ artigo.dataPublicacao | date:'dd/MM/yyyy' }}
+                </span>
               </div>
             </div>
           </a>
-        </div>
+        </article>
       }
     </div>
   }
 
   @if (!loading && artigos.length === 0) {
-    <div class="text-center p-5">
-      <p class="h5">Nenhum artigo encontrado.</p>
-      <p class="text-muted">Tente ajustar seus filtros ou volte mais tarde.</p>
+    <div class="empty-state">
+      <span class="empty-icon">📭</span>
+      <h3>Nenhum artigo encontrado</h3>
+      <p>Tente ajustar seus filtros ou volte mais tarde.</p>
     </div>
   }
 </section>
