@@ -148,21 +148,37 @@
                         <p class="mb-2"><span class="fw-bold">Sexo:</span> {{ dog.sexo }}</p>
                         <p class="mb-2"><span class="fw-bold">Status:</span>
                         <p-tag
-                          [value]="dog.status === 'CADASTRO_INCOMPLETO' ? 'Cadastro incompleto' : (dog.status || '—')"
-                          [severity]="dog.status === 'CADASTRO_INCOMPLETO' ? 'warn' : (dog.status === 'APROVADO' ? 'success' : (dog.status === 'REJEITADO' ? 'danger' : 'info'))"
+                          [value]="dog.status === 'CADASTRO_INCOMPLETO' ? 'Cadastro incompleto' : (dog.status === 'AGUARDANDO_PAGAMENTO' ? 'Aguardando Pagamento' : (dog.status || '—'))"
+                          [severity]="dog.status === 'CADASTRO_INCOMPLETO' ? 'warn' : (dog.status === 'AGUARDANDO_PAGAMENTO' ? 'warn' : (dog.status === 'APROVADO' ? 'success' : (dog.status === 'REJEITADO' ? 'danger' : 'info')))"
                         ></p-tag>
                       </p>
-                      <div
-                        class="mt-auto d-flex justify-content-between align-items-center"
-                        >
-                        <button pButton type="button" class="p-button-sm p-button-outlined" icon="pi pi-video" label="Enviar vídeo" (click)="openVideoModal(dog)"></button>
-                        @if (dog.videoOption && dog.videoOption !== 'NONE') {
-                          <small
-                            class="text-muted"
-                            >Vídeo: {{ dog.videoOption }}</small
-                            >
-                          }
-                        </div>
+                      <div class="mt-auto">
+                        <!-- Status Aguardando Pagamento -->
+                        @if (dog.status === 'AGUARDANDO_PAGAMENTO') {
+                          <div class="alert alert-warning p-2 mb-2 d-flex align-items-center">
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                            <small class="fw-bold">Pagamento pendente</small>
+                          </div>
+                          <button
+                            pButton
+                            type="button"
+                            class="p-button-sm w-100"
+                            icon="pi pi-wallet"
+                            label="Realizar Pagamento"
+                            (click)="onPagar(dog)">
+                          </button>
+                        }
+
+                        <!-- Botão de Vídeo (Apenas se não aprovado e não aguardando pagamento) -->
+                        @if (dog.status !== 'APROVADO' && dog.status !== 'AGUARDANDO_PAGAMENTO') {
+                          <div class="d-flex justify-content-between align-items-center">
+                            <button pButton type="button" class="p-button-sm p-button-outlined" icon="pi pi-video" label="Enviar vídeo" (click)="openVideoModal(dog)"></button>
+                            @if (dog.videoOption && dog.videoOption !== 'NONE') {
+                              <small class="text-muted">Vídeo: {{ dog.videoOption }}</small>
+                            }
+                          </div>
+                        }
+                      </div>
                       </div>
                     </div>
                   </div>

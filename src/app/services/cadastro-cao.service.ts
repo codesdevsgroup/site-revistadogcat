@@ -6,7 +6,12 @@ import type { ApiResponse, ListResult } from "@app-types/api";
 import { environment } from "../../environments/environment";
 
 
-export type StatusCadastro = "CADASTRO_INCOMPLETO" | "APROVADO" | "REJEITADO";
+export type StatusCadastro =
+  | "CADASTRO_INCOMPLETO"
+  | "AGUARDANDO_PAGAMENTO"
+  | "PAGO"
+  | "APROVADO"
+  | "REJEITADO";
 
 export interface CadastroCao {
   cadastroId: string;

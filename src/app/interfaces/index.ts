@@ -4,3 +4,5 @@ export * from './cao.interface';
 export * from './edicao';
 export * from './admin-cao.interface';
 export * from './admin-raca.interface';
+export * from './api.interface';
+export * from './configuracao.interface';

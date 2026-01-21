@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { ConfiguracaoService, ConfiguracaoResponse } from '../../../services/configuracao.service';
+import { ConfiguracaoService } from '../../../services/configuracao.service';
+import { ConfiguracaoResponse } from '../../../interfaces';
 import { NotificationService } from '../../../services/notification.service';
 import { CommonModule } from '@angular/common';
 
@@ -23,7 +24,7 @@ export class ConfiguracaoTaxaComponent implements OnInit {
     private notificationService: NotificationService
   ) {
     this.configuracaoForm = this.fb.group({
-      taxaCadastro: [50.00, [Validators.required, Validators.min(0)]]
+      taxaCadastro: ['0,00', [Validators.required]]
     });
   }
 
@@ -39,7 +40,7 @@ export class ConfiguracaoTaxaComponent implements OnInit {
         this.valorAtual = config.valor;
         const valorEmReais = config.valor / 100;
         this.configuracaoForm.patchValue({
-          taxaCadastro: valorEmReais
+          taxaCadastro: valorEmReais.toFixed(2).replace('.', ',')
         });
         this.isLoading = false;
       },
@@ -58,7 +59,19 @@ export class ConfiguracaoTaxaComponent implements OnInit {
     }
 
     this.isSaving = true;
-    const { taxaCadastro } = this.configuracaoForm.value;
+    let { taxaCadastro } = this.configuracaoForm.value;
+
+    // Se for string, substitui vírgula por ponto. Se já for número, mantém.
+    if (typeof taxaCadastro === 'string') {
+      taxaCadastro = parseFloat(taxaCadastro.replace(/\./g, '').replace(',', '.'));
+    }
+
+    if (isNaN(taxaCadastro) || taxaCadastro < 0) {
+      this.notificationService.error('Valor inválido');
+      this.isSaving = false;
+      return;
+    }
+
     // Converter de reais para centavos
     const valorEmCentavos = Math.round(taxaCadastro * 100);
 

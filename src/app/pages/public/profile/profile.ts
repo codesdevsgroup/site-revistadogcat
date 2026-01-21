@@ -340,4 +340,20 @@ export class ProfileComponent implements OnInit, OnDestroy {
       d.cadastroId === updated.cadastroId ? { ...d, ...updated } : d,
     );
   }
+
+  onPagar(dog: CadastroCao): void {
+    if (!dog?.cadastroId) return;
+
+    // Redireciona para a página de checkout ou inicia o processo de pagamento
+    // Por enquanto, vamos manter simples e redirecionar para uma rota de pagamento futura
+    // ou chamar um serviço que inicia a transação.
+    // Como a rota de pagamento ainda não foi criada, vou colocar um log e aviso.
+    console.log('Iniciar pagamento para:', dog.nome);
+
+    // Idealmente: this.router.navigate(['/pagamento/checkout', dog.cadastroId]);
+    // Ou criar ordem de pagamento via serviço e redirecionar para link externo.
+
+    this.notificationService.info('Funcionalidade de pagamento será implementada a seguir.');
+    // TODO: Integrar com PagamentoService quando criado.
+  }
 }
