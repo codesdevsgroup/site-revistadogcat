@@ -47,6 +47,18 @@ export class CaoService {
       .pipe(catchError(this.handleError));
   }
 
+  atualizarCaoUnificado(
+    id: string,
+    formData: FormData,
+  ): Observable<HttpEvent<CadastroCaoResponse>> {
+    return this.http
+      .put<CadastroCaoResponse>(`${this.apiUrl}/${id}`, formData, {
+        reportProgress: true,
+        observe: "events",
+      })
+      .pipe(catchError(this.handleError));
+  }
+
   validarArquivoImagem(file: File): FileValidation {
     if (!TIPOS_ARQUIVO_IMAGEM.includes(file.type as any)) {
       return {

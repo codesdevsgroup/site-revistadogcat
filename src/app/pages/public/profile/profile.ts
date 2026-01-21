@@ -5,6 +5,7 @@ import { Subscription } from 'rxjs';
 import { AuthService } from '../../../services/auth.service';
 import { ProfileService, UserProfile } from '../../../services/profile.service';
 import { CadastroCaoService, CadastroCao } from '../../../services/cadastro-cao.service';
+import { PaymentService } from '../../../services/payment.service';
 import { Endereco } from '../../../interfaces/endereco.interface';
 import { ProfileEditModalComponent } from '../../../components/profile-edit-modal/profile-edit-modal';
 import { AddressModalComponent } from '../../../components/address-modal/address-modal';
@@ -66,9 +67,10 @@ export class ProfileComponent implements OnInit, OnDestroy {
   constructor(
     private authService: AuthService,
     private profileService: ProfileService,
-    private router: Router,
     private cadastroCaoService: CadastroCaoService,
-    private notificationService: NotificationService,
+    private paymentService: PaymentService,
+    private router: Router,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -344,20 +346,29 @@ export class ProfileComponent implements OnInit, OnDestroy {
     );
   }
 
-  onPagar(dog: CadastroCao): void {
-    if (!dog?.cadastroId) return;
+  isLoadingPayment = false;
 
-    // Redireciona para a página de checkout ou inicia o processo de pagamento
-    // Por enquanto, vamos manter simples e redirecionar para uma rota de pagamento futura
-    // ou chamar um serviço que inicia a transação.
-    // Como a rota de pagamento ainda não foi criada, vou colocar um log e aviso.
-    console.log('Iniciar pagamento para:', dog.nome);
+  async onPagar(dog: CadastroCao) {
+    try {
+      this.isLoadingPayment = true;
 
-    // Idealmente: this.router.navigate(['/pagamento/checkout', dog.cadastroId]);
-    // Ou criar ordem de pagamento via serviço e redirecionar para link externo.
+      const response = await this.paymentService.criarPagamento(dog.cadastroId).toPromise();
 
-    this.notificationService.info('Funcionalidade de pagamento será implementada a seguir.');
-    // TODO: Integrar com PagamentoService quando criado.
+      if (response && response.linkPagamento) {
+        // Abrir link de pagamento em nova aba
+        window.open(response.linkPagamento, '_blank');
+        this.notificationService.success('Link de pagamento gerado! Finalize o pagamento na nova aba.');
+      } else {
+        this.notificationService.error('Erro ao gerar link de pagamento');
+      }
+    } catch (error: any) {
+      console.error('Erro ao gerar pagamento:', error);
+      this.notificationService.error(
+        error?.error?.message || 'Erro ao gerar link de pagamento. Tente novamente.'
+      );
+    } finally {
+      this.isLoadingPayment = false;
+    }
   }
 
   // --- Modal de Detalhes do Cão ---
@@ -374,9 +385,14 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.selectedDogDetails = null;
   }
 
-  onEditDog(dog: CadastroCao): void {
-    this.closeDogDetails();
-    // Navegar para a página de cadastro passando o objeto cão no estado
-    this.router.navigate(['/cadastro-cao'], { state: { dogToEdit: dog } });
+  onDogUpdated(updatedDog: CadastroCao): void {
+    this.dogs = this.dogs.map(d => 
+      d.cadastroId === updatedDog.cadastroId ? { ...d, ...updatedDog } : d
+    );
+    // Se o cão atualizado for o selecionado, atualize também a referência
+    if (this.selectedDogDetails?.cadastroId === updatedDog.cadastroId) {
+        this.selectedDogDetails = { ...this.selectedDogDetails, ...updatedDog };
+    }
+    this.notificationService.success('Lista de cães atualizada.');
   }
 }

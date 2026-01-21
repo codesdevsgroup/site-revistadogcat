@@ -9,170 +9,313 @@
   (onHide)="close()"
 >
   <ng-template pTemplate="content">
-    @if (dog) {
-      <div class="row">
-        <!-- Coluna da Foto -->
-        <div class="col-md-5 mb-3 text-center">
-          @if (dog.fotoPerfil) {
-            <div class="profile-image-container mb-2">
-              <img [src]="dog.fotoPerfil" alt="Foto de Perfil" class="img-fluid rounded shadow-sm" style="max-height: 250px; object-fit: cover;">
-            </div>
-          } @else {
-            <div class="profile-image-placeholder p-4 bg-light rounded text-center mb-2">
-              <i class="fas fa-dog fa-3x text-secondary"></i>
-              <p class="mt-2 text-muted small">Sem foto de perfil</p>
-            </div>
-          }
-
-          @if (dog.fotoLateral) {
-            <div class="mt-3">
-               <small class="text-muted d-block mb-1">Foto Lateral</small>
-               <img [src]="dog.fotoLateral" alt="Foto Lateral" class="img-fluid rounded shadow-sm" style="max-height: 150px; object-fit: cover;">
-            </div>
-         }
-
-          <!-- Status Destacado -->
-          <div class="mt-3">
-            <p class="mb-1 text-muted small">Status Atual</p>
-            <p-tag
-              [value]="dog.status === 'AGUARDANDO_PAGAMENTO' ? 'Aguardando Pagamento' : (dog.status === 'CADASTRO_INCOMPLETO' ? 'Cadastro Incompleto' : dog.status)"
-              [severity]="dog.status === 'AGUARDANDO_PAGAMENTO' ? 'warn' : (dog.status === 'CADASTRO_INCOMPLETO' ? 'warn' : (dog.status === 'APROVADO' ? 'success' : (dog.status === 'REJEITADO' ? 'danger' : 'info')))"
-              styleClass="text-lg p-2 w-100 block"
-            ></p-tag>
-          </div>
-
-          @if (dog.status === 'AGUARDANDO_PAGAMENTO') {
-            <div class="alert alert-warning mt-3 text-start">
-              <div class="d-flex">
-                <i class="fas fa-clock me-2 mt-1"></i>
-                <div>
-                  <strong>Pagamento Pendente</strong><br>
-                  <small>Realize o pagamento para confirmar a inscrição.</small>
-                </div>
+    @if (!isEditing) {
+      @if (dog) {
+        <div class="row">
+          <!-- Coluna da Foto -->
+          <div class="col-md-5 mb-3 text-center">
+            @if (dog.fotoPerfil) {
+              <div class="profile-image-container mb-2">
+                <img [src]="dog.fotoPerfil" alt="Foto de Perfil" class="img-fluid rounded shadow-sm" style="max-height: 250px; object-fit: cover;">
               </div>
-            </div>
-            <div class="mt-2">
-              <button pButton type="button" label="Realizar Pagamento Agora" icon="pi pi-wallet" class="p-button-warning w-100" (click)="onPagar()"></button>
-            </div>
-          }
-
-          @if (dog.status === 'CADASTRO_INCOMPLETO') {
-            <div class="alert alert-warning mt-3 text-start">
-              <div class="d-flex">
-                <i class="fas fa-exclamation-triangle me-2 mt-1"></i>
-                <div>
-                  <strong>Atenção</strong><br>
-                  <small>O cadastro deste cão está incompleto. Finalize o preenchimento dos dados para liberar a opção de pagamento.</small>
-                </div>
+            } @else {
+              <div class="profile-image-placeholder p-4 bg-light rounded text-center mb-2">
+                <i class="fas fa-dog fa-3x text-secondary"></i>
+                <p class="mt-2 text-muted small">Sem foto de perfil</p>
               </div>
-            </div>
-          }
-        </div>
-
-        <!-- Coluna das Informações -->
-        <div class="col-md-7">
-          <h3 class="mb-3 text-primary">{{ dog.nome }}</h3>
-
-          <div class="info-grid">
-            <div class="mb-2"><strong>Raça:</strong> {{ dog.raca || '—' }}</div>
-            @if (dog.racaSugerida) {
-              <div class="mb-2"><strong>Raça Sugerida:</strong> {{ dog.racaSugerida }}</div>
             }
-            <div class="mb-2"><strong>Idade:</strong> {{ getIdade(dog.dataNascimento) }}</div>
-            <div class="mb-2"><strong>Sexo:</strong> {{ dog.sexo === 'M' ? 'Macho' : 'Fêmea' }}</div>
-            <div class="mb-2"><strong>Características:</strong> {{ dog.caracteristicas || '—' }}</div>
 
-            <hr class="my-3">
-
-            <div class="row">
-              <div class="col-6 mb-2"><strong>Peso:</strong> {{ dog.peso || '—' }}</div>
-              <div class="col-6 mb-2"><strong>Altura:</strong> {{ dog.altura || '—' }}</div>
-            </div>
-            
-            <div class="mb-2"><strong>Títulos:</strong> {{ dog.titulos || '—' }}</div>
-
-            <div class="mb-2">
-              <strong>Pedigree:</strong>
-              @if (dog.temPedigree) {
-                 <span class="text-success"><i class="fas fa-check-circle"></i> Sim</span>
-                 @if (dog.registroPedigree) {
-                   <small class="d-block text-muted">Reg: {{dog.registroPedigree}}</small>
-                 }
-                 @if (dog.entidadeEmissoraPedigree) {
-                  <small class="d-block text-muted">Emissor: {{dog.entidadeEmissoraPedigree}}</small>
-                }
-                 @if (dog.pedigreeFrente || dog.pedigreeVerso) {
-                  <div class="d-flex gap-2 mt-2">
-                    @if (dog.pedigreeFrente) {
-                      <a [href]="dog.pedigreeFrente" target="_blank" title="Pedigree Frente">
-                        <img [src]="dog.pedigreeFrente" class="img-thumbnail" style="height: 50px; width: auto;">
-                      </a>
-                    }
-                    @if (dog.pedigreeVerso) {
-                      <a [href]="dog.pedigreeVerso" target="_blank" title="Pedigree Verso">
-                        <img [src]="dog.pedigreeVerso" class="img-thumbnail" style="height: 50px; width: auto;">
-                      </a>
-                    }
-                  </div>
-                }
-              } @else {
-                 <span class="text-secondary">Não</span>
-              }
-            </div>
-
-            <div class="mb-2">
-              <strong>Microchip:</strong>
-              @if (dog.temMicrochip) {
-                 <span class="text-success"><i class="fas fa-check-circle"></i> Sim</span>
-                 @if (dog.numeroMicrochip) {
-                   <small class="d-block text-muted">{{dog.numeroMicrochip}}</small>
-                 }
-              } @else {
-                 <span class="text-secondary">Não</span>
-              }
-            </div>
-            
-            @if (dog.observacoes) {
+            @if (dog.fotoLateral) {
               <div class="mt-3">
-                <strong>Observações:</strong>
-                <p class="small text-muted mb-0 p-2 bg-light rounded">{{ dog.observacoes }}</p>
+                 <small class="text-muted d-block mb-1">Foto Lateral</small>
+                 <img [src]="dog.fotoLateral" alt="Foto Lateral" class="img-fluid rounded shadow-sm" style="max-height: 150px; object-fit: cover;">
               </div>
            }
 
-            @if (dog.status === 'APROVADO') {
-              <div class="alert alert-success mt-3 d-flex align-items-center">
-                <i class="fas fa-check-double me-2"></i>
-                <div>
-                  <strong>Pagamento & Cadastro Confirmados</strong><br>
-                  <small>Seu cão está apto a participar.</small>
+            <!-- Status Destacado -->
+            <div class="mt-3">
+              <p class="mb-1 text-muted small">Status Atual</p>
+              <p-tag
+                [value]="dog.status === 'AGUARDANDO_PAGAMENTO' ? 'Aguardando Pagamento' : (dog.status === 'CADASTRO_INCOMPLETO' ? 'Cadastro Incompleto' : dog.status)"
+                [severity]="dog.status === 'AGUARDANDO_PAGAMENTO' ? 'warn' : (dog.status === 'CADASTRO_INCOMPLETO' ? 'warn' : (dog.status === 'APROVADO' ? 'success' : (dog.status === 'REJEITADO' ? 'danger' : 'info')))"
+                styleClass="text-lg p-2 w-100 block"
+              ></p-tag>
+            </div>
+
+            @if (dog.status === 'AGUARDANDO_PAGAMENTO') {
+              <div class="alert alert-warning mt-3 text-start">
+                <div class="d-flex">
+                  <i class="fas fa-clock me-2 mt-1"></i>
+                  <div>
+                    <strong>Pagamento Pendente</strong><br>
+                    <small>Realize o pagamento para confirmar a inscrição.</small>
+                  </div>
                 </div>
+              </div>
+              <div class="mt-2">
+                <button pButton type="button" label="Realizar Pagamento Agora" icon="pi pi-wallet" class="p-button-warning w-100" (click)="onPagar()"></button>
               </div>
             }
 
-            @if (dog.motivoRejeicao && dog.status === 'REJEITADO') {
-              <div class="alert alert-danger mt-3">
-                <strong>Motivo da Rejeição:</strong><br>
-                {{ dog.motivoRejeicao }}
+            @if (dog.status === 'CADASTRO_INCOMPLETO') {
+              <div class="alert alert-warning mt-3 text-start">
+                <div class="d-flex">
+                  <i class="fas fa-exclamation-triangle me-2 mt-1"></i>
+                  <div>
+                    <strong>Atenção</strong><br>
+                    <small>O cadastro deste cão está incompleto. Finalize o preenchimento dos dados para liberar a opção de pagamento.</small>
+                  </div>
+                </div>
               </div>
             }
           </div>
+
+          <!-- Coluna das Informações -->
+          <div class="col-md-7">
+            <h3 class="mb-3 text-primary">{{ dog.nome }}</h3>
+
+            <div class="info-grid">
+              <div class="mb-2"><strong>Raça:</strong> {{ dog.raca || '—' }}</div>
+              @if (dog.racaSugerida) {
+                <div class="mb-2"><strong>Raça Sugerida:</strong> {{ dog.racaSugerida }}</div>
+              }
+              <div class="mb-2"><strong>Idade:</strong> {{ getIdade(dog.dataNascimento) }}</div>
+              <div class="mb-2"><strong>Sexo:</strong> {{ dog.sexo === 'M' ? 'Macho' : 'Fêmea' }}</div>
+              <div class="mb-2"><strong>Características:</strong> {{ dog.caracteristicas || '—' }}</div>
+
+              <hr class="my-3">
+
+              <div class="row">
+                <div class="col-6 mb-2"><strong>Peso:</strong> {{ dog.peso || '—' }}</div>
+                <div class="col-6 mb-2"><strong>Altura:</strong> {{ dog.altura || '—' }}</div>
+              </div>
+
+              <div class="mb-2"><strong>Títulos:</strong> {{ dog.titulos || '—' }}</div>
+
+              <div class="mb-2">
+                <strong>Pedigree:</strong>
+                @if (dog.temPedigree) {
+                   <span class="text-success"><i class="fas fa-check-circle"></i> Sim</span>
+                   @if (dog.registroPedigree) {
+                     <small class="d-block text-muted">Reg: {{dog.registroPedigree}}</small>
+                   }
+                   @if (dog.entidadeEmissoraPedigree) {
+                    <small class="d-block text-muted">Emissor: {{dog.entidadeEmissoraPedigree}}</small>
+                  }
+                   @if (dog.pedigreeFrente || dog.pedigreeVerso) {
+                    <div class="d-flex gap-2 mt-2">
+                      @if (dog.pedigreeFrente) {
+                        <a [href]="dog.pedigreeFrente" target="_blank" title="Pedigree Frente">
+                          <img [src]="dog.pedigreeFrente" class="img-thumbnail" style="height: 50px; width: auto;">
+                        </a>
+                      }
+                      @if (dog.pedigreeVerso) {
+                        <a [href]="dog.pedigreeVerso" target="_blank" title="Pedigree Verso">
+                          <img [src]="dog.pedigreeVerso" class="img-thumbnail" style="height: 50px; width: auto;">
+                        </a>
+                      }
+                    </div>
+                  }
+                } @else {
+                   <span class="text-secondary">Não</span>
+                }
+              </div>
+
+              <div class="mb-2">
+                <strong>Microchip:</strong>
+                @if (dog.temMicrochip) {
+                   <span class="text-success"><i class="fas fa-check-circle"></i> Sim</span>
+                   @if (dog.numeroMicrochip) {
+                     <small class="d-block text-muted">{{dog.numeroMicrochip}}</small>
+                   }
+                } @else {
+                   <span class="text-secondary">Não</span>
+                }
+              </div>
+
+              @if (dog.observacoes) {
+                <div class="mt-3">
+                  <strong>Observações:</strong>
+                  <p class="small text-muted mb-0 p-2 bg-light rounded">{{ dog.observacoes }}</p>
+                </div>
+             }
+
+              @if (dog.status === 'APROVADO') {
+                <div class="alert alert-success mt-3 d-flex align-items-center">
+                  <i class="fas fa-check-double me-2"></i>
+                  <div>
+                    <strong>Pagamento & Cadastro Confirmados</strong><br>
+                    <small>Seu cão está apto a participar.</small>
+                  </div>
+                </div>
+              }
+
+              @if (dog.motivoRejeicao && dog.status === 'REJEITADO') {
+                <div class="alert alert-danger mt-3">
+                  <strong>Motivo da Rejeição:</strong><br>
+                  {{ dog.motivoRejeicao }}
+                </div>
+              }
+            </div>
+          </div>
         </div>
-      </div>
+      } @else {
+        <div class="text-center p-5">
+          <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+          <p class="mt-3 text-muted">Carregando detalhes do cão...</p>
+        </div>
+      }
     } @else {
-      <div class="text-center p-5">
-        <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
-        <p class="mt-3 text-muted">Carregando detalhes do cão...</p>
+      <!-- Modo de Edição -->
+      <div [formGroup]="editForm" class="p-fluid">
+        <div class="card p-3 bg-light mb-3">
+          <div class="row">
+            <div class="col-md-6 field mb-2">
+              <label for="fotoPerfil" class="fw-bold">Foto de Perfil</label>
+              <input type="file" id="fotoPerfil" (change)="onFileSelected($event, 'fotoPerfil')" accept="image/*" class="form-control">
+            </div>
+            <div class="col-md-6 field mb-2">
+              <label for="fotoLateral" class="fw-bold">Foto Lateral</label>
+              <input type="file" id="fotoLateral" (change)="onFileSelected($event, 'fotoLateral')" accept="image/*" class="form-control">
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+           <div class="col-md-6">
+             <div class="field mb-3">
+               <label for="nome" class="block fw-bold">Nome do Cão *</label>
+               <input id="nome" type="text" pInputText formControlName="nome" class="w-100" />
+               @if (editForm.get('nome')?.invalid && editForm.get('nome')?.touched) {
+                 <small class="p-error block">Nome é obrigatório (min 2 chars)</small>
+               }
+             </div>
+           </div>
+           <div class="col-md-6">
+             <div class="field mb-3">
+               <label class="block fw-bold">Sexo *</label>
+               <div class="d-flex gap-3 mt-2">
+                 <div class="field-radiobutton d-flex align-items-center">
+                   <input type="radio" id="sexoM" value="M" formControlName="sexo" class="me-2">
+                   <label for="sexoM">Macho</label>
+                 </div>
+                 <div class="field-radiobutton d-flex align-items-center">
+                   <input type="radio" id="sexoF" value="F" formControlName="sexo" class="me-2">
+                   <label for="sexoF">Fêmea</label>
+                 </div>
+               </div>
+             </div>
+           </div>
+        </div>
+
+        <div class="row">
+           <div class="col-md-6">
+             <div class="field mb-3">
+               <label for="raca" class="block fw-bold">Raça *</label>
+               <p-select id="raca" [options]="racas" optionLabel="nome" optionValue="id" formControlName="raca" placeholder="Selecione a raça" [filter]="true" styleClass="w-100"></p-select>
+             </div>
+             @if (isOutraRacaSelected) {
+                <div class="field mb-3">
+                   <label for="racaSugerida" class="fw-bold">Qual a raça? *</label>
+                   <input id="racaSugerida" type="text" pInputText formControlName="racaSugerida" class="w-100" />
+                </div>
+             }
+           </div>
+           <div class="col-md-6">
+             <div class="field mb-3">
+                <label for="dataNascimento" class="block fw-bold">Data de Nascimento *</label>
+                <p-datepicker id="dataNascimento" formControlName="dataNascimento" dateFormat="dd/mm/yy" [showIcon]="true" styleClass="w-100"></p-datepicker>
+             </div>
+           </div>
+        </div>
+
+        <div class="row">
+          <div class="col-6 field mb-3">
+            <label for="peso" class="fw-bold">Peso (kg)</label>
+            <input id="peso" type="text" pInputText formControlName="peso" class="w-100" />
+          </div>
+          <div class="col-6 field mb-3">
+            <label for="altura" class="fw-bold">Altura (cm)</label>
+            <input id="altura" type="text" pInputText formControlName="altura" class="w-100" />
+          </div>
+        </div>
+
+        <div class="card p-3 bg-light mb-3">
+           <div class="field mb-2">
+              <p-checkbox formControlName="temPedigree" [binary]="true" label="Possui Pedigree?" styleClass="fw-bold"></p-checkbox>
+           </div>
+           @if (editForm.get('temPedigree')?.value) {
+              <div class="row mt-2">
+                 <div class="col-md-6 field mb-2">
+                    <label for="registroPedigree" class="small">Registro Pedigree *</label>
+                    <input id="registroPedigree" type="text" pInputText formControlName="registroPedigree" class="w-100 p-inputtext-sm" />
+                 </div>
+                 <div class="col-md-6 field mb-2">
+                    <label for="entidadeEmissoraPedigree" class="small">Entidade Emissora *</label>
+                    <input id="entidadeEmissoraPedigree" type="text" pInputText formControlName="entidadeEmissoraPedigree" class="w-100 p-inputtext-sm" />
+                 </div>
+              </div>
+              <div class="row mt-2">
+                <div class="col-md-6 field mb-2">
+                  <label for="pedigreeFrente" class="small">Foto Pedigree (Frente)</label>
+                  <input type="file" id="pedigreeFrente" (change)="onFileSelected($event, 'pedigreeFrente')" accept="image/*" class="form-control form-control-sm">
+                </div>
+                <div class="col-md-6 field mb-2">
+                  <label for="pedigreeVerso" class="small">Foto Pedigree (Verso)</label>
+                  <input type="file" id="pedigreeVerso" (change)="onFileSelected($event, 'pedigreeVerso')" accept="image/*" class="form-control form-control-sm">
+                </div>
+              </div>
+           }
+        </div>
+
+        <div class="card p-3 bg-light mb-3">
+           <div class="field mb-2">
+              <p-checkbox formControlName="temMicrochip" [binary]="true" label="Possui Microchip?" styleClass="fw-bold"></p-checkbox>
+           </div>
+           @if (editForm.get('temMicrochip')?.value) {
+              <div class="field mt-2">
+                 <label for="numeroMicrochip" class="small">Número Microchip (15 dígitos) *</label>
+                 <input id="numeroMicrochip" type="text" pInputText formControlName="numeroMicrochip" maxlength="15" class="w-100 p-inputtext-sm" />
+              </div>
+           }
+        </div>
+
+        <div class="field mb-3">
+           <label for="titulos" class="fw-bold">Títulos</label>
+           <textarea id="titulos" pTextarea formControlName="titulos" rows="2" class="w-100"></textarea>
+        </div>
+
+        <div class="field mb-3">
+           <label for="caracteristicas" class="fw-bold">Características</label>
+           <textarea id="caracteristicas" pTextarea formControlName="caracteristicas" rows="2" class="w-100"></textarea>
+        </div>
+
+        <div class="field mb-3">
+           <label for="observacoes" class="fw-bold">Observações</label>
+           <textarea id="observacoes" pTextarea formControlName="observacoes" rows="2" class="w-100"></textarea>
+        </div>
       </div>
     }
   </ng-template>
+
   <ng-template pTemplate="footer">
-    <div class="d-flex justify-content-between align-items-center w-100">
-      <div>
-        @if (dog && (dog.status === 'CADASTRO_INCOMPLETO' || dog.status === 'REJEITADO')) {
-          <button pButton type="button" label="Editar Cadastro" icon="pi pi-pencil" class="p-button-warning" (click)="onEdit()"></button>
-        }
+    @if (!isEditing) {
+      <div class="d-flex justify-content-between align-items-center w-100">
+        <div class="d-flex gap-2">
+          @if (dog && dog.status === 'AGUARDANDO_PAGAMENTO') {
+            <button pButton type="button" label="Realizar Pagamento" icon="pi pi-wallet" class="p-button-warning" (click)="onPagar()"></button>
+          }
+          @if (dog && (dog.status === 'CADASTRO_INCOMPLETO' || dog.status === 'REJEITADO')) {
+            <button pButton type="button" label="Editar Cadastro" icon="pi pi-pencil" class="p-button-warning" (click)="enableEdit()"></button>
+          }
+        </div>
+        <button pButton type="button" label="Fechar" class="p-button-secondary p-button-text" (click)="close()"></button>
       </div>
-      <button pButton type="button" label="Fechar" class="p-button-secondary p-button-text" (click)="close()"></button>
-    </div>
+    } @else {
+      <div class="d-flex justify-content-end gap-2 w-100">
+         <button pButton type="button" label="Cancelar" class="p-button-secondary p-button-text" (click)="cancelEdit()"></button>
+         <button pButton type="button" label="Salvar Alterações" class="p-button-primary" (click)="saveChanges()" [loading]="isSubmitting"></button>
+      </div>
+    }
   </ng-template>
 </p-dialog>

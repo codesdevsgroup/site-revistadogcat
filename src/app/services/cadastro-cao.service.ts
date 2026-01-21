@@ -18,6 +18,8 @@ export interface CadastroCao {
   userId: string;
   nome: string;
   raca?: string;
+  racaId?: string;
+  racaSugerida?: string;
   sexo: string;
   dataNascimento: Date;
   fotoPerfil: string;

@@ -138,7 +138,7 @@
               <div class="row">
                 @for (dog of dogs; track dog) {
                   <div class="col-md-6 col-lg-4 mb-4">
-                    <div class="card h-100 shadow-sm dog-card" style="cursor: pointer; transition: transform 0.2s;" (click)="openDogDetails(dog)">
+                    <div class="card h-100 shadow-sm dog-card">
                       <div class="card-body d-flex flex-column">
                         <div class="d-flex align-items-center mb-3">
                           <i class="fas fa-paw fa-lg text-primary me-2"></i>
@@ -146,39 +146,63 @@
                         </div>
                         <p class="mb-2"><span class="fw-bold">Raça:</span> {{ dog.raca || '—' }}</p>
                         <p class="mb-2"><span class="fw-bold">Sexo:</span> {{ dog.sexo }}</p>
-                        <p class="mb-2"><span class="fw-bold">Status:</span>
-                        <p-tag
-                          [value]="dog.status === 'CADASTRO_INCOMPLETO' ? 'Cadastro incompleto' : (dog.status === 'AGUARDANDO_PAGAMENTO' ? 'Aguardando Pagamento' : (dog.status || '—'))"
-                          [severity]="dog.status === 'CADASTRO_INCOMPLETO' ? 'warn' : (dog.status === 'AGUARDANDO_PAGAMENTO' ? 'warn' : (dog.status === 'APROVADO' ? 'success' : (dog.status === 'REJEITADO' ? 'danger' : 'info')))"
-                        ></p-tag>
-                      </p>
-                      <div class="mt-auto" (click)="$event.stopPropagation()">
-                        <!-- Status Aguardando Pagamento -->
-                        @if (dog.status === 'AGUARDANDO_PAGAMENTO') {
-                          <div class="alert alert-warning p-2 mb-2 d-flex align-items-center">
-                            <i class="fas fa-exclamation-circle me-2"></i>
-                            <small class="fw-bold">Pagamento pendente</small>
-                          </div>
+
+                        <!-- Status do Cadastro -->
+                        <div class="mb-2">
+                          <strong>Status:</strong>
+                          <p-tag
+                            [value]="dog.status === 'AGUARDANDO_PAGAMENTO' ? 'Aguardando Pagamento' : (dog.status === 'CADASTRO_INCOMPLETO' ? 'Cadastro Incompleto' : (dog.status === 'APROVADO' ? 'Aprovado' : (dog.status === 'REJEITADO' ? 'Rejeitado' : dog.status)))"
+                            [severity]="dog.status === 'AGUARDANDO_PAGAMENTO' ? 'warn' : (dog.status === 'CADASTRO_INCOMPLETO' ? 'warn' : (dog.status === 'APROVADO' ? 'success' : (dog.status === 'REJEITADO' ? 'danger' : 'info')))"
+                          ></p-tag>
+                        </div>
+
+                        <!-- Status Financeiro -->
+                        <div class="mb-3">
+                          <strong class="d-block mb-1">Pagamento:</strong>
+
+                          @if (dog.status === 'APROVADO') {
+                            <div class="d-flex align-items-center text-success">
+                              <i class="fas fa-check-circle me-2"></i>
+                              <span class="fw-bold">✅ Pago e Confirmado</span>
+                            </div>
+                          } @else {
+                            <div class="d-flex align-items-center text-warning">
+                              <i class="fas fa-exclamation-triangle me-2"></i>
+                              <span class="fw-bold">⚠️ Pendente - Aguardando Pagamento</span>
+                            </div>
+                          }
+                        </div>
+
+                        <div class="mt-auto d-flex flex-column gap-2">
+                          <!-- Botão Editar / Detalhes (Sempre visível) -->
                           <button
                             pButton
                             type="button"
-                            class="p-button-sm w-100"
-                            icon="pi pi-wallet"
-                            label="Realizar Pagamento"
-                            (click)="onPagar(dog)">
+                            class="p-button-sm p-button-outlined w-100"
+                            icon="pi pi-pencil"
+                            label="Editar / Detalhes"
+                            (click)="openDogDetails(dog)">
                           </button>
-                        }
 
-                        <!-- Botão de Vídeo (Apenas se não aprovado e não aguardando pagamento) -->
-                        @if (dog.status !== 'APROVADO' && dog.status !== 'AGUARDANDO_PAGAMENTO') {
-                          <div class="d-flex justify-content-between align-items-center">
-                            <button pButton type="button" class="p-button-sm p-button-outlined" icon="pi pi-video" label="Enviar vídeo" (click)="openVideoModal(dog)"></button>
-                            @if (dog.videoOption && dog.videoOption !== 'NONE') {
-                              <small class="text-muted">Vídeo: {{ dog.videoOption }}</small>
-                            }
-                          </div>
-                        }
-                      </div>
+                          <!-- Botão Pagamento (Se não aprovado) -->
+                          @if (dog.status !== 'APROVADO') {
+                            <button
+                              pButton
+                              type="button"
+                              class="p-button-sm p-button-warning w-100"
+                              icon="pi pi-wallet"
+                              label="Realizar Pagamento"
+                              (click)="onPagar(dog)">
+                            </button>
+                          }
+
+                          <!-- Botão de Vídeo (Opcional, se não aprovado/pago) -->
+                          @if (dog.status !== 'APROVADO' && dog.status !== 'AGUARDANDO_PAGAMENTO') {
+                             <div class="d-flex justify-content-between align-items-center">
+                               <button pButton type="button" class="p-button-sm p-button-secondary p-button-outlined w-100" icon="pi pi-video" label="Enviar vídeo" (click)="openVideoModal(dog)"></button>
+                             </div>
+                          }
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -280,6 +304,6 @@
     [dog]="selectedDogDetails"
     (closeModal)="closeDogDetails()"
     (requestPayment)="onPagar($event)"
-    (editDog)="onEditDog($event)"
+    (dogUpdated)="onDogUpdated($event)"
   ></app-dog-details-modal>
 </div>
