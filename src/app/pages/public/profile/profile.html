@@ -138,7 +138,7 @@
               <div class="row">
                 @for (dog of dogs; track dog) {
                   <div class="col-md-6 col-lg-4 mb-4">
-                    <div class="card h-100">
+                    <div class="card h-100 shadow-sm dog-card" style="cursor: pointer; transition: transform 0.2s;" (click)="openDogDetails(dog)">
                       <div class="card-body d-flex flex-column">
                         <div class="d-flex align-items-center mb-3">
                           <i class="fas fa-paw fa-lg text-primary me-2"></i>
@@ -152,7 +152,7 @@
                           [severity]="dog.status === 'CADASTRO_INCOMPLETO' ? 'warn' : (dog.status === 'AGUARDANDO_PAGAMENTO' ? 'warn' : (dog.status === 'APROVADO' ? 'success' : (dog.status === 'REJEITADO' ? 'danger' : 'info')))"
                         ></p-tag>
                       </p>
-                      <div class="mt-auto">
+                      <div class="mt-auto" (click)="$event.stopPropagation()">
                         <!-- Status Aguardando Pagamento -->
                         @if (dog.status === 'AGUARDANDO_PAGAMENTO') {
                           <div class="alert alert-warning p-2 mb-2 d-flex align-items-center">
@@ -273,3 +273,13 @@
       <button pButton type="button" label="Salvar" icon="pi pi-save" (click)="submitVideo()" [disabled]="isSubmittingVideo" [loading]="isSubmittingVideo"></button>
     </ng-template>
   </p-dialog>
+
+  <!-- Modal: Detalhes do Cão (Componente Isolado) -->
+  <app-dog-details-modal
+    [isOpen]="isDogDetailsModalOpen"
+    [dog]="selectedDogDetails"
+    (closeModal)="closeDogDetails()"
+    (requestPayment)="onPagar($event)"
+    (editDog)="onEditDog($event)"
+  ></app-dog-details-modal>
+</div>

@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-
+import { CommonModule } from '@angular/common'; // Adicionado
 import { Router, RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../../../services/auth.service';
@@ -10,6 +10,7 @@ import { ProfileEditModalComponent } from '../../../components/profile-edit-moda
 import { AddressModalComponent } from '../../../components/address-modal/address-modal';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { NotificationService } from '../../../services/notification.service';
+import { DogDetailsModalComponent } from '../../../components/dog-details-modal/dog-details-modal'; // Adicionado
 // PrimeNG
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
@@ -26,11 +27,13 @@ import { MessageModule } from 'primeng/message';
   selector: "app-profile",
   standalone: true,
   imports: [
+    CommonModule, // Adicionado
     ReactiveFormsModule,
     FormsModule,
     RouterModule,
     ProfileEditModalComponent,
     AddressModalComponent,
+    DogDetailsModalComponent, // Adicionado
     ButtonModule,
     CardModule,
     DialogModule,
@@ -355,5 +358,25 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
     this.notificationService.info('Funcionalidade de pagamento será implementada a seguir.');
     // TODO: Integrar com PagamentoService quando criado.
+  }
+
+  // --- Modal de Detalhes do Cão ---
+  isDogDetailsModalOpen = false;
+  selectedDogDetails: CadastroCao | null = null;
+
+  openDogDetails(dog: CadastroCao): void {
+    this.selectedDogDetails = dog;
+    this.isDogDetailsModalOpen = true;
+  }
+
+  closeDogDetails(): void {
+    this.isDogDetailsModalOpen = false;
+    this.selectedDogDetails = null;
+  }
+
+  onEditDog(dog: CadastroCao): void {
+    this.closeDogDetails();
+    // Navegar para a página de cadastro passando o objeto cão no estado
+    this.router.navigate(['/cadastro-cao'], { state: { dogToEdit: dog } });
   }
 }
