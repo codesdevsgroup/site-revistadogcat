@@ -12,27 +12,27 @@
 }
 
 .dashboard-header {
-  text-align: center;
+  text-align: left;
+  margin-bottom: var(--space-8);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
 
   .dashboard-title {
-    font-size: 2.5rem;
-    font-weight: var(--fontWeight-bold);
-    color: var(--primaryColor);
-    margin-bottom: var(--space-2);
-    background: linear-gradient(
-      135deg,
-      var(--primaryColor),
-      var(--primaryColorDark)
-    );
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--gray-900);
+    margin: 0;
+    letter-spacing: -0.03em;
+    background: none;
+    -webkit-text-fill-color: initial;
   }
 
   .dashboard-subtitle {
-    font-size: 1.125rem;
-    color: var(--gray-600);
+    font-size: 1rem;
+    color: var(--gray-500);
     margin: 0;
+    font-weight: 500;
   }
 }
 
@@ -50,59 +50,40 @@
 
 :host ::ng-deep .stat-card {
   background: white;
-  border-radius: 16px;
+  border-radius: 24px;
   padding: var(--space-6);
   display: flex;
   align-items: center;
   gap: var(--space-4);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
 
-  &::before {
+  /* Efeito de brilho suave no topo */
+  &::after {
     content: "";
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
-    height: 4px;
+    height: 1px;
     background: linear-gradient(
       90deg,
-      var(--primaryColor),
-      var(--primaryColorDark)
+      rgba(255, 255, 255, 0),
+      rgba(255, 255, 255, 0.8),
+      rgba(255, 255, 255, 0)
     );
   }
 
   &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 4px 16px rgba(0, 0, 0, 0.08);
+    transform: translateY(-5px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   }
 
-  .stat-primary::before {
-    background: linear-gradient(
-      90deg,
-      var(--primaryColor),
-      var(--primaryColorDark)
-    );
-  }
-
-  .stat-success::before {
-    background: linear-gradient(90deg, var(--successColor), #22c55e);
-  }
-
-  .stat-golden::before {
-    background: linear-gradient(
-      90deg,
-      var(--goldenColor),
-      var(--goldenColorLight)
-    );
-  }
-
-  .stat-info::before {
-    background: linear-gradient(90deg, var(--infoColor), #3b82f6);
-  }
+  /* Removida a faixa colorida superior para um visual mais limpo */
+  /* Mantendo as classes de cores para uso nos ícones e textos */
 
   .p-card-body {
     padding: 0;
@@ -116,89 +97,71 @@
   .stat-content {
     display: flex;
     align-items: center;
-    gap: var(--space-4);
+    gap: var(--space-5); /* Aumentado o gap */
   }
 
   .stat-icon {
-    width: 60px;
-    height: 60px;
-    border-radius: 12px;
+    width: 64px; /* Levemente maior */
+    height: 64px;
+    border-radius: 20px; /* Mais arredondado */
     display: flex;
     align-items: center;
     justify-content: center;
-    // Ícone default: material-icons ou material-symbols
     .material-icons,
     .material-symbols-outlined {
-      font-size: 28px;
+      font-size: 30px;
       line-height: 1;
-      color: var(--gray-700); // padrão para quando o fundo for claro
+      color: var(--gray-700);
     }
     flex-shrink: 0;
-    // Fundo padrão para evitar "ícone branco em fundo branco" quando a classe de cor não aplicar
-    background: var(--gray-100);
+    background: var(--gray-50);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); /* Profundidade interna */
   }
 
   .stat-primary .stat-icon {
-    background: linear-gradient(
-      135deg,
-      var(--primaryColor),
-      var(--primaryColorDark)
-    );
-    .material-icons,
-    .material-symbols-outlined {
-      color: white;
-    }
+    background: linear-gradient(135deg, rgba(var(--primaryColorRGB), 0.1), rgba(var(--primaryColorRGB), 0.2));
+    .material-icons, .material-symbols-outlined { color: var(--primaryColor); }
   }
 
   .stat-success .stat-icon {
-    background: linear-gradient(135deg, var(--successColor), #22c55e);
-    .material-icons,
-    .material-symbols-outlined {
-      color: white;
-    }
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(34, 197, 94, 0.2));
+    .material-icons, .material-symbols-outlined { color: var(--successColor); }
   }
 
   .stat-golden .stat-icon {
-    background: linear-gradient(
-      135deg,
-      var(--goldenColor),
-      var(--goldenColorLight)
-    );
-    .material-icons,
-    .material-symbols-outlined {
-      color: white;
-    }
+    background: linear-gradient(135deg, rgba(var(--goldenColorRGB), 0.1), rgba(var(--goldenColorRGB), 0.2));
+    .material-icons, .material-symbols-outlined { color: var(--goldenColor); }
   }
 
   .stat-info .stat-icon {
-    background: linear-gradient(135deg, var(--infoColor), #3b82f6);
-    .material-icons,
-    .material-symbols-outlined {
-      color: white;
-    }
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(59, 130, 246, 0.2));
+    .material-icons, .material-symbols-outlined { color: var(--infoColor); }
   }
 
   .stat-value {
-    font-size: 2rem;
-    font-weight: var(--fontWeight-bold);
-    color: var(--gray-800);
-    margin: 0 0 var(--space-1) 0;
-    line-height: 1;
+    font-size: 2.25rem; /* Maior e mais impactante */
+    font-weight: 700;
+    color: var(--gray-900);
+    margin: 0;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
   }
 
   .stat-title {
-    font-size: 0.875rem;
-    color: var(--gray-600);
-    margin: 0 0 var(--space-2) 0;
-    font-weight: var(--fontWeight-medium);
+    font-size: 0.85rem;
+    color: var(--gray-500);
+    margin: var(--space-1) 0 0 0;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
   }
 
   .stat-change {
+    /* Mantido igual */
     font-size: 0.75rem;
     font-weight: var(--fontWeight-semibold);
     padding: 2px 8px;
     border-radius: 6px;
-    background: rgba(34, 197, 94, 0.1);
     color: var(--successColor);
     &.positive {
       background: rgba(34, 197, 94, 0.12);
@@ -225,6 +188,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  width: 100%;
 }
 
 .section-title {
@@ -234,73 +198,118 @@
   margin-bottom: var(--space-6);
 }
 
-// Layout principal com coluna direita
-.content-grid {
-  display: grid;
-  grid-template-columns: 1fr 340px;
-  gap: var(--space-6);
-
-  @media (max-width: 1200px) {
-    grid-template-columns: 1fr 320px;
-  }
-
-  @media (max-width: 992px) {
-    grid-template-columns: 1fr;
-  }
-}
-
-.content-right {
-  position: relative;
-}
-
-.quick-actions {
+.quick-actions-horizontal {
   margin-bottom: var(--space-6);
 
-  .actions-grid {
+  .quick-actions-card {
+    background: transparent;
+    border-radius: 0;
+    padding: 0;
+    box-shadow: none;
+    border: none;
+
+    .p-card-body {
+      padding: 0;
+    }
+
+    .p-card-content {
+      padding: 0;
+    }
+  }
+
+  .actions-grid-horizontal {
     display: flex;
-    flex-direction: column;
-    gap: var(--space-3);
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-6);
+
+    @media (max-width: 992px) {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-4);
+    }
+  }
+
+  .actions-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--gray-800);
+    margin: 0;
+    white-space: nowrap;
+    letter-spacing: -0.02em;
+  }
+
+  .actions-buttons {
+    display: flex;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+    width: 100%;
+    justify-content: flex-end;
+
+    @media (max-width: 992px) {
+      justify-content: flex-start;
+      width: 100%;
+    }
   }
 
   .action-btn {
     display: inline-flex;
     align-items: center;
-    gap: var(--space-2);
-    width: 100%;
-    padding: 0.85rem 1rem;
-    border-radius: 12px;
-    background: #fff;
-    border: 1px solid #e5e7eb;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-    transition: all 0.2s ease;
+    justify-content: center;
+    gap: var(--space-3);
+    padding: 0.875rem 1.75rem;
+    border-radius: 18px; /* Mais moderno */
+    background: white;
+    border: 1px solid rgba(0,0,0,0.02);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    color: var(--gray-700);
+    font-weight: 600;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
 
     .material-symbols-outlined {
-      font-size: 22px;
+      font-size: 24px;
+      color: var(--primaryColor);
+      transition: transform 0.3s ease;
     }
 
     &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
-      border-color: var(--primaryColor);
+      background: white;
+      transform: translateY(-3px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
       color: var(--primaryColor);
+
+      .material-symbols-outlined {
+        transform: scale(1.1);
+      }
+    }
+
+    &:active {
+      transform: translateY(-1px);
     }
   }
+}
+
+// Layout principal simplificado (sem coluna direita)
+.main-content {
+  width: 100%;
 }
 
 .recent-activity {
   .activity-list {
     background: white;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border-radius: 24px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
     overflow: hidden;
+    border: 1px solid rgba(0,0,0,0.02);
   }
 
   .activity-item {
     display: flex;
     align-items: center;
     gap: var(--space-4);
-    padding: var(--space-4) var(--space-6);
-    border-bottom: 1px solid var(--gray-100);
+    padding: var(--space-5) var(--space-6);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.04);
     transition: background 0.2s ease;
 
     &:last-child {
@@ -312,9 +321,9 @@
     }
 
     .activity-icon {
-      width: 40px;
-      height: 40px;
-      border-radius: 10px;
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
       background: linear-gradient(
         135deg,
         var(--primaryColor),
@@ -326,6 +335,7 @@
       color: white;
       font-size: 0.875rem;
       flex-shrink: 0;
+      box-shadow: 0 4px 6px -1px rgba(var(--primaryColorRGB), 0.2);
     }
 
     .activity-content {
@@ -334,18 +344,19 @@
       .activity-text {
         margin: 0 0 var(--space-1) 0;
         color: var(--gray-700);
-        font-size: 0.875rem;
-        line-height: 1.4;
+        font-size: 0.925rem;
+        line-height: 1.5;
 
         strong {
-          color: var(--primaryColor);
-          font-weight: var(--fontWeight-semibold);
+          color: var(--gray-900);
+          font-weight: 600;
         }
       }
 
       .activity-time {
         font-size: 0.75rem;
-        color: var(--gray-500);
+        color: var(--gray-400);
+        font-weight: 500;
       }
     }
   }
@@ -370,28 +381,6 @@
       white-space: nowrap; /* evita quebra estranha quando houver ícones e textos juntos */
     }
     .p-table .material-symbols-outlined {
-      font-size: 20px;
-    }
-  }
-}
-
-// Responsividade para "Ações Rápidas"
-.quick-actions-card {
-  .actions-grid {
-    display: grid; /* garante consistência e facilidade de ajuste */
-    grid-template-columns: 1fr;
-    gap: var(--space-3);
-  }
-
-  .action-btn {
-    justify-content: flex-start; /* garante alinhamento consistente em telas estreitas */
-  }
-
-  @media (max-width: 992px) {
-    .action-btn {
-      padding: 0.75rem 0.9rem;
-    }
-    .action-btn .material-symbols-outlined {
       font-size: 20px;
     }
   }
@@ -426,7 +415,12 @@
 .analytics-section {
   .analytics-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    /* Alterado para permitir cards maiores.
+       Com 3 cards, eles tentarão ocupar 1/3 cada se houver espaço.
+       Se a tela for menor, vai quebrar para 2 ou 1.
+       minmax(400px, 1fr) força eles a serem mais largos antes de quebrar linha.
+    */
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
     gap: var(--space-6);
 
     @media (max-width: 768px) {
@@ -435,25 +429,6 @@
     }
   }
 
-  // Unifica aparência dos cabeçalhos dos cards analíticos
-  :host ::ng-deep .analytics-card .p-card-header {
-    padding: var(--space-4) var(--space-5);
-    border-bottom: 1px solid #e5e7eb;
-    background: #fff;
-  }
-
-  .analytics-card .card-title {
-    margin: 0;
-    font-size: 18px;
-    font-weight: 600;
-    color: #1f2937;
-  }
-
-  .analytics-card .card-header-flex {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
 
   .stat-informativo {
     display: inline-flex;
@@ -470,16 +445,45 @@
     }
   }
 
-  .analytics-card {
+  ::ng-deep .analytics-card {
     background: white;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    border: 1px solid #e5e7eb;
+    border-radius: 24px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.5);
     transition: all 0.3s ease;
+    overflow: hidden; /* Garante que o header respeite o border-radius */
+    display: flex;
+    flex-direction: column;
 
     &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+      transform: translateY(-5px);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+
+    /* Estilo unificado do Header para todos os cards analíticos */
+    .p-card-header {
+      padding: var(--space-5) var(--space-6);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+      background: #fff;
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--gray-800);
+      display: flex;
+      align-items: center;
+      letter-spacing: -0.01em;
+    }
+
+    /* Garante que o corpo do card ocupe o espaço restante */
+    .p-card-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: var(--space-5) var(--space-6); /* Padding consistente no corpo */
+    }
+
+    .p-card-content {
+      flex: 1;
+      padding: 0;
     }
 
     h3 {
@@ -597,7 +601,7 @@
 }
 
 // Estilos específicos para o card de Cadastros de Cães
-.dog-stats-card {
+:host ::ng-deep .dog-stats-card {
   .header-title-group {
     display: flex;
     align-items: center;
@@ -607,7 +611,7 @@
   .header-icon-container {
     width: 32px;
     height: 32px;
-    border-radius: 8px;
+    border-radius: 10px; /* Levemente mais arredondado */
     background: linear-gradient(
       135deg,
       var(--primaryColor),
@@ -658,9 +662,9 @@
   .attention-box {
     margin-top: var(--space-4);
     padding: var(--space-4);
-    border-radius: 12px;
+    border-radius: 16px; /* Mais consistente com o card */
     background: #fffcf5; /* Fundo muito sutil */
-    border: 1px solid #fed7aa;
+    border: 1px solid rgba(254, 215, 170, 0.5);
     display: flex;
     gap: var(--space-3);
     align-items: flex-start;
@@ -680,7 +684,7 @@
     .attention-icon {
       width: 36px;
       height: 36px;
-      border-radius: 50%;
+      border-radius: 12px; /* Mais arredondado */
       background: #fff7ed;
       display: flex;
       align-items: center;

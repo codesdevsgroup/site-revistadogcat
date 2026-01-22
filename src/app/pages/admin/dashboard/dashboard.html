@@ -6,6 +6,47 @@
     </p>
   </div>
 
+  <!-- Ações Rápidas - Horizontal -->
+  <div class="quick-actions-horizontal">
+    <p-card styleClass="quick-actions-card">
+      <div class="actions-grid-horizontal">
+        <h3 class="actions-title">Ações Rápidas</h3>
+        <div class="actions-buttons">
+          <button
+            type="button"
+            class="action-btn"
+            (click)="novoArtigo()"
+            pTooltip="Criar novo artigo"
+            tooltipPosition="bottom"
+          >
+            <span class="material-symbols-outlined">description</span>
+            <span>Novo Artigo</span>
+          </button>
+          <button
+            type="button"
+            class="action-btn"
+            (click)="adicionarUsuario()"
+            pTooltip="Adicionar novo usuário"
+            tooltipPosition="bottom"
+          >
+            <span class="material-symbols-outlined">person_add</span>
+            <span>Adicionar Usuário</span>
+          </button>
+          <button
+            type="button"
+            class="action-btn"
+            (click)="abrirRelatorios()"
+            pTooltip="Gerar relatórios e exportações"
+            tooltipPosition="bottom"
+          >
+            <span class="material-symbols-outlined">bar_chart</span>
+            <span>Relatórios</span>
+          </button>
+        </div>
+      </div>
+    </p-card>
+  </div>
+
   <!-- Cards: skeleton enquanto carrega -->
   @if (isLoading) {
     <div class="stats-grid">
@@ -56,170 +97,131 @@
       }
     </div>
   }
-  <div class="content-grid">
-    <div class="content-left">
-      <div class="analytics-section">
-        <div class="analytics-grid">
-          <p-card header="Crescimento Mensal" styleClass="analytics-card">
-            @if (isLoading) {
-              <p-skeleton width="100%" height="240px"></p-skeleton>
+
+  <!-- Layout Principal Simplificado -->
+  <div class="main-content">
+    <div class="analytics-section">
+      <div class="analytics-grid">
+        <p-card header="Crescimento Mensal" styleClass="analytics-card">
+          @if (isLoading) {
+            <p-skeleton width="100%" height="240px"></p-skeleton>
+          } @else {
+            @if (lineChartData?.datasets?.length) {
+              <p-chart
+                type="line"
+                [data]="lineChartData"
+                [options]="chartOptions"
+              ></p-chart>
             } @else {
-              @if (lineChartData?.datasets?.length) {
-                <p-chart
-                  type="line"
-                  [data]="lineChartData"
-                  [options]="chartOptions"
-                ></p-chart>
-              } @else {
-                <div class="no-data">Sem dados de crescimento mensal</div>
-              }
+              <div class="no-data">Sem dados de crescimento mensal</div>
             }
-          </p-card>
-          <p-card header="Distribuição de Usuários" styleClass="analytics-card">
-            @if (isLoading) {
-              <p-skeleton width="100%" height="240px"></p-skeleton>
+          }
+        </p-card>
+        <p-card header="Distribuição de Usuários" styleClass="analytics-card">
+          @if (isLoading) {
+            <p-skeleton width="100%" height="240px"></p-skeleton>
+          } @else {
+            @if (pieChartData?.datasets?.length) {
+              <p-chart type="pie" [data]="pieChartData"></p-chart>
             } @else {
-              @if (pieChartData?.datasets?.length) {
-                <p-chart type="pie" [data]="pieChartData"></p-chart>
-              } @else {
-                <div class="no-data">Sem distribuição de usuários</div>
-              }
+              <div class="no-data">Sem distribuição de usuários</div>
             }
-          </p-card>
-          <!-- Terceiro card analítico redesenhado: Cadastros de Cães -->
-          <p-card styleClass="analytics-card dog-stats-card">
-            <ng-template pTemplate="header">
-              <div class="card-header-flex">
-                <div class="header-title-group">
-                  <div class="header-icon-container">
-                    <span class="material-symbols-outlined">pets</span>
-                  </div>
-                  <h3 class="card-title">Cadastros de Cães</h3>
+          }
+        </p-card>
+        <!-- Terceiro card analítico redesenhado: Cadastros de Cães -->
+        <p-card styleClass="analytics-card dog-stats-card">
+          <ng-template pTemplate="header">
+            <div class="card-header-flex">
+              <div class="header-title-group">
+                <div class="header-icon-container">
+                  <span class="material-symbols-outlined">pets</span>
                 </div>
-                <!-- Badge customizado -->
+                <h3 class="card-title">Cadastros de Cães</h3>
+              </div>
+              <!-- Badge customizado -->
+              @if (dogsIncompleteCount > 0) {
+                <div
+                  class="custom-badge warning"
+                >
+                  <span class="pulse-dot"></span>
+                  {{ dogsIncompleteCount }} Pendentes
+                </div>
+              }
+              @if (dogsIncompleteCount === 0) {
+                <div
+                  class="custom-badge success"
+                >
+                  <span
+                    class="material-symbols-outlined"
+                    style="font-size: 14px"
+                  >check</span
+                  >
+                  Tudo em dia
+                </div>
+              }
+            </div>
+          </ng-template>
+
+          <div class="card-content-wrapper">
+            @if (isLoading) {
+              <p-skeleton width="100%" height="240px"></p-skeleton>
+            } @else {
+              @if (dogsLineChartData?.datasets?.length) {
+                <div class="chart-container">
+                  <p-chart
+                    type="line"
+                    [data]="dogsLineChartData"
+                    [options]="chartOptions"
+                  ></p-chart>
+                </div>
                 @if (dogsIncompleteCount > 0) {
-                  <div
-                    class="custom-badge warning"
-                    >
-                    <span class="pulse-dot"></span>
-                    {{ dogsIncompleteCount }} Pendentes
-                  </div>
-                }
-                @if (dogsIncompleteCount === 0) {
-                  <div
-                    class="custom-badge success"
-                    >
-                    <span
-                      class="material-symbols-outlined"
-                      style="font-size: 14px"
-                      >check</span
-                      >
-                      Tudo em dia
+                  <div class="attention-box">
+                    <div class="attention-icon">
+                      <span class="material-symbols-outlined"
+                        >priority_high</span
+                        >
+                      </div>
+                      <div class="attention-content">
+                        <strong>Atenção Necessária</strong>
+                        <span
+                          >{{ dogsIncompleteCount }} cadastros estão incompletos e
+                          precisam de revisão.</span
+                          >
+                        </div>
+                      </div>
+                    }
+                  } @else {
+                    <div class="no-data-state">
+                      <span class="material-symbols-outlined">pets</span>
+                      <p>Sem dados de cadastros de cães</p>
                     </div>
                   }
-                </div>
-              </ng-template>
-
-              <div class="card-content-wrapper">
-                @if (isLoading) {
-                  <p-skeleton width="100%" height="240px"></p-skeleton>
-                } @else {
-                  @if (dogsLineChartData?.datasets?.length) {
-                    <div class="chart-container">
-                      <p-chart
-                        type="line"
-                        [data]="dogsLineChartData"
-                        [options]="chartOptions"
-                      ></p-chart>
-                    </div>
-                    @if (dogsIncompleteCount > 0) {
-                      <div class="attention-box">
-                        <div class="attention-icon">
-                          <span class="material-symbols-outlined"
-                            >priority_high</span
-                            >
-                          </div>
-                          <div class="attention-content">
-                            <strong>Atenção Necessária</strong>
-                            <span
-                              >{{ dogsIncompleteCount }} cadastros estão incompletos e
-                              precisam de revisão.</span
-                              >
-                            </div>
-                          </div>
-                        }
-                      } @else {
-                        <div class="no-data-state">
-                          <span class="material-symbols-outlined">pets</span>
-                          <p>Sem dados de cadastros de cães</p>
-                        </div>
-                      }
-                    }
-                  </div>
-                </p-card>
+                }
               </div>
-            </div>
-
-            <p-divider></p-divider>
-            <p-card
-              header="Atividade Recente (ainda não implementado)"
-              styleClass="recent-activity-card"
-              >
-              <p-table [value]="recentActivity" [tableStyle]="{'min-width': '50rem'}">
-                <ng-template pTemplate="body" let-activity>
-                  <tr>
-                    <td>
-                      <span class="material-symbols-outlined"
-                        >{{ activity.icon }}</span
-                        >
-                      </td>
-                      <td [innerHTML]="activity.text"></td>
-                      <td>{{activity.time}}</td>
-                    </tr>
-                  </ng-template>
-                </p-table>
-              </p-card>
-            </div>
-
-            <aside class="content-right">
-              <div class="quick-actions">
-                <p-card header="Ações Rápidas" styleClass="quick-actions-card">
-                  <div class="actions-grid">
-                    <button
-                      type="button"
-                      class="action-btn"
-                      (click)="novoArtigo()"
-                      pTooltip="Criar novo artigo"
-                      tooltipPosition="left"
-                      >
-                      <span class="material-symbols-outlined">description</span>
-                      <span>Novo Artigo</span>
-                    </button>
-                    <button
-                      type="button"
-                      class="action-btn"
-                      (click)="adicionarUsuario()"
-                      pTooltip="Adicionar novo usuário"
-                      tooltipPosition="left"
-                      >
-                      <span class="material-symbols-outlined">person_add</span>
-                      <span>Adicionar Usuário</span>
-                    </button>
-                    <button
-                      type="button"
-                      class="action-btn"
-                      (click)="abrirRelatorios()"
-                      pTooltip="Gerar relatórios e exportações"
-                      tooltipPosition="left"
-                      >
-                      <span class="material-symbols-outlined">bar_chart</span>
-                      <span>Relatórios</span>
-                    </button>
-                  </div>
-                </p-card>
-              </div>
-            </aside>
+            </p-card>
           </div>
+        </div>
+
+        <p-divider></p-divider>
+        <p-card
+          header="Atividade Recente (ainda não implementado)"
+          styleClass="recent-activity-card"
+          >
+          <p-table [value]="recentActivity" [tableStyle]="{'min-width': '50rem'}">
+            <ng-template pTemplate="body" let-activity>
+              <tr>
+                <td>
+                  <span class="material-symbols-outlined"
+                    >{{ activity.icon }}</span
+                    >
+                  </td>
+                  <td [innerHTML]="activity.text"></td>
+                  <td>{{activity.time}}</td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </p-card>
+        </div>
         </div>
 
         <!-- Modal de Relatórios -->
