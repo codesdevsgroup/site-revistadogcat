@@ -1,22 +1,56 @@
 <div class="container py-4 admin-kardex">
-  <h1 class="mb-3">
-    <i class="fas fa-clipboard-list me-2"></i>
-    Kardex de Votação
-  </h1>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1>
+      <i class="fas fa-clipboard-list me-2"></i>
+      Auditoria de Votação (Kardex)
+    </h1>
+    <button class="btn btn-outline-success" (click)="exportar()">
+      <i class="fas fa-file-csv me-2"></i> Exportar CSV
+    </button>
+  </div>
 
   <!-- Filtros -->
-  <form [formGroup]="filtrosForm" class="card p-3 mb-4">
-    <div class="row g-3 align-items-end">
-      <div class="col-md-4">
+  <form [formGroup]="filtrosForm" class="card p-3 mb-4" (ngSubmit)="consultar(1)">
+    <div class="row g-3">
+      <div class="col-md-3">
         <label for="dataInicio" class="form-label">Data Início</label>
         <input id="dataInicio" type="date" class="form-control" formControlName="dataInicio">
       </div>
-      <div class="col-md-4">
+      <div class="col-md-3">
         <label for="dataFim" class="form-label">Data Fim</label>
         <input id="dataFim" type="date" class="form-control" formControlName="dataFim">
       </div>
+      <div class="col-md-3">
+        <label for="acao" class="form-label">Ação</label>
+        <select id="acao" class="form-select" formControlName="acao">
+          <option value="">Todas</option>
+          <option *ngFor="let acao of acoes" [value]="acao">{{ acao }}</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <label for="tipo" class="form-label">Tipo Voto</label>
+        <select id="tipo" class="form-select" formControlName="tipo">
+          <option value="">Todos</option>
+          <option *ngFor="let t of tiposVoto" [value]="t">{{ t }}</option>
+        </select>
+      </div>
       <div class="col-md-4">
-        <button type="button" class="btn btn-primary w-100" (click)="consultar()" [disabled]="carregando || filtrosForm.invalid">
+        <label for="userId" class="form-label">ID Usuário</label>
+        <input id="userId" type="text" class="form-control" formControlName="userId" placeholder="Busca por ID de usuário">
+      </div>
+      <div class="col-md-4">
+        <label for="cadastroId" class="form-label">ID Cadastro (Cão)</label>
+        <input id="cadastroId" type="text" class="form-control" formControlName="cadastroId" placeholder="Busca por ID de cadastro">
+      </div>
+      <div class="col-md-4">
+        <label for="ip" class="form-label">IP</label>
+        <input id="ip" type="text" class="form-control" formControlName="ip" placeholder="192.168.0.1">
+      </div>
+      <div class="col-12 d-flex justify-content-end gap-2">
+        <button type="button" class="btn btn-secondary" (click)="limparFiltros()">
+          <i class="fas fa-eraser me-2"></i> Limpar
+        </button>
+        <button type="submit" class="btn btn-primary" [disabled]="carregando">
           <i class="fas" [class.fa-search]="!carregando" [class.fa-spinner]="carregando" [class.fa-spin]="carregando"></i>
           <span class="ms-2">Consultar</span>
         </button>
@@ -25,81 +59,86 @@
   </form>
 
   <!-- Loading -->
-  @if (carregando) {
-    <div class="text-center my-4">
-      <i class="fas fa-spinner fa-spin fa-2x"></i>
-      <p class="mt-2">Carregando relatório...</p>
-    </div>
-  }
+  <div *ngIf="carregando" class="text-center my-4">
+    <i class="fas fa-spinner fa-spin fa-2x"></i>
+    <p class="mt-2">Carregando dados...</p>
+  </div>
 
-  <!-- Conteúdo -->
-  @if (!carregando && relatorio; as r) {
-    <div>
-      <!-- Resumo -->
-      <div class="row g-3 mb-4">
-        @for (card of [
-          { title: 'Total de Votos', value: r.resumo.totalVotos, icon: 'fas fa-vote-yea', color: 'primary' },
-          { title: 'Votos Comuns', value: r.resumo.votosNormais, icon: 'fas fa-check-circle', color: 'success' },
-          { title: 'Super Votos', value: r.resumo.superVotos, icon: 'fas fa-star', color: 'warning' },
-          { title: 'Total de Pontos', value: r.resumo.totalPontos, icon: 'fas fa-chart-line', color: 'info' },
-          { title: 'Usuários Ativos', value: r.resumo.usuariosAtivos, icon: 'fas fa-users', color: 'secondary' },
-          { title: 'Cães Votados', value: r.resumo.caesVotados, icon: 'fas fa-dog', color: 'dark' }
-          ]; track card) {
-          <div class="col-lg-2 col-md-4 col-sm-6">
-            <div class="card stat-card p-3 stat-{{card.color}}">
-              <div class="d-flex align-items-center">
-                <i class="me-3" [class]="card.icon"></i>
-                <div>
-                  <h5 class="mb-0">{{ card.value }}</h5>
-                  <small class="text-muted">{{ card.title }}</small>
-                </div>
+  <!-- Tabela -->
+  <div *ngIf="!carregando && kardexItems.length > 0" class="card">
+    <div class="table-responsive">
+      <table class="table table-hover mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>Data/Hora</th>
+            <th>Ação</th>
+            <th>Tipo</th>
+            <th>Usuário</th>
+            <th>Cão (Cadastro)</th>
+            <th>IP</th>
+            <th>Observações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of kardexItems; trackBy: trackById">
+            <td>{{ item.createdAt | date:'dd/MM/yyyy HH:mm:ss' }}</td>
+            <td>
+              <span class="badge"
+                [class.bg-success]="item.acao === 'VOTO_CRIADO'"
+                [class.bg-danger]="item.acao === 'VOTO_REMOVIDO' || item.acao === 'VOTO_INVALIDADO' || item.acao === 'USUARIO_BLOQUEADO'"
+                [class.bg-secondary]="item.acao === 'OUTROS'">
+                {{ item.acao }}
+              </span>
+            </td>
+            <td>
+              <span *ngIf="item.tipo" class="badge bg-info text-dark">{{ item.tipo }}</span>
+              <span *ngIf="!item.tipo">-</span>
+            </td>
+            <td>
+              <div *ngIf="item.usuario; else userIdOnly">
+                <div class="fw-bold">{{ item.usuario.nome }}</div>
+                <small class="text-muted">{{ item.usuario.email }}</small>
               </div>
-            </div>
-          </div>
-        }
-      </div>
-      <!-- Ranking -->
-      <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
-          <h5 class="mb-0">
-            <i class="fas fa-trophy me-2"></i>
-            Ranking de Cães por Pontos
-          </h5>
-          <small class="text-muted">Período: {{ r.periodo.inicio }} a {{ r.periodo.fim }}</small>
-        </div>
-        <div class="table-responsive">
-          <table class="table table-hover mb-0">
-            <thead class="table-light">
-              <tr>
-                <th style="width: 80px">Posição</th>
-                <th>Cão</th>
-                <th class="text-end" style="width: 160px">Pontos</th>
-                <th class="text-end" style="width: 160px">Votos</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (item of r.ranking; track trackByRanking($index, item)) {
-                <tr>
-                  <td><span class="badge bg-primary">#{{ item.posicao }}</span></td>
-                  <td>
-                    <div class="d-flex align-items-center gap-2">
-                      @if (item.cao.foto) {
-                        <img [src]="item.cao.foto" alt="Foto" class="rounded" style="width: 40px; height: 40px; object-fit: cover;">
-                      }
-                      <div>
-                        <div class="fw-semibold">{{ item.cao.nome }}</div>
-                        <small class="text-muted">ID: {{ item.cao.id }}</small>
-                      </div>
-                    </div>
-                  </td>
-                  <td class="text-end">{{ item.totalPontos }}</td>
-                  <td class="text-end">{{ item.totalVotos }}</td>
-                </tr>
-              }
-            </tbody>
-          </table>
-        </div>
-      </div>
+              <ng-template #userIdOnly>
+                <small class="text-muted" title="{{ item.userId }}">{{ item.userId | slice:0:8 }}...</small>
+              </ng-template>
+            </td>
+            <td>
+               <div *ngIf="item.cadastro; else cadastroIdOnly">
+                <div class="fw-bold">{{ item.cadastro.nome }}</div>
+                <small class="text-muted">{{ item.cadastro.raca }}</small>
+              </div>
+              <ng-template #cadastroIdOnly>
+                <small class="text-muted" title="{{ item.cadastroId }}">{{ item.cadastroId | slice:0:8 }}...</small>
+              </ng-template>
+            </td>
+            <td>{{ item.ip || '-' }}</td>
+            <td>{{ item.observacoes || '-' }}</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-  }
+
+    <!-- Paginação -->
+    <div class="card-footer d-flex justify-content-between align-items-center" *ngIf="totalPages > 1">
+      <small class="text-muted">Página {{ page }} de {{ totalPages }} (Total: {{ total }})</small>
+      <nav aria-label="Page navigation">
+        <ul class="pagination mb-0">
+          <li class="page-item" [class.disabled]="page === 1">
+            <button class="page-link" (click)="consultar(page - 1)">Anterior</button>
+          </li>
+          <li class="page-item" *ngFor="let p of getPagesArray()" [class.active]="p === page">
+            <button class="page-link" (click)="consultar(p)">{{ p }}</button>
+          </li>
+          <li class="page-item" [class.disabled]="page === totalPages">
+            <button class="page-link" (click)="consultar(page + 1)">Próxima</button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+
+  <div *ngIf="!carregando && kardexItems.length === 0" class="alert alert-info mt-3">
+    Nenhum registro encontrado com os filtros selecionados.
+  </div>
 </div>
