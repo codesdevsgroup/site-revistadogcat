@@ -47,8 +47,8 @@ describe('AuthService - Refresh Token Flow', () => {
       };
       const mockRefreshToken = 'valid-refresh-token';
 
-      localStorage.setItem('refreshToken', mockRefreshToken);
-      localStorage.setItem('userData', JSON.stringify(mockUser));
+      sessionStorage.setItem('refresh_token', mockRefreshToken);
+      sessionStorage.setItem('auth_user', JSON.stringify(mockUser));
 
       const mockRefreshResponse = {
         statusCode: 200,
@@ -70,14 +70,14 @@ describe('AuthService - Refresh Token Flow', () => {
 
       const req = httpMock.expectOne(`${environment.apiUrl}/auth/refresh`);
       expect(req.request.method).toBe('POST');
-      expect(req.request.body).toEqual({ refreshToken: mockRefreshToken });
+      expect(req.request.body).toEqual({ refresh_token: mockRefreshToken });
 
       req.flush(mockRefreshResponse);
     });
 
     it('deve limpar sessão quando refresh token é inválido', () => {
       const mockRefreshToken = 'invalid-refresh-token';
-      localStorage.setItem('refreshToken', mockRefreshToken);
+      sessionStorage.setItem('refresh_token', mockRefreshToken);
 
       service.refreshToken().subscribe({
         next: () => fail('Deveria ter falhado'),
@@ -106,7 +106,7 @@ describe('AuthService - Refresh Token Flow', () => {
         createdAt: '2024-01-01T00:00:00Z'
       };
       service.setTokens('valid-access-token', 'valid-refresh-token');
-      localStorage.setItem('userData', JSON.stringify(mockUser));
+      sessionStorage.setItem('auth_user', JSON.stringify(mockUser));
 
       service.ensureAuthenticated().subscribe(result => {
         expect(result).toBe(true);
@@ -127,8 +127,8 @@ describe('AuthService - Refresh Token Flow', () => {
       };
       const mockRefreshToken = 'valid-refresh-token';
 
-      localStorage.setItem('refreshToken', mockRefreshToken);
-      localStorage.setItem('userData', JSON.stringify(mockUser));
+      sessionStorage.setItem('refresh_token', mockRefreshToken);
+      sessionStorage.setItem('auth_user', JSON.stringify(mockUser));
 
       const mockRefreshResponse = {
         statusCode: 200,
@@ -174,15 +174,17 @@ describe('AuthService - Refresh Token Flow', () => {
 
       // Caso 2: Com access token - não precisa fazer refresh
       service.setTokens('access-token', 'refresh-token');
-      localStorage.setItem('userData', JSON.stringify(mockUser));
+      sessionStorage.setItem('auth_user', JSON.stringify(mockUser));
       expect(service.canRefreshToken()).toBe(false);
 
       // Caso 3: Sem access token mas com refresh token e dados do usuário - pode fazer refresh
-      sessionStorage.removeItem('accessToken');
+      // We need to clear the in-memory access token as well
+      (service as any).accessToken = null;
+      sessionStorage.removeItem('access_token');
       expect(service.canRefreshToken()).toBe(true);
 
       // Caso 4: Sem dados do usuário - não pode fazer refresh
-      localStorage.removeItem('userData');
+      sessionStorage.removeItem('auth_user');
       expect(service.canRefreshToken()).toBe(false);
     });
   });

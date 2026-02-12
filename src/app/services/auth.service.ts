@@ -16,11 +16,12 @@ import { Usuario } from '../interfaces/usuario.interface';
 export class AuthService {
   private apiUrl = `${environment.apiUrl}/auth`;
   private userKey = 'auth_user';
-  private refreshTokenKey = 'refresh_token'; // Key used to store in localStorage (matches backend response)
+  private refreshTokenKey = 'refresh_token'; // Key for sessionStorage
   private accessTokenKey = 'access_token'; // Key for sessionStorage
 
-  // access_token is stored in memory for better security (XSS)
+  // Tokens are stored in memory for better security (XSS)
   private accessToken: string | null = null;
+  private refreshTokenValue: string | null = null;
 
   // Flag para evitar múltiplas chamadas de logout simultâneas
   private isLoggingOut = false;
@@ -43,17 +44,20 @@ export class AuthService {
 
   private initializeAuthenticationState(): void {
     const accessToken = sessionStorage.getItem(this.accessTokenKey);
+    const refreshToken = sessionStorage.getItem(this.refreshTokenKey);
 
-    // If an access token is present in sessionStorage, restore it to memory and set authenticated state to true
+    // If tokens are present in sessionStorage, restore them to memory
     if (accessToken) {
       this.accessToken = accessToken;
       this.isAuthenticatedSubject.next(true);
       console.log('AuthService: Access token restaurado do sessionStorage. Estado de autenticação: true');
     } else {
-      // If no access token, assume not authenticated initially.
-      // initializeAuth will handle refresh token logic.
       this.isAuthenticatedSubject.next(false);
       console.log('AuthService: Nenhum access token encontrado no sessionStorage. Estado de autenticação: false');
+    }
+
+    if (refreshToken) {
+      this.refreshTokenValue = refreshToken;
     }
   }
 
@@ -122,7 +126,7 @@ export class AuthService {
   }
 
   refreshToken(): Observable<RefreshResponse> {
-    const storedRefreshToken = this.getRefreshToken(); // Get the refresh token from localStorage
+    const storedRefreshToken = this.getRefreshToken(); // Get the refresh token from storage
     if (!storedRefreshToken) {
       this.clearSession();
       return throwError(() => new Error('No refresh token available.'));
@@ -173,7 +177,14 @@ export class AuthService {
   }
 
   getRefreshToken(): string | null {
-    return localStorage.getItem(this.refreshTokenKey);
+    if (this.refreshTokenValue) {
+      return this.refreshTokenValue;
+    }
+    const storedToken = sessionStorage.getItem(this.refreshTokenKey);
+    if (storedToken) {
+      this.refreshTokenValue = storedToken;
+    }
+    return this.refreshTokenValue;
   }
 
   private handleAuthentication(accessToken: string, refreshToken: string, user: Usuario): void {
@@ -184,20 +195,21 @@ export class AuthService {
   }
 
   public setTokens(accessToken: string, refreshToken: string): void {
-    console.log('AuthService: Salvando tokens. AccessToken (memória): ', accessToken ? 'presente' : 'ausente', '; RefreshToken (localStorage): ', refreshToken ? 'presente' : 'ausente');
+    console.log('AuthService: Salvando tokens. AccessToken: ', accessToken ? 'presente' : 'ausente', '; RefreshToken: ', refreshToken ? 'presente' : 'ausente');
     this.accessToken = accessToken;
-    // Armazena o access token no sessionStorage para persistir durante a sessão
+    this.refreshTokenValue = refreshToken;
+
+    // Tokens are stored in sessionStorage for better security (not persistent across sessions)
     sessionStorage.setItem(this.accessTokenKey, accessToken);
-    localStorage.setItem(this.refreshTokenKey, refreshToken);
+    sessionStorage.setItem(this.refreshTokenKey, refreshToken);
+
     this.isAuthenticatedSubject.next(true);
-    console.log('AuthService: Tokens salvos. RefreshToken no localStorage agora é:', localStorage.getItem(this.refreshTokenKey));
   }
 
   private setUserData(userData: Usuario): void {
-    console.log('AuthService: Salvando dados do usuário no localStorage:', userData);
-    localStorage.setItem(this.userKey, JSON.stringify(userData));
+    console.log('AuthService: Salvando dados do usuário no sessionStorage:', userData);
+    sessionStorage.setItem(this.userKey, JSON.stringify(userData));
     this.currentUserSubject.next(userData);
-    console.log('AuthService: Dados do usuário salvos. Usuário no localStorage agora é:', localStorage.getItem(this.userKey));
   }
 
   public updateUserData(updatedData: Partial<Usuario>): void {
@@ -222,21 +234,28 @@ export class AuthService {
    */
   public clearSession(): void {
     this.accessToken = null;
+    this.refreshTokenValue = null;
     this.isLoggingOut = false; // Reset da flag de logout
+
     sessionStorage.removeItem(this.accessTokenKey);
+    sessionStorage.removeItem(this.refreshTokenKey);
+    sessionStorage.removeItem(this.userKey);
+
+    // Also clear from localStorage just in case there are legacy tokens
     localStorage.removeItem(this.refreshTokenKey);
     localStorage.removeItem(this.userKey);
+
     this.currentUserSubject.next(null);
     this.isAuthenticatedSubject.next(false);
   }
 
   private getUserFromStorage(): Usuario | null {
-    const userStr = localStorage.getItem(this.userKey);
+    const userStr = sessionStorage.getItem(this.userKey) || localStorage.getItem(this.userKey);
     if (userStr) {
       try {
         return JSON.parse(userStr) as Usuario;
       } catch (error) {
-        console.error('AuthService: Erro ao parsear dados do usuário do localStorage:', error);
+        console.error('AuthService: Erro ao parsear dados do usuário do storage:', error);
         this.clearSession();
         return null;
       }

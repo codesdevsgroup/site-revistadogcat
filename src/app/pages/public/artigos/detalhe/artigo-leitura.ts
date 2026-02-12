@@ -8,7 +8,6 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ActivatedRoute, RouterModule } from "@angular/router";
-import { DomSanitizer, SafeHtml } from "@angular/platform-browser";
 import { ArtigosService } from "../../../../services/artigos.service";
 import type { Artigo } from "../../../../interfaces/artigo.interface";
 import { Subject, takeUntil } from "rxjs";
@@ -24,11 +23,10 @@ import { Subject, takeUntil } from "rxjs";
 export class ArtigoLeituraComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private artigosService = inject(ArtigosService);
-  private sanitizer = inject(DomSanitizer);
   private cdr = inject(ChangeDetectorRef);
 
   artigo?: Artigo;
-  conteudoSeguro?: SafeHtml;
+  conteudoSeguro?: string;
   loading = true;
   error: string | null = null;
 
@@ -71,9 +69,7 @@ export class ArtigoLeituraComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (art) => {
           this.artigo = art;
-          this.conteudoSeguro = this.sanitizer.bypassSecurityTrustHtml(
-            this.extractHtmlFromContent(art.conteudo),
-          );
+          this.conteudoSeguro = this.extractHtmlFromContent(art.conteudo);
           this.totalCurtidas = art.curtidas || 0;
           this.totalVisualizacoes = art.visualizacoes || 0;
           this.loading = false;
