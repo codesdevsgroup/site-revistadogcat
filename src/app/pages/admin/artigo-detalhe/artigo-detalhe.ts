@@ -126,7 +126,6 @@ export class ArtigoDetalheComponent implements OnInit {
           fotoDestaque: artigo.imagemCapa || ''
         };
 
-        console.log('Dados do artigo carregado:', formData);
         this.artigoForm.patchValue(formData);
 
         // Forçar atualização do conteúdo após um pequeno delay para garantir que o TipTap esteja pronto
@@ -134,7 +133,6 @@ export class ArtigoDetalheComponent implements OnInit {
           const conteudoValue = typeof artigo.conteudo === 'object' ? this.extractHtmlFromContent(artigo.conteudo) : artigo.conteudo;
           this.artigoForm.get('conteudo')?.setValue(conteudoValue || '');
           this.artigoForm.get('conteudo')?.markAsTouched();
-          console.log('Conteúdo definido no formulário:', this.artigoForm.get('conteudo')?.value);
         }, 100);
         this.fotoDestaque = artigo.imagemCapa || null;
         this.imagemOriginalUrl = artigo.imagemCapa || null; // Armazenar URL original
@@ -225,23 +223,11 @@ export class ArtigoDetalheComponent implements OnInit {
   }
 
   onSubmit(): void {
-    console.log('=== VALIDAÇÃO DO FORMULÁRIO ===');
-    console.log('Formulário válido?', this.artigoForm.valid);
-    console.log('Valores do formulário:', this.artigoForm.value);
-    console.log('Status dos campos:');
-    Object.keys(this.artigoForm.controls).forEach(key => {
-      const control = this.artigoForm.get(key);
-      console.log(`- ${key}: válido=${control?.valid}, valor="${control?.value}", erros=`, control?.errors);
-    });
-
     if (!this.artigoForm.valid) {
-      console.log('❌ Formulário inválido - parando execução');
       this.markFormGroupTouched();
       this.mostrarErrosValidacao();
       return;
     }
-
-    console.log('✅ Formulário válido - prosseguindo com salvamento');
 
     const formData = this.artigoForm.value;
 
@@ -274,10 +260,6 @@ export class ArtigoDetalheComponent implements OnInit {
     };
 
     // Criar/atualizar artigo com upload de imagem em uma única requisição
-    console.log('=== INÍCIO DO PROCESSO DE SALVAMENTO ===');
-    console.log('Imagem selecionada para upload:', !!this.imagemSelecionada);
-    console.log('Payload base:', payloadBase);
-
     let operacao$: Observable<Artigo>;
 
     if (this.isEditMode && this.artigoId) {
@@ -318,12 +300,10 @@ export class ArtigoDetalheComponent implements OnInit {
    * Mostra erros de validação específicos para cada campo
    */
   private mostrarErrosValidacao(): void {
-    console.log('=== VERIFICAÇÃO DETALHADA DE ERROS ===');
     const erros: string[] = [];
 
     // Verificar cada campo e seus valores atuais
     const titulo = this.artigoForm.get('titulo');
-    console.log('Campo título:', { valid: titulo?.valid, value: titulo?.value, errors: titulo?.errors });
     if (titulo?.invalid) {
       const valor = titulo.value;
       if (!valor || valor.trim() === '') {
@@ -334,7 +314,6 @@ export class ArtigoDetalheComponent implements OnInit {
     }
 
     const autor = this.artigoForm.get('autor');
-    console.log('Campo autor:', { valid: autor?.valid, value: autor?.value, errors: autor?.errors });
     if (autor?.invalid) {
       const valor = autor.value;
       if (!valor || valor === '') {
@@ -343,7 +322,6 @@ export class ArtigoDetalheComponent implements OnInit {
     }
 
     const categoria = this.artigoForm.get('categoria');
-    console.log('Campo categoria:', { valid: categoria?.valid, value: categoria?.value, errors: categoria?.errors });
     if (categoria?.invalid) {
       const valor = categoria.value;
       if (!valor || valor === '') {
@@ -352,7 +330,6 @@ export class ArtigoDetalheComponent implements OnInit {
     }
 
     const dataPublicacao = this.artigoForm.get('dataPublicacao');
-    console.log('Campo dataPublicacao:', { valid: dataPublicacao?.valid, value: dataPublicacao?.value, errors: dataPublicacao?.errors });
     if (dataPublicacao?.invalid) {
       const valor = dataPublicacao.value;
       if (!valor || valor === '') {
@@ -361,7 +338,6 @@ export class ArtigoDetalheComponent implements OnInit {
     }
 
     const conteudo = this.artigoForm.get('conteudo');
-    console.log('Campo conteudo:', { valid: conteudo?.valid, value: conteudo?.value, errors: conteudo?.errors });
     if (conteudo?.invalid) {
       const valor = conteudo.value;
       if (!valor || valor.trim() === '') {
@@ -370,8 +346,6 @@ export class ArtigoDetalheComponent implements OnInit {
     }
 
     const fotoDestaque = this.artigoForm.get('fotoDestaque');
-    console.log('Campo fotoDestaque:', { valid: fotoDestaque?.valid, value: fotoDestaque?.value, errors: fotoDestaque?.errors });
-    console.log('Estado da imagem:', { fotoDestaque: this.fotoDestaque, isEditMode: this.isEditMode });
     if (fotoDestaque?.invalid) {
       const valor = fotoDestaque.value;
       // Para novos artigos, a foto é obrigatória
@@ -385,28 +359,10 @@ export class ArtigoDetalheComponent implements OnInit {
       erros.push('Resumo deve ter no máximo 300 caracteres');
     }
 
-    console.log('=== RESULTADO DA VALIDAÇÃO ===');
-    console.log('Total de erros encontrados:', erros.length);
-    console.log('Lista de erros:', erros);
-
     if (erros.length > 0) {
       this.notificationService.error(`Problemas encontrados: ${erros.join(', ')}`);
-      console.log('❌ Erros específicos detectados');
-      console.log('Valores do formulário:', this.artigoForm.value);
-      console.log('Status do formulário:', this.artigoForm.status);
-      console.log('Erros do formulário:', this.artigoForm.errors);
     } else {
       this.notificationService.warning('Formulário inválido. Verifique todos os campos.');
-      console.log('⚠️ Formulário inválido mas sem erros específicos detectados');
-      console.log('Valores do formulário:', this.artigoForm.value);
-      console.log('Status do formulário:', this.artigoForm.status);
-      console.log('Controles inválidos:');
-      Object.keys(this.artigoForm.controls).forEach(key => {
-        const control = this.artigoForm.get(key);
-        if (control?.invalid) {
-          console.log(`- ${key}: erros=`, control.errors);
-        }
-      });
     }
   }
 
@@ -418,8 +374,6 @@ export class ArtigoDetalheComponent implements OnInit {
   // Método para upload da foto de destaque
   onFotoDestaqueChange(event: any): void {
     const file = event.target.files[0];
-    console.log('=== NOVA IMAGEM SELECIONADA ===');
-    console.log('Arquivo selecionado:', file);
 
     if (file) {
       // Validar tipo de arquivo
@@ -437,14 +391,12 @@ export class ArtigoDetalheComponent implements OnInit {
       }
 
       this.imagemSelecionada = file;
-      console.log('imagemSelecionada definida:', !!this.imagemSelecionada);
 
       // Criar preview da imagem
       const reader = new FileReader();
       reader.onload = (e: any) => {
         this.fotoDestaque = e.target.result;
         this.artigoForm.patchValue({ fotoDestaque: e.target.result });
-        console.log('Preview criado, fotoDestaque atualizada');
       };
       reader.readAsDataURL(file);
     }
