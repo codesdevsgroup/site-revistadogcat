@@ -92,15 +92,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   private loadUserData() {
-    try {
-      const userData = localStorage.getItem('auth_user');
-      if (userData) {
-        const user = JSON.parse(userData);
-        this.username = user.userName || user.name || '';
-        this.userRole = user.role || ''; // Directly use the role from the user object
-      }
-    } catch (error) {
-      console.error('Erro ao carregar dados do usuário:', error);
+    const user = this.authService.getCurrentUser();
+    if (user) {
+      this.username = user.userName || user.name || '';
+      this.userRole = user.role || ''; // Directly use the role from the user object
     }
   }
 
