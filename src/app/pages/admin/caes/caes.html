@@ -5,16 +5,16 @@
       Cães Cadastrados
     </h1>
     <div class="page-actions">
-      @if (canManageBreeds()) {
+      @if (isAdmin) {
         <button pButton type="button" icon="pi pi-cog" label="Gerenciar Raças"
-          (click)="openBreedModal()"
+          (click)="openRacaModal()"
         ></button>
       }
       <button pButton type="button" icon="pi pi-plus" label="Cadastrar Cão" (click)="navigateToCadastro()"></button>
     </div>
   </div>
 
-  @if (!isLoading) {
+  @if (!loading) {
     <div class="caes-table-container">
       <div class="table-header">
         <h2>Lista de Cães ({{ filteredCaes.length }})</h2>
@@ -51,7 +51,7 @@
               </div>
             </td>
             <td>{{ getRacaName(cao.racaId) || cao.raca?.nome || 'N/A' }}</td>
-            <td>{{ formatAge(cao.dataNascimento) }}</td>
+            <td>{{ calculateAge(cao.dataNascimento) }}</td>
             <td>{{ cao.donoCao?.nome || 'N/A' }}</td>
             <td>{{ formatDate(cao.createdAt) }}</td>
             <td>
@@ -85,7 +85,7 @@
             <td>
               <div class="action-buttons">
                 <button pButton type="button" icon="pi pi-eye" class="p-button-rounded p-button-text" (click)="openCaoModal(cao)" title="Visualizar"></button>
-                <button pButton type="button" icon="pi pi-pencil" class="p-button-rounded p-button-text" (click)="editCao(cao)" title="Editar"></button>
+                <button pButton type="button" icon="pi pi-pencil" class="p-button-rounded p-button-text" (click)="openCaoModal(cao)" title="Editar"></button>
               </div>
             </td>
           </tr>
@@ -95,7 +95,7 @@
         <div class="empty-state">
           <i class="fas fa-dog"></i>
           <h3>Nenhum cão encontrado</h3>
-          @if (searchTerm || selectedBreedId) {
+          @if (searchTerm || selectedRaca) {
             <p>
               Tente ajustar os filtros de busca ou
               <button class="btn-link" (click)="clearFilters()">
@@ -103,7 +103,7 @@
               </button>
             </p>
           }
-          @if (!searchTerm && !selectedBreedId) {
+          @if (!searchTerm && !selectedRaca) {
             <p>
               Ainda não há cães cadastrados no sistema.
             </p>
@@ -124,15 +124,15 @@
   [visible]="showRacaModal"
   (visibleChange)="showRacaModal = $event"
   [racas]="racas"
-  [currentBreed]="currentBreed"
-  [isSavingBreed]="isSavingBreed"
-  [editingBreedId]="editingBreedId"
+  [currentBreed]="racaForm"
+  [isSavingBreed]="racaModalLoading"
+  [editingBreedId]="isEditingRaca ? racaForm.racaId : null"
   [racaSearchTerm]="racaSearchTerm"
-  (racaSearchTermChange)="racaSearchTerm = $event; onRacaFilterChange()"
-  (cancel)="cancelBreedEdit()"
-  (save)="saveBreed()"
-  (edit)="editBreed($event)"
-  (delete)="deleteBreed($event)"
+  (racaSearchTermChange)="racaSearchTerm = $event; updateFilteredRacas()"
+  (cancel)="closeRacaModal()"
+  (save)="saveRaca()"
+  (edit)="editRaca($event)"
+  (delete)="deleteRaca($event)"
 ></app-raca-manage-dialog>
 
 <app-cao-details-dialog

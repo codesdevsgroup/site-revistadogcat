@@ -162,22 +162,6 @@ export class CaesComponent implements OnInit {
     }
   }
 
-  onRacaFilterChange() {
-    this.updateFilteredRacas();
-  }
-
-  openBreedModal() {
-    this.openRacaModal();
-  }
-
-  canManageBreeds(): boolean {
-    return this.isAdmin;
-  }
-
-  get isLoading(): boolean {
-    return this.loading;
-  }
-
   get filteredCaes() {
     return this.caes.filter((cao) => {
       const matchesSearch =
@@ -213,10 +197,6 @@ export class CaesComponent implements OnInit {
       const years = Math.floor(ageInMonths / 12);
       return `${years} ${years === 1 ? "ano" : "anos"}`;
     }
-  }
-
-  formatAge(birthDate: Date): string {
-    return this.calculateAge(birthDate);
   }
 
   getRacaName(racaId?: string): string {
@@ -346,65 +326,11 @@ export class CaesComponent implements OnInit {
     return user ? user.role === "ADMIN" || user.role === "EDITOR" : false;
   }
 
-  get isSavingBreed() {
-    return this.racaModalLoading;
-  }
-
-  get editingBreedId() {
-    return this.isEditingRaca ? this.racaForm.racaId : null;
-  }
-
-  get currentBreed() {
-    return this.racaForm;
-  }
-
-  get breedForm() {
-    return {
-      valid: this.racaForm.nome.trim().length > 0,
-    };
-  }
-
-  cancelBreedEdit() {
-    this.closeRacaModal();
-  }
-
-  closeBreedModal() {
-    this.closeRacaModal();
-  }
-
-  saveBreed() {
-    this.saveRaca();
-  }
-
-  get selectedBreedId() {
-    return this.selectedRaca;
-  }
-
-  get showBreedModal() {
-    return this.showRacaModal;
-  }
-
   clearFilters() {
     this.searchTerm = "";
     this.selectedRaca = "";
     this.selectedStatus = "";
     this.loadCaes();
-  }
-
-  editBreed(raca: Raca) {
-    this.editRaca(raca);
-  }
-
-  deleteBreed(raca: Raca) {
-    this.deleteRaca(raca);
-  }
-
-  viewCao(cao: CaoListItem) {
-    console.log("Visualizar cão:", cao);
-  }
-
-  editCao(cao: CaoListItem) {
-    this.openCaoModal(cao);
   }
 
   openCaoModal(caoListItem: CaoListItem) {
