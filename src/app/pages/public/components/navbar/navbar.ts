@@ -1,7 +1,8 @@
 import { Component, HostListener, ElementRef, OnInit, OnDestroy } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
+import { Router, RouterModule, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
+import { filter, takeUntil } from 'rxjs/operators';
 import { AuthService } from '../../../../services/auth.service';
 import type { Usuario } from '../../../../interfaces/usuario.interface';
 
@@ -39,6 +40,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   isCompact = false;
   username = '';
   userRole = '';
+  private destroy$ = new Subject<void>();
 
   // Observables para o estado de autenticação e dados do usuário
   public isAuthenticated$: Observable<boolean>;
@@ -55,7 +57,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.loadUserData();
-    this.currentUser$.subscribe(user => {
+    this.currentUser$.pipe(takeUntil(this.destroy$)).subscribe(user => {
       if (user) {
         this.username = user.userName || user.name || '';
         this.userRole = user.role || ''; // Directly use the role from the user object
@@ -68,11 +70,17 @@ export class NavbarComponent implements OnInit, OnDestroy {
     // Atualiza estado inicialmente conforme posição da página
     this.updateScrollState();
     this.updateCompactState();
-    this.router.events.subscribe(() => this.updateCompactState());
+    this.router.events
+      .pipe(
+        filter((event) => event instanceof NavigationEnd),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(() => this.updateCompactState());
   }
 
   ngOnDestroy() {
-    // No specific cleanup needed for now, similar to top-menu.ts
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   // Controla estado visual (shrink) ao rolar a página
