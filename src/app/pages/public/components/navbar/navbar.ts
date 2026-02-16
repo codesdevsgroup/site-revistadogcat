@@ -59,13 +59,15 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.loadUserData();
     this.currentUser$
       .pipe(takeUntil(this.destroy$))
-      .subscribe(user => {
-        if (user) {
-          this.username = user.userName || user.name || '';
-          this.userRole = user.role || ''; // Directly use the role from the user object
-        } else {
-          this.username = '';
-          this.userRole = '';
+      .subscribe({
+        next: (user) => {
+          if (user) {
+            this.username = user.userName || user.name || '';
+            this.userRole = user.role || ''; // Directly use the role from the user object
+          } else {
+            this.username = '';
+            this.userRole = '';
+          }
         }
       });
 
@@ -74,7 +76,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.updateCompactState();
     this.router.events
       .pipe(takeUntil(this.destroy$))
-      .subscribe(() => this.updateCompactState());
+      .subscribe({
+        next: () => this.updateCompactState()
+      });
   }
 
   ngOnDestroy() {
