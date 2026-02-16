@@ -215,7 +215,12 @@
                     >{{ activity.icon }}</span
                     >
                   </td>
-                  <td [innerHTML]="activity.text"></td>
+                  <td>
+                    {{ activity.text }}
+                    @if (activity.highlight) {
+                      <strong> {{ activity.highlight }}</strong>
+                    }
+                  </td>
                   <td>{{activity.time}}</td>
                 </tr>
               </ng-template>
