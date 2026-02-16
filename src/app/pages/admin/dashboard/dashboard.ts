@@ -39,9 +39,9 @@ export class DashboardComponent implements OnInit {
   isLoading = true;
 
   recentActivity = [
-    { icon: 'person_add', text: 'Novo usuário cadastrado: <strong>João Silva</strong>', time: '2 minutos atrás' },
-    { icon: 'description', text: 'Artigo publicado: <strong>Cuidados com Pets no Inverno</strong>', time: '1 hora atrás' },
-    { icon: 'emoji_events', text: 'Nova assinatura premium ativada', time: '3 horas atrás' }
+    { icon: 'person_add', text: 'Novo usuário cadastrado:', highlight: 'João Silva', time: '2 minutos atrás' },
+    { icon: 'description', text: 'Artigo publicado:', highlight: 'Cuidados com Pets no Inverno', time: '1 hora atrás' },
+    { icon: 'emoji_events', text: 'Nova assinatura premium ativada', highlight: null, time: '3 horas atrás' }
   ];
 
   lineChartData: any;
