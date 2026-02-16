@@ -65,8 +65,6 @@ export class ConfirmPasswordComponent implements OnInit {
         password: this.confirmPasswordForm.get('password')?.value,
         token: this.token
       };
-
-      console.log('New password data:', passwordData);
       
       // Simular chamada de API
       setTimeout(() => {

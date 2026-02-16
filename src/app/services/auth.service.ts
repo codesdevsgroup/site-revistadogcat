@@ -87,7 +87,6 @@ export class AuthService {
     return this.http.post<LoginResponse>(`${this.apiUrl}/login`, credentials)
       .pipe(
         tap(response => {
-          console.log('AuthService: Resposta do login recebida:', response);
           // Access data from the 'data' property
           this.handleAuthentication(response.data.access_token, response.data.refresh_token, response.data.user);
         }),
@@ -97,7 +96,6 @@ export class AuthService {
 
   register(userData: RegisterRequest): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/register`, userData).pipe(
-      tap(response => console.log('Usuário registrado com sucesso:', response)),
       catchError(this.handleError)
     );
   }
@@ -207,7 +205,6 @@ export class AuthService {
   }
 
   private setUserData(userData: Usuario): void {
-    console.log('AuthService: Salvando dados do usuário no sessionStorage:', userData);
     sessionStorage.setItem(this.userKey, JSON.stringify(userData));
     this.currentUserSubject.next(userData);
   }

@@ -31,7 +31,6 @@ export class ResetPasswordComponent implements OnInit {
       this.isSubmitting = true;
       
       const email = this.resetPasswordForm.get('email')?.value;
-      console.log('Reset password for email:', email);
       
       // Simular envio de e-mail
       setTimeout(() => {
