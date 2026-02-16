@@ -37,13 +37,23 @@ export class EdicoesService {
 
   obterEdicao(id: string): Observable<Edicao> {
     return this.http.get<any>(`${this.apiUrl}/${id}`).pipe(
-      map((resp) => (resp?.data ?? resp) as Edicao)
+      map((resp) => {
+        if (resp?.data && typeof resp.data === 'object' && 'id' in resp.data) {
+          return resp.data as Edicao;
+        }
+        return resp as Edicao;
+      })
     );
   }
 
   listarUltima(): Observable<Edicao> {
     return this.http.get<any>(`${this.apiUrl}/ultima`).pipe(
-      map((resp) => (resp?.data ?? resp) as Edicao)
+      map((resp) => {
+        if (resp?.data && typeof resp.data === 'object' && 'id' in resp.data) {
+          return resp.data as Edicao;
+        }
+        return resp as Edicao;
+      })
     );
   }
 
@@ -57,7 +67,12 @@ export class EdicoesService {
 
   atualizarEdicao(id: string, formData: FormData): Observable<Edicao> {
     return this.http.patch<any>(`${this.apiUrl}/${id}`, formData).pipe(
-      map((resp) => (resp?.data ?? resp) as Edicao)
+      map((resp) => {
+        if (resp?.data && typeof resp.data === 'object' && 'id' in resp.data) {
+          return resp.data as Edicao;
+        }
+        return resp as Edicao;
+      })
     );
   }
 
