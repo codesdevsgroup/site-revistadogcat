@@ -204,10 +204,14 @@
 
         <p-divider></p-divider>
         <p-card
-          header="Atividade Recente (ainda não implementado)"
+          header="Atividade Recente"
           styleClass="recent-activity-card"
           >
-          <p-table [value]="recentActivity" [tableStyle]="{'min-width': '50rem'}">
+          <p-table
+            [value]="recentActivity"
+            [tableStyle]="{'min-width': '50rem'}"
+            emptyMessage="Nenhuma atividade recente encontrada."
+          >
             <ng-template pTemplate="body" let-activity>
               <tr>
                 <td>

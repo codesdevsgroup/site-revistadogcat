@@ -17,7 +17,7 @@ import { BadgeModule } from 'primeng/badge';
 import { PanelModule } from 'primeng/panel';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { DashboardService } from '../../../services/dashboard.service';
-import { DashboardResponse } from '../../../dtos/dashboard.dto';
+import { DashboardResponse, RecentActivityItem } from '../../../dtos/dashboard.dto';
 import { SkeletonModule } from 'primeng/skeleton';
 
 @Component({
@@ -38,11 +38,11 @@ export class DashboardComponent implements OnInit {
   stats: Array<{ title: string; value: string; icon: string; color: string; change: string; changePositive: boolean }> = [];
   isLoading = true;
 
-  recentActivity = [
-    { icon: 'person_add', text: 'Novo usuário cadastrado:', highlight: 'João Silva', time: '2 minutos atrás' },
-    { icon: 'description', text: 'Artigo publicado:', highlight: 'Cuidados com Pets no Inverno', time: '1 hora atrás' },
-    { icon: 'emoji_events', text: 'Nova assinatura premium ativada', highlight: null, time: '3 horas atrás' }
-  ];
+  recentActivity: RecentActivityItem[] = [];
+
+  // Novos estados para o terceiro card
+  dogsLineChartData: any;
+  dogsIncompleteCount: number = 0;
 
   lineChartData: any;
   pieChartData: any;
@@ -68,6 +68,7 @@ export class DashboardComponent implements OnInit {
       next: (data: DashboardResponse) => {
         this.populateStats(data);
         this.populateCharts(data);
+        this.recentActivity = data.recentActivity || [];
         this.isLoading = false;
       },
       error: (error) => {
@@ -275,7 +276,4 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  // Novos estados para o terceiro card
-  dogsLineChartData: any;
-  dogsIncompleteCount: number = 0;
 }
