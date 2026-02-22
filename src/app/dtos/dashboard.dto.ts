@@ -36,9 +36,17 @@ export interface DogsStatsResponse {
   rejectedCount: number;
 }
 
+export interface RecentActivityItem {
+  icon: string;
+  text: string;
+  highlight: string | null;
+  time: string;
+}
+
 export interface DashboardResponse {
   cards: DashboardCards;
   monthlyGrowth: MonthlyGrowthItem[];
   userDistribution: UserDistributionItem[];
   dogsStats?: DogsStatsResponse;
+  recentActivity?: RecentActivityItem[];
 }
